@@ -11,10 +11,17 @@
     "lint:fix": "eslint --fix --ext .ts,.tsx --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@chakra-ui/react": "^1.6.4",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
     "@supabase/supabase-js": "^1.15.1",
-    "next": "^10.2.0",
+    "@supabase/ui": "^0.27.3",
+    "framer-motion": "^4",
+    "next": "^11.0.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-icons": "^4.2.0",
+    "swr": "^0.5.6"
   },
   "devDependencies": {
     "@types/node": "^14.0.5",

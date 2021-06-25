@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL as string,
@@ -14,4 +14,9 @@ export const getPosts = async () => {
   }
 
   return data || [];
+};
+
+export const signIn = async () => {
+  const { error } = await supabase.auth.signIn({ provider: "google" });
+  if (error) console.log(error);
 };
