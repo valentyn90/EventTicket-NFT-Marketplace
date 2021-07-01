@@ -17,6 +17,7 @@ export default function Home() {
           body: JSON.stringify({ event, session }),
         }).then((res) => res.json());
 
+        // if redirected from google to index
         if (event === "SIGNED_IN") router.push("/profile");
       }
     );

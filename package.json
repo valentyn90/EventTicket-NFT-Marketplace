@@ -11,9 +11,12 @@
     "lint:fix": "eslint --fix --ext .ts,.tsx --ignore-path .gitignore ."
   },
   "dependencies": {
+    "@chakra-ui/icons": "^1.0.13",
     "@chakra-ui/react": "^1.6.4",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@fontsource/kadwa": "^4.4.5",
+    "@fontsource/open-sans": "^4.4.5",
     "@supabase/supabase-js": "^1.15.1",
     "@supabase/ui": "^0.27.3",
     "framer-motion": "^4",

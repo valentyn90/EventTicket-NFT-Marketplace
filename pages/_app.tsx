@@ -1,14 +1,20 @@
-import type { AppProps /*, AppContext */ } from "next/app";
+import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
-import { Auth } from "@supabase/ui";
-import { supabase } from "@/utils/supabase-client";
+import { UserContextProvider } from "@/utils/useUser";
+import Layout from "@/components/ui/Layout";
+import theme from "@/utils/theme";
+
+import "@fontsource/open-sans";
+import "@fontsource/kadwa";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ChakraProvider>
-      <Auth.UserContextProvider supabaseClient={supabase}>
-        <Component {...pageProps} />
-      </Auth.UserContextProvider>
+    <ChakraProvider theme={theme}>
+      <UserContextProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </UserContextProvider>
     </ChakraProvider>
   );
 }
