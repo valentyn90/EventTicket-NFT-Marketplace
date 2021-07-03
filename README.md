@@ -7,6 +7,7 @@ Created from a Next.js TypeScript [starter](https://github.com/redimpulz/nextjs-
 - Next.js
 - TypeScript
 - Supabase
+- Vercel
 
 ## Getting started
 
@@ -19,6 +20,8 @@ Created from a Next.js TypeScript [starter](https://github.com/redimpulz/nextjs-
 `yarn dev`
 
 1. Set up environment variables.
+
+TODO: Add Vercel Instructions
 
 - Rename `.env.template` to `.env.local` in the root directory
 - Add the Supabase environment variable values from the [app page](https://app.supabase.io/) under `Settings` -> `API`.
