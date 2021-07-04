@@ -13,10 +13,10 @@ interface Props {
   signOut: () => void;
 }
 
-export const UserContext: React.Context<Props> = createContext({
+export const UserContext = createContext<Props>({
   user: null,
   session: null,
-  signOut: () => {},
+  signOut: () => { }
 });
 
 export const UserContextProvider: React.FC<Props> = (props) => {

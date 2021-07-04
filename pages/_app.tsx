@@ -10,7 +10,7 @@ import "@fontsource/kadwa";
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <UserContextProvider>
+      <UserContextProvider {...pageProps}>
         <Layout>
           <Component {...pageProps} />
         </Layout>
