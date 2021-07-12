@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Card } from "@/components/Card";
+import { Card } from "@/components/ui/Card";
 import { signIn } from "@/utils/supabase-client";
 import { useUser } from "@/utils/useUser";
 import {

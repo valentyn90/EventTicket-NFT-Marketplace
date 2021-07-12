@@ -15,11 +15,11 @@ Created from a Next.js TypeScript [starter](https://github.com/redimpulz/nextjs-
 
 `yarn`
 
-1. Start the development server:
+2. Start the development server:
 
 `yarn dev`
 
-1. Set up environment variables.
+3. Set up environment variables.
 
 TODO: Add Vercel Instructions
 
@@ -31,4 +31,4 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-1. Go to `localhost:3000`
+4. Go to `localhost:3000`

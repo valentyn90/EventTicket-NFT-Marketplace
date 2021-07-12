@@ -23,7 +23,7 @@ const NavIndex: React.FC = () => {
                   style={{ transform: "rotate(-90deg)" }}
                 />
                 <Text fontSize="2xl" ml={2}>
-                  First Ink
+                  Verified Ink
                 </Text>
               </Center>
             </a>

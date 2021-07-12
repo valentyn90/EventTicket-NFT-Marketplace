@@ -1,5 +1,5 @@
-import { Card } from "@/components/Card";
-import { Link } from "@/components/Link";
+import { Card } from "@/components/ui/Card";
+import { Link } from "@/components/ui/Link";
 import { supabase } from "@/utils/supabase-client";
 import { Box, Heading, useColorModeValue } from "@chakra-ui/react";
 import { useRouter } from "next/router";

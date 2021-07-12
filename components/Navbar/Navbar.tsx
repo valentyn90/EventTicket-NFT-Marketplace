@@ -22,8 +22,11 @@ export const Template: React.FC = (props) => {
   const mobileNav = useDisclosure();
   return (
     <Flex
-      py={4}
-      px={{ base: 4, md: 6, lg: 8 }}
+      top={0}
+      width="100%"
+      position="fixed"
+      py={2}
+      px={{ base: 2, md: 4, lg: 6 }}
       bg={mode("white", "gray.800")}
       boxShadow="none"
       borderBottomWidth={mode("0", "1px")}
@@ -35,7 +38,7 @@ export const Template: React.FC = (props) => {
             {children.find((child) => child.type === Links)?.props.children}
           </TabList>
           <TabIndicator
-            mt="13px"
+            mt="6px"
             height={1}
             borderTopRadius="md"
             bg={mode("blue.500", "blue.200")}

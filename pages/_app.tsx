@@ -1,7 +1,7 @@
 import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { UserContextProvider } from "@/utils/useUser";
-import Layout from "@/components/ui/Layout";
+import Layout from "@/components/ui/layout/Layout";
 import theme from "@/utils/theme";
 
 import "@fontsource/open-sans";
