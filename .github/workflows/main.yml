@@ -30,4 +30,3 @@ jobs:
         run: |
           echo building
           yarn
-          yarn run build
