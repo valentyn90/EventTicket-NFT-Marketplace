@@ -1,21 +1,18 @@
 import CreateLayout from "@/components/Create/CreateLayout";
-import { supabase } from "@/utils/supabase-client";
 import { useUser } from "@/utils/useUser";
 import {
-  Text,
-  Flex,
-  Divider,
   Button,
+  Divider,
+  Flex,
   FormControl,
   FormLabel,
   Input,
-  Stack,
   Spinner,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
-import { User } from "@supabase/supabase-js";
-import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const StepOne = () => {
   const router = useRouter();
@@ -76,13 +73,13 @@ const StepOne = () => {
             nft_id: nft?.id,
           });
           if (res.error) {
-            console.log(res.error);
+            alert(res.error.message);
           } else {
             setNftObject(res.data[0]);
             router.push("/create/step-2");
           }
         } catch (err) {
-          console.log(err);
+          alert(err.message);
         }
       }
     } else {
@@ -103,16 +100,20 @@ const StepOne = () => {
 
   async function handleDeleteNft() {
     if (nft) {
-      const { error } = await deleteNft(nft.id);
-      if (error) {
-        alert("There was an error deleting your NFT.");
-      } else {
-        setNftObject(null);
-        setFirstName("");
-        setLastName("");
-        setGradYear("");
-        alert("Successfully deleted NFT.");
+      if (confirm("Are you sure you want to delete your NFT?")) {
+        const { error } = await deleteNft(nft.id);
+        if (error) {
+          alert("There was an error deleting your NFT.");
+        } else {
+          setNftObject(null);
+          setFirstName("");
+          setLastName("");
+          setGradYear("");
+          alert("Successfully deleted NFT.");
+        }
       }
+    } else {
+      alert("No NFT to delete.");
     }
   }
 
@@ -187,48 +188,5 @@ const StepOne = () => {
     </CreateLayout>
   );
 };
-
-export async function getServerSideProps({ req }: { req: NextApiRequest }) {
-  // this is buggy.
-  const { user } = await supabase.auth.api.getUserByCookie(req);
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: "/signin",
-        permanent: false,
-      },
-    };
-  } else {
-    // check if NFT form is finished or approved.
-    const user_id = user.id;
-    const { data, error } = await supabase
-      .from("nft")
-      .select("*")
-      .eq("user_id", user_id)
-      .single();
-    if (data) {
-      if (data.finished && !data.approved) {
-        return {
-          redirect: {
-            destination: "/create/step-6",
-            permanent: false,
-          },
-        };
-      } else if (data.finished && data.approved) {
-        return {
-          redirect: {
-            destination: "/create/step-7",
-            permanent: false,
-          },
-        };
-      } else {
-        return { props: {} };
-      }
-    } else {
-      return { props: {} };
-    }
-  }
-}
 
 export default StepOne;

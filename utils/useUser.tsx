@@ -34,6 +34,7 @@ interface UserProps {
   deletePhoto: () => void;
   deleteVideo: () => void;
   getPhotoFile: () => void;
+  checkPhotoFile: () => void;
   checkVideoFile: () => void;
   setPhotoFileName: (fileName: string) => void;
   setPhotoFileObject: (file: any) => void;
@@ -85,6 +86,10 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     supabase.from("files").select("*").eq("id", file_id).single();
   const getSupabaseFile = (file_name: string) =>
     supabase.storage.from("private").download(file_name);
+  const deleteFileById = (file_id: number) =>
+    supabase.from("files").delete().match({ id: file_id });
+  const deleteStorageFile = (file_name: string) =>
+    supabase.storage.from("private").remove([file_name]);
 
   useEffect(() => {
     if (user) {
@@ -93,31 +98,6 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
       });
     }
   }, [user]);
-
-  useEffect(() => {
-    if (nft) {
-      if (nft.photo_file) {
-        Promise.allSettled([getFileObject(nft.photo_file)]).then(
-          (results: any) => {
-            setNftPhoto(results[0].value.data);
-          }
-        );
-      }
-    }
-  }, [nft]);
-
-  useEffect(() => {
-    if (nftPhoto) {
-      Promise.allSettled([getSupabaseFile(nftPhoto.file_name)]).then(
-        async (results: any) => {
-          const blob = new Blob([results[0].value.data]);
-
-          const url = URL.createObjectURL(blob);
-          setPhotoFile(url);
-        }
-      );
-    }
-  }, [nftPhoto]);
 
   const value = {
     session,
@@ -153,6 +133,27 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     setPhotoFileName: (fileName: string) => {
       setPhotoFileName(fileName);
     },
+    checkPhotoFile: async () => {
+      if (nft?.photo_file) {
+        const { data, error } = await getFileObject(nft.photo_file);
+        if (!error) {
+          setNftPhoto(data);
+
+          const { data: data2, error: error2 } = await getSupabaseFile(
+            data.file_name
+          );
+
+          if (error2) {
+            alert(error2.message);
+          } else {
+            var uri = URL.createObjectURL(data2);
+            setPhotoFile(uri);
+          }
+        } else {
+          alert(error.message);
+        }
+      }
+    },
     checkSignatureFile: async () => {
       // 1. Get file object from db
       if (nft?.signature_file) {
@@ -171,7 +172,7 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
             setSignatureFile(uri);
           }
         } else {
-          alert(error);
+          alert(error.message);
         }
       }
     },
@@ -188,7 +189,6 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
         }
       }
     },
-
     getPhotoFile: async () => {
       if (user) {
         const { data, error } = await supabase.storage
@@ -242,8 +242,29 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
       return res;
     },
     deleteNft: async (nft_id: number) => {
-      const res = await supabase.from("nft").delete().match({ id: nft_id });
-      return res;
+      /**
+       * Check if there are files associated with this NFT
+       * And then delete those files before you delete the NFT
+       */
+      try {
+        const res = await supabase.from("nft").delete().match({ id: nft_id });
+        setNft(null);
+        setPhotoFile(null);
+        setPhotoFileName("");
+        setVideoFile(null);
+        setVideoFileName("");
+        setNftPhoto(null);
+        setNftVideo(null);
+        setNftVideoName("");
+        setSignatureFile(null);
+        setNftSignature(null);
+        return res;
+      } catch (err) {
+        console.log(err);
+        return {
+          error: "Error deleting NFT",
+        };
+      }
     },
     deletePhoto: () => {
       setPhotoFile(null);
@@ -264,7 +285,7 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
       setSignatureFile(file);
     },
     uploadSignatureToSupabase: async (newSigFile: File) => {
-      const filePathName = `${user.id}/signaturePic.png`;
+      const filePathName = `${user.id}/${new Date().getTime()}signaturePic.png`;
       // upload signature image to storage
       const { data, error } = await supabase.storage
         .from("private")
@@ -300,7 +321,7 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
       }
     },
     uploadVideoToSupabase: async () => {
-      const filePathName = `${user.id}/${videoFileName}`;
+      const filePathName = `${user.id}/${new Date().getTime()}${videoFileName}`;
       const { data, error } = await supabase.storage
         .from("private")
         .upload(filePathName, videoFile);
@@ -347,7 +368,7 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
       setVideoFileName(name);
     },
     uploadFileToSupabase: async () => {
-      const filePathName = `${user.id}/${photoFileName}`;
+      const filePathName = `${user.id}/${new Date().getTime()}${photoFileName}`;
       const { data, error } = await supabase.storage
         .from("private")
         .upload(filePathName, photoFile);

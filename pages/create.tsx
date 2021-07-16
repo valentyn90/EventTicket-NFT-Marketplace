@@ -1,14 +1,15 @@
-import React from "react";
-import NextLink from "next/link";
+import { supabase } from "@/utils/supabase-client";
 import {
   Box,
-  useColorModeValue,
-  Flex,
-  VStack,
-  Text,
   Button,
+  Flex,
   Image,
+  Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
+import { NextApiRequest } from "next";
+import NextLink from "next/link";
+import React from "react";
 
 const Create: React.FC = () => {
   return (
@@ -53,5 +54,47 @@ const Create: React.FC = () => {
     </Box>
   );
 };
+
+export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+  const { user } = await supabase.auth.api.getUserByCookie(req);
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: "/signin",
+        permanent: false,
+      },
+    };
+  } else {
+    // check if NFT form is finished or approved.
+    const user_id = user.id;
+    const { data, error } = await supabase
+      .from("nft")
+      .select("*")
+      .eq("user_id", user_id)
+      .single();
+    if (data) {
+      if (data.finished && !data.approved) {
+        return {
+          redirect: {
+            destination: "/create/step-6",
+            permanent: false,
+          },
+        };
+      } else if (data.finished && data.approved) {
+        return {
+          redirect: {
+            destination: "/create/step-7",
+            permanent: false,
+          },
+        };
+      } else {
+        return { props: {} };
+      }
+    } else {
+      return { props: {} };
+    }
+  }
+}
 
 export default Create;

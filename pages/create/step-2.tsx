@@ -9,15 +9,16 @@ import React, { useEffect, useState } from "react";
 
 const StepTwo = () => {
   const router = useRouter();
-  const { nft, nftPhoto, photoFile, uploadFileToSupabase } = useUser();
+  const { nft, nftPhoto, photoFile, uploadFileToSupabase, checkPhotoFile } =
+    useUser();
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!nft) {
-      // need server side NFT props on initial load for this to work.
-      // router.push("/create/step-1");
+    async function checkPhoto() {
+      await checkPhotoFile();
     }
-  }, [nft]);
+    checkPhoto();
+  }, [nft?.photo_file]);
 
   async function handleStepTwoSubmit(e: React.FormEvent) {
     e.preventDefault();

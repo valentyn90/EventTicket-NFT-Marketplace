@@ -2,10 +2,18 @@ import CardPreview from "@/components/Create/CardPreview";
 import CreateLayout from "@/components/Create/CreateLayout";
 import { useUser } from "@/utils/useUser";
 import { VStack, Text, Button, Flex, Box } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 
 const StepSeven = () => {
-  const { photoFile, nft } = useUser();
+  const { photoFile, nft, checkPhotoFile } = useUser();
+
+  useEffect(() => {
+    async function checkPhoto() {
+      await checkPhotoFile();
+    }
+    checkPhoto();
+  }, [nft?.photo_file]);
+
   async function handleRecruitClick() {
     alert("recruit");
   }

@@ -25,6 +25,7 @@ export const Template: React.FC = (props) => {
       top={0}
       width="100%"
       position="fixed"
+      zIndex={9999}
       py={2}
       px={{ base: 2, md: 4, lg: 6 }}
       bg={mode("white", "gray.800")}
@@ -38,6 +39,7 @@ export const Template: React.FC = (props) => {
             {children.find((child) => child.type === Links)?.props.children}
           </TabList>
           <TabIndicator
+            position="absolute"
             mt="6px"
             height={1}
             borderTopRadius="md"

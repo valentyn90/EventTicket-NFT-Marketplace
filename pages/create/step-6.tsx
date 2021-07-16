@@ -1,16 +1,23 @@
-import CreateLayout from "@/components/Create/CreateLayout";
-import React, { useState } from "react";
-import { Flex, Divider, Button, Text, Box, Spinner } from "@chakra-ui/react";
-import NextLink from "next/link";
-import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import CardPreview from "@/components/Create/CardPreview";
+import CreateLayout from "@/components/Create/CreateLayout";
 import { useUser } from "@/utils/useUser";
+import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
 const StepSix = () => {
-  const { photoFile, nft, setNftApprovalTrue } = useUser();
+  const { photoFile, nft, setNftApprovalTrue, checkPhotoFile } = useUser();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    async function checkPhoto() {
+      await checkPhotoFile();
+    }
+    checkPhoto();
+  }, [nft?.photo_file]);
+
   async function handleStepSixSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
