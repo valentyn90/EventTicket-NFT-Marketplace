@@ -14,32 +14,23 @@ import {
 } from "@chakra-ui/react";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
 
 interface Props {}
 
-const SignIn: React.FC<Props> = () => {
+const SignUp: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
-  const [emailLinkSent, setEmailLinkSent] = useState(false);
   const [email, setEmail] = useState("");
   const { signIn } = useUser();
-
-  const router = useRouter();
-
-  const { notLoggedIn } = router.query;
-
-  const goToStepOne =
-    notLoggedIn !== undefined ? notLoggedIn === "true" : false;
 
   async function handleSignin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const emailSignIn = await signIn({ email, goToStepOne });
+    const emailSignIn = await signIn({ email });
     setLoading(false);
     if (emailSignIn) {
-      setEmailLinkSent(true);
+      alert("Check your email for a login link.");
     }
   }
 
@@ -52,43 +43,41 @@ const SignIn: React.FC<Props> = () => {
     >
       <Box maxW="lg" mx="auto">
         <Heading textAlign="center" size="2xl" fontWeight="extrabold">
-          Sign in to your account
+          Create your account
         </Heading>
         <Text textAlign="center" mt={4} size="l" color="gray.600">
-          Don't have an account?{" "}
-          <NextLink href="/signup">
-            <a className="blue-link">Sign up</a>
+          Already have an account?{" "}
+          <NextLink href="/signin">
+            <a className="blue-link">Sign in</a>
           </NextLink>
         </Text>
         <Card mt="12" py={8}>
           <VStack spacing={8}>
             <Button
-              disabled={emailLinkSent}
               py={6}
               w="100%"
               colorScheme="twitter"
               onClick={() => {
-                signIn({ provider: "twitter", goToStepOne });
+                signIn({ provider: "twitter" });
               }}
             >
               <FaTwitter />
               <Text ml="2rem" fontWeight="normal">
-                Sign in with Twitter
+                Sign up with Twitter
               </Text>
             </Button>
             <Button
-              disabled={emailLinkSent}
               py={6}
               w="100%"
               color="currentColor"
               variant="outline"
               onClick={() => {
-                signIn({ provider: "google", goToStepOne });
+                signIn({ provider: "google" });
               }}
             >
               <FaGoogle />
               <Text ml="2rem" fontWeight="normal">
-                Sign in with Google
+                Sign up with Google
               </Text>
             </Button>
           </VStack>
@@ -104,20 +93,9 @@ const SignIn: React.FC<Props> = () => {
               mt={2}
               mb={8}
             />
-            {!emailLinkSent ? (
-              <Button py={6} type="submit" width="100%" colorScheme="blue">
-                {loading ? <Spinner /> : "Sign in"}
-              </Button>
-            ) : (
-              <VStack spacing={6}>
-                <Text textAlign="center" fontSize="3xl" fontWeight="bold">
-                  Check your email
-                </Text>
-                <Text textAlign="center">
-                  A sign in link has been sent to your email.
-                </Text>
-              </VStack>
-            )}
+            <Button py={6} type="submit" width="100%" colorScheme="blue">
+              {loading ? <Spinner /> : "Sign up"}
+            </Button>
           </form>
         </Card>
       </Box>
@@ -138,4 +116,4 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   return { props: {} };
 }
 
-export default SignIn;
+export default SignUp;

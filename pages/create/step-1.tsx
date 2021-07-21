@@ -1,4 +1,5 @@
 import CreateLayout from "@/components/Create/CreateLayout";
+import { supabase } from "@/utils/supabase-client";
 import { useUser } from "@/utils/useUser";
 import {
   Button,
@@ -11,6 +12,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -66,12 +68,14 @@ const StepOne = () => {
       } else {
         // Changes, update and then go to step 2.
         try {
+          setSubmitting(true);
           const res: any = await updateNft({
             firstName,
             lastName,
             gradYear,
             nft_id: nft?.id,
           });
+          setSubmitting(false);
           if (res.error) {
             alert(res.error.message);
           } else {
@@ -85,7 +89,9 @@ const StepOne = () => {
     } else {
       // Create new NFT
       try {
+        setSubmitting(true);
         const res: any = await createNft({ firstName, lastName, gradYear });
+        setSubmitting(false);
         if (res.error) {
           alert(res.error.message);
         } else {
@@ -188,5 +194,21 @@ const StepOne = () => {
     </CreateLayout>
   );
 };
+
+export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+  const { user } = await supabase.auth.api.getUserByCookie(req);
+  if (!user) {
+    return {
+      redirect: {
+        destination: "/signin?notLoggedIn=true",
+        permanent: false,
+      },
+    };
+  }
+  // If there is a user continue to profile.
+  return {
+    props: {},
+  };
+}
 
 export default StepOne;

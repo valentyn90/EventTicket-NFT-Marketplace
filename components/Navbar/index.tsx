@@ -1,5 +1,5 @@
 import { useUser } from "@/utils/useUser";
-import { Button, Center, Text, Flex, Box } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import * as React from "react";
 import { FiPenTool } from "react-icons/fi";
@@ -34,7 +34,22 @@ const NavIndex: React.FC = () => {
         <NavTabLink>Create</NavTabLink>
         <NavTabLink>Marketplace</NavTabLink>
       </Navbar.Links>
-      {user !== null ? (
+      {!user ? (
+        <Navbar.SignIn>
+          <NextLink href="/signin">
+            <a>
+              <Button variant="ghost" colorScheme="blue">
+                Sign In
+              </Button>
+            </a>
+          </NextLink>
+          <NextLink href="/signin">
+            <a>
+              <Button colorScheme="blue">Sign Up For Free</Button>
+            </a>
+          </NextLink>
+        </Navbar.SignIn>
+      ) : (
         <Navbar.UserProfile>
           <Flex
             direction={["column", "column", "row"]}
@@ -55,21 +70,6 @@ const NavIndex: React.FC = () => {
             />
           </Flex>
         </Navbar.UserProfile>
-      ) : (
-        <Navbar.SignIn>
-          <NextLink href="/signin">
-            <a>
-              <Button variant="ghost" colorScheme="blue">
-                Sign In
-              </Button>
-            </a>
-          </NextLink>
-          <NextLink href="/signin">
-            <a>
-              <Button colorScheme="blue">Sign Up For Free</Button>
-            </a>
-          </NextLink>
-        </Navbar.SignIn>
       )}
     </Navbar>
   );

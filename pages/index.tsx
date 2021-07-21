@@ -1,33 +1,28 @@
-import { Card } from "@/components/ui/Card";
-import { Link } from "@/components/ui/Link";
 import { supabase } from "@/utils/supabase-client";
-import { Box, Heading, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { NextApiRequest } from "next";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 
-export default function Home() {
+const Index: React.FC = () => {
   const router = useRouter();
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        fetch("/api/auth", {
-          method: "POST",
-          headers: new Headers({ "Content-Type": "application/json" }),
-          credentials: "same-origin",
-          body: JSON.stringify({ event, session }),
-        }).then((res) => res.json());
-
-        // if redirected from google to index
-        if (event === "SIGNED_IN") router.push("/profile");
+    const goToStepOne = localStorage.getItem("goToStepOne");
+    if (goToStepOne !== undefined) {
+      if (goToStepOne === "true") {
+        localStorage.removeItem("goToStepOne");
+        router.push("/create/step-1");
       }
-    );
-    return () => {
-      if (authListener) {
-        authListener.unsubscribe();
-      }
-    };
+    }
   }, []);
-
   return (
     <Box
       bg={useColorModeValue("gray.50", "inherit")}
@@ -35,14 +30,88 @@ export default function Home() {
       py="12"
       px={{ base: "4", lg: "8" }}
     >
-      <Box maxW="md" mx="auto">
-        <Heading textAlign="center" size="xl" fontWeight="extrabold">
-          Sign in to your account
-        </Heading>
-        <Card mt="8">
-          <Link href="/signin">Signin</Link>
-        </Card>
+      <Box maxWidth="1200px" mx="auto">
+        <Flex direction={["column", "column", "row"]}>
+          <Flex direction="column" spacing={4} flex="1" align="start">
+            <Text color="gray.500" mb="4">
+              GET VERIFIED
+            </Text>
+            <Text fontSize="4xl" fontWeight="bold" mb="4">
+              Own <span style={{ color: "#3182ce" }}>your</span> image
+            </Text>
+            <Text w="75%" color="gray.600" mb="4">
+              Take a few minutes to create your Verified Ink and own it for
+              life. Even after you trade or sell your Verified Ink, you'll
+              continue to receive royalties on all future profits.
+            </Text>
+            <NextLink href="/create/step-1">
+              <a>
+                <Button colorScheme="blue" mb="4">
+                  Get Your Verified Ink
+                </Button>
+              </a>
+            </NextLink>
+            <Text color="gray.500">
+              Don't have an account yet?{" "}
+              <NextLink href="/signup">
+                <a className="blue-link">Sign up</a>
+              </NextLink>
+            </Text>
+          </Flex>
+          <Box flex="1" align="center" mt={["2rem", "2rem", 0]}>
+            <Image
+              src="/img/bobby.png"
+              alt="High school football player"
+              boxShadow="2xl"
+            />
+          </Box>
+        </Flex>
       </Box>
     </Box>
   );
+};
+
+export async function getServerSideProps() {
+  return {
+    redirect: {
+      destination: "/create",
+      permanent: false,
+    },
+  };
+  // const { user } = await supabase.auth.api.getUserByCookie(req);
+
+  // if (!user) {
+  //   return { props: {} };
+  // } else {
+  //   // check if NFT form is finished or approved.
+  //   const user_id = user.id;
+  //   const { data, error } = await supabase
+  //     .from("nft")
+  //     .select("*")
+  //     .eq("user_id", user_id)
+  //     .single();
+  //   if (data) {
+  //     if (data.finished && !data.approved) {
+  //       return {
+  //         redirect: {
+  //           destination: "/create/step-6",
+  //           permanent: false,
+  //         },
+  //       };
+  //     } else if (data.finished && data.approved) {
+  //       return {
+  //         redirect: {
+  //           destination: "/create/step-7",
+  //           permanent: false,
+  //         },
+  //       };
+  //     } else {
+  //       return { props: {} };
+  //     }
+  //   } else {
+  //     return { props: {} };
+  //   }
+  // }
 }
+
+export default Index;

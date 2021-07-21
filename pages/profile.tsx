@@ -47,7 +47,7 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
       },
     };
   }
-  // If there is a user, return it.
+  // If there is a user continue to profile.
   return { props: {} };
 }
 

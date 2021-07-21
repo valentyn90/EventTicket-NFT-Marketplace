@@ -1,5 +1,7 @@
 import Nft from "@/types/Nft";
 import NftFormInput from "@/types/NftFormInput";
+import SignInOptions from "@/types/SignInOptions";
+import { Provider } from "@supabase/supabase-js";
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { supabase } from "./supabase-client";
 
@@ -22,6 +24,7 @@ interface UserProps {
   signatureFile: any;
   nftSignature: any;
   videoFileName: string;
+  signIn: (options: SignInOptions) => Promise<boolean | null>;
   setNftObject: (nft: Nft | null) => void;
   signOut: () => void;
   setVideoFileNameFn: (name: string) => void;
@@ -68,6 +71,14 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     setUser((session?.user as any) ?? null);
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        // sets the cookie
+        await fetch("/api/auth", {
+          method: "POST",
+          headers: new Headers({ "Content-Type": "application/json" }),
+          credentials: "same-origin",
+          body: JSON.stringify({ event, session }),
+        }).then((res) => res.json());
+        // sets the user data in state context
         setSession(session);
         setUser((session?.user as any) ?? null);
       }
@@ -113,6 +124,25 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     nftSignature,
     videoFileName,
     setVideoFileName,
+    signIn: async ({ email, provider, goToStepOne }: SignInOptions) => {
+      if (goToStepOne) {
+        localStorage.setItem("goToStepOne", "true");
+      }
+      if (email) {
+        const { error } = await supabase.auth.signIn({ email });
+        if (error) {
+          console.log(error);
+          return false;
+        } else {
+          return true;
+        }
+      } else if (provider) {
+        const { error } = await supabase.auth.signIn({ provider });
+        if (error) console.log(error);
+        return null;
+      }
+      return null;
+    },
     signOut: () => {
       return supabase.auth.signOut();
     },

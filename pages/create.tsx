@@ -40,7 +40,12 @@ const Create: React.FC = () => {
                 </Button>
               </a>
             </NextLink>
-            <Text color="gray.500">Don't have an account yet? Sign up.</Text>
+            <Text color="gray.500">
+              Don't have an account yet?{" "}
+              <NextLink href="/signup">
+                <a className="blue-link">Sign up</a>
+              </NextLink>
+            </Text>
           </Flex>
           <Box flex="1" align="center" mt={["2rem", "2rem", 0]}>
             <Image
@@ -59,12 +64,7 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   const { user } = await supabase.auth.api.getUserByCookie(req);
 
   if (!user) {
-    return {
-      redirect: {
-        destination: "/signin",
-        permanent: false,
-      },
-    };
+    return { props: {} };
   } else {
     // check if NFT form is finished or approved.
     const user_id = user.id;

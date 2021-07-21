@@ -6,6 +6,7 @@ import { UserContextProvider } from "@/utils/useUser";
 import Layout from "@/components/ui/layout/Layout";
 import theme from "@/utils/theme";
 import Head from "next/head";
+import { GlobalStyle } from "../css/globalStyle";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -13,6 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Verified Ink</title>
       </Head>
+      <GlobalStyle />
       <UserContextProvider {...pageProps}>
         <Layout>
           <Component {...pageProps} />

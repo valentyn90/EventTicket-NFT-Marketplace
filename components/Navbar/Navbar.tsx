@@ -29,7 +29,7 @@ export const Template: React.FC = (props) => {
       py={2}
       px={{ base: 2, md: 4, lg: 6 }}
       bg={mode("white", "gray.800")}
-      boxShadow="none"
+      boxShadow="20px 12px 20px 0px rgba(233, 233, 233, 0.25)"
       borderBottomWidth={mode("0", "1px")}
     >
       {children.find((child) => child.type === Brand)?.props.children}
