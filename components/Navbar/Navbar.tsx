@@ -1,5 +1,6 @@
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
+  Button,
   Divider,
   Flex,
   HStack,
@@ -29,11 +30,11 @@ export const Template: React.FC = (props) => {
       py={2}
       px={{ base: 2, md: 4, lg: 6 }}
       bg={mode("white", "gray.800")}
-      boxShadow="20px 12px 20px 0px rgba(233, 233, 233, 0.25)"
+      boxShadow="xl"
       borderBottomWidth={mode("0", "1px")}
     >
       {children.find((child) => child.type === Brand)?.props.children}
-      <HStack display={{ base: "none", md: "flex" }} marginStart={4}>
+      <HStack display={{ base: "none", md: "flex" }} marginStart={16}>
         <Tabs colorScheme="blue" variant="unstyled" isFitted>
           <TabList>
             {children.find((child) => child.type === Links)?.props.children}
@@ -48,13 +49,13 @@ export const Template: React.FC = (props) => {
         </Tabs>
       </HStack>
       <Spacer />
+      {children.find((child) => child.type === ColorMode)?.props.children}
       <HStack display={{ base: "none", md: "flex" }} spacing={3}>
         {children.find((child) => child.type === UserProfile)?.props.children}
       </HStack>
       <HStack display={{ base: "none", md: "flex" }} spacing={3}>
         {children.find((child) => child.type === SignIn)?.props.children}
       </HStack>
-
       <IconButton
         display={{ base: "flex", md: "none" }}
         size="sm"
@@ -94,6 +95,10 @@ export const Template: React.FC = (props) => {
             }
             {children.find((child) => child.type === SignIn)?.props.children}
           </Flex>
+          {
+            children.find((child) => child.type === ColorModeMobile)?.props
+              .children
+          }
         </Stack>
       </MobileNavContent>
     </Flex>
@@ -104,10 +109,14 @@ const Brand: React.FC = () => null;
 const Links: React.FC = () => null;
 const UserProfile: React.FC = () => null;
 const SignIn: React.FC = () => null;
+const ColorMode: React.FC = () => null;
+const ColorModeMobile: React.FC = () => null;
 
 export const Navbar = Object.assign(Template, {
   Brand,
   Links,
   UserProfile,
   SignIn,
+  ColorMode,
+  ColorModeMobile,
 });

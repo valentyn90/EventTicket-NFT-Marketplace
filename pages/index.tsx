@@ -37,7 +37,7 @@ const Index: React.FC = () => {
               GET VERIFIED
             </Text>
             <Text fontSize="4xl" fontWeight="bold" mb="4">
-              Own <span style={{ color: "#3182ce" }}>your</span> image
+              Own <span style={{ color: "#0051CA" }}>your</span> image
             </Text>
             <Text w="75%" color="gray.600" mb="4">
               Take a few minutes to create your Verified Ink and own it for

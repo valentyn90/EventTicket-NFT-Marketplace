@@ -54,7 +54,7 @@ const SignIn: React.FC<Props> = () => {
         <Heading textAlign="center" size="2xl" fontWeight="extrabold">
           Sign in to your account
         </Heading>
-        <Text textAlign="center" mt={4} size="l" color="gray.600">
+        <Text textAlign="center" mt={4} size="l" colorScheme="gray">
           Don't have an account?{" "}
           <NextLink href="/signup">
             <a className="blue-link">Sign up</a>
@@ -105,7 +105,13 @@ const SignIn: React.FC<Props> = () => {
               mb={8}
             />
             {!emailLinkSent ? (
-              <Button py={6} type="submit" width="100%" colorScheme="blue">
+              <Button
+                py={6}
+                type="submit"
+                width="100%"
+                colorScheme="blue"
+                color="white"
+              >
                 {loading ? <Spinner /> : "Sign in"}
               </Button>
             ) : (

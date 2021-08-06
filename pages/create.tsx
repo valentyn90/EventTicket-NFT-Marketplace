@@ -22,25 +22,25 @@ const Create: React.FC = () => {
       <Box maxWidth="1200px" mx="auto">
         <Flex direction={["column", "column", "row"]}>
           <Flex direction="column" spacing={4} flex="1" align="start">
-            <Text color="gray.500" mb="4">
+            <Text colorScheme="gray" mb="4">
               GET VERIFIED
             </Text>
             <Text fontSize="4xl" fontWeight="bold" mb="4">
-              Own <span style={{ color: "#3182ce" }}>your</span> image
+              Own <span style={{ color: "#0051CA" }}>your</span> image
             </Text>
-            <Text w="75%" color="gray.600" mb="4">
+            <Text w="75%" colorScheme="gray" mb="4">
               Take a few minutes to create your Verified Ink and own it for
               life. Even after you trade or sell your Verified Ink, you'll
               continue to receive royalties on all future profits.
             </Text>
             <NextLink href="/create/step-1">
               <a>
-                <Button colorScheme="blue" mb="4">
+                <Button colorScheme="blue" color="white" mb="4">
                   Get Your Verified Ink
                 </Button>
               </a>
             </NextLink>
-            <Text color="gray.500">
+            <Text colorScheme="gray">
               Don't have an account yet?{" "}
               <NextLink href="/signup">
                 <a className="blue-link">Sign up</a>

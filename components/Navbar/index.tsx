@@ -1,8 +1,16 @@
 import { useUser } from "@/utils/useUser";
-import { Box, Button, Center, Flex, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  HStack,
+  Text,
+  useColorMode,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import NextLink from "next/link";
 import * as React from "react";
-import { FiPenTool } from "react-icons/fi";
+import ViLogo from "../ui/logos/ViLogo";
 import { Navbar } from "./Navbar";
 import { NavTabLink } from "./NavTabLink";
 import { UserProfile } from "./UserProfile";
@@ -10,30 +18,53 @@ import { UserProfile } from "./UserProfile";
 const NavIndex: React.FC = () => {
   const { user } = useUser();
 
+  const logoColor = useColorModeValue("blue", "white");
+
+  const { colorMode, toggleColorMode } = useColorMode();
   return (
     <Navbar>
       <Navbar.Brand>
-        <Box>
-          <NextLink href="/">
-            <a>
-              <Center marginEnd={6} style={{ cursor: "pointer" }}>
-                <FiPenTool
-                  color="0085FF"
-                  size={25}
-                  style={{ transform: "rotate(-90deg)" }}
-                />
-                <Text fontSize="2xl" ml={2}>
-                  Verified Ink
+        <NextLink href="/">
+          <a>
+            <HStack height="100%">
+              <ViLogo width="25px" height="25px" />
+              <Flex align="center">
+                <Text
+                  color={logoColor}
+                  textTransform="uppercase"
+                  fontWeight="semibold"
+                  fontSize="2xl"
+                  ml={2}
+                >
+                  Verified
                 </Text>
-              </Center>
-            </a>
-          </NextLink>
-        </Box>
+                <Text
+                  fontWeight="light"
+                  alignSelf="flex-start"
+                  textTransform="uppercase"
+                  fontSize="2xl"
+                >
+                  Ink
+                </Text>
+              </Flex>
+            </HStack>
+          </a>
+        </NextLink>
       </Navbar.Brand>
       <Navbar.Links>
         <NavTabLink>Create</NavTabLink>
         <NavTabLink>Marketplace</NavTabLink>
       </Navbar.Links>
+      <Navbar.ColorMode>
+        <Button
+          onClick={toggleColorMode}
+          colorScheme="blue"
+          variant="ghost"
+          display={["none", "none", "block"]}
+        >
+          {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
+        </Button>
+      </Navbar.ColorMode>
       {!user ? (
         <Navbar.SignIn>
           <NextLink href="/signin">
@@ -45,7 +76,9 @@ const NavIndex: React.FC = () => {
           </NextLink>
           <NextLink href="/signin">
             <a>
-              <Button colorScheme="blue">Sign Up For Free</Button>
+              <Button colorScheme="blue" color="white">
+                Sign Up For Free
+              </Button>
             </a>
           </NextLink>
         </Navbar.SignIn>
@@ -71,6 +104,17 @@ const NavIndex: React.FC = () => {
           </Flex>
         </Navbar.UserProfile>
       )}
+      <Navbar.ColorModeMobile>
+        <Button
+          onClick={toggleColorMode}
+          colorScheme="blue"
+          variant="ghost"
+          display={["block", "block", "none"]}
+          alignSelf="start"
+        >
+          {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
+        </Button>
+      </Navbar.ColorModeMobile>
     </Navbar>
   );
 };

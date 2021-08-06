@@ -16,6 +16,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fontsource/kadwa": "^4.4.5",
+    "@fontsource/lato": "^4.5.0",
     "@fontsource/open-sans": "^4.4.5",
     "@supabase/supabase-js": "^1.15.1",
     "@supabase/ui": "^0.27.3",
@@ -41,6 +42,6 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.3",
     "prettier": "^2.0.5",
-    "typescript": "^4.2.4"
+    "typescript": "^4.3.5"
   }
 }

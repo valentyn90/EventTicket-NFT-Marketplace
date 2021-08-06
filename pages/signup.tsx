@@ -45,7 +45,7 @@ const SignUp: React.FC<Props> = () => {
         <Heading textAlign="center" size="2xl" fontWeight="extrabold">
           Create your account
         </Heading>
-        <Text textAlign="center" mt={4} size="l" color="gray.600">
+        <Text textAlign="center" mt={4} size="l" colorScheme="gray">
           Already have an account?{" "}
           <NextLink href="/signin">
             <a className="blue-link">Sign in</a>
@@ -93,7 +93,13 @@ const SignUp: React.FC<Props> = () => {
               mt={2}
               mb={8}
             />
-            <Button py={6} type="submit" width="100%" colorScheme="blue">
+            <Button
+              py={6}
+              type="submit"
+              width="100%"
+              colorScheme="blue"
+              color="white"
+            >
               {loading ? <Spinner /> : "Sign up"}
             </Button>
           </form>

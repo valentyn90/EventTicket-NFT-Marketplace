@@ -1,4 +1,5 @@
 import "@fontsource/open-sans";
+import "@fontsource/lato";
 import "@fontsource/kadwa";
 import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
