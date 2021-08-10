@@ -106,6 +106,7 @@ const NavIndex: React.FC = () => {
       )}
       <Navbar.ColorModeMobile>
         <Button
+          mr={4}
           onClick={toggleColorMode}
           colorScheme="blue"
           variant="ghost"

@@ -48,6 +48,11 @@ const StepTwo = () => {
     }
   }
 
+  /**
+   * Check if image is uploaded and cropped
+   * update text if so.
+   */
+
   return (
     <CreateLayout>
       <form onSubmit={handleStepTwoSubmit}>

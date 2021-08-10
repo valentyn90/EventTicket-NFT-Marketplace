@@ -1,6 +1,7 @@
+import axios from "axios";
 import { useUser } from "@/utils/useUser";
-import { Box, Image, Text } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import { Box, Image, Text, Spinner } from "@chakra-ui/react";
+import React, { useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import CardPreview from "./CardPreview";
 
@@ -35,13 +36,46 @@ const rejectStyle = {
 };
 
 function ActionPhotoUpload() {
+  const [loading, setLoading] = useState(false);
   const { setPhotoFileObject, photoFile, deletePhoto, setPhotoFileName, nft } =
     useUser();
 
   async function onDrop(files: any) {
+    setLoading(true);
     const file = files[0];
-    setPhotoFileName(file.name);
-    setPhotoFileObject(file);
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = async function (reader) {
+      const res = await axios
+        .post("/api/create-clipping", {
+          // @ts-ignore
+          file: reader.target.result,
+        })
+        .then(async function (resp: any) {
+          setLoading(false);
+          const base64Image = dataURLtoFile(resp.data, file.name);
+          // @ts-ignore
+          setPhotoFileObject(base64Image);
+          setPhotoFileName(file.name);
+        });
+    };
+  }
+
+  function dataURLtoFile(dataurl: any, filename: any) {
+    var arr = dataurl.split(","),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], filename, { type: mime });
   }
 
   const {
@@ -68,9 +102,13 @@ function ActionPhotoUpload() {
 
   return (
     <Box w="100%">
-      <Text mb="4" mt={["4", "4", 0]}>
-        Action Shot
-      </Text>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <Text mb="4" mt={["4", "4", 0]}>
+          Action Shot
+        </Text>
+      )}
       <div {...getRootProps({ style: style as any })}>
         <input {...getInputProps()} />
         {photoFile === null ? (

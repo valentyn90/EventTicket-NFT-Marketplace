@@ -20,6 +20,8 @@
     "@fontsource/open-sans": "^4.4.5",
     "@supabase/supabase-js": "^1.15.1",
     "@supabase/ui": "^0.27.3",
+    "axios": "^0.21.1",
+    "form-data": "^4.0.0",
     "framer-motion": "^4",
     "next": "^11.0.1",
     "react": "^17.0.2",
