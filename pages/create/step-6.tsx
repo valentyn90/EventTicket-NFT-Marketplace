@@ -1,5 +1,6 @@
-import CardPreview from "@/components/Create/CardPreview";
 import CreateLayout from "@/components/Create/CreateLayout";
+import Card from "@/components/NftCard/Card";
+import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
 import { useUser } from "@/utils/useUser";
 import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
@@ -67,13 +68,13 @@ const StepSix = () => {
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Front
                 </Text>
-                {photoFile && <CardPreview photoFile={photoFile} nft={nft} />}
+                {photoFile ? <Card /> : <CardPlaceholder />}
               </Box>
               <Box flex="1">
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Back
                 </Text>
-                {photoFile && <CardPreview photoFile={photoFile} nft={nft} />}
+                {photoFile ? <Card /> : <CardPlaceholder />}
               </Box>
             </Flex>
           </Flex>
@@ -84,7 +85,7 @@ const StepSix = () => {
                 <Button>Back</Button>
               </a>
             </NextLink>
-            <Button colorScheme="blue" type="submit">
+            <Button colorScheme="blue" color="white" type="submit">
               {submitting ? <Spinner /> : "Approved!"}
             </Button>
           </Flex>

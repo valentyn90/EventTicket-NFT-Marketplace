@@ -10,6 +10,7 @@ import {
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import React from "react";
+import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
 
 const Create: React.FC = () => {
   return (
@@ -48,11 +49,7 @@ const Create: React.FC = () => {
             </Text>
           </Flex>
           <Box flex="1" align="center" mt={["2rem", "2rem", 0]}>
-            <Image
-              src="/img/bobby.png"
-              alt="High school football player"
-              boxShadow="2xl"
-            />
+            <CardPlaceholder />
           </Box>
         </Flex>
       </Box>

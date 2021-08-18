@@ -1,4 +1,5 @@
 import CreateLayout from "@/components/Create/CreateLayout";
+import { nftInput } from "@/mobx/NftInput";
 import { supabase } from "@/utils/supabase-client";
 import { useUser } from "@/utils/useUser";
 import {
@@ -12,6 +13,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { observer } from "mobx-react-lite";
 import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -22,26 +24,17 @@ const StepOne = () => {
   const { nft, setNftObject, createNft, updateNft, deleteNft } = useUser();
 
   const [submitting, setSubmitting] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const handleFirstName = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFirstName(e.target.value);
-  const [lastName, setLastName] = useState("");
-  const handleLastName = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setLastName(e.target.value);
-  const [gradYear, setGradYear] = useState<any>("");
-  const handleGradYear = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setGradYear(e.target.value);
 
   useEffect(() => {
     if (nft) {
       if (nft.first_name) {
-        setFirstName(nft.first_name);
+        nftInput.setInputValue("firstName", nft.first_name);
       }
       if (nft.last_name) {
-        setLastName(nft.last_name);
+        nftInput.setInputValue("lastName", nft.last_name);
       }
       if (nft.graduation_year) {
-        setGradYear(nft.graduation_year);
+        nftInput.setInputValue("gradName", nft.graduation_year);
       }
     }
   }, []);
@@ -59,9 +52,9 @@ const StepOne = () => {
      */
     if (nft) {
       if (
-        nft.first_name === firstName &&
-        nft.last_name === lastName &&
-        nft.graduation_year === gradYear
+        nft.first_name === nftInput.firstName &&
+        nft.last_name === nftInput.lastName &&
+        nft.graduation_year === nftInput.gradYear
       ) {
         // No changes, go to step 2 with no request
         router.push("/create/step-2");
@@ -70,9 +63,9 @@ const StepOne = () => {
         try {
           setSubmitting(true);
           const res: any = await updateNft({
-            firstName,
-            lastName,
-            gradYear,
+            firstName: nftInput.firstName,
+            lastName: nftInput.lastName,
+            gradYear: nftInput.gradYear,
             nft_id: nft?.id,
           });
           setSubmitting(false);
@@ -90,7 +83,11 @@ const StepOne = () => {
       // Create new NFT
       try {
         setSubmitting(true);
-        const res: any = await createNft({ firstName, lastName, gradYear });
+        const res: any = await createNft({
+          firstName: nftInput.firstName,
+          lastName: nftInput.lastName,
+          gradYear: nftInput.gradYear,
+        });
         setSubmitting(false);
         if (res.error) {
           alert(res.error.message);
@@ -112,9 +109,7 @@ const StepOne = () => {
           alert("There was an error deleting your NFT.");
         } else {
           setNftObject(null);
-          setFirstName("");
-          setLastName("");
-          setGradYear("");
+          nftInput.resetValues();
           alert("Successfully deleted NFT.");
         }
       }
@@ -150,8 +145,10 @@ const StepOne = () => {
                   <Input
                     type="text"
                     placeholder="Bobby"
-                    value={firstName}
-                    onChange={handleFirstName}
+                    value={nftInput.firstName}
+                    onChange={(e) =>
+                      nftInput.setInputValue("firstName", e.target.value)
+                    }
                   />
                 </FormControl>
                 <FormControl id="lastName">
@@ -159,8 +156,10 @@ const StepOne = () => {
                   <Input
                     type="text"
                     placeholder="Boucher"
-                    value={lastName}
-                    onChange={handleLastName}
+                    value={nftInput.lastName}
+                    onChange={(e) =>
+                      nftInput.setInputValue("lastName", e.target.value)
+                    }
                   />
                 </FormControl>
                 <FormControl id="graduationYear">
@@ -168,8 +167,12 @@ const StepOne = () => {
                   <Input
                     type="text"
                     placeholder="`22"
-                    value={gradYear}
-                    onChange={handleGradYear}
+                    value={
+                      nftInput.gradYear !== undefined ? nftInput.gradYear : ""
+                    }
+                    onChange={(e) =>
+                      nftInput.setInputValue("gradYear", e.target.value)
+                    }
                   />
                 </FormControl>
               </Stack>
@@ -185,7 +188,7 @@ const StepOne = () => {
             >
               Delete Existing NFT
             </Button>
-            <Button colorScheme="blue" type="submit">
+            <Button colorScheme="blue" color="white" type="submit">
               {submitting ? <Spinner /> : "Next step"}
             </Button>
           </Flex>
@@ -211,4 +214,4 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   };
 }
 
-export default StepOne;
+export default observer(StepOne);

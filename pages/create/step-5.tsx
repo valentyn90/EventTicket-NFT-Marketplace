@@ -1,11 +1,11 @@
-import React, { useRef, useEffect, useState } from "react";
 import CreateLayout from "@/components/Create/CreateLayout";
-import { Flex, Divider, Button, Text, Box, Spinner } from "@chakra-ui/react";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import { useUser } from "@/utils/useUser";
+import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
-import SignaturePad from "react-signature-pad-wrapper";
 import { useRouter } from "next/router";
+import React, { useEffect, useRef, useState } from "react";
+import SignaturePad from "react-signature-pad-wrapper";
 
 const StepFive = () => {
   const {
@@ -57,6 +57,7 @@ const StepFive = () => {
         setSubmitting(false);
 
         if (res === null) {
+          await checkSignatureFile();
           router.push("/create/step-6");
         } else {
           alert(res.message);
@@ -111,7 +112,12 @@ const StepFive = () => {
                   </Flex>
                 </>
               )}
-              <Button colorScheme="blue" type="submit" alignSelf="flex-end">
+              <Button
+                colorScheme="blue"
+                color="white"
+                type="submit"
+                alignSelf="flex-end"
+              >
                 {submitting ? <Spinner /> : "Proof Time"}
               </Button>
             </Flex>

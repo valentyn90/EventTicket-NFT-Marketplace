@@ -69,6 +69,7 @@ const StepFour = () => {
                 mt="2rem"
                 align="end"
                 colorScheme="blue"
+                color="white"
                 type="submit"
               >
                 {submitting ? <Spinner /> : "Time to Sign"}

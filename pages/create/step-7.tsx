@@ -1,7 +1,8 @@
-import CardPreview from "@/components/Create/CardPreview";
 import CreateLayout from "@/components/Create/CreateLayout";
+import Card from "@/components/NftCard/Card";
+import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
 import { useUser } from "@/utils/useUser";
-import { VStack, Text, Button, Flex, Box } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 
 const StepSeven = () => {
@@ -45,13 +46,13 @@ const StepSeven = () => {
           <Text textAlign="center" mb="2" fontSize="2xl">
             Front
           </Text>
-          {photoFile && <CardPreview photoFile={photoFile} nft={nft} />}
+          {photoFile ? <Card /> : <CardPlaceholder />}
         </Box>
         <Box flex="1">
           <Text textAlign="center" mb="2" fontSize="2xl">
             Back
           </Text>
-          {photoFile && <CardPreview photoFile={photoFile} nft={nft} />}
+          {photoFile ? <Card /> : <CardPlaceholder />}
         </Box>
       </Flex>
     </CreateLayout>

@@ -1,21 +1,24 @@
 import CardPreview from "@/components/Create/CardPreview";
 import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
+import Card from "@/components/NftCard/Card";
+import { nftInput } from "@/mobx/NftInput";
 import { useUser } from "@/utils/useUser";
 import {
+  Box,
   Button,
   Divider,
   Flex,
   FormControl,
   FormLabel,
   Input,
-  Stack,
   Spinner,
-  Box,
+  Stack,
 } from "@chakra-ui/react";
+import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const StepThree = () => {
   const { nft, photoFile, stepThreeSubmit, setNftObject } = useUser();
@@ -23,58 +26,28 @@ const StepThree = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
-  const [highSchool, setHighSchool] = useState("");
-  const handleHighSchool = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setHighSchool(e.target.value);
-  const [usaState, setUsaState] = useState("");
-  const handleUsaState = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setUsaState(e.target.value);
-  const [sport, setSport] = useState<any>("");
-  const handleSport = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setSport(e.target.value);
-  const [sportPosition, setSportPosition] = useState<any>("");
-  const handleSportPosition = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setSportPosition(e.target.value);
-  const [choiceQuote, setChoiceQuote] = useState<any>("");
-  const handleChoiceQuote = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setChoiceQuote(e.target.value);
-
-  useEffect(() => {
-    if (nft) {
-      if (nft.high_school !== null) setHighSchool(nft.high_school);
-      if (nft.usa_state) setUsaState(nft.usa_state);
-      if (nft.sport) setSport(nft.sport);
-      if (nft.sport_position) setSportPosition(nft.sport_position);
-      if (nft.quotes) setChoiceQuote(nft.quotes);
-    }
-  }, [nft]);
-
   async function handleStepThreeSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    // If user is at this point
-    // They have an NFT object in DB
-    // If not, something went wrong.
 
     if (nft) {
       if (
         // 1. Check if the input values are the same as DB nft
-        nft.high_school === highSchool &&
-        nft.usa_state === usaState &&
-        nft.sport === sport &&
-        nft.sport_position === sportPosition &&
-        nft.quotes === choiceQuote
+        nft.high_school === nftInput.highSchool &&
+        nft.usa_state === nftInput.usaState &&
+        nft.sport === nftInput.sport &&
+        nft.sport_position === nftInput.sportPosition &&
+        nft.quotes === nftInput.choiceQuote
       ) {
         router.push("/create/step-4");
       } else {
         // first insert
         setSubmitting(true);
         const { data, error } = await stepThreeSubmit({
-          highSchool,
-          usaState,
-          sport,
-          sportPosition,
-          choiceQuote,
+          highSchool: nftInput.highSchool,
+          usaState: nftInput.usaState,
+          sport: nftInput.sport,
+          sportPosition: nftInput.sportPosition,
+          choiceQuote: nftInput.choiceQuote,
           nft_id: nft.id,
         });
         setSubmitting(false);
@@ -109,8 +82,10 @@ const StepThree = () => {
                     type="text"
                     id="highSchool"
                     placeholder="Vernon HS"
-                    value={highSchool}
-                    onChange={handleHighSchool}
+                    value={nftInput.highSchool}
+                    onChange={(e) =>
+                      nftInput.setInputValue("highSchool", e.target.value)
+                    }
                   />
                 </FormControl>
                 <FormControl id="usaState">
@@ -119,8 +94,10 @@ const StepThree = () => {
                     type="text"
                     id="usState"
                     placeholder="LA"
-                    value={usaState}
-                    onChange={handleUsaState}
+                    value={nftInput.usaState}
+                    onChange={(e) =>
+                      nftInput.setInputValue("usaState", e.target.value)
+                    }
                   />
                 </FormControl>
                 <FormControl id="sport">
@@ -129,8 +106,10 @@ const StepThree = () => {
                     type="text"
                     id="sport"
                     placeholder="Football"
-                    value={sport}
-                    onChange={handleSport}
+                    value={nftInput.sport}
+                    onChange={(e) =>
+                      nftInput.setInputValue("sport", e.target.value)
+                    }
                   />
                 </FormControl>
                 <FormControl id="sportPosition">
@@ -139,8 +118,10 @@ const StepThree = () => {
                     type="text"
                     id="sportPosition"
                     placeholder="QB"
-                    value={sportPosition}
-                    onChange={handleSportPosition}
+                    value={nftInput.sportPosition}
+                    onChange={(e) =>
+                      nftInput.setInputValue("sportPosition", e.target.value)
+                    }
                   />
                 </FormControl>
                 <FormControl id="choiceQuote" mb={["2rem", "2rem", 0]}>
@@ -149,8 +130,10 @@ const StepThree = () => {
                     type="text"
                     id="highSchool"
                     placeholder="Knibb High Football Rules!!!"
-                    value={choiceQuote}
-                    onChange={handleChoiceQuote}
+                    value={nftInput.choiceQuote}
+                    onChange={(e) =>
+                      nftInput.setInputValue("choiceQuote", e.target.value)
+                    }
                   />
                 </FormControl>
                 {photoFile && (
@@ -159,10 +142,10 @@ const StepThree = () => {
                     mb={["2rem !important", "2rem !important", 0]}
                     display={["block", "block", "none"]}
                   >
-                    <CardPreview photoFile={photoFile} nft={nft} />
+                    <Card />
                   </Box>
                 )}
-                <Button colorScheme="blue" type="submit">
+                <Button colorScheme="blue" color="white" type="submit">
                   {submitting ? <Spinner /> : "Looking Good"}
                 </Button>
               </Stack>
@@ -183,4 +166,4 @@ const StepThree = () => {
   );
 };
 
-export default StepThree;
+export default observer(StepThree);

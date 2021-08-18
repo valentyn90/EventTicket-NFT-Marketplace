@@ -1,6 +1,7 @@
+import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
 import { useUser } from "@/utils/useUser";
-import { Flex, Text, Box, Image } from "@chakra-ui/react";
-import CardPreview from "./CardPreview";
+import { Box, Flex, Text } from "@chakra-ui/react";
+import Card from "../NftCard/Card";
 
 const PhotoPreviewSide = ({
   title,
@@ -19,16 +20,7 @@ const PhotoPreviewSide = ({
       </Text>
       <Text w="75%">{subtitle}</Text>
       <Box mt="5rem" display={["none", "none", "block"]}>
-        {photoFile ? (
-          <CardPreview photoFile={photoFile} nft={nft} />
-        ) : (
-          <Image
-            height="500px"
-            src="/img/bobby.png"
-            alt="High school football player"
-            boxShadow="2xl"
-          />
-        )}
+        {photoFile ? <Card /> : <CardPlaceholder />}
       </Box>
     </Flex>
   );

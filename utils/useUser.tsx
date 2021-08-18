@@ -1,7 +1,9 @@
+import { nftInput } from "@/mobx/NftInput";
 import Nft from "@/types/Nft";
 import NftFormInput from "@/types/NftFormInput";
 import SignInOptions from "@/types/SignInOptions";
 import { Provider } from "@supabase/supabase-js";
+import { toJS } from "mobx";
 import React, { useEffect, useState, createContext, useContext } from "react";
 import { supabase } from "./supabase-client";
 
@@ -92,9 +94,9 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
   }, []);
 
   const getUserNft = (user_id: string) =>
-    supabase.from("nft").select("*").eq("user_id", user_id).single();
+    supabase.from("nft").select("*").eq("user_id", user_id).maybeSingle();
   const getFileObject = (file_id: number) =>
-    supabase.from("files").select("*").eq("id", file_id).single();
+    supabase.from("files").select("*").eq("id", file_id).maybeSingle();
   const getSupabaseFile = (file_name: string) =>
     supabase.storage.from("private").download(file_name);
   const deleteFileById = (file_id: number) =>
@@ -105,7 +107,10 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
   useEffect(() => {
     if (user) {
       Promise.allSettled([getUserNft(user.id)]).then((results: any) => {
-        setNft(results[0].value.data);
+        if (results[0].value.data) {
+          nftInput.loadValues(results[0].value.data);
+          setNft(results[0].value.data);
+        }
       });
     }
   }, [user]);
@@ -288,6 +293,7 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
         setNftVideoName("");
         setSignatureFile(null);
         setNftSignature(null);
+        nftInput.resetValues();
         return res;
       } catch (err) {
         console.log(err);
@@ -346,6 +352,12 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
             },
           ])
           .match({ id: nft?.id });
+
+        // @ts-ignore
+        setNft({
+          ...nft,
+          signature_file: (data2 as any)[0].id,
+        });
 
         return null;
       }

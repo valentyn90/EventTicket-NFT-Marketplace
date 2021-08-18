@@ -76,6 +76,7 @@ const StepTwo = () => {
                 mt="2rem"
                 align="end"
                 colorScheme="blue"
+                color="white"
                 type="submit"
               >
                 {submitting ? <Spinner /> : "Let's See It"}

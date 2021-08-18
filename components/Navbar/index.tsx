@@ -57,6 +57,7 @@ const NavIndex: React.FC = () => {
       </Navbar.Links>
       <Navbar.ColorMode>
         <Button
+          mr={2}
           onClick={toggleColorMode}
           colorScheme="blue"
           variant="ghost"
@@ -90,6 +91,7 @@ const NavIndex: React.FC = () => {
           >
             <Button
               colorScheme="blue"
+              color="white"
               order={{ base: 2, md: 1 }}
               mr={[0, 0, 2]}
               mt={[2, 2, 0]}

@@ -4,6 +4,7 @@ import { Box, Image, Text, Spinner } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import CardPreview from "./CardPreview";
+import Card from "../NftCard/Card";
 
 const baseStyle = {
   flex: 1,
@@ -166,7 +167,7 @@ function ActionPhotoUpload() {
       </div>
       <Box mt="4" w="100%" display={["block", "block", "none"]}>
         {photoFile ? (
-          <CardPreview photoFile={photoFile} nft={nft} />
+          <Card />
         ) : (
           <Image
             height="500px"
