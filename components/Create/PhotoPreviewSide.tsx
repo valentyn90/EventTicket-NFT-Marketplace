@@ -12,7 +12,7 @@ const PhotoPreviewSide = ({
   subtitle: string;
   flex: string;
 }) => {
-  const { photoFile, nft } = useUser();
+  const { nft } = useUser();
   return (
     <Flex direction="column" flex={flex}>
       <Text fontSize="3xl" fontWeight="bold">
@@ -20,7 +20,7 @@ const PhotoPreviewSide = ({
       </Text>
       <Text w="75%">{subtitle}</Text>
       <Box mt="5rem" display={["none", "none", "block"]}>
-        {photoFile ? <Card /> : <CardPlaceholder />}
+        {nft?.id ? <Card /> : <CardPlaceholder />}
       </Box>
     </Flex>
   );

@@ -26,14 +26,14 @@ const StepSeven = () => {
           Your Verified Ink Proof
         </Text>
 
-        <Text color="gray.600">
+        <Text colorScheme="gray">
           We’ll keep you updated on your Verified Ink Proof status. For now you
           can admire your creation. Patience is a virtue.
           <br />
           If you want some company, recruit a few teammates to Verified. You’ll
           get one of their Inks when they sign up.
         </Text>
-        <Button onClick={handleRecruitClick} colorScheme="blue">
+        <Button onClick={handleRecruitClick} colorScheme="blue" color="white">
           Recruit
         </Button>
       </VStack>

@@ -1,20 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
   position: relative;
   font: Lato;
 
+
   .card {
-    width: 540px;
+    width: 544px;
     height: 940px;
     margin-right: 10px;
   }
 
   .background {
     position: absolute;
-    width: 540px;
-    height: 880px;
+    width: 544px;
+    height: 897px;
     left: 0px;
     bottom: 0px;
   }
@@ -33,7 +34,8 @@ const Wrapper = styled.div`
       #cb0000 101.53%
     );
     mix-blend-mode: normal;
-    mask-image: url(/img/card-mask.svg);
+    // mask-image: url(/img/card-mask.svg);
+    mask-image: url(/img/card-mask.png);
     mask-repeat: no-repeat;
   }
 
@@ -45,12 +47,24 @@ const Wrapper = styled.div`
   }
 
   .overlay-gradient {
-    mask-image: url(/img/card-mask-gradient.svg);
+    mask-image: url(/img/card-mask-gradient.png);
+  }
+
+  .background-stripes {
+    position: absolute;
+    top: 0%;
+    width: 521.71px;
+    height: 100%;
+    left: 50%;
+    transform: translate(-50%);
+    opacity: 30%;
+    background: url(/img/stripes.png);
+    background-size: 550px;
   }
 
   .signature {
     position: absolute;
-    bottom: 10%;
+    bottom: 8%;
     left: 50%;
     transform: translate(-50%);
     width: 250px;
@@ -73,40 +87,6 @@ const Wrapper = styled.div`
     color: #ffffff7a;
   }
 
-  .bold-info {
-    font-style: normal;
-    font-weight: 900;
-    display: inline;
-    color: white;
-    font-size: 24px;
-  }
-  .info-heading {
-    font-weight: 100;
-    display: inline;
-    color: #ffffff7a;
-    font-size: 22px;
-  }
-
-  .info-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0px;
-  }
-
-  .basic-info {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 450px;
-
-    position: absolute;
-    bottom: 30%;
-    left: 50%;
-    transform: translate(-50%);
-  }
-
   .athlete-name {
     position: absolute;
     bottom: 40%;
@@ -116,49 +96,104 @@ const Wrapper = styled.div`
     font-weight: 900;
     text-align: center;
     line-height: 65px;
+    color: white;
   }
 
   .background-name {
-    font-size: 120px;
-    line-height: 120px;
+    font-size: 100px;
+    line-height: 95px;
 
     transform: rotate(90deg);
+    transform-origin: top left;
 
     position: absolute;
-    left: 200px;
-    top: 120px;
+    left: 530px;
+    top: 85px;
     color: #ffffff00;
+    text-overflow: clip;
+    text-align: left;
+
+    width: 580px;
+    overflow: hidden;
+    white-space: nowrap;
 
     -webkit-text-stroke: 1px white;
+    opacity: 50%;
   }
 
   .verified-logo {
     position: absolute;
     left: 5%;
-    top: 3%;
+    top: 75px;
     opacity: 30%;
   }
 
-  .stripe {
-    position: absolute;
-    opacity: 40%;
+  .bold-info {
+    font-style: normal;
+    font-weight: 900;
+    display: inline;
+    color: white;
+    font-size: 20px;
   }
+  .info-heading {
+    font-weight: 100;
+    display: inline;
+    color: #ffffff7a;
+    font-size: 18px;
+  }
+
+  .info-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    width: 60px;
+  }
+
+  .basic-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 460px;
+    text-align: center;
+
+    position: absolute;
+    top: 63%;
+    left: 50%;
+    transform: translate(-50%);
+  }
+
 `;
 
+
 const Card = () => {
+
+  const [viewportWidth, setVieportWidth] = useState(800)
+  const updateMedia = () => {
+    setVieportWidth(window.innerWidth);
+  };
+
+  useEffect(() => {
+    updateMedia();
+    window.addEventListener("resize", updateMedia);
+    return () => window.removeEventListener("resize", updateMedia);
+  });
+
   return (
-    <Wrapper>
+    <Wrapper style={{ transform: `scale(${Math.min(1.0, viewportWidth / 600)})`, transformOrigin: `top left` }}>
       <div className="card">
         <div className="background">
           <div className="background-gradient">
-            <div className="background-name">BOBBY SMITH</div>
+            <div className="background-stripes"></div>
+            <div className="background-name">BOBBY<br />SMITH</div>
           </div>
-          <img className="stripe" src="/img/stripe.svg" />
+          {/* <img className="stripe" src="/img/stripe.svg" /> */}
 
           <img className="background-img" src="/img/qb-removebg.png" />
           <img className="verified-logo" src="/img/card-logo.svg" />
           <div className="background-gradient overlay-gradient"></div>
-          <img className="stripe overlay-gradient" src="/img/stripe.svg" />
+          {/* <img className="stripe overlay-gradient" src="/img/stripe.svg" /> */}
 
           <div className="athlete-name">Bobby Smith</div>
           <div className="basic-info">
@@ -174,6 +209,11 @@ const Card = () => {
               <div className="info-heading">Hometown</div>
               <div className="bold-info">Highland Park, IL</div>
             </div>
+            <div className="info-group">
+              <div className="info-heading">Sport</div>
+              <div className="bold-info">Football</div>
+            </div>
+
           </div>
           <div className="signature"></div>
           <div className="serial-number">

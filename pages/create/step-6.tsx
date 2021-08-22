@@ -44,7 +44,7 @@ const StepSix = () => {
                 flex="1"
                 width={["100%", "100%", "75%"]}
                 mt={["1rem", "1rem", 0]}
-                color="gray.600"
+                colorScheme="gray"
               >
                 That wasn’t so hard. Take a good look, ensure everything is
                 right. Once you approve the proof, it’s set. We’ll kick off the
@@ -54,7 +54,7 @@ const StepSix = () => {
                 flex="1"
                 width={["100%", "100%", "75%"]}
                 mt={["1rem", "1rem", 0]}
-                color="gray.600"
+                colorScheme="gray"
               >
                 If you found an issue, just go back and fix it, then come back
                 to this proof page at any time.

@@ -34,13 +34,14 @@ interface UserProps {
   createNft: (props: NftFormInput) => any;
   updateNft: (props: NftFormInput) => any;
   deleteNft: (nft_id: number) => any;
-  uploadFileToSupabase: () => any;
+  uploadPhotoToSupabase: () => any;
   uploadVideoToSupabase: () => any;
   deletePhoto: () => void;
   deleteVideo: () => void;
   getPhotoFile: () => void;
   checkPhotoFile: () => void;
   checkVideoFile: () => void;
+  deleteSignature: () => void;
   setPhotoFileName: (fileName: string) => void;
   setPhotoFileObject: (file: any) => void;
   stepThreeSubmit: (props: NftFormInput) => any;
@@ -304,6 +305,9 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     },
     deletePhoto: () => {
       setPhotoFile(null);
+      setNftPhoto(null);
+      setPhotoFileName("");
+      setNftPhotoPath("");
     },
     deleteVideo: () => {
       setVideoFile(null);
@@ -316,6 +320,10 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     },
     setVideoFileObject: (file: any) => {
       setVideoFile(file);
+    },
+    deleteSignature: () => {
+      setSignatureFile(null);
+      setNftSignature(null);
     },
     setSignatureFileObject: (file: any) => {
       setSignatureFile(file);
@@ -391,6 +399,12 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
           ])
           .match({ id: nft?.id });
 
+        // @ts-ignore
+        setNft({
+          ...nft,
+          clip_file: (data2 as any)[0].id,
+        });
+
         return null;
       }
     },
@@ -409,7 +423,7 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     setVideoFileNameFn: (name: string) => {
       setVideoFileName(name);
     },
-    uploadFileToSupabase: async () => {
+    uploadPhotoToSupabase: async () => {
       const filePathName = `${user.id}/${new Date().getTime()}${photoFileName}`;
       const { data, error } = await supabase.storage
         .from("private")
@@ -438,6 +452,12 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
             },
           ])
           .match({ id: nft?.id });
+
+        // @ts-ignore
+        setNft({
+          ...nft,
+          photo_file: (data2 as any)[0].id,
+        });
 
         return null;
       }

@@ -1,4 +1,3 @@
-import CardPreview from "@/components/Create/CardPreview";
 import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import Card from "@/components/NftCard/Card";

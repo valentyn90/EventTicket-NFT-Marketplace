@@ -1,5 +1,6 @@
 import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
+import Card from "@/components/NftCard/Card";
 import { useUser } from "@/utils/useUser";
 import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
@@ -14,7 +15,9 @@ const StepFive = () => {
     nftSignature,
     nft,
     setSignatureFileObject,
+    photoFile,
     checkSignatureFile,
+    deleteSignature,
   } = useUser();
   const signatureRef: any = useRef(null);
 
@@ -76,9 +79,23 @@ const StepFive = () => {
               subtitle="You can just sign in the space with your finger or trackpad. If you want to use a mouse, best of luck to you."
               flex="1"
             />
-            <Flex flex="1" direction="column">
+            <Flex flex="1" direction="column" position="relative">
               {signatureFile ? (
                 <>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "3%",
+                      left: "2%",
+                      fontSize: "20px",
+                      transform: "rotate(45deg)",
+                      cursor: "pointer",
+                      zIndex: 12,
+                    }}
+                    onClick={deleteSignature}
+                  >
+                    +
+                  </div>
                   <Text mt={["4", "4", 0]}>Your Signature</Text>
                   <Box
                     border="2px solid #E2E8F0"
@@ -101,9 +118,10 @@ const StepFive = () => {
                     <SignaturePad
                       ref={signatureRef}
                       options={{
-                        minWidth: 5,
-                        maxWidth: 10,
-                        penColor: "rgb(66, 133, 244)",
+                        minWidth: 1.5,
+                        maxWidth: 3.5,
+                        penColor: "black",
+                        dotSize: 3,
                       }}
                     />
                   </Box>
@@ -111,6 +129,15 @@ const StepFive = () => {
                     <Button onClick={handleClear}>Clear</Button>
                   </Flex>
                 </>
+              )}
+              {photoFile && (
+                <Box
+                  mt={["2rem !important", "2rem !important", 0]}
+                  mb={["2rem !important", "2rem !important", 0]}
+                  display={["block", "block", "none"]}
+                >
+                  <Card />
+                </Box>
               )}
               <Button
                 colorScheme="blue"

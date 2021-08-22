@@ -1,12 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import { Box, Button, Flex } from "@chakra-ui/react";
+import React, { useRef } from "react";
 import SignaturePad from "react-signature-pad-wrapper";
-import { Button, Box, Flex } from "@chakra-ui/react";
 
 const SignaturePadComp = () => {
   const signatureRef: any = useRef(null);
-  useEffect(() => {
-    console.log(signatureRef);
-  });
 
   function handleClear() {
     if (signatureRef) {

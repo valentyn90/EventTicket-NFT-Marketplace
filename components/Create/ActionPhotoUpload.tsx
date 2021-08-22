@@ -1,9 +1,8 @@
-import axios from "axios";
 import { useUser } from "@/utils/useUser";
-import { Box, Image, Text, Spinner } from "@chakra-ui/react";
+import { Box, Image, Spinner, Text } from "@chakra-ui/react";
+import axios from "axios";
 import React, { useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import CardPreview from "./CardPreview";
 import Card from "../NftCard/Card";
 
 const baseStyle = {
@@ -166,7 +165,7 @@ function ActionPhotoUpload() {
         )}
       </div>
       <Box mt="4" w="100%" display={["block", "block", "none"]}>
-        {photoFile ? (
+        {nft?.id ? (
           <Card />
         ) : (
           <Image

@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 
 const StepTwo = () => {
   const router = useRouter();
-  const { nft, nftPhoto, photoFile, uploadFileToSupabase, checkPhotoFile } =
+  const { nft, nftPhoto, photoFile, uploadPhotoToSupabase, checkPhotoFile } =
     useUser();
   const [submitting, setSubmitting] = useState(false);
 
@@ -25,7 +25,7 @@ const StepTwo = () => {
     if (photoFile) {
       if (typeof photoFile === "object") {
         setSubmitting(true);
-        const res = await uploadFileToSupabase();
+        const res = await uploadPhotoToSupabase();
         setSubmitting(false);
         if (res === null) {
           // no errors
