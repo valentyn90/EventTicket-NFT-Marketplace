@@ -51,6 +51,7 @@ const StepThree = () => {
         });
         setSubmitting(false);
         if (error) {
+          console.log(error);
           alert(error.message);
         } else {
           setNftObject(data[0]);

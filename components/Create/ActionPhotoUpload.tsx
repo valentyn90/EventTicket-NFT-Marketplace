@@ -1,9 +1,14 @@
 import { useUser } from "@/utils/useUser";
-import { Box, Image, Spinner, Text } from "@chakra-ui/react";
+import { Box, Image as ChakraImage, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useMemo, useState } from "react";
+import React, { SyntheticEvent, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import Resizer from "react-image-file-resizer";
+import { AiOutlineRotateRight } from "react-icons/ai";
 import Card from "../NftCard/Card";
+import { nftInput } from "@/mobx/NftInput";
+import { observer } from "mobx-react-lite";
+import { checkImageSize, resizeImageFile } from "@/utils/imageFileResizer";
 
 const baseStyle = {
   flex: 1,
@@ -36,14 +41,55 @@ const rejectStyle = {
 };
 
 function ActionPhotoUpload() {
+  const [rotation, setRotation] = useState(0);
   const [loading, setLoading] = useState(false);
   const { setPhotoFileObject, photoFile, deletePhoto, setPhotoFileName, nft } =
     useUser();
+
+  function handleRotate(e: SyntheticEvent) {
+    e.stopPropagation();
+    if (nftInput.rotation + 90 > 360) {
+      nftInput.setRotation(0);
+    } else {
+      nftInput.setRotation(nftInput.rotation + 90);
+    }
+  }
 
   async function onDrop(files: any) {
     setLoading(true);
     const file = files[0];
 
+    const { width, height }: any = await checkImageSize(file);
+
+    // Resize image if width is above 1400
+    // before clipping
+    if (width > 1400) {
+      const image = await resizeFile(file);
+      await clipImage(image);
+    } else {
+      const image = await resizeFile(file, width, height);
+      await clipImage(image);
+    }
+  }
+
+  const resizeFile = (file: any, width: number = 0, height: number = 0) => {
+    let quality = 100;
+    //4MB image file
+    if (file.size > 4000000) {
+      quality = 90;
+    }
+    //8MB image file
+    if (file.size > 8000000) {
+      quality = 85;
+    }
+
+    if (width === 0) width = 800;
+    if (height === 0) height = 800;
+
+    return resizeImageFile(file, width, height, quality);
+  };
+
+  async function clipImage(file: any) {
     const reader = new FileReader();
 
     reader.readAsDataURL(file);
@@ -56,10 +102,13 @@ function ActionPhotoUpload() {
         })
         .then(async function (resp: any) {
           setLoading(false);
-          const base64Image = dataURLtoFile(resp.data, file.name);
+          const base64Image = dataURLtoFile(
+            resp.data,
+            file.name.replace(".JPEG", ".png")
+          );
           // @ts-ignore
           setPhotoFileObject(base64Image);
-          setPhotoFileName(file.name);
+          setPhotoFileName(file.name.replace(".JPEG", ".png"));
         });
     };
   }
@@ -100,59 +149,68 @@ function ActionPhotoUpload() {
     [isDragActive, isDragReject, isDragAccept]
   );
 
-  return (
-    <Box w="100%">
-      {loading ? (
-        <Spinner />
-      ) : (
-        <Text mb="4" mt={["4", "4", 0]}>
-          Action Shot
-        </Text>
-      )}
-      <div {...getRootProps({ style: style as any })}>
-        <input {...getInputProps()} />
-        {photoFile === null ? (
-          <>
-            <svg
-              width="39"
-              height="38"
-              viewBox="0 0 39 38"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21.5 5H5.5C4.43913 5 3.42172 5.42143 2.67157 6.17157C1.92143 6.92172 1.5 7.93913 1.5 9V29M1.5 29V33C1.5 34.0609 1.92143 35.0783 2.67157 35.8284C3.42172 36.5786 4.43913 37 5.5 37H29.5C30.5609 37 31.5783 36.5786 32.3284 35.8284C33.0786 35.0783 33.5 34.0609 33.5 33V25M1.5 29L10.672 19.828C11.4221 19.0781 12.4393 18.6569 13.5 18.6569C14.5607 18.6569 15.5779 19.0781 16.328 19.828L21.5 25M33.5 17V25M33.5 25L30.328 21.828C29.5779 21.0781 28.5607 20.6569 27.5 20.6569C26.4393 20.6569 25.4221 21.0781 24.672 21.828L21.5 25M21.5 25L25.5 29M29.5 5H37.5M33.5 1V9M21.5 13H21.52"
-                stroke="#9CA3AF"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <br />
-            <p>Upload a file or drag and drop</p>
-            <p>PNG, JPG, GIF up to 10MB</p>
-          </>
-        ) : (
-          <>
-            <div
-              style={{
-                position: "absolute",
-                top: "2%",
-                left: "2%",
-                fontSize: "20px",
-                transform: "rotate(45deg)",
-                cursor: "pointer",
-                zIndex: 12,
-              }}
-              onClick={deletePhoto}
-            >
-              +
-            </div>
-            <Image
+  let uploadComponent;
+  if (loading) {
+    uploadComponent = <Spinner size="xl" />;
+  } else {
+    if (photoFile === null) {
+      uploadComponent = (
+        <>
+          <svg
+            width="39"
+            height="38"
+            viewBox="0 0 39 38"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M21.5 5H5.5C4.43913 5 3.42172 5.42143 2.67157 6.17157C1.92143 6.92172 1.5 7.93913 1.5 9V29M1.5 29V33C1.5 34.0609 1.92143 35.0783 2.67157 35.8284C3.42172 36.5786 4.43913 37 5.5 37H29.5C30.5609 37 31.5783 36.5786 32.3284 35.8284C33.0786 35.0783 33.5 34.0609 33.5 33V25M1.5 29L10.672 19.828C11.4221 19.0781 12.4393 18.6569 13.5 18.6569C14.5607 18.6569 15.5779 19.0781 16.328 19.828L21.5 25M33.5 17V25M33.5 25L30.328 21.828C29.5779 21.0781 28.5607 20.6569 27.5 20.6569C26.4393 20.6569 25.4221 21.0781 24.672 21.828L21.5 25M21.5 25L25.5 29M29.5 5H37.5M33.5 1V9M21.5 13H21.52"
+              stroke="#9CA3AF"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <br />
+          <p>Upload a file or drag and drop</p>
+          <p>PNG, JPG, GIF up to 10MB</p>
+        </>
+      );
+    } else {
+      uploadComponent = (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              top: "2%",
+              left: "2%",
+              fontSize: "20px",
+              transform: "rotate(45deg)",
+              cursor: "pointer",
+              zIndex: 12,
+            }}
+            onClick={(e: SyntheticEvent) => {
+              deletePhoto();
+              nftInput.setRotation(0);
+              e.stopPropagation();
+            }}
+          >
+            +
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <ChakraImage
               opacity=".5"
-              maxWidth="80%"
+              width="auto"
+              maxW="125px"
               objectFit="cover"
-              height="100px"
+              height="auto"
+              maxH="100px"
+              transform={`rotate(${nftInput.rotation}deg)`}
               src={
                 typeof photoFile === "string"
                   ? photoFile
@@ -161,14 +219,35 @@ function ActionPhotoUpload() {
               alt="High school football player"
               boxShadow="2xl"
             />
-          </>
-        )}
+            <AiOutlineRotateRight
+              onClick={handleRotate}
+              style={{
+                cursor: "pointer",
+                width: "40px",
+                height: "40px",
+                margin: "20px",
+              }}
+            />
+          </div>
+        </>
+      );
+    }
+  }
+
+  return (
+    <Box w="100%">
+      <Text mb="4" mt={["4", "4", 0]}>
+        Action Shot
+      </Text>
+      <div {...getRootProps({ style: style as any })}>
+        <input {...getInputProps()} />
+        {uploadComponent}
       </div>
       <Box mt="4" w="100%" display={["block", "block", "none"]}>
         {nft?.id ? (
           <Card />
         ) : (
-          <Image
+          <ChakraImage
             height="500px"
             src="/img/bobby.png"
             alt="High school football player"
@@ -180,4 +259,4 @@ function ActionPhotoUpload() {
   );
 }
 
-export default ActionPhotoUpload;
+export default observer(ActionPhotoUpload);

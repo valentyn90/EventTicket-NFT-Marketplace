@@ -5,6 +5,7 @@ import SignInOptions from "@/types/SignInOptions";
 import { Provider } from "@supabase/supabase-js";
 import { toJS } from "mobx";
 import React, { useEffect, useState, createContext, useContext } from "react";
+import { checkImageSize, resizeImageFile } from "./imageFileResizer";
 import { supabase } from "./supabase-client";
 
 interface UserProps {
@@ -34,7 +35,7 @@ interface UserProps {
   createNft: (props: NftFormInput) => any;
   updateNft: (props: NftFormInput) => any;
   deleteNft: (nft_id: number) => any;
-  uploadPhotoToSupabase: () => any;
+  uploadPhotoToSupabase: (rotate: boolean, isString: boolean) => any;
   uploadVideoToSupabase: () => any;
   deletePhoto: () => void;
   deleteVideo: () => void;
@@ -174,7 +175,6 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
         const { data, error } = await getFileObject(nft.photo_file);
         if (!error) {
           setNftPhoto(data);
-
           const { data: data2, error: error2 } = await getSupabaseFile(
             data.file_name
           );
@@ -220,6 +220,17 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
           setNftVideo(data);
           const fileName = (/[^/]*$/.exec(data.file_name) as any)[0];
           setNftVideoName(fileName);
+
+          const { data: data2, error: error2 } = await getSupabaseFile(
+            data.file_name
+          );
+
+          if (error2) {
+            alert(error2.message);
+          } else {
+            var uri = URL.createObjectURL(data2);
+            setVideoFile(uri);
+          }
         } else {
           alert(error);
         }
@@ -423,11 +434,42 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     setVideoFileNameFn: (name: string) => {
       setVideoFileName(name);
     },
-    uploadPhotoToSupabase: async () => {
-      const filePathName = `${user.id}/${new Date().getTime()}${photoFileName}`;
+    uploadPhotoToSupabase: async (
+      rotate: boolean,
+      isString: boolean = false
+    ) => {
+      const filePathName = `${user.id}/${new Date().getTime()}${
+        photoFileName ? photoFileName : nftPhoto.file_name
+      }`;
+      let photoFileToUpload = null;
+      // rotate via api before it gets uploaded.
+      if (rotate) {
+        let photoToUse;
+        if (isString) {
+          // if photo is object url convert to file
+          photoToUse = await fetch(photoFile)
+            .then((r) => r.blob())
+            .then(
+              (blobFile) =>
+                new File([blobFile], "fileNameGoesHere", { type: "image/png" })
+            );
+        } else {
+          photoToUse = photoFile;
+        }
+        const { width, height }: any = await checkImageSize(photoToUse);
+        photoFileToUpload = await resizeImageFile(
+          photoToUse,
+          width,
+          height,
+          100,
+          nftInput.rotation
+        );
+      } else {
+        photoFileToUpload = photoFile;
+      }
       const { data, error } = await supabase.storage
         .from("private")
-        .upload(filePathName, photoFile);
+        .upload(filePathName, photoFileToUpload);
       if (error) {
         return error;
       } else {

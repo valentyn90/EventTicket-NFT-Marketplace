@@ -1,20 +1,34 @@
 import Nft from "@/types/Nft";
 import { useUser } from "@/utils/useUser";
 import { Wrap } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  TouchEvent,
+  CSSProperties,
+  SyntheticEvent,
+} from "react";
 import styled from "styled-components";
 import { observer } from "mobx-react-lite";
 import { nftInput } from "@/mobx/NftInput";
 import { toJS } from "mobx";
+import { RiFullscreenLine } from "react-icons/ri";
 
 const Wrapper = styled.div<Props>`
   position: relative;
   font: Lato;
+  display: flex;
+  justify-content: center;
+
+  @media only screen and (max-width: 600px) {
+    transform: scale(calc(400 / 600));
+    transform-origin: top center;
+  }
 
   .card {
+    position: absolute;
     width: 544px;
-    height: 940px;
-    margin-right: 10px;
+    height: 975px;
   }
 
   .background {
@@ -41,18 +55,16 @@ const Wrapper = styled.div<Props>`
     mix-blend-mode: normal;
     mask-image: url(/img/card-mask.png);
     mask-repeat: no-repeat;
+    mask-position: top center;
   }
 
   .background-img {
     position: absolute;
-    width: 500px;
-    left: 50%;
-    transform: translate(-50%);
+    width: 740px;
+    left: 0px;
     top: -80px;
-    object-fit: cover;
-    object-position: center top;
-    max-height: 600px;
-    // mask-image: linear-gradient(180deg, rgba(0,0,0,1) 83%, rgba(210,208,213,0) 100%);
+
+    ${(props) => `transform: rotate(${props.rotation}deg);`}
   }
 
   .overlay-gradient {
@@ -120,6 +132,7 @@ const Wrapper = styled.div<Props>`
     top: 85px;
     color: #ffffff00;
     text-overflow: clip;
+    text-align: left;
 
     width: 580px;
     overflow: hidden;
@@ -171,36 +184,211 @@ const Wrapper = styled.div<Props>`
     left: 50%;
     transform: translate(-50%);
   }
+
+  .reverse-background-mask {
+    mask-image: url(/img/reverse-background.png);
+    mask-repeat: no-repeat;
+    mask-position: top center;
+    overflow: hidden;
+  }
+
+  .background-video {
+    position: absolute;
+    top: 0px;
+    display: block;
+    height: 898px;
+    // width: auto;
+    vertical-align: center;
+    max-width: 3000px;
+    left: 50%;
+    transform: translate(-50%);
+  }
+
+  .reverse-logo-background {
+    position: absolute;
+    height: 300px;
+    width: 100%;
+    background: linear-gradient(
+      180deg,
+      #000d52 -25.39%,
+      rgba(107, 117, 170, 0.452044) 80.43%,
+      rgba(196, 196, 196, 0) 100%
+    );
+  }
+
+  .reverse-verified-logo {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translate(-50%) scale(1.5);
+  }
+
+  .reverse-name-background {
+    position: absolute;
+    background-color: #000d52;
+    bottom: 0px;
+    width: 100%;
+    height: 180px;
+    opacity: 80%;
+  }
+
+  .reverse-athlete-name {
+    top: 82%;
+    width: 200px;
+    font-size: 36px;
+    line-height: 38px;
+  }
+
+  .card-container {
+    position: relative;
+    transform-style: preserve-3d;
+    // perspective: 200px;
+    transform-origin: center;
+  }
+
+  .front {
+    z-index: 2;
+    backface-visibility: hidden;
+    transform: rotateY(0deg);
+  }
+
+  .reverse {
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+  }
+
+  .viewer {
+  }
+
+  .fullscreen {
+    position: absolute;
+    top: 90px;
+    right: 10px;
+    height: 30px;
+    width: 50px;
+    color: white;
+    opacity: 30%;
+  }
 `;
 
 interface Props {
   signatureFile: string | null;
+  rotation: number | null;
 }
 
 const Card = () => {
-  const { photoFile, signatureFile, nft, checkSignatureFile, checkPhotoFile } =
-    useUser();
+  const {
+    photoFile,
+    signatureFile,
+    nft,
+    checkSignatureFile,
+    checkPhotoFile,
+    videoFile,
+    checkVideoFile,
+  } = useUser();
 
   const [viewportWidth, setVieportWidth] = useState(800);
+
+  const [lastX, setLastX] = useState(-1);
+  const [lastY, setLastY] = useState(0);
+  const [cssTransform, setCssTransform] = useState<CSSProperties>({});
+
   const updateMedia = () => {
     setVieportWidth(window.innerWidth);
   };
 
+  const handleTouchEvent = (e: TouchEvent) => {
+    if (e.type === "touchend") {
+      setLastX(-1);
+
+      let res = 0;
+      let y = Math.floor(lastY / 180);
+
+      let min_val = lastY - y * 180;
+      let max_val = (y + 1) * 180 - lastY;
+
+      if (min_val < max_val) {
+        res = y * 180;
+      } else {
+        res = (y + 1) * 180;
+      }
+      setLastY(res);
+    } else if (lastX === -1) {
+      setLastX(e.touches[0].clientX);
+    } else {
+      setLastY(lastY + e.touches[0].clientX - lastX);
+      setLastX(e.touches[0].clientX);
+    }
+  };
+
+  const flipCard = () => {
+    setLastY(lastY + 180);
+  };
+
+  const goFullscreen = (e: SyntheticEvent) => {
+    e.stopPropagation();
+
+    var el = document.getElementById("player-video");
+
+    if (el?.requestFullscreen) {
+      el.requestFullscreen();
+      // @ts-ignore
+    } else if (el?.webkitRequestFullScreen) {
+      // @ts-ignore
+      el.webkitRequestFullScreen();
+    }
+    //@ts-ignore
+    else if (el?.webkitSupportsFullscreen) {
+      //@ts-ignore
+      el.webkitEnterFullscreen();
+    }
+  };
+
   useEffect(() => {
-    // console.log(nft?.photo_file);
+    if (lastY % 360 === 0) {
+      setCssTransform({
+        transitionDelay: `100ms`,
+        transform: `perspective(1000px) rotateY(${lastY}deg)`,
+        transition: `transform 500ms ease-in-out`,
+      });
+    } else if (lastY % 180 === 0) {
+      setCssTransform({
+        transform: `perspective(1000px) rotateY(${lastY}deg)`,
+        transition: `transform 300ms ease-in-out`,
+      });
+    } else {
+      setCssTransform({
+        transform: `perspective(1000px) rotateY(${lastY}deg)`,
+      });
+    }
+  }, [lastY]);
+
+  useEffect(() => {
+    async function checkVideo() {
+      await checkVideoFile();
+    }
+    if (nft?.clip_file) {
+      checkVideo();
+    }
+  }, [nft?.clip_file]);
+
+  useEffect(() => {
     async function checkSignature() {
       await checkSignatureFile();
     }
+    if (nft?.signature_file) {
+      checkSignature();
+    }
+  }, [nft?.signature_file]);
+
+  useEffect(() => {
     async function checkPhoto() {
       await checkPhotoFile();
     }
     if (nft?.photo_file) {
       checkPhoto();
     }
-    if (nft?.signature_file) {
-      checkSignature();
-    }
-  }, [nft?.signature_file, nft?.photo_file]);
+  }, [nft?.photo_file]);
 
   useEffect(() => {
     updateMedia();
@@ -209,57 +397,101 @@ const Card = () => {
   });
 
   let imgSrc;
-
   if (photoFile) {
-    imgSrc =
-      typeof photoFile === "string"
-        ? photoFile
-        : URL.createObjectURL(photoFile);
+    if (typeof photoFile === "string") {
+      imgSrc = photoFile;
+    } else {
+      imgSrc = URL.createObjectURL(photoFile);
+    }
   } else {
     imgSrc = "/img/qb-removebg.png";
   }
 
   const fullName = `${nftInput.firstName} ${nftInput.lastName}`;
+
   return (
-    <Wrapper signatureFile={signatureFile || null} style={{ transform: `scale(${Math.min(1.0, viewportWidth / 600)})`, transformOrigin: `top left` }}>
-      <div className="card">
-        <div className="background">
-          <div className="background-gradient">
-            <div className="background-stripes"></div>
+    <Wrapper signatureFile={signatureFile} rotation={nftInput.rotation}>
+      <div className="viewer">
+        <div
+          className="card card-container"
+          onTouchMove={handleTouchEvent}
+          onTouchEnd={handleTouchEvent}
+          onClick={flipCard}
+          style={cssTransform}
+        >
+          <div className="card front">
+            <div className="background">
+              <div className="background-gradient">
+                <div className="background-stripes"></div>
+                <div className="background-name">
+                  {nftInput.firstName}
+                  <br />
+                  {nftInput.lastName}
+                </div>
+              </div>
+              <img className="background-img" src={imgSrc} />
+              <img className="verified-logo" src="/img/card-logo.svg" />
+              <div className="background-gradient overlay-gradient"></div>
 
-            <div className="background-name">{nftInput.firstName}<br />{nftInput.lastName}</div>
-          </div>
-
-          {imgSrc && <img className="background-img" src={imgSrc} />}
-          <img className="verified-logo" src="/img/card-logo.svg" />
-          <div className="background-gradient overlay-gradient"></div>
-
-          <div className="athlete-name">{fullName}</div>
-          <div className="basic-info">
-            <div className="info-group">
-              <div className="info-heading">Year</div>
-              <div className="bold-info">'{nftInput.gradYear}</div>
-            </div>
-            <div className="info-group">
-              <div className="info-heading">Position</div>
-              <div className="bold-info">{nftInput.sportPosition}</div>
-            </div>
-            <div className="info-group">
-              <div className="info-heading">Hometown</div>
-              <div className="bold-info">
-                {nftInput.highSchool}, {nftInput.usaState}
+              <div className="athlete-name">{fullName}</div>
+              <div className="basic-info">
+                <div className="info-group">
+                  <div className="info-heading">Year</div>
+                  <div className="bold-info">'{nftInput.gradYear}</div>
+                </div>
+                <div className="info-group">
+                  <div className="info-heading">Position</div>
+                  <div className="bold-info">{nftInput.sportPosition}</div>
+                </div>
+                <div className="info-group">
+                  <div className="info-heading">Hometown</div>
+                  <div className="bold-info">
+                    {nftInput.highSchool}, {nftInput.usaState}
+                  </div>
+                </div>
+                <div className="info-group">
+                  <div className="info-heading">Sport</div>
+                  <div className="bold-info">{nftInput.sport}</div>
+                </div>
+              </div>
+              <div className="signature"></div>
+              <div className="serial-number">
+                <div className="bold-info">1</div>/100
               </div>
             </div>
-            <div className="info-group">
-              <div className="info-heading">Sport</div>
-              <div className="bold-info">
-                {nftInput.sport}
+          </div>
+          <div className="card reverse">
+            <div className="background">
+              <div className="background-gradient">
+                <div className="background-gradient reverse-background-mask">
+                  <video
+                    className="background-video"
+                    id="player-video"
+                    src={videoFile}
+                    playsInline
+                    autoPlay
+                    loop
+                    muted
+                  ></video>
+                  <div className="reverse-logo-background"></div>
+                  <img
+                    className="reverse-verified-logo"
+                    src="/img/card-logo.svg"
+                    onClick={goFullscreen}
+                  />
+                  <div className="reverse-name-background"></div>
+                  <div className="athlete-name reverse-athlete-name">
+                    {nftInput.firstName}
+                    <br />
+                    {nftInput.lastName}
+                  </div>
+                  <RiFullscreenLine
+                    className="fullscreen"
+                    onClick={goFullscreen}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="signature"></div>
-          <div className="serial-number">
-            <div className="bold-info">1</div>/100
           </div>
         </div>
       </div>

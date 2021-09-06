@@ -20,10 +20,15 @@ class NftInput {
   sport: string = "";
   sportPosition: string = "";
   choiceQuote: string = "";
+  rotation: number = 0;
 
   constructor() {
     makeAutoObservable(this);
   }
+
+  setRotation = (rotate: number) => {
+    this.rotation = rotate;
+  };
 
   setInputValue = (field: string, value: any) => {
     // @ts-ignore

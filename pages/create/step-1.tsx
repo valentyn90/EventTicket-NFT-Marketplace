@@ -70,12 +70,14 @@ const StepOne = () => {
           });
           setSubmitting(false);
           if (res.error) {
+            console.log(res.error);
             alert(res.error.message);
           } else {
             setNftObject(res.data[0]);
             router.push("/create/step-2");
           }
         } catch (err) {
+          console.log(err);
           alert(err.message);
         }
       }

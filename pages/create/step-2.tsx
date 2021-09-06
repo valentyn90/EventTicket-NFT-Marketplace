@@ -1,6 +1,7 @@
 import ActionPhotoUpload from "@/components/Create/ActionPhotoUpload";
 import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
+import { nftInput } from "@/mobx/NftInput";
 import { useUser } from "@/utils/useUser";
 import { Button, Divider, Flex, Spinner } from "@chakra-ui/react";
 import NextLink from "next/link";
@@ -25,7 +26,13 @@ const StepTwo = () => {
     if (photoFile) {
       if (typeof photoFile === "object") {
         setSubmitting(true);
-        const res = await uploadPhotoToSupabase();
+        let rotate = false;
+        if (nftInput.rotation !== 0) {
+          // rotate image
+          rotate = true;
+        }
+        const res = await uploadPhotoToSupabase(rotate, false);
+        nftInput.setRotation(0);
         setSubmitting(false);
         if (res === null) {
           // no errors
@@ -33,11 +40,32 @@ const StepTwo = () => {
         } else {
           // errors
           if (res.message) {
+            console.log(res);
             alert(res.message);
           }
         }
       } else {
-        router.push("/create/step-3");
+        setSubmitting(true);
+        if (nftInput.rotation !== 0) {
+          // uploaded image is rotated
+          // reupload and then push again
+          let rotate = true;
+          const res = await uploadPhotoToSupabase(rotate, true);
+          nftInput.setRotation(0);
+          setSubmitting(false);
+          if (res === null) {
+            // no errors
+            router.push("/create/step-3");
+          } else {
+            // errors
+            if (res.message) {
+              console.log(res);
+              alert(res.message);
+            }
+          }
+        } else {
+          router.push("/create/step-3");
+        }
       }
     } else {
       if (nftPhoto) {
