@@ -51,6 +51,14 @@ const Wrapper = styled.div`
     position: absolute;
     width: 740px;
     left: 0px;
+    top: 0px;
+  }
+
+  .crop-background-img {
+    position: absolute;
+    width: 100%;
+    height: 750px;
+    overflow: hidden;
     top: -80px;
   }
 
@@ -354,7 +362,9 @@ const Card = () => {
                 <div className="background-stripes"></div>
                 <div className="background-name">BOBBY<br />SMITH</div>
               </div>
-              <img className="background-img" src="/img/qb-removebg.png" />
+              <div className="crop-background-img">
+                <img className="background-img" src="/img/qb-removebg.png" />
+              </div>
               <img className="verified-logo" src="/img/card-logo.svg" />
               <div className="background-gradient overlay-gradient"></div>
 

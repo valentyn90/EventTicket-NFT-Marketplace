@@ -62,8 +62,15 @@ const Wrapper = styled.div<Props>`
     position: absolute;
     width: 740px;
     left: 0px;
-    top: -80px;
+    top: 0px;
+  }
 
+  .crop-background-img {
+    position: absolute;
+    width: 100%;
+    height: 750px;
+    overflow: hidden;
+    top: -80px;
     ${(props) => `transform: rotate(${props.rotation}deg);`}
   }
 
@@ -429,7 +436,9 @@ const Card = () => {
                   {nftInput.lastName}
                 </div>
               </div>
-              <img className="background-img" src={imgSrc} />
+              <div className="crop-background-img">
+                <img className="background-img" src={imgSrc} />
+              </div>
               <img className="verified-logo" src="/img/card-logo.svg" />
               <div className="background-gradient overlay-gradient"></div>
 
