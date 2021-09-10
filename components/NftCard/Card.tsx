@@ -13,6 +13,7 @@ import { observer } from "mobx-react-lite";
 import { nftInput } from "@/mobx/NftInput";
 import { toJS } from "mobx";
 import { RiFullscreenLine } from "react-icons/ri";
+import { useRouter } from "next/router";
 
 const Wrapper = styled.div<Props>`
   position: relative;
@@ -30,7 +31,6 @@ const Wrapper = styled.div<Props>`
     width: 544px;
     height: 975px;
   }
-
   .background {
     position: absolute;
     width: 544px;
@@ -38,14 +38,12 @@ const Wrapper = styled.div<Props>`
     left: 0px;
     bottom: 0px;
   }
-
   .background-gradient {
     position: absolute;
     left: 0%;
     right: 0%;
     top: 0%;
     bottom: 0%;
-
     background: linear-gradient(
       219.17deg,
       #4f66e1 -10.14%,
@@ -57,7 +55,6 @@ const Wrapper = styled.div<Props>`
     mask-repeat: no-repeat;
     mask-position: top center;
   }
-
   .background-img {
     position: absolute;
     width: 740px;
@@ -73,11 +70,9 @@ const Wrapper = styled.div<Props>`
     top: -80px;
     ${(props) => `transform: rotate(${props.rotation}deg);`}
   }
-
   .overlay-gradient {
     mask-image: url(/img/card-mask-gradient.png);
   }
-
   .background-stripes {
     position: absolute;
     top: 0%;
@@ -89,7 +84,6 @@ const Wrapper = styled.div<Props>`
     background: url(/img/stripes.png);
     background-size: 550px;
   }
-
   .signature {
     position: absolute;
     bottom: 8%;
@@ -102,7 +96,6 @@ const Wrapper = styled.div<Props>`
     mask-repeat: no-repeat;
     background: white;
   }
-
   .serial-number {
     position: absolute;
     bottom: 5%;
@@ -114,7 +107,6 @@ const Wrapper = styled.div<Props>`
     display: inline;
     color: #ffffff7a;
   }
-
   .athlete-name {
     position: absolute;
     bottom: 40%;
@@ -126,14 +118,11 @@ const Wrapper = styled.div<Props>`
     line-height: 65px;
     color: white;
   }
-
   .background-name {
     font-size: 100px;
     line-height: 95px;
-
     transform: rotate(90deg);
     transform-origin: top left;
-
     position: absolute;
     left: 530px;
     top: 85px;
@@ -144,18 +133,15 @@ const Wrapper = styled.div<Props>`
     width: 580px;
     overflow: hidden;
     white-space: nowrap;
-
     -webkit-text-stroke: 1px white;
     opacity: 50%;
   }
-
   .verified-logo {
     position: absolute;
     left: 5%;
     top: 75px;
     opacity: 30%;
   }
-
   .bold-info {
     font-style: normal;
     font-weight: 900;
@@ -169,7 +155,6 @@ const Wrapper = styled.div<Props>`
     color: #ffffff7a;
     font-size: 18px;
   }
-
   .info-group {
     display: flex;
     flex-direction: column;
@@ -177,7 +162,6 @@ const Wrapper = styled.div<Props>`
     padding: 10px;
     width: 60px;
   }
-
   .basic-info {
     display: flex;
     flex-direction: row;
@@ -185,7 +169,6 @@ const Wrapper = styled.div<Props>`
     align-items: flex-start;
     width: 460px;
     text-align: center;
-
     position: absolute;
     top: 63%;
     left: 50%;
@@ -290,9 +273,11 @@ const Card = () => {
     nft,
     checkSignatureFile,
     checkPhotoFile,
+    nftVideo,
     videoFile,
     checkVideoFile,
   } = useUser();
+  const router = useRouter();
 
   const [viewportWidth, setVieportWidth] = useState(800);
 
@@ -350,6 +335,12 @@ const Card = () => {
       el.webkitEnterFullscreen();
     }
   };
+
+  useEffect(() => {
+    if (router.pathname.includes("step-4")) {
+      setLastY(180);
+    }
+  }, [router.pathname]);
 
   useEffect(() => {
     if (lastY % 360 === 0) {

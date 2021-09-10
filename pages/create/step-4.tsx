@@ -6,6 +6,8 @@ import VideoProofUpload from "@/components/Create/VideoProofUpload";
 import { useUser } from "@/utils/useUser";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { nftInput } from "@/mobx/NftInput";
+import { observer } from "mobx-react-lite";
 
 const StepFour = () => {
   const {
@@ -29,25 +31,23 @@ const StepFour = () => {
 
   async function handleStepFourSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    if (videoFile) {
-      if (typeof videoFile === "object") {
-        setSubmitting(true);
-        const res = await uploadVideoToSupabase();
-        setSubmitting(false);
-        if (res === null) {
-          // no errors
-          router.push("/create/step-5");
-        } else {
-          if (res.message) {
-            alert(res.message);
-          }
+    if (nftInput.localVideo) {
+      setSubmitting(true);
+      nftInput.setVideoUploading(true);
+      const res = await uploadVideoToSupabase(nftInput.localVideo);
+      nftInput.setVideoUploading(false);
+      setSubmitting(false);
+      if (res === null) {
+        // no errors
+        router.push("/create/step-5");
+      } else {
+        if (res.message) {
+          alert(res.message);
         }
       }
-    } else if (nftVideo) {
-      router.push("/create/step-5");
+      nftInput.resetLocalVideo();
     } else {
-      alert("Upload a video.");
+      router.push("/create/step-5");
     }
   }
 
@@ -61,7 +61,7 @@ const StepFour = () => {
               subtitle="Upload a short clip showing off your skills. 10-20 seconds is perfect, we'll clip it if it's over 30."
               flex="1"
             />
-            <Flex flex="1" direction="column" mt={["4", "4", 0]}>
+            <Flex flex="1" direction="column" >
               <VideoProofUpload />
               <Button
                 display="block"
@@ -71,6 +71,7 @@ const StepFour = () => {
                 colorScheme="blue"
                 color="white"
                 type="submit"
+                disabled={nftInput.videoUploading}
               >
                 {submitting ? <Spinner /> : "Time to Sign"}
               </Button>
@@ -90,4 +91,4 @@ const StepFour = () => {
   );
 };
 
-export default StepFour;
+export default observer(StepFour);

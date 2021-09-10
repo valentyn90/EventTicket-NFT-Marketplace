@@ -21,10 +21,29 @@ class NftInput {
   sportPosition: string = "";
   choiceQuote: string = "";
   rotation: number = 0;
+  photoUploading: boolean = false;
+  videoUploading: boolean = false;
+  localVideo: File | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this);
   }
+
+  resetLocalVideo = () => {
+    this.localVideo = undefined;
+  };
+
+  setLocalVideo = (video: File) => {
+    this.localVideo = video;
+  };
+
+  setVideoUploading = (upload: boolean) => {
+    this.videoUploading = upload;
+  };
+
+  setPhotoUploading = (upload: boolean) => {
+    this.photoUploading = upload;
+  };
 
   setRotation = (rotate: number) => {
     this.rotation = rotate;

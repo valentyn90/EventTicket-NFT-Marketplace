@@ -42,7 +42,6 @@ const rejectStyle = {
 
 function ActionPhotoUpload() {
   const [rotation, setRotation] = useState(0);
-  const [loading, setLoading] = useState(false);
   const { setPhotoFileObject, photoFile, deletePhoto, setPhotoFileName, nft } =
     useUser();
 
@@ -56,8 +55,8 @@ function ActionPhotoUpload() {
   }
 
   async function onDrop(files: any) {
-    setLoading(true);
     const file = files[0];
+    nftInput.setPhotoUploading(true);
 
     const { width, height }: any = await checkImageSize(file);
 
@@ -101,7 +100,7 @@ function ActionPhotoUpload() {
           file: reader.target.result,
         })
         .then(async function (resp: any) {
-          setLoading(false);
+          nftInput.setPhotoUploading(false);
           const base64Image = dataURLtoFile(
             resp.data,
             file.name.replace(".JPEG", ".png")
@@ -150,7 +149,7 @@ function ActionPhotoUpload() {
   );
 
   let uploadComponent;
-  if (loading) {
+  if (nftInput.photoUploading) {
     uploadComponent = <Spinner size="xl" />;
   } else {
     if (photoFile === null) {

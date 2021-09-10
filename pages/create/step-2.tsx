@@ -4,6 +4,7 @@ import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import { nftInput } from "@/mobx/NftInput";
 import { useUser } from "@/utils/useUser";
 import { Button, Divider, Flex, Spinner } from "@chakra-ui/react";
+import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -106,6 +107,7 @@ const StepTwo = () => {
                 colorScheme="blue"
                 color="white"
                 type="submit"
+                disabled={nftInput.photoUploading}
               >
                 {submitting ? <Spinner /> : "Let's See It"}
               </Button>
@@ -126,4 +128,4 @@ const StepTwo = () => {
   );
 };
 
-export default StepTwo;
+export default observer(StepTwo);

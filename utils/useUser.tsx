@@ -36,12 +36,13 @@ interface UserProps {
   updateNft: (props: NftFormInput) => any;
   deleteNft: (nft_id: number) => any;
   uploadPhotoToSupabase: (rotate: boolean, isString: boolean) => any;
-  uploadVideoToSupabase: () => any;
+  uploadVideoToSupabase: (file: File) => any;
   deletePhoto: () => void;
   deleteVideo: () => void;
   getPhotoFile: () => void;
   checkPhotoFile: () => void;
   checkVideoFile: () => void;
+  checkVideoExists: () => boolean;
   deleteSignature: () => void;
   setPhotoFileName: (fileName: string) => void;
   setPhotoFileObject: (file: any) => void;
@@ -212,6 +213,13 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
         }
       }
     },
+    checkVideoExists: () => {
+      if (nft?.clip_file !== null) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     checkVideoFile: async () => {
       // 1. Get file object from db
       if (nft?.clip_file) {
@@ -244,7 +252,7 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
         if (error) {
           console.log(error);
         } else {
-          console.log(data);
+          // console.log(data);
         }
       }
     },
@@ -381,11 +389,11 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
         return null;
       }
     },
-    uploadVideoToSupabase: async () => {
-      const filePathName = `${user.id}/${new Date().getTime()}${videoFileName}`;
+    uploadVideoToSupabase: async (file: File) => {
+      const filePathName = `${user.id}/${new Date().getTime()}${file.name}`;
       const { data, error } = await supabase.storage
         .from("private")
-        .upload(filePathName, videoFile);
+        .upload(filePathName, file);
 
       if (error) {
         return error;
