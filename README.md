@@ -24,6 +24,7 @@ Created from a Next.js TypeScript [starter](https://github.com/redimpulz/nextjs-
 TODO: Add Vercel Instructions
 
 - Rename `.env.template` to `.env.local` in the root directory
+- You can resync env from vercel by running `vc env pull .env.local`
 - Add the Supabase environment variable values from the [app page](https://app.supabase.io/) under `Settings` -> `API`.
 
 ```

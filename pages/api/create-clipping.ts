@@ -23,7 +23,7 @@ export default async function handler(
 
   fd.append('image', fs.createReadStream('/image.jpg'))
   fd.append('format', 'result')
-  fd.append('test', 'true')
+  fd.append('test', process.env.NEXT_PUBLIC_CLIPPING_TEST as string)
   fd.append('fit.toResult', 'true')
 
 
