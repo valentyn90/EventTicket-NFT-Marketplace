@@ -27,6 +27,7 @@ interface UserProps {
   signatureFile: any;
   nftSignature: any;
   videoFileName: string;
+  getNftCardData: (nft_id: number) => any;
   signIn: (options: SignInOptions) => Promise<boolean | null>;
   setNftObject: (nft: Nft | null) => void;
   signOut: () => void;
@@ -96,6 +97,8 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     };
   }, []);
 
+  const getNftById = (nft_id: number) =>
+    supabase.from("nft").select("*").eq("id", nft_id).maybeSingle();
   const getUserNft = (user_id: string) =>
     supabase.from("nft").select("*").eq("user_id", user_id).maybeSingle();
   const getFileObject = (file_id: number) =>
@@ -106,6 +109,31 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     supabase.from("files").delete().match({ id: file_id });
   const deleteStorageFile = (file_name: string) =>
     supabase.storage.from("private").remove([file_name]);
+
+  const getFileFromSupabase = async (
+    file_id: number
+  ): Promise<{ error: string | null; file: object | null }> => {
+    const { data, error } = await getFileObject(file_id);
+    if (error) {
+      return {
+        error: error.message,
+        file: null,
+      };
+    }
+
+    const { data: dataFile, error: errorFile } = await getSupabaseFile(
+      data.file_name
+    );
+    if (errorFile)
+      return {
+        error: errorFile.message,
+        file: null,
+      };
+    return {
+      error: null,
+      file: dataFile,
+    };
+  };
 
   useEffect(() => {
     if (user) {
@@ -132,6 +160,59 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     nftSignature,
     videoFileName,
     setVideoFileName,
+    getNftCardData: async (nft_id: number) => {
+      // get all the data...
+      try {
+        let photo;
+        let video;
+        let signature;
+        const { data, error } = await getNftById(nft_id);
+        if (error) {
+          alert(error.message);
+          return null;
+        }
+        // check/get all the files
+        if (data.photo_file) {
+          const { error, file } = await getFileFromSupabase(data.photo_file);
+          if (!error) {
+            var uri = URL.createObjectURL(file);
+            photo = uri;
+          }
+        }
+        if (data.clip_file) {
+          const { error, file } = await getFileFromSupabase(data.clip_file);
+          if (!error) {
+            var uri = URL.createObjectURL(file);
+            video = uri;
+          }
+        }
+        if (data.signature_file) {
+          const { error, file } = await getFileFromSupabase(
+            data.signature_file
+          );
+          if (!error) {
+            var uri = URL.createObjectURL(file);
+            signature = uri;
+          }
+        }
+
+        return {
+          photo,
+          video,
+          signature,
+          gradYear: data.graduation_year,
+          firstName: data.first_name,
+          lastName: data.last_name,
+          highSchool: data.high_school,
+          sport: data.sport,
+          state: data.usa_state,
+          sportPosition: data.sport_position,
+        };
+      } catch (err) {
+        console.log(err);
+        return null;
+      }
+    },
     signIn: async ({ email, provider, goToStepOne }: SignInOptions) => {
       if (goToStepOne) {
         localStorage.setItem("goToStepOne", "true");

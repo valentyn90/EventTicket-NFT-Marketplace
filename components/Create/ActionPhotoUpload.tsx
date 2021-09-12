@@ -244,14 +244,9 @@ function ActionPhotoUpload() {
       </div>
       <Box mt="4" w="100%" display={["block", "block", "none"]}>
         {nft?.id ? (
-          <Card />
+          <Card nft_id={nft?.id} nft_width={400} reverse={false} />
         ) : (
-          <ChakraImage
-            height="500px"
-            src="/img/bobby.png"
-            alt="High school football player"
-            boxShadow="2xl"
-          />
+          <Text>Loading...</Text>
         )}
       </Box>
     </Box>

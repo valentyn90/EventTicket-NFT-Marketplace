@@ -68,13 +68,21 @@ const StepSix = () => {
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Front
                 </Text>
-                {photoFile ? <Card /> : <CardPlaceholder />}
+                {nft?.id ? (
+                  <Card nft_id={nft?.id} nft_width={400} reverse={false} />
+                ) : (
+                  <Text>Loading...</Text>
+                )}
               </Box>
               <Box flex="1">
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Back
                 </Text>
-                {photoFile ? <Card /> : <CardPlaceholder />}
+                {nft?.id ? (
+                  <Card nft_id={nft?.id} nft_width={400} reverse={true} />
+                ) : (
+                  <Text>Loading...</Text>
+                )}
               </Box>
             </Flex>
           </Flex>

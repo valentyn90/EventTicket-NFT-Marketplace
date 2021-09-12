@@ -210,7 +210,7 @@ function VideoProofUpload() {
       </div>
       <Box mt="4" w="100%" display={["block", "block", "none"]}>
         {nft?.id ? (
-          <Card />
+          <Card nft_id={nft?.id} nft_width={400} reverse={true} />
         ) : (
           <ChakraImage
             height="500px"

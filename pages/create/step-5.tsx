@@ -136,7 +136,11 @@ const StepFive = () => {
                   mb={["2rem !important", "2rem !important", 0]}
                   display={["block", "block", "none"]}
                 >
-                  <Card />
+                  {nft?.id ? (
+                    <Card nft_id={nft?.id} nft_width={400} reverse={false} />
+                  ) : (
+                    <Text>Loading...</Text>
+                  )}
                 </Box>
               )}
               <Button

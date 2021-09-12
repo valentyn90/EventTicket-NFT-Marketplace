@@ -15,11 +15,15 @@ import { toJS } from "mobx";
 import { RiFullscreenLine } from "react-icons/ri";
 import { useRouter } from "next/router";
 
-const Wrapper = styled.div<Props>`
+const Wrapper = styled.div<StyleProps>`
   position: relative;
   font: Lato;
   display: flex;
   justify-content: center;
+
+  ${(props: StyleProps) => `transform: scale(calc(${props.nftWidth} / 600));`}
+
+  transform-origin: top center;
 
   @media only screen and (max-width: 600px) {
     transform: scale(calc(400 / 600));
@@ -68,7 +72,7 @@ const Wrapper = styled.div<Props>`
     height: 750px;
     overflow: hidden;
     top: -80px;
-    ${(props) => `transform: rotate(${props.rotation}deg);`}
+    ${(props: StyleProps) => `transform: rotate(${props.rotation}deg);`}
   }
   .overlay-gradient {
     mask-image: url(/img/card-mask-gradient.png);
@@ -261,28 +265,80 @@ const Wrapper = styled.div<Props>`
   }
 `;
 
-interface Props {
+interface StyleProps {
   signatureFile: string | null;
   rotation: number | null;
+  nftWidth: number;
 }
 
-const Card = () => {
-  const {
-    photoFile,
-    signatureFile,
-    nft,
-    checkSignatureFile,
-    checkPhotoFile,
-    nftVideo,
-    videoFile,
-    checkVideoFile,
-  } = useUser();
-  const router = useRouter();
+interface Props {
+  nft_id: number | undefined;
+  nft_width: number | undefined;
+  reverse: boolean | undefined;
+}
 
+const Card: React.FunctionComponent<Props> = ({
+  nft_id,
+  nft_width,
+  reverse,
+}) => {
+  let nftId: number;
+  let flip: boolean;
+  let nftWidth: number;
+
+  if (nft_width === undefined) {
+    nftWidth = 400;
+  } else {
+    nftWidth = nft_width;
+  }
+
+  if (reverse === undefined) {
+    flip = false;
+  } else {
+    flip = reverse;
+  }
+
+  if (nft_id === undefined) {
+    nftId = 36;
+  } else {
+    nftId = nft_id;
+  }
+
+  const { getNftCardData } = useUser();
+
+  const [nftCardData, setNftCardData] = useState({
+    photo: "/img/qb-removebg.png",
+    video: "https://linsky-planck.s3.amazonaws.com/hudson2.mp4",
+    highSchool: "",
+    signature: "",
+    firstName: "",
+    lastName: "",
+    sport: "",
+    sportPosition: "",
+    state: "",
+    gradYear: "",
+  });
+
+  async function getCardData() {
+    const res = await getNftCardData(nftId);
+    if (res) {
+      setNftCardData({
+        ...nftCardData,
+        ...res,
+      });
+    }
+  }
+
+  useEffect(() => {
+    getCardData();
+  }, [nftId]);
+
+  const router = useRouter();
+    
   const [viewportWidth, setVieportWidth] = useState(800);
 
   const [lastX, setLastX] = useState(-1);
-  const [lastY, setLastY] = useState(0);
+  const [lastY, setLastY] = useState(flip ? 180 : 0);
   const [cssTransform, setCssTransform] = useState<CSSProperties>({});
 
   const updateMedia = () => {
@@ -359,34 +415,7 @@ const Card = () => {
         transform: `perspective(1000px) rotateY(${lastY}deg)`,
       });
     }
-  }, [lastY]);
-
-  useEffect(() => {
-    async function checkVideo() {
-      await checkVideoFile();
-    }
-    if (nft?.clip_file) {
-      checkVideo();
-    }
-  }, [nft?.clip_file]);
-
-  useEffect(() => {
-    async function checkSignature() {
-      await checkSignatureFile();
-    }
-    if (nft?.signature_file) {
-      checkSignature();
-    }
-  }, [nft?.signature_file]);
-
-  useEffect(() => {
-    async function checkPhoto() {
-      await checkPhotoFile();
-    }
-    if (nft?.photo_file) {
-      checkPhoto();
-    }
-  }, [nft?.photo_file]);
+  }, [lastY, flip]);
 
   useEffect(() => {
     updateMedia();
@@ -394,21 +423,14 @@ const Card = () => {
     return () => window.removeEventListener("resize", updateMedia);
   });
 
-  let imgSrc;
-  if (photoFile) {
-    if (typeof photoFile === "string") {
-      imgSrc = photoFile;
-    } else {
-      imgSrc = URL.createObjectURL(photoFile);
-    }
-  } else {
-    imgSrc = "/img/qb-removebg.png";
-  }
-
-  const fullName = `${nftInput.firstName} ${nftInput.lastName}`;
+  const fullName = `${nftCardData.firstName} ${nftCardData.lastName}`;
 
   return (
-    <Wrapper signatureFile={signatureFile} rotation={nftInput.rotation}>
+    <Wrapper
+      signatureFile={nftCardData.signature}
+      rotation={nftInput.rotation}
+      nftWidth={nftWidth}
+    >
       <div className="viewer">
         <div
           className="card card-container"
@@ -422,13 +444,13 @@ const Card = () => {
               <div className="background-gradient">
                 <div className="background-stripes"></div>
                 <div className="background-name">
-                  {nftInput.firstName}
+                  {nftCardData.firstName}
                   <br />
-                  {nftInput.lastName}
+                  {nftCardData.lastName}
                 </div>
               </div>
               <div className="crop-background-img">
-                <img className="background-img" src={imgSrc} />
+                <img className="background-img" src={nftCardData.photo} />
               </div>
               <img className="verified-logo" src="/img/card-logo.svg" />
               <div className="background-gradient overlay-gradient"></div>
@@ -437,21 +459,21 @@ const Card = () => {
               <div className="basic-info">
                 <div className="info-group">
                   <div className="info-heading">Year</div>
-                  <div className="bold-info">'{nftInput.gradYear}</div>
+                  <div className="bold-info">'{nftCardData.gradYear}</div>
                 </div>
                 <div className="info-group">
                   <div className="info-heading">Position</div>
-                  <div className="bold-info">{nftInput.sportPosition}</div>
+                  <div className="bold-info">{nftCardData.sportPosition}</div>
                 </div>
                 <div className="info-group">
                   <div className="info-heading">Hometown</div>
                   <div className="bold-info">
-                    {nftInput.highSchool}, {nftInput.usaState}
+                    {nftCardData.highSchool}, {nftCardData.state}
                   </div>
                 </div>
                 <div className="info-group">
                   <div className="info-heading">Sport</div>
-                  <div className="bold-info">{nftInput.sport}</div>
+                  <div className="bold-info">{nftCardData.sport}</div>
                 </div>
               </div>
               <div className="signature"></div>
@@ -467,7 +489,7 @@ const Card = () => {
                   <video
                     className="background-video"
                     id="player-video"
-                    src={videoFile}
+                    src={nftCardData.video}
                     playsInline
                     autoPlay
                     loop
@@ -481,9 +503,9 @@ const Card = () => {
                   />
                   <div className="reverse-name-background"></div>
                   <div className="athlete-name reverse-athlete-name">
-                    {nftInput.firstName}
+                    {nftCardData.firstName}
                     <br />
-                    {nftInput.lastName}
+                    {nftCardData.lastName}
                   </div>
                   <RiFullscreenLine
                     className="fullscreen"

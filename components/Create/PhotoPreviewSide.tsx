@@ -20,7 +20,11 @@ const PhotoPreviewSide = ({
       </Text>
       <Text w="75%">{subtitle}</Text>
       <Box mt="5rem" display={["none", "none", "block"]}>
-        {nft?.id ? <Card /> : <CardPlaceholder />}
+        {nft?.id ? (
+          <Card nft_id={nft?.id} nft_width={400} reverse={false} />
+        ) : (
+          <Text>Loading...</Text>
+        )}
       </Box>
     </Flex>
   );

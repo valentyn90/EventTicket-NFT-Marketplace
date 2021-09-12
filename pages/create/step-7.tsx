@@ -16,7 +16,14 @@ const StepSeven = () => {
   }, [nft?.photo_file]);
 
   async function handleRecruitClick() {
-    alert("recruit");
+    const share_link = 'https://verifiedink.us/cardview/' + nft?.id
+    const ta = document.createElement("textarea");
+    ta.innerText = share_link;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    alert('link has been copied to your clipboard')
   }
 
   return (
@@ -34,7 +41,7 @@ const StepSeven = () => {
           get one of their Inks when they sign up.
         </Text>
         <Button onClick={handleRecruitClick} colorScheme="blue" color="white">
-          Recruit
+          Share my Verified Ink
         </Button>
       </VStack>
       <Flex
@@ -46,13 +53,21 @@ const StepSeven = () => {
           <Text textAlign="center" mb="2" fontSize="2xl">
             Front
           </Text>
-          {photoFile ? <Card /> : <CardPlaceholder />}
+          {nft?.id ? (
+            <Card nft_id={nft?.id} nft_width={400} reverse={false} />
+          ) : (
+            <Text>Loading...</Text>
+          )}
         </Box>
         <Box flex="1">
           <Text textAlign="center" mb="2" fontSize="2xl">
             Back
           </Text>
-          {photoFile ? <Card /> : <CardPlaceholder />}
+          {nft?.id ? (
+            <Card nft_id={nft?.id} nft_width={400} reverse={true} />
+          ) : (
+            <Text>Loading...</Text>
+          )}
         </Box>
       </Flex>
     </CreateLayout>

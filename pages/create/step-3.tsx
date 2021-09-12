@@ -12,6 +12,7 @@ import {
   FormLabel,
   Input,
   Spinner,
+  Text,
   Stack,
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
@@ -142,7 +143,11 @@ const StepThree = () => {
                     mb={["2rem !important", "2rem !important", 0]}
                     display={["block", "block", "none"]}
                   >
-                    <Card />
+                    {nft?.id ? (
+                      <Card nft_id={nft?.id} nft_width={400} reverse={false} />
+                    ) : (
+                      <Text>Loading...</Text>
+                    )}
                   </Box>
                 )}
                 <Button colorScheme="blue" color="white" type="submit">
