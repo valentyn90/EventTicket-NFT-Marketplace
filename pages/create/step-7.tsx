@@ -16,14 +16,29 @@ const StepSeven = () => {
   }, [nft?.photo_file]);
 
   async function handleRecruitClick() {
+
     const share_link = 'https://verifiedink.us/cardview/' + nft?.id
-    const ta = document.createElement("textarea");
-    ta.innerText = share_link;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    ta.remove();
-    alert('link has been copied to your clipboard')
+
+    const shareData = {
+      title: 'VerifiedInk',
+      text: 'Checkout my Verified Ink',
+      url: share_link
+    }
+
+    if (navigator.share === undefined) {
+      const ta = document.createElement("textarea");
+      ta.innerText = share_link;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      alert('link has been copied to your clipboard')
+    }
+    else {
+
+      await navigator.share(shareData)
+    }
+
   }
 
   return (
