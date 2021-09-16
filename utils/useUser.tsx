@@ -36,7 +36,12 @@ interface UserProps {
   createNft: (props: NftFormInput) => any;
   updateNft: (props: NftFormInput) => any;
   deleteNft: (nft_id: number) => any;
-  uploadPhotoToSupabase: (rotate: boolean, isString: boolean) => any;
+  uploadPhotoToSupabase: (
+    rotate: boolean,
+    isString: boolean,
+    newPhoto?: File | null,
+    newPhotoName?: string | undefined
+  ) => any;
   uploadVideoToSupabase: (file: File) => any;
   deletePhoto: () => void;
   deleteVideo: () => void;
@@ -54,9 +59,18 @@ interface UserProps {
   setNftApprovalTrue: () => any;
 }
 
+// export async function getStaticProps() {
+//   const vercel_env = process.env.VERCEL_ENV
+//   const vercel_url = process.env.VERCEL_URL
+//   return {
+//     props: {vercel_env, vercel_url}, // will be passed to the page component as props
+//   }
+// }
+
 export const UserContext = createContext<UserProps>({} as UserProps);
 
 export const UserContextProvider: React.FC<UserProps> = (props) => {
+
   const [session, setSession] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [photoFile, setPhotoFile] = useState<any>(null);
@@ -214,11 +228,20 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
       }
     },
     signIn: async ({ email, provider, goToStepOne }: SignInOptions) => {
-      if (goToStepOne) {
-        localStorage.setItem("goToStepOne", "true");
+
+      //TODO: Fiugure out if we should go to step one or not
+      let redirect_url: string | undefined = `https://verifiedink.us/redirect`
+
+      if (process.env.NEXT_PUBLIC_VERCEL_ENV == 'development') {
+        redirect_url = 'http://localhost:3000/redirect'
       }
+
+      if (!goToStepOne) {
+        redirect_url = undefined
+      }
+
       if (email) {
-        const { error } = await supabase.auth.signIn({ email });
+        const { error } = await supabase.auth.signIn({ email }, { redirectTo: redirect_url });
         if (error) {
           console.log(error);
           return false;
@@ -226,7 +249,8 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
           return true;
         }
       } else if (provider) {
-        const { error } = await supabase.auth.signIn({ provider });
+
+        const { error } = await supabase.auth.signIn({ provider }, { redirectTo: redirect_url });
         if (error) console.log(error);
         return null;
       }
@@ -404,10 +428,21 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
       }
     },
     deletePhoto: () => {
-      setPhotoFile(null);
-      setNftPhoto(null);
-      setPhotoFileName("");
-      setNftPhotoPath("");
+      if (nftInput.localPhoto !== undefined) {
+        nftInput.resetLocalPhoto();
+        nftInput.setRefreshPhotoCard();
+        setPhotoFile(null);
+        setNftPhoto(null);
+        setPhotoFileName("");
+        setNftPhotoPath("");
+      } else {
+        setPhotoFile(null);
+        setNftPhoto(null);
+        setPhotoFileName("");
+        setNftPhotoPath("");
+        nftInput.resetLocalPhoto();
+        nftInput.setHidePhotoInCard(true);
+      }
     },
     deleteVideo: () => {
       setVideoFile(null);
@@ -525,11 +560,17 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
     },
     uploadPhotoToSupabase: async (
       rotate: boolean,
-      isString: boolean = false
+      isString: boolean = false,
+      newPhoto: File | null = null,
+      newPhotoName: string | undefined
     ) => {
-      const filePathName = `${user.id}/${new Date().getTime()}${
-        photoFileName ? photoFileName : nftPhoto.file_name
-      }`;
+      let filePathName = "";
+      if (newPhotoName !== undefined) {
+        filePathName = `${user.id}/${new Date().getTime()}${newPhotoName}`;
+      } else {
+        filePathName = `${user.id}/${new Date().getTime()}${photoFileName ? photoFileName : nftPhoto.file_name
+          }`;
+      }
       let photoFileToUpload = null;
       // rotate via api before it gets uploaded.
       if (rotate) {
@@ -543,7 +584,7 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
                 new File([blobFile], "fileNameGoesHere", { type: "image/png" })
             );
         } else {
-          photoToUse = photoFile;
+          photoToUse = newPhoto ? newPhoto : photoFile;
         }
         const { width, height }: any = await checkImageSize(photoToUse);
         photoFileToUpload = await resizeImageFile(
@@ -554,7 +595,7 @@ export const UserContextProvider: React.FC<UserProps> = (props) => {
           nftInput.rotation
         );
       } else {
-        photoFileToUpload = photoFile;
+        photoFileToUpload = newPhoto ? newPhoto : photoFile;
       }
       const { data, error } = await supabase.storage
         .from("private")

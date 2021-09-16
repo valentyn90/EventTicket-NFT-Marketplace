@@ -24,14 +24,36 @@ const StepTwo = () => {
 
   async function handleStepTwoSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (photoFile) {
+    let rotate = false;
+    if (nftInput.rotation !== 0) {
+      // rotate image
+      rotate = true;
+    }
+
+    if (nftInput.localPhoto !== undefined) {
+      setSubmitting(true);
+      const res = await uploadPhotoToSupabase(
+        rotate,
+        false,
+        nftInput.localPhoto,
+        nftInput.localPhoto.name
+      );
+      nftInput.setRotation(0);
+      setSubmitting(false);
+
+      if (res === null) {
+        // no errors
+        router.push("/create/step-3");
+      } else {
+        // errors
+        if (res.message) {
+          console.log(res);
+          alert(res.message);
+        }
+      }
+    } else if (photoFile) {
       if (typeof photoFile === "object") {
         setSubmitting(true);
-        let rotate = false;
-        if (nftInput.rotation !== 0) {
-          // rotate image
-          rotate = true;
-        }
         const res = await uploadPhotoToSupabase(rotate, false);
         nftInput.setRotation(0);
         setSubmitting(false);
@@ -89,12 +111,18 @@ const StepTwo = () => {
           {/* Top Row */}
           <Flex direction={["column", "column", "row"]}>
             {/* Left side */}
-            <PhotoPreviewSide
-              title="Something's Missing"
-              subtitle="Your Ink needs the perfect action shot. You'll be able to change
+            {nft && nft.id ? (
+              <PhotoPreviewSide
+                title="Something's Missing"
+                subtitle="Your Ink needs the perfect action shot. You'll be able to change
               it later, but let's get something in there now."
-              flex="1"
-            />
+                flex="1"
+                nft_id={nft?.id}
+                nft={nft}
+              />
+            ) : (
+              "Loading..."
+            )}
 
             {/* Right side */}
             <Flex flex="1" direction="column">

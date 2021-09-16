@@ -272,42 +272,22 @@ interface StyleProps {
 }
 
 interface Props {
-  nft_id: number | undefined;
-  nft_width: number | undefined;
-  reverse: boolean | undefined;
+  nft_id?: number | undefined;
+  nft_width?: number | undefined;
+  reverse?: boolean | undefined;
+  nft?: Nft;
 }
 
 const Card: React.FunctionComponent<Props> = ({
-  nft_id,
-  nft_width,
-  reverse,
+  nft_id = 36,
+  nft_width = 400,
+  reverse = false,
+  nft,
 }) => {
-  let nftId: number;
-  let flip: boolean;
-  let nftWidth: number;
-
-  if (nft_width === undefined) {
-    nftWidth = 400;
-  } else {
-    nftWidth = nft_width;
-  }
-
-  if (reverse === undefined) {
-    flip = false;
-  } else {
-    flip = reverse;
-  }
-
-  if (nft_id === undefined) {
-    nftId = 36;
-  } else {
-    nftId = nft_id;
-  }
-
   const { getNftCardData } = useUser();
 
   const [nftCardData, setNftCardData] = useState({
-    photo: "/img/qb-removebg.png",
+    photo: "",
     video: "https://linsky-planck.s3.amazonaws.com/hudson2.mp4",
     highSchool: "",
     signature: "",
@@ -320,25 +300,39 @@ const Card: React.FunctionComponent<Props> = ({
   });
 
   async function getCardData() {
-    const res = await getNftCardData(nftId);
-    if (res) {
-      setNftCardData({
-        ...nftCardData,
-        ...res,
-      });
-    }
+    return getNftCardData(nft_id);
   }
 
   useEffect(() => {
-    getCardData();
-  }, [nftId]);
+    let mounted = true;
+    getCardData().then((res) => {
+      if (mounted) {
+        if (res) {
+          setNftCardData({
+            ...nftCardData,
+            ...res,
+          });
+        }
+      }
+    });
+
+    () => {
+      mounted = false;
+    };
+  }, [
+    nft_id,
+    nft?.photo_file,
+    nft?.clip_file,
+    nft?.signature_file,
+    nftInput.refreshPhotoCard,
+  ]);
 
   const router = useRouter();
-    
+
   const [viewportWidth, setVieportWidth] = useState(800);
 
   const [lastX, setLastX] = useState(-1);
-  const [lastY, setLastY] = useState(flip ? 180 : 0);
+  const [lastY, setLastY] = useState(reverse ? 180 : 0);
   const [cssTransform, setCssTransform] = useState<CSSProperties>({});
 
   const updateMedia = () => {
@@ -415,7 +409,7 @@ const Card: React.FunctionComponent<Props> = ({
         transform: `perspective(1000px) rotateY(${lastY}deg)`,
       });
     }
-  }, [lastY, flip]);
+  }, [lastY, reverse]);
 
   useEffect(() => {
     updateMedia();
@@ -425,11 +419,32 @@ const Card: React.FunctionComponent<Props> = ({
 
   const fullName = `${nftCardData.firstName} ${nftCardData.lastName}`;
 
+  let signature;
+  if (nftInput.localSignature !== null) {
+    signature = nftInput.localSignature?.current?.toDataURL();
+  } else {
+    signature = nftCardData.signature;
+  }
+
+  let photo;
+  if (nftInput.hidePhotoInCard) {
+    photo = undefined;
+  } else {
+    if (nftInput.showLocalPhoto) {
+      photo =
+        typeof nftInput.localPhoto === "string"
+          ? nftInput.localPhoto
+          : URL.createObjectURL(nftInput.localPhoto);
+    } else {
+      photo = nftCardData.photo;
+    }
+  }
+
   return (
     <Wrapper
-      signatureFile={nftCardData.signature}
+      signatureFile={signature}
       rotation={nftInput.rotation}
-      nftWidth={nftWidth}
+      nftWidth={nft_width}
     >
       <div className="viewer">
         <div
@@ -450,7 +465,7 @@ const Card: React.FunctionComponent<Props> = ({
                 </div>
               </div>
               <div className="crop-background-img">
-                <img className="background-img" src={nftCardData.photo} />
+                <img className="background-img" src={photo} />
               </div>
               <img className="verified-logo" src="/img/card-logo.svg" />
               <div className="background-gradient overlay-gradient"></div>

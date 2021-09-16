@@ -42,8 +42,14 @@ const rejectStyle = {
 
 function ActionPhotoUpload() {
   const [rotation, setRotation] = useState(0);
-  const { setPhotoFileObject, photoFile, deletePhoto, setPhotoFileName, nft } =
-    useUser();
+  const {
+    setPhotoFileObject,
+    photoFile,
+    deletePhoto,
+    setPhotoFileName,
+    nft,
+    uploadPhotoToSupabase,
+  } = useUser();
 
   function handleRotate(e: SyntheticEvent) {
     e.stopPropagation();
@@ -56,19 +62,58 @@ function ActionPhotoUpload() {
 
   async function onDrop(files: any) {
     const file = files[0];
+
+    if (nftInput.hidePhotoInCard) {
+    }
+    /**
+     * 1. If phot
+     */
+
     nftInput.setPhotoUploading(true);
 
     const { width, height }: any = await checkImageSize(file);
 
     // Resize image if width is above 1400
     // before clipping
+    let newImg;
     if (width > 1400) {
       const image = await resizeFile(file);
-      await clipImage(image);
+      newImg = await clipImage(image);
     } else {
       const image = await resizeFile(file, width, height);
-      await clipImage(image);
+      newImg = await clipImage(image);
     }
+
+    nftInput.setPhotoUploading(false);
+
+    nftInput.setLocalPhoto(newImg.photo);
+    nftInput.setHidePhotoInCard(false);
+
+    // // Upload image on drop.
+    // if (newImg) {
+    //   if (typeof photoFile === "object") {
+    //     // new file object
+    //     let rotate = false;
+    //     if (nftInput.rotation !== 0) {
+    //       rotate = true;
+    //     }
+
+    //     const res = await uploadPhotoToSupabase(
+    //       rotate,
+    //       false,
+    //       newImg.photo,
+    //       newImg.photoName
+    //     );
+    //     nftInput.setRotation(0);
+    //     nftInput.setPhotoUploading(false);
+    //     if (res !== null) {
+    //       if (res.message) {
+    //         console.log(res);
+    //         alert(res.message);
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   const resizeFile = (file: any, width: number = 0, height: number = 0) => {
@@ -88,28 +133,35 @@ function ActionPhotoUpload() {
     return resizeImageFile(file, width, height, quality);
   };
 
-  async function clipImage(file: any) {
-    const reader = new FileReader();
+  async function clipImage(
+    file: any
+  ): Promise<{ photo: File; photoName: string }> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
 
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
 
-    reader.onload = async function (reader) {
-      const res = await axios
-        .post("/api/create-clipping", {
-          // @ts-ignore
-          file: reader.target.result,
-        })
-        .then(async function (resp: any) {
-          nftInput.setPhotoUploading(false);
-          const base64Image = dataURLtoFile(
-            resp.data,
-            file.name.replace(".JPEG", ".png")
-          );
-          // @ts-ignore
-          setPhotoFileObject(base64Image);
-          setPhotoFileName(file.name.replace(".JPEG", ".png"));
-        });
-    };
+      reader.onload = async function (reader) {
+        const res = await axios
+          .post("/api/create-clipping", {
+            // @ts-ignore
+            file: reader.target.result,
+          })
+          .then(async function (resp: any) {
+            const base64Image = dataURLtoFile(
+              resp.data,
+              file.name.replace(".JPEG", ".png")
+            );
+            // @ts-ignore
+            setPhotoFileObject(base64Image);
+            setPhotoFileName(file.name.replace(".JPEG", ".png"));
+            resolve({
+              photo: base64Image,
+              photoName: file.name.replace(".JPEG", ".png"),
+            });
+          });
+      };
+    });
   }
 
   function dataURLtoFile(dataurl: any, filename: any) {
@@ -149,6 +201,7 @@ function ActionPhotoUpload() {
   );
 
   let uploadComponent;
+
   if (nftInput.photoUploading) {
     uploadComponent = <Spinner size="xl" />;
   } else {
@@ -189,8 +242,8 @@ function ActionPhotoUpload() {
               zIndex: 12,
             }}
             onClick={(e: SyntheticEvent) => {
-              deletePhoto();
               nftInput.setRotation(0);
+              deletePhoto();
               e.stopPropagation();
             }}
           >

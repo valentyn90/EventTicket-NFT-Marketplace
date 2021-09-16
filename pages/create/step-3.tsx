@@ -69,11 +69,17 @@ const StepThree = () => {
           {/* Top Row */}
           <Flex direction={["column", "column", "row"]}>
             {/* Left side */}
-            <PhotoPreviewSide
-              title="Just a few more details"
-              subtitle="We won't ask many more questions, we know you're super important and busy."
-              flex="1"
-            />
+            {nft && nft.id ? (
+              <PhotoPreviewSide
+                title="Just a few more details"
+                subtitle="We won't ask many more questions, we know you're super important and busy."
+                flex="1"
+                nft_id={nft?.id}
+                nft={nft}
+              />
+            ) : (
+              "Loading..."
+            )}
             {/* Right side */}
             <Flex flex="1" direction="column" mt={["4", "4", 0]}>
               <Stack>

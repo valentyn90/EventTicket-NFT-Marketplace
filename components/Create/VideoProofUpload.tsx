@@ -1,6 +1,13 @@
 import { nftInput } from "@/mobx/NftInput";
 import { useUser } from "@/utils/useUser";
-import { Box, Image as ChakraImage, Text, Progress, Button, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Image as ChakraImage,
+  Text,
+  Progress,
+  Button,
+  Spinner,
+} from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import React, { useMemo, useState, useEffect } from "react";
@@ -68,12 +75,6 @@ function VideoProofUpload() {
         alert(res.message);
       }
     }
-
-    // // Check if video already existed
-    // if (checkVideoExists()) {
-    //   nftInput.setLocalVideo(file);
-    // } else {
-    //   // If no, upload
   }
 
   const {

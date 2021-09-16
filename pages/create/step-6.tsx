@@ -69,7 +69,12 @@ const StepSix = () => {
                   Front
                 </Text>
                 {nft?.id ? (
-                  <Card nft_id={nft?.id} nft_width={400} reverse={false} />
+                  <Card
+                    nft_id={nft?.id}
+                    nft_width={400}
+                    reverse={false}
+                    nft={nft}
+                  />
                 ) : (
                   <Text>Loading...</Text>
                 )}
@@ -79,7 +84,12 @@ const StepSix = () => {
                   Back
                 </Text>
                 {nft?.id ? (
-                  <Card nft_id={nft?.id} nft_width={400} reverse={true} />
+                  <Card
+                    nft_id={nft?.id}
+                    nft_width={400}
+                    reverse={true}
+                    nft={nft}
+                  />
                 ) : (
                   <Text>Loading...</Text>
                 )}

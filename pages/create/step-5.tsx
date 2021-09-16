@@ -1,8 +1,10 @@
 import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import Card from "@/components/NftCard/Card";
+import { nftInput } from "@/mobx/NftInput";
 import { useUser } from "@/utils/useUser";
 import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
+import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
@@ -36,6 +38,7 @@ const StepFive = () => {
   function handleClear() {
     if (signatureRef) {
       signatureRef.current.instance.clear();
+      nftInput.setLocalSignature(null);
     }
   }
 
@@ -61,6 +64,7 @@ const StepFive = () => {
 
         if (res === null) {
           await checkSignatureFile();
+          nftInput.setLocalSignature(null);
           router.push("/create/step-6");
         } else {
           alert(res.message);
@@ -74,11 +78,15 @@ const StepFive = () => {
       <form onSubmit={handleStepFiveSubmit}>
         <Flex direction="column">
           <Flex direction={["column", "column", "row"]}>
-            <PhotoPreviewSide
-              title="Let's get your Signature"
-              subtitle="You can just sign in the space with your finger or trackpad. If you want to use a mouse, best of luck to you."
-              flex="1"
-            />
+            {nft && nft.id && (
+              <PhotoPreviewSide
+                title="Let's get your Signature"
+                subtitle="You can just sign in the space with your finger or trackpad. If you want to use a mouse, best of luck to you."
+                flex="1"
+                nft_id={nft?.id}
+                nft={nft}
+              />
+            )}
             <Flex flex="1" direction="column" position="relative">
               {signatureFile ? (
                 <>
@@ -92,7 +100,9 @@ const StepFive = () => {
                       cursor: "pointer",
                       zIndex: 12,
                     }}
-                    onClick={deleteSignature}
+                    onClick={() => {
+                      deleteSignature();
+                    }}
                   >
                     +
                   </div>
@@ -114,6 +124,9 @@ const StepFive = () => {
                     mt="2"
                     mb="2"
                     borderRadius="5px"
+                    onClick={() => {
+                      nftInput.setLocalSignature(signatureRef);
+                    }}
                   >
                     <SignaturePad
                       ref={signatureRef}
@@ -167,7 +180,7 @@ const StepFive = () => {
   );
 };
 
-export default StepFive;
+export default observer(StepFive);
 
 async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
   const res: Response = await fetch(dataUrl);

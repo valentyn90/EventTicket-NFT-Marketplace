@@ -1,4 +1,3 @@
-import { supabase } from "@/utils/supabase-client";
 import {
   Box,
   Button,
@@ -7,22 +6,12 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { NextApiRequest } from "next";
+
 import NextLink from "next/link";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+
+import React from "react";
 
 const Index: React.FC = () => {
-  const router = useRouter();
-  useEffect(() => {
-    const goToStepOne = localStorage.getItem("goToStepOne");
-    if (goToStepOne !== undefined) {
-      if (goToStepOne === "true") {
-        localStorage.removeItem("goToStepOne");
-        router.push("/create/step-1");
-      }
-    }
-  }, []);
   return (
     <Box
       bg={useColorModeValue("gray.50", "inherit")}
@@ -78,40 +67,6 @@ export async function getServerSideProps() {
       permanent: false,
     },
   };
-  // const { user } = await supabase.auth.api.getUserByCookie(req);
-
-  // if (!user) {
-  //   return { props: {} };
-  // } else {
-  //   // check if NFT form is finished or approved.
-  //   const user_id = user.id;
-  //   const { data, error } = await supabase
-  //     .from("nft")
-  //     .select("*")
-  //     .eq("user_id", user_id)
-  //     .single();
-  //   if (data) {
-  //     if (data.finished && !data.approved) {
-  //       return {
-  //         redirect: {
-  //           destination: "/create/step-6",
-  //           permanent: false,
-  //         },
-  //       };
-  //     } else if (data.finished && data.approved) {
-  //       return {
-  //         redirect: {
-  //           destination: "/create/step-7",
-  //           permanent: false,
-  //         },
-  //       };
-  //     } else {
-  //       return { props: {} };
-  //     }
-  //   } else {
-  //     return { props: {} };
-  //   }
-  // }
 }
 
 export default Index;

@@ -56,12 +56,16 @@ const StepFour = () => {
       <form onSubmit={handleStepFourSubmit}>
         <Flex direction="column">
           <Flex direction={["column", "column", "row"]}>
-            <PhotoPreviewSide
-              title="Video Proof"
-              subtitle="Upload a short clip showing off your skills. 10-20 seconds is perfect, we'll clip it if it's over 30."
-              flex="1"
-            />
-            <Flex flex="1" direction="column" >
+            {nft && nft.id && (
+              <PhotoPreviewSide
+                title="Video Proof"
+                subtitle="Upload a short clip showing off your skills. 10-20 seconds is perfect, we'll clip it if it's over 30."
+                flex="1"
+                nft_id={nft?.id}
+                nft={nft}
+              />
+            )}
+            <Flex flex="1" direction="column">
               <VideoProofUpload />
               <Button
                 display="block"

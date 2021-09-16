@@ -24,10 +24,37 @@ class NftInput {
   photoUploading: boolean = false;
   videoUploading: boolean = false;
   localVideo: File | undefined = undefined;
+  localSignature: any = null;
+  hidePhotoInCard: boolean = false;
+  showLocalPhoto: boolean = false;
+  refreshPhotoCard: boolean = false;
+  localPhoto: File | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this);
   }
+
+  setRefreshPhotoCard = () => {
+    this.refreshPhotoCard = !this.refreshPhotoCard;
+  };
+
+  setHidePhotoInCard = (hide: boolean) => {
+    this.hidePhotoInCard = hide;
+  };
+
+  setLocalPhoto = (photo: File) => {
+    this.localPhoto = photo;
+    this.showLocalPhoto = true;
+  };
+
+  resetLocalPhoto = () => {
+    this.localPhoto = undefined;
+    this.showLocalPhoto = false;
+  };
+
+  setLocalSignature = (sig: any) => {
+    this.localSignature = sig;
+  };
 
   resetLocalVideo = () => {
     this.localVideo = undefined;

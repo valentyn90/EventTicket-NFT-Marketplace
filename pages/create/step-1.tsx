@@ -78,7 +78,7 @@ const StepOne = () => {
           }
         } catch (err) {
           console.log(err);
-          alert(err.message);
+          alert(err);
         }
       }
     } else {
@@ -202,6 +202,7 @@ const StepOne = () => {
 
 export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   const { user } = await supabase.auth.api.getUserByCookie(req);
+
   if (!user) {
     return {
       redirect: {
