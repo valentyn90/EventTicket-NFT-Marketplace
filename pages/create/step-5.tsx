@@ -120,10 +120,14 @@ const StepFive = () => {
                 <>
                   <Text>Sign Here</Text>
                   <Box
+                    cursor={["pointer", "pointer", "default"]}
                     border="2px solid #E2E8F0"
                     mt="2"
                     mb="2"
                     borderRadius="5px"
+                    onTouchEnd={() => {
+                      nftInput.setLocalSignature(signatureRef);
+                    }}
                     onClick={() => {
                       nftInput.setLocalSignature(signatureRef);
                     }}
@@ -143,19 +147,13 @@ const StepFive = () => {
                   </Flex>
                 </>
               )}
-              {photoFile && (
-                <Box
-                  mt={["2rem !important", "2rem !important", 0]}
-                  mb={["2rem !important", "2rem !important", 0]}
-                  display={["block", "block", "none"]}
-                >
-                  {nft?.id ? (
-                    <Card nft_id={nft?.id} nft_width={400} reverse={false} />
-                  ) : (
-                    <Text>Loading...</Text>
-                  )}
-                </Box>
-              )}
+              <Box
+                mt={["2rem !important", "2rem !important", 0]}
+                mb={["2rem !important", "2rem !important", 0]}
+                display={["block", "block", "none"]}
+              >
+                <Card nft_id={nft?.id} nft_width={400} reverse={false} />
+              </Box>
               <Button
                 colorScheme="blue"
                 color="white"
