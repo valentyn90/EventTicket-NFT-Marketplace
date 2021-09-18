@@ -440,6 +440,8 @@ const Card: React.FunctionComponent<Props> = ({
     }
   }
 
+  let graduation_year = nftCardData.gradYear.toString().length > 2 ? nftCardData.gradYear : `'${nftCardData.gradYear.toString().padStart(2, "0")}`
+
   return (
     <Wrapper
       signatureFile={signature}
@@ -474,7 +476,7 @@ const Card: React.FunctionComponent<Props> = ({
               <div className="basic-info">
                 <div className="info-group">
                   <div className="info-heading">Year</div>
-                  <div className="bold-info">'{nftCardData.gradYear}</div>
+                  <div className="bold-info">{graduation_year}</div>
                 </div>
                 <div className="info-group">
                   <div className="info-heading">Position</div>
