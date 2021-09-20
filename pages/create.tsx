@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
+import Head from "next/head";
 import React from "react";
 import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
 
@@ -20,6 +21,10 @@ const Create: React.FC = () => {
       py="12"
       px={{ base: "4", lg: "8" }}
     >
+      <Head>
+        <meta property="og:image" content="https://verifiedink.us/img/verified-ink-site.png" />
+        <meta property="og:title" content="Create your own custom NFT with Verified Ink" />
+      </Head>
       <Box maxWidth="1200px" mx="auto">
         <Flex direction={["column", "column", "row"]}>
           <Flex direction="column" spacing={4} flex="1" align="start">
