@@ -14,6 +14,7 @@ import { nftInput } from "@/mobx/NftInput";
 import { toJS } from "mobx";
 import { RiFullscreenLine } from "react-icons/ri";
 import { useRouter } from "next/router";
+import Head from "next/head"
 
 const Wrapper = styled.div<StyleProps>`
   position: relative;
@@ -448,6 +449,11 @@ const Card: React.FunctionComponent<Props> = ({
       rotation={nftInput.rotation}
       nftWidth={nft_width}
     >
+      <Head>
+        <meta property="og:title" content={"Check out " + nftCardData.firstName + "'s Verified Ink"} />
+        <meta property="og:image" content="/img/verified-ink-site.png" />
+        <meta property="description" content="Create your own custom NFT with Verified Ink" />
+      </Head>
       <div className="viewer">
         <div
           className="card card-container"

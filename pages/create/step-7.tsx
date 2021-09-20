@@ -16,7 +16,7 @@ const StepSeven = () => {
   }, [nft?.photo_file]);
 
   async function handleRecruitClick() {
-    const share_link = "https://verifiedink.us/cardview/" + nft?.id;
+    const share_link = "https://verifiedink.us/card/" + nft?.id;
 
     const shareData = {
       title: "VerifiedInk",
