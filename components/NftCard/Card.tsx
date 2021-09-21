@@ -450,8 +450,8 @@ const Card: React.FunctionComponent<Props> = ({
       nftWidth={nft_width}
     >
       <Head>
-        <meta property="og:title" content={"Check out " + (nftCardData.firstName ? nftCardData.firstName + "'s" : "") + " Verified Ink"} />
-        <meta property="og:image" content="https://verifiedink.us/img/verified-ink-site.png" />
+        <meta property="og:title" content={"Check out " + (nftCardData.firstName ? nftCardData.firstName + "'s" : "") + " Verified Ink"} key="title" />
+        <meta property="og:image" content="https://verifiedink.us/img/verified-ink-site.png" key="preview" />
         <meta property="description" content="Create your own custom NFT with Verified Ink" />
       </Head>
       <div className="viewer">

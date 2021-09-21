@@ -10,7 +10,9 @@ const Layout: React.FC<Props> = ({ children }) => {
   return (
     <>
       <Head>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=1" />
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2" />
+        <meta property="og:title" content="Verified Ink" key="title" />
+        <meta property="og:image" content="https://verifiedink.us/img/verified-ink-site.png" key="preview" />
       </Head>
       <Navbar />
       {/* Margin for fixed navbar position */}

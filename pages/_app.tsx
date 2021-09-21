@@ -14,6 +14,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ChakraProvider theme={theme}>
       <Head>
         <title>Verified Ink</title>
+        <meta property="og:image" content="https://verifiedink.us/img/verified-ink-site.png" key="preview" />
+
       </Head>
       <GlobalStyle />
       <UserContextProvider {...pageProps}>
