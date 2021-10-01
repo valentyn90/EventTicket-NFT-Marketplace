@@ -6,9 +6,8 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-
+import { NextApiRequest } from "next";
 import NextLink from "next/link";
-
 import React from "react";
 
 const Index: React.FC = () => {
@@ -60,7 +59,7 @@ const Index: React.FC = () => {
   );
 };
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   return {
     redirect: {
       destination: "/create",

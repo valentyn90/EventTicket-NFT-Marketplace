@@ -1,4 +1,5 @@
 interface NftFormInput {
+  user_id?: string;
   nft_id?: number;
   firstName?: string;
   lastName?: string;

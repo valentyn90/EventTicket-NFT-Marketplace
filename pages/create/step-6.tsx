@@ -1,33 +1,23 @@
 import CreateLayout from "@/components/Create/CreateLayout";
 import Card from "@/components/NftCard/Card";
-import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
-import { useUser } from "@/utils/useUser";
+import userStore from "@/mobx/UserStore";
 import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
+import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const StepSix = () => {
-  const { photoFile, nft, setNftApprovalTrue, checkPhotoFile } = useUser();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    async function checkPhoto() {
-      await checkPhotoFile();
-    }
-    checkPhoto();
-  }, [nft?.photo_file]);
 
   async function handleStepSixSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    const res = await setNftApprovalTrue();
+    const res = await userStore.nft?.setNftApprovalTrue();
     setSubmitting(false);
-    if (res === null) {
+    if (res) {
       router.push("/create/step-7");
-    } else {
-      alert(res.message);
     }
   }
 
@@ -68,31 +58,23 @@ const StepSix = () => {
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Front
                 </Text>
-                {nft?.id ? (
-                  <Card
-                    nft_id={nft?.id}
-                    nft_width={400}
-                    reverse={false}
-                    nft={nft}
-                  />
-                ) : (
-                  <Text>Loading...</Text>
-                )}
+                <Card
+                  nft_id={userStore.nft?.id}
+                  nft={userStore.loadedNft}
+                  nft_width={400}
+                  reverse={false}
+                />
               </Box>
               <Box flex="1">
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Back
                 </Text>
-                {nft?.id ? (
-                  <Card
-                    nft_id={nft?.id}
-                    nft_width={400}
-                    reverse={true}
-                    nft={nft}
-                  />
-                ) : (
-                  <Text>Loading...</Text>
-                )}
+                <Card
+                  nft_id={userStore.nft?.id}
+                  nft={userStore.loadedNft}
+                  nft_width={400}
+                  reverse={true}
+                />
               </Box>
             </Flex>
           </Flex>
@@ -113,4 +95,4 @@ const StepSix = () => {
   );
 };
 
-export default StepSix;
+export default observer(StepSix);

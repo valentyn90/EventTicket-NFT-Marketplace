@@ -1,6 +1,7 @@
-import { supabase } from "@/utils/supabase-client";
-import { useUser } from "@/utils/useUser";
-import { Box, Heading, useColorModeValue, Button } from "@chakra-ui/react";
+import userStore from "@/mobx/UserStore";
+import { signOut, supabase } from "@/utils/supabase-client";
+import { Box, Button, Heading, useColorModeValue } from "@chakra-ui/react";
+import { observer } from "mobx-react-lite";
 import type { NextApiRequest } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -8,16 +9,13 @@ import React, { useEffect } from "react";
 interface Props {}
 
 const Profile: React.FC<Props> = (props) => {
-  const { user, signOut } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    // This needs to be updated because
-    // if you refresh, and are logged in, it pushes to /signin
-    if (!user) {
+    if (!userStore.loggedIn) {
       router.push("/signin");
     }
-  }, [user, router]);
+  }, [userStore.loggedIn, router]);
 
   return (
     <Box
@@ -31,7 +29,7 @@ const Profile: React.FC<Props> = (props) => {
           Signed in.
         </Heading>
         <Button onClick={signOut}>Logout</Button>
-        <p>user email: {user?.email}</p>
+        <p>user email: {userStore?.email}</p>
       </Box>
     </Box>
   );
@@ -51,4 +49,4 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   return { props: {} };
 }
 
-export default Profile;
+export default observer(Profile);

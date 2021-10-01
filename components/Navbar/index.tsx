@@ -1,4 +1,5 @@
-import { useUser } from "@/utils/useUser";
+import userStore from "@/mobx/UserStore";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
@@ -7,7 +8,7 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import * as React from "react";
 import ViLogo from "../ui/logos/ViLogo";
@@ -16,11 +17,9 @@ import { NavTabLink } from "./NavTabLink";
 import { UserProfile } from "./UserProfile";
 
 const NavIndex: React.FC = () => {
-  const { user } = useUser();
-
   const logoColor = useColorModeValue("blue", "white");
-
   const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <Navbar>
       <Navbar.Brand>
@@ -66,7 +65,7 @@ const NavIndex: React.FC = () => {
           {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
         </Button>
       </Navbar.ColorMode>
-      {!user ? (
+      {!userStore.loggedIn ? (
         <Navbar.SignIn>
           <NextLink href="/signin">
             <a>
@@ -99,9 +98,9 @@ const NavIndex: React.FC = () => {
               Recruit
             </Button>
             <UserProfile
-              name={user.name}
-              avatarUrl={user.user_metadata.avatar_url}
-              email={user.email}
+              name={userStore.name}
+              avatarUrl={userStore.avatar_url}
+              email={userStore.email}
             />
           </Flex>
         </Navbar.UserProfile>
@@ -122,4 +121,4 @@ const NavIndex: React.FC = () => {
   );
 };
 
-export default NavIndex;
+export default observer(NavIndex);

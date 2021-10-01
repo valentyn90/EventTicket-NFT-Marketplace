@@ -1,7 +1,6 @@
 import CreateLayout from "@/components/Create/CreateLayout";
-import { nftInput } from "@/mobx/NftInput";
+import userStore from "@/mobx/UserStore";
 import { supabase } from "@/utils/supabase-client";
-import { useUser } from "@/utils/useUser";
 import {
   Button,
   Divider,
@@ -16,103 +15,52 @@ import {
 import { observer } from "mobx-react-lite";
 import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const StepOne = () => {
   const router = useRouter();
 
-  const { nft, setNftObject, createNft, updateNft, deleteNft } = useUser();
-
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (nft) {
-      if (nft.first_name) {
-        nftInput.setInputValue("firstName", nft.first_name);
-      }
-      if (nft.last_name) {
-        nftInput.setInputValue("lastName", nft.last_name);
-      }
-      if (nft.graduation_year) {
-        nftInput.setInputValue("gradName", nft.graduation_year);
-      }
-    }
-  }, []);
 
   async function handleStepOneSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    /**
-     * Check if there is an existing NFT
-     * If there is
-     * And values are the same as the input
-     * Then push to step-2 without DB create
-     *
-     * Else create nft if none, or update if so
-     */
-    if (nft) {
-      if (
-        nft.first_name === nftInput.firstName &&
-        nft.last_name === nftInput.lastName &&
-        nft.graduation_year === nftInput.gradYear
-      ) {
-        // No changes, go to step 2 with no request
+    if (userStore.nft) {
+      // nft exists, update values
+      if (userStore.stepOneSkip) {
+        // no changes, push to step 2
         router.push("/create/step-2");
       } else {
-        // Changes, update and then go to step 2.
-        try {
-          setSubmitting(true);
-          const res: any = await updateNft({
-            firstName: nftInput.firstName,
-            lastName: nftInput.lastName,
-            gradYear: nftInput.gradYear,
-            nft_id: nft?.id,
-          });
-          setSubmitting(false);
-          if (res.error) {
-            console.log(res.error);
-            alert(res.error.message);
-          } else {
-            setNftObject(res.data[0]);
-            router.push("/create/step-2");
-          }
-        } catch (err) {
-          console.log(err);
-          alert(err);
+        // update NFT in db
+        setSubmitting(true);
+        const res = await userStore.nft.updateThisNft();
+        setSubmitting(false);
+        if (res) {
+          // successfully updated
+          router.push("/create/step-2");
         }
       }
     } else {
       // Create new NFT
-      try {
-        setSubmitting(true);
-        const res: any = await createNft({
-          firstName: nftInput.firstName,
-          lastName: nftInput.lastName,
-          gradYear: nftInput.gradYear,
-        });
-        setSubmitting(false);
-        if (res.error) {
-          alert(res.error.message);
-        } else {
-          setNftObject(res.data[0]);
-          router.push("/create/step-2");
-        }
-      } catch (err) {
-        console.log(err);
+      setSubmitting(true);
+      const res = await userStore.createNft();
+      setSubmitting(false);
+      if (res) {
+        // success
+        router.push("/create/step-2");
       }
     }
   }
 
   async function handleDeleteNft() {
-    if (nft) {
+    if (userStore.nft) {
       if (confirm("Are you sure you want to delete your NFT?")) {
-        const { error } = await deleteNft(nft.id);
-        if (error) {
-          alert("There was an error deleting your NFT.");
-        } else {
-          setNftObject(null);
-          nftInput.resetValues();
+        const res = await userStore.nft.deleteThisNft();
+
+        if (res) {
           alert("Successfully deleted NFT.");
+        } else {
+          alert("There was an error deleting your NFT.");
         }
       }
     } else {
@@ -147,9 +95,12 @@ const StepOne = () => {
                   <Input
                     type="text"
                     placeholder="Bobby"
-                    value={nftInput.firstName}
+                    value={userStore.nftInput?.first_name || ""}
                     onChange={(e) =>
-                      nftInput.setInputValue("firstName", e.target.value)
+                      userStore.nftInput?.setInputValue(
+                        "first_name",
+                        e.target.value
+                      )
                     }
                   />
                 </FormControl>
@@ -158,9 +109,12 @@ const StepOne = () => {
                   <Input
                     type="text"
                     placeholder="Boucher"
-                    value={nftInput.lastName}
+                    value={userStore.nftInput?.last_name || ""}
                     onChange={(e) =>
-                      nftInput.setInputValue("lastName", e.target.value)
+                      userStore.nftInput?.setInputValue(
+                        "last_name",
+                        e.target.value
+                      )
                     }
                   />
                 </FormControl>
@@ -169,11 +123,12 @@ const StepOne = () => {
                   <Input
                     type="text"
                     placeholder="`22"
-                    value={
-                      nftInput.gradYear !== undefined ? nftInput.gradYear : ""
-                    }
+                    value={userStore.nftInput?.graduation_year || ""}
                     onChange={(e) =>
-                      nftInput.setInputValue("gradYear", e.target.value)
+                      userStore.nftInput?.setInputValue(
+                        "graduation_year",
+                        e.target.value
+                      )
                     }
                   />
                 </FormControl>
@@ -211,7 +166,6 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
       },
     };
   }
-  // If there is a user continue to profile.
   return {
     props: {},
   };

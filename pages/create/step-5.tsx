@@ -1,74 +1,43 @@
 import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import Card from "@/components/NftCard/Card";
-import { nftInput } from "@/mobx/NftInput";
-import { useUser } from "@/utils/useUser";
+import userStore from "@/mobx/UserStore";
 import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import SignaturePad from "react-signature-pad-wrapper";
 
 const StepFive = () => {
-  const {
-    signatureFile,
-    uploadSignatureToSupabase,
-    nftSignature,
-    nft,
-    setSignatureFileObject,
-    photoFile,
-    checkSignatureFile,
-    deleteSignature,
-  } = useUser();
   const signatureRef: any = useRef(null);
 
   const router = useRouter();
 
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    // check/get signature file
-    async function checkSignature() {
-      await checkSignatureFile();
-    }
-    checkSignature();
-  }, [nft?.signature_file]);
-
   function handleClear() {
     if (signatureRef) {
       signatureRef.current.instance.clear();
-      nftInput.setLocalSignature(null);
+      userStore.nftInput.setLocalSignature(null);
     }
   }
 
   async function handleStepFiveSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    if (signatureFile) {
+    if (userStore.stepFiveSkip) {
       router.push("/create/step-6");
     } else {
-      if (signatureRef.current.isEmpty()) {
-        alert("Draw a signature.");
-      } else {
-        // save to db
-        setSubmitting(true);
-        const newSigFile = await dataUrlToFile(
-          signatureRef.current.toDataURL(),
-          "signaturePic.png"
-        );
-
-        // setSignatureFileObject(newSigFile);
-        const res = await uploadSignatureToSupabase(newSigFile);
-        setSubmitting(false);
-
-        if (res === null) {
-          await checkSignatureFile();
-          nftInput.setLocalSignature(null);
-          router.push("/create/step-6");
-        } else {
-          alert(res.message);
-        }
+      setSubmitting(true);
+      const newSigFile = await dataUrlToFile(
+        signatureRef.current.toDataURL(),
+        "signaturePic.png"
+      );
+      const res = await userStore.nft?.uploadSignatureToSupabase(newSigFile);
+      setSubmitting(false);
+      if (res) {
+        // success
+        router.push("/create/step-6");
       }
     }
   }
@@ -78,17 +47,15 @@ const StepFive = () => {
       <form onSubmit={handleStepFiveSubmit}>
         <Flex direction="column">
           <Flex direction={["column", "column", "row"]}>
-            {nft && nft.id && (
-              <PhotoPreviewSide
-                title="Let's get your Signature"
-                subtitle="You can just sign in the space with your finger or trackpad. If you want to use a mouse, best of luck to you."
-                flex="1"
-                nft_id={nft?.id}
-                nft={nft}
-              />
-            )}
+            <PhotoPreviewSide
+              title="Let's get your Signature"
+              subtitle="You can just sign in the space with your finger or trackpad. If you want to use a mouse, best of luck to you."
+              flex="1"
+              nft_id={userStore.nft?.id}
+              nft={userStore.loadedNft}
+            />
             <Flex flex="1" direction="column" position="relative">
-              {signatureFile ? (
+              {userStore.signatureExists ? (
                 <>
                   <div
                     style={{
@@ -101,7 +68,7 @@ const StepFive = () => {
                       zIndex: 12,
                     }}
                     onClick={() => {
-                      deleteSignature();
+                      userStore.nft?.deleteThisSignature();
                     }}
                   >
                     +
@@ -113,7 +80,7 @@ const StepFive = () => {
                     mb="2"
                     borderRadius="5px"
                   >
-                    <img src={signatureFile} alt="" />
+                    <img src={userStore.nft?.signature} alt="" />
                   </Box>
                 </>
               ) : (
@@ -126,10 +93,10 @@ const StepFive = () => {
                     mb="2"
                     borderRadius="5px"
                     onTouchEnd={() => {
-                      nftInput.setLocalSignature(signatureRef);
+                      userStore.nftInput.setLocalSignature(signatureRef);
                     }}
                     onClick={() => {
-                      nftInput.setLocalSignature(signatureRef);
+                      userStore.nftInput.setLocalSignature(signatureRef);
                     }}
                   >
                     <SignaturePad
@@ -152,7 +119,12 @@ const StepFive = () => {
                 mb={["2rem !important", "2rem !important", 0]}
                 display={["block", "block", "none"]}
               >
-                <Card nft_id={nft?.id} nft_width={400} reverse={false} />
+                <Card
+                  nft_id={userStore.nft?.id}
+                  nft={userStore.loadedNft}
+                  nft_width={400}
+                  reverse={false}
+                />
               </Box>
               <Button
                 colorScheme="blue"

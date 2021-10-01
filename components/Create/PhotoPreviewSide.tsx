@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
-import { useUser } from "@/utils/useUser";
+import { NftStore } from "@/mobx/NftStore";
 import { Box, Flex, Text } from "@chakra-ui/react";
+import React from "react";
 import Card from "../NftCard/Card";
-import Nft from "@/types/Nft";
 
 const PhotoPreviewSide = ({
   title,
@@ -15,8 +13,8 @@ const PhotoPreviewSide = ({
   title: string;
   subtitle: string;
   flex: string;
-  nft_id: number;
-  nft: Nft;
+  nft_id: number | undefined;
+  nft: NftStore | null;
 }) => {
   return (
     <Flex direction="column" flex={flex}>
@@ -25,7 +23,11 @@ const PhotoPreviewSide = ({
       </Text>
       <Text w="75%">{subtitle}</Text>
       <Box mt="5rem" display={["none", "none", "block"]}>
-        <Card nft_id={nft_id} nft_width={400} reverse={false} nft={nft} />
+        {nft ? (
+          <Card nft_id={nft_id} nft_width={400} reverse={false} nft={nft} />
+        ) : (
+          "Loading..."
+        )}
       </Box>
     </Flex>
   );

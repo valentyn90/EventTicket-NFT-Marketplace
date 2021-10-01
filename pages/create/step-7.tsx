@@ -1,22 +1,13 @@
 import CreateLayout from "@/components/Create/CreateLayout";
 import Card from "@/components/NftCard/Card";
-import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
-import { useUser } from "@/utils/useUser";
+import userStore from "@/mobx/UserStore";
 import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
+import React from "react";
 
 const StepSeven = () => {
-  const { photoFile, nft, checkPhotoFile } = useUser();
-
-  useEffect(() => {
-    async function checkPhoto() {
-      await checkPhotoFile();
-    }
-    checkPhoto();
-  }, [nft?.photo_file]);
-
   async function handleRecruitClick() {
-    const share_link = "https://verifiedink.us/card/" + nft?.id;
+    const share_link = "https://verifiedink.us/card/" + userStore.nft?.id;
 
     const shareData = {
       title: "VerifiedInk",
@@ -64,25 +55,27 @@ const StepSeven = () => {
           <Text textAlign="center" mb="2" fontSize="2xl">
             Front
           </Text>
-          {nft?.id ? (
-            <Card nft_id={nft?.id} nft_width={400} reverse={false} nft={nft} />
-          ) : (
-            <Text>Loading...</Text>
-          )}
+          <Card
+            nft_id={userStore.nft?.id}
+            nft={userStore.loadedNft}
+            nft_width={400}
+            reverse={false}
+          />
         </Box>
         <Box flex="1">
           <Text textAlign="center" mb="2" fontSize="2xl">
             Back
           </Text>
-          {nft?.id ? (
-            <Card nft_id={nft?.id} nft_width={400} reverse={true} nft={nft} />
-          ) : (
-            <Text>Loading...</Text>
-          )}
+          <Card
+            nft_id={userStore.nft?.id}
+            nft={userStore.loadedNft}
+            nft_width={400}
+            reverse={true}
+          />
         </Box>
       </Flex>
     </CreateLayout>
   );
 };
 
-export default StepSeven;
+export default observer(StepSeven);

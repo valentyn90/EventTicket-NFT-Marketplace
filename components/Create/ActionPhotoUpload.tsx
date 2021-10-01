@@ -1,14 +1,12 @@
-import { useUser } from "@/utils/useUser";
+import userStore from "@/mobx/UserStore";
+import { checkImageSize, resizeImageFile } from "@/utils/imageFileResizer";
 import { Box, Image as ChakraImage, Spinner, Text } from "@chakra-ui/react";
 import axios from "axios";
-import React, { SyntheticEvent, useMemo, useState } from "react";
+import { observer } from "mobx-react-lite";
+import React, { SyntheticEvent, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
-import Resizer from "react-image-file-resizer";
 import { AiOutlineRotateRight } from "react-icons/ai";
 import Card from "../NftCard/Card";
-import { nftInput } from "@/mobx/NftInput";
-import { observer } from "mobx-react-lite";
-import { checkImageSize, resizeImageFile } from "@/utils/imageFileResizer";
 
 const baseStyle = {
   flex: 1,
@@ -41,35 +39,23 @@ const rejectStyle = {
 };
 
 function ActionPhotoUpload() {
-  const [rotation, setRotation] = useState(0);
-  const {
-    setPhotoFileObject,
-    photoFile,
-    deletePhoto,
-    setPhotoFileName,
-    nft,
-    uploadPhotoToSupabase,
-  } = useUser();
-
   function handleRotate(e: SyntheticEvent) {
     e.stopPropagation();
-    if (nftInput.rotation + 90 > 360) {
-      nftInput.setRotation(0);
+    if (userStore.nftInput.preview_rotation + 90 > 360) {
+      userStore.nftInput.setRotation(0);
     } else {
-      nftInput.setRotation(nftInput.rotation + 90);
+      userStore.nftInput.setRotation(userStore.nftInput.preview_rotation + 90);
     }
   }
 
   async function onDrop(files: any) {
     const file = files[0];
 
-    if (nftInput.hidePhotoInCard) {
-    }
     /**
      * 1. If phot
      */
 
-    nftInput.setPhotoUploading(true);
+    userStore.nftInput.setPhotoUploading(true);
 
     const { width, height }: any = await checkImageSize(file);
 
@@ -84,36 +70,8 @@ function ActionPhotoUpload() {
       newImg = await clipImage(image);
     }
 
-    nftInput.setPhotoUploading(false);
-
-    nftInput.setLocalPhoto(newImg.photo);
-    nftInput.setHidePhotoInCard(false);
-
-    // // Upload image on drop.
-    // if (newImg) {
-    //   if (typeof photoFile === "object") {
-    //     // new file object
-    //     let rotate = false;
-    //     if (nftInput.rotation !== 0) {
-    //       rotate = true;
-    //     }
-
-    //     const res = await uploadPhotoToSupabase(
-    //       rotate,
-    //       false,
-    //       newImg.photo,
-    //       newImg.photoName
-    //     );
-    //     nftInput.setRotation(0);
-    //     nftInput.setPhotoUploading(false);
-    //     if (res !== null) {
-    //       if (res.message) {
-    //         console.log(res);
-    //         alert(res.message);
-    //       }
-    //     }
-    //   }
-    // }
+    userStore.nftInput.setPhotoUploading(false);
+    userStore.nftInput.setLocalPhoto(newImg.photo);
   }
 
   const resizeFile = (file: any, width: number = 0, height: number = 0) => {
@@ -153,8 +111,6 @@ function ActionPhotoUpload() {
               file.name.replace(".JPEG", ".png")
             );
             // @ts-ignore
-            setPhotoFileObject(base64Image);
-            setPhotoFileName(file.name.replace(".JPEG", ".png"));
             resolve({
               photo: base64Image,
               photoName: file.name.replace(".JPEG", ".png"),
@@ -202,10 +158,11 @@ function ActionPhotoUpload() {
 
   let uploadComponent;
 
-  if (nftInput.photoUploading) {
+  if (userStore.nftInput.photoUploading) {
     uploadComponent = <Spinner size="xl" />;
   } else {
-    if (photoFile === null) {
+    if (!userStore.nft?.photo && userStore.nftInput.localPhoto === undefined) {
+      // no photo
       uploadComponent = (
         <>
           <svg
@@ -229,6 +186,12 @@ function ActionPhotoUpload() {
         </>
       );
     } else {
+      let imgSrc;
+      if (userStore.nftInput.localPhoto !== undefined) {
+        imgSrc = URL.createObjectURL(userStore.nftInput.localPhoto);
+      } else if (userStore.nft?.photo) {
+        imgSrc = userStore.nft?.photo;
+      }
       uploadComponent = (
         <>
           <div
@@ -242,8 +205,7 @@ function ActionPhotoUpload() {
               zIndex: 12,
             }}
             onClick={(e: SyntheticEvent) => {
-              nftInput.setRotation(0);
-              deletePhoto();
+              userStore.deletePhoto();
               e.stopPropagation();
             }}
           >
@@ -262,12 +224,8 @@ function ActionPhotoUpload() {
               objectFit="cover"
               height="auto"
               maxH="100px"
-              transform={`rotate(${nftInput.rotation}deg)`}
-              src={
-                typeof photoFile === "string"
-                  ? photoFile
-                  : URL.createObjectURL(photoFile)
-              }
+              transform={`rotate(${userStore.nftInput.preview_rotation}deg)`}
+              src={imgSrc}
               alt="High school football player"
               boxShadow="2xl"
             />
@@ -296,11 +254,12 @@ function ActionPhotoUpload() {
         {uploadComponent}
       </div>
       <Box mt="4" w="100%" display={["block", "block", "none"]}>
-        {nft?.id ? (
-          <Card nft_id={nft?.id} nft_width={400} reverse={false} />
-        ) : (
-          <Text>Loading...</Text>
-        )}
+        {/* Mobile display */}
+        <Card
+          nft_id={userStore.loadedNft?.id}
+          nft_width={400}
+          reverse={false}
+        />
       </Box>
     </Box>
   );

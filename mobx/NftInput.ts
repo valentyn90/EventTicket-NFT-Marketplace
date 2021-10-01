@@ -1,55 +1,69 @@
+import Nft from "@/types/Nft";
 import { makeAutoObservable } from "mobx";
 
-interface LoadValues {
-  first_name?: string;
-  last_name?: string;
-  graduation_year?: number;
-  high_school?: string;
-  usa_state?: string;
-  sport?: string;
-  sport_position?: string;
-  choice_quote?: string;
-}
-
-class NftInput {
-  firstName: string = "";
-  lastName: string = "";
-  gradYear: number | undefined;
-  highSchool: string = "";
-  usaState: string = "";
+export class NftInput {
+  first_name: string = "";
+  last_name: string = "";
+  graduation_year: number | undefined;
+  high_school: string = "";
+  usa_state: string = "";
   sport: string = "";
-  sportPosition: string = "";
-  choiceQuote: string = "";
-  rotation: number = 0;
+  sport_position: string = "";
+  quotes: string = "";
+  preview_rotation: number = 0;
   photoUploading: boolean = false;
   videoUploading: boolean = false;
   localVideo: File | undefined = undefined;
   localSignature: any = null;
-  hidePhotoInCard: boolean = false;
-  showLocalPhoto: boolean = false;
-  refreshPhotoCard: boolean = false;
   localPhoto: File | undefined = undefined;
 
-  constructor() {
+  constructor(input: Nft | null) {
     makeAutoObservable(this);
+    this.first_name = input?.first_name || "";
+    this.last_name = input?.last_name || "";
+    this.sport = input?.sport || "";
+    this.sport_position = input?.sport_position || "";
+    this.usa_state = input?.usa_state || "";
+    this.quotes = input?.quotes || "";
+    this.high_school = input?.high_school || "";
+    this.graduation_year = input?.graduation_year;
   }
 
-  setRefreshPhotoCard = () => {
-    this.refreshPhotoCard = !this.refreshPhotoCard;
+  setValues = (input: Nft) => {
+    this.first_name = input?.first_name || "";
+    this.last_name = input?.last_name || "";
+    this.sport = input?.sport || "";
+    this.sport_position = input?.sport_position || "";
+    this.usa_state = input?.usa_state || "";
+    this.quotes = input?.quotes || "";
+    this.high_school = input?.high_school || "";
+    this.graduation_year = input?.graduation_year;
   };
 
-  setHidePhotoInCard = (hide: boolean) => {
-    this.hidePhotoInCard = hide;
+  resetValues = () => {
+    this.first_name = "";
+    this.last_name = "";
+    this.graduation_year = undefined;
+    this.high_school = "";
+    this.usa_state = "";
+    this.sport = "";
+    this.sport_position = "";
+    this.quotes = "";
+    this.preview_rotation = 0;
+    this.photoUploading = false;
+    this.videoUploading = false;
+    this.localVideo = undefined;
+    this.localSignature = null;
+    this.localPhoto = undefined;
   };
 
   setLocalPhoto = (photo: File) => {
     this.localPhoto = photo;
-    this.showLocalPhoto = true;
   };
 
   resetLocalPhoto = () => {
+    this.preview_rotation = 0;
     this.localPhoto = undefined;
-    this.showLocalPhoto = false;
   };
 
   setLocalSignature = (sig: any) => {
@@ -73,35 +87,11 @@ class NftInput {
   };
 
   setRotation = (rotate: number) => {
-    this.rotation = rotate;
+    this.preview_rotation = rotate;
   };
 
   setInputValue = (field: string, value: any) => {
     // @ts-ignore
     this[field] = value;
   };
-
-  loadValues = (load: LoadValues) => {
-    this.firstName = load.first_name || this.firstName || "";
-    this.lastName = load.last_name || this.lastName || "";
-    this.gradYear = load.graduation_year || this.gradYear || undefined;
-    this.highSchool = load.high_school || this.highSchool || "";
-    this.usaState = load.usa_state || this.usaState || "";
-    this.sport = load.sport || this.sport || "";
-    this.sportPosition = load.sport_position || this.sportPosition || "";
-    this.choiceQuote = load.choice_quote || this.choiceQuote || "";
-  };
-
-  resetValues = () => {
-    this.firstName = "";
-    this.lastName = "";
-    this.gradYear = undefined;
-    this.highSchool = "";
-    this.usaState = "";
-    this.sport = "";
-    this.sportPosition = "";
-    this.choiceQuote = "";
-  };
 }
-
-export const nftInput = new NftInput();

@@ -1,19 +1,9 @@
-import { nftInput } from "@/mobx/NftInput";
-import { useUser } from "@/utils/useUser";
-import {
-  Box,
-  Image as ChakraImage,
-  Text,
-  Progress,
-  Button,
-  Spinner,
-} from "@chakra-ui/react";
+import userStore from "@/mobx/UserStore";
+import { Box, Spinner, Text } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
-import { useRouter } from "next/router";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import Card from "../NftCard/Card";
-import axios from "axios";
 
 const baseStyle = {
   flex: 1,
@@ -46,34 +36,15 @@ const rejectStyle = {
 };
 
 function VideoProofUpload() {
-  const router = useRouter();
-  const {
-    nft,
-    setVideoFileObject,
-    videoFile,
-    deleteVideo,
-    setVideoFileNameFn,
-    checkVideoExists,
-    nftVideo,
-    nftVideoName,
-    videoFileName,
-    checkVideoFile,
-    uploadVideoToSupabase,
-  } = useUser();
-
   async function onDrop(files: any) {
     const file = files[0];
 
-    nftInput.setVideoUploading(true);
-    const res = await uploadVideoToSupabase(file);
-    nftInput.setVideoUploading(false);
-    if (res === null) {
-      // success.
-      // router.push("/create/step-5");
-    } else {
-      if (res.message) {
-        alert(res.message);
-      }
+    userStore.nftInput.setVideoUploading(true);
+    const res = await userStore.nft?.uploadVideoToSupabase(file);
+    userStore.nftInput.setVideoUploading(false);
+
+    if (res) {
+      // success
     }
   }
 
@@ -101,41 +72,14 @@ function VideoProofUpload() {
 
   let component;
 
-  if (nftInput.videoUploading) {
+  if (userStore.nftInput.videoUploading) {
     component = (
       <>
         <Spinner size="xl" />
       </>
     );
-  } else if (nftInput.localVideo) {
-    var uri = URL.createObjectURL(nftInput.localVideo);
-    component = (
-      <>
-        <div
-          style={{
-            position: "absolute",
-            top: "0",
-            left: "1%",
-            fontSize: "25px",
-            transform: "rotate(45deg)",
-            cursor: "pointer",
-            zIndex: 12,
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            deleteVideo();
-          }}
-        >
-          +
-        </div>
-        <Box style={{ opacity: ".5" }}>
-          <video src={uri} preload="none" muted></video>
-          <Text>{nftInput.localVideo.name}</Text>
-        </Box>
-      </>
-    );
   } else {
-    if (!nftVideo && !videoFile) {
+    if (userStore.nft?.video === "") {
       component = (
         <>
           <svg
@@ -159,17 +103,6 @@ function VideoProofUpload() {
         </>
       );
     } else {
-      let videoSrc;
-      if (videoFile) {
-        if (typeof videoFile === "object") {
-          videoSrc = URL.createObjectURL(videoFile);
-        } else {
-          videoSrc = videoFile;
-        }
-      } else {
-        videoSrc = null;
-      }
-
       component = (
         <>
           <div
@@ -184,18 +117,14 @@ function VideoProofUpload() {
             }}
             onClick={(e) => {
               e.stopPropagation();
-              deleteVideo();
+              userStore.nft?.deleteThisVideo();
             }}
           >
             +
           </div>
           <Box style={{ opacity: ".5" }}>
-            <video src={videoSrc} preload="none" muted></video>
-            {nftVideoName ? (
-              <Text>{nftVideoName}</Text>
-            ) : (
-              <Text>{videoFileName}</Text>
-            )}
+            <video src={userStore.nft?.video} preload="none" muted></video>
+            <Text>{userStore.nft?.video_name}</Text>
           </Box>
         </>
       );
@@ -204,22 +133,17 @@ function VideoProofUpload() {
 
   return (
     <Box w="100%">
-      {/* {nftInput.videoUploading && <Progress isIndeterminate />} */}
       <div {...getRootProps({ style: style as any })}>
         <input {...getInputProps()} />
         {component}
       </div>
       <Box mt="4" w="100%" display={["block", "block", "none"]}>
-        {nft?.id ? (
-          <Card nft_id={nft?.id} nft_width={400} reverse={true} />
-        ) : (
-          <ChakraImage
-            height="500px"
-            src="/img/bobby.png"
-            alt="High school football player"
-            boxShadow="2xl"
-          />
-        )}
+        <Card
+          nft_id={userStore.loadedNft?.id}
+          nft_width={400}
+          reverse={true}
+          nft={userStore.loadedNft}
+        />
       </Box>
     </Box>
   );

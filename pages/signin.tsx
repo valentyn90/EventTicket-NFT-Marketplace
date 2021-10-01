@@ -1,16 +1,15 @@
 import { Card } from "@/components/ui/Card";
 import { DividerWithText } from "@/components/ui/DividerWithText";
-import { supabase } from "@/utils/supabase-client";
-import { useUser } from "@/utils/useUser";
+import { signIn, supabase } from "@/utils/supabase-client";
 import {
   Box,
   Button,
   Heading,
   Input,
+  Spinner,
   Text,
   useColorModeValue,
   VStack,
-  Spinner,
 } from "@chakra-ui/react";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
@@ -24,7 +23,6 @@ const SignIn: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
   const [emailLinkSent, setEmailLinkSent] = useState(false);
   const [email, setEmail] = useState("");
-  const { signIn } = useUser();
 
   const router = useRouter();
 
