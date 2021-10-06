@@ -1,9 +1,11 @@
 import userStore from "@/mobx/UserStore";
+import * as UpChunk from "@mux/upchunk";
 import { Box, Spinner, Text } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Card from "../NftCard/Card";
+import VideoPlayer from "../Components/VideoPlayer";
 
 const baseStyle = {
   flex: 1,
@@ -36,16 +38,65 @@ const rejectStyle = {
 };
 
 function VideoProofUpload() {
+  const [isPreparing, setIsPreparing] = useState(false);
+  const [progress, setProgress] = useState<any>(null);
+
+  const createUpload = async (): Promise<{ muxId: any; muxUrl: any }> => {
+    try {
+      return fetch("/api/mux/upload", {
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then(({ id, url }) => {
+          return { muxId: id, muxUrl: url };
+        });
+    } catch (e) {
+      console.error("Error in createUpload", e);
+      return { muxId: null, muxUrl: "" };
+    }
+  };
+
+  const startUpload = (file: File, endpoint: string) => {
+    const upload = UpChunk.createUpload({
+      endpoint,
+      file,
+    });
+
+    upload.on("error", (err) => {
+      // setErrorMessage(err.detail)
+      console.log(err);
+    });
+
+    upload.on("progress", (progress) => {
+      setProgress(Math.floor(progress.detail));
+    });
+
+    upload.on("success", () => {
+      // start the fetch in nftstore methods
+      setIsPreparing(true);
+      userStore.nft?.getMuxUpload();
+    });
+  };
+
   async function onDrop(files: any) {
+    /**
+     * How the mux upload works:
+     *
+     * 1. Create an upload object that returns an id and upload url
+     * 2. Upload file to that url
+     * 3. Get upload object by id, check if upload is done (on interval)
+     * 4. If an asset id is ready, get that asset (on interval)
+     * 5. When uploading asset is ready, update mobx stores and supabase database with mux ids
+     * 6. Display using the playback id + VideoPlayer
+     */
     const file = files[0];
 
     userStore.nftInput.setVideoUploading(true);
-    const res = await userStore.nft?.uploadVideoToSupabase(file);
-    userStore.nftInput.setVideoUploading(false);
-
-    if (res) {
-      // success
-    }
+    const { muxId, muxUrl } = await createUpload();
+    userStore.nft?.setInputValue("mux_upload_id", muxId);
+    startUpload(file, muxUrl);
+    // startUpload begins a series of async methods
+    // Begins upload process to mux, then ends with updating supabase db with mux ids
   }
 
   const {
@@ -79,7 +130,7 @@ function VideoProofUpload() {
       </>
     );
   } else {
-    if (userStore.nft?.video === "") {
+    if (!userStore.nft?.mux_playback_id) {
       component = (
         <>
           <svg
@@ -123,16 +174,31 @@ function VideoProofUpload() {
             +
           </div>
           <Box style={{ opacity: ".5" }}>
-            <video src={userStore.nft?.video} preload="none" muted></video>
-            <Text>{userStore.nft?.video_name}</Text>
+            <VideoPlayer
+              src={userStore.nft?.mux_playback_id}
+              previewOnly={true}
+            />
+            {/* <Text>{userStore.nft?.video_name}</Text> */}
           </Box>
         </>
       );
     }
   }
 
+  let uploadComponent;
+  if (userStore.nftInput.videoUploading) {
+    uploadComponent = isPreparing ? (
+      <div>Preparing..</div>
+    ) : (
+      <div>Uploading...{progress ? `${progress}%` : ""}</div>
+    );
+  } else {
+    uploadComponent = null;
+  }
+
   return (
     <Box w="100%">
+      <>{uploadComponent}</>
       <div {...getRootProps({ style: style as any })}>
         <input {...getInputProps()} />
         {component}

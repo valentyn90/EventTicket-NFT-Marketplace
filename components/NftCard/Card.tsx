@@ -6,6 +6,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { CSSProperties, useEffect, useState } from "react";
 import { RiFullscreenLine } from "react-icons/ri";
+import VideoPlayer from "../Components/VideoPlayer";
 import { goFullscreen, handleTouchEvent } from "./CardMethods";
 import { CardWrapper } from "./CardStyles";
 
@@ -14,6 +15,7 @@ interface Props {
   nft_width?: number | undefined;
   reverse?: boolean | undefined;
   nft?: NftStore | null;
+  readOnly?: boolean;
 }
 
 const Card: React.FunctionComponent<Props> = ({
@@ -21,10 +23,11 @@ const Card: React.FunctionComponent<Props> = ({
   nft_width = 400,
   reverse = false,
   nft,
+  readOnly = false,
 }) => {
   const [nftCardData, setNftCardData] = useState({
     photo: "",
-    video: "https://linsky-planck.s3.amazonaws.com/hudson2.mp4",
+    mux_playback_id: "",
     high_school: "",
     signature: "",
     first_name: "",
@@ -40,21 +43,12 @@ const Card: React.FunctionComponent<Props> = ({
     if (!error && data) {
       // check/get all the files
       let photo = "";
-      let video = "";
       let signature = "";
       if (data.photo_file) {
         const { error, file } = await getFileFromSupabase(data.photo_file);
         if (!error) {
           var uri = URL.createObjectURL(file);
           photo = uri;
-        }
-      }
-
-      if (data.clip_file) {
-        const { error, file } = await getFileFromSupabase(data.clip_file);
-        if (!error) {
-          var uri = URL.createObjectURL(file);
-          video = uri;
         }
       }
       if (data.signature_file) {
@@ -69,14 +63,19 @@ const Card: React.FunctionComponent<Props> = ({
         ...data,
         signature,
         photo,
-        video,
       });
     }
   }
 
   useEffect(() => {
     getCardData();
-  }, [nft_id, nft?.photo_file, nft?.clip_file, nft?.signature_file]);
+  }, [
+    nft_id,
+    nft?.photo_file,
+    nft?.clip_file,
+    nft?.signature_file,
+    userStore.nft?.mux_playback_id,
+  ]);
 
   const router = useRouter();
 
@@ -125,35 +124,7 @@ const Card: React.FunctionComponent<Props> = ({
     return () => window.removeEventListener("resize", updateMedia);
   });
 
-  let signature;
-  if (userStore.nftInput.localSignature !== null) {
-    signature = userStore.nftInput.localSignature?.current?.toDataURL();
-  } else {
-    signature = nftCardData.signature;
-  }
-
-  let photo;
-  if (userStore.nftInput.localPhoto === undefined) {
-    if (userStore.nft?.photo) {
-      photo = userStore.nft?.photo;
-    }
-  } else {
-    photo = URL.createObjectURL(userStore.nftInput.localPhoto);
-  }
-
-  let graduation_year =
-    nftCardData.graduation_year.toString().length > 2
-      ? nftCardData.graduation_year
-      : `'${nftCardData.graduation_year.toString().padStart(2, "0")}`;
-
-  /**
-   * For the field values
-   * Check if nftInput is different from
-   * nftCardData
-   * if it is, then it's a newer value from memory and current form input
-   *
-   */
-  const localInputOrNot = (local: any, notLocal: any) => {
+  const localInputOrNot = (local: string, notLocal: string) => {
     // Check if empty string or not.
     if (local !== "") {
       // check if local is different
@@ -167,41 +138,98 @@ const Card: React.FunctionComponent<Props> = ({
     }
   };
 
-  let first_name = localInputOrNot(
-    userStore.nftInput.first_name,
-    nftCardData.first_name
-  );
+  let signature;
+  let photo;
+  let graduation_year;
+  let first_name;
+  let last_name;
+  let fullName;
+  let high_school;
+  let usa_state;
+  let location;
+  let sport_position;
+  let sport;
+  let preview_rotation;
+  if (readOnly) {
+    preview_rotation = 0;
+    signature = nftCardData.signature;
+    photo = nftCardData.photo;
+    graduation_year =
+      nftCardData.graduation_year.toString().length > 2
+        ? nftCardData.graduation_year
+        : `'${nftCardData.graduation_year.toString().padStart(2, "0")}`;
+    first_name = nftCardData.first_name;
+    last_name = nftCardData.last_name;
+    fullName = `${first_name} ${last_name}`;
 
-  let last_name = localInputOrNot(
-    userStore.nftInput.last_name,
-    nftCardData.last_name
-  );
+    high_school = nftCardData.high_school;
+    usa_state = nftCardData.state;
+    location = `${high_school}, ${usa_state}`;
+    sport_position = nftCardData.sport_position;
+    sport = nftCardData.sport;
+  } else {
+    preview_rotation = userStore.nftInput.preview_rotation;
+    if (userStore.nftInput.localSignature !== null) {
+      signature = userStore.nftInput.localSignature?.current?.toDataURL();
+    } else {
+      signature = nftCardData.signature;
+    }
+    if (userStore.nftInput.localPhoto === undefined) {
+      if (userStore.nft?.photo) {
+        photo = userStore.nft?.photo;
+      }
+    } else {
+      photo = URL.createObjectURL(userStore.nftInput.localPhoto);
+    }
 
-  const fullName = `${first_name} ${last_name}`;
+    if (userStore.nftInput.graduation_year) {
+      graduation_year =
+        localInputOrNot(
+          userStore.nftInput.graduation_year.toString(),
+          nftCardData.graduation_year
+        ).toString().length > 2
+          ? nftCardData.graduation_year
+          : `'${nftCardData.graduation_year.toString().padStart(2, "0")}`;
+    } else {
+      graduation_year =
+        nftCardData.graduation_year.toString().length > 2
+          ? nftCardData.graduation_year
+          : `'${nftCardData.graduation_year.toString().padStart(2, "0")}`;
+    }
 
-  let high_school = localInputOrNot(
-    userStore.nftInput.high_school,
-    nftCardData.high_school
-  );
+    first_name = localInputOrNot(
+      userStore.nftInput.first_name,
+      nftCardData.first_name
+    );
+    last_name = localInputOrNot(
+      userStore.nftInput.last_name,
+      nftCardData.last_name
+    );
+    fullName = `${first_name} ${last_name}`;
+    high_school = localInputOrNot(
+      userStore.nftInput.high_school,
+      nftCardData.high_school
+    );
 
-  let usa_state = localInputOrNot(
-    userStore.nftInput.usa_state,
-    nftCardData.state
-  );
+    usa_state = localInputOrNot(
+      userStore.nftInput.usa_state,
+      nftCardData.state
+    );
 
-  let location = `${high_school}, ${usa_state}`;
+    location = `${high_school}, ${usa_state}`;
 
-  let sport_position = localInputOrNot(
-    userStore.nftInput.sport_position,
-    nftCardData.sport_position
-  );
+    sport_position = localInputOrNot(
+      userStore.nftInput.sport_position,
+      nftCardData.sport_position
+    );
 
-  let sport = localInputOrNot(userStore.nftInput.sport, nftCardData.sport);
+    sport = localInputOrNot(userStore.nftInput.sport, nftCardData.sport);
+  }
 
   return (
     <CardWrapper
       signatureFile={signature}
-      rotation={userStore.nftInput.preview_rotation}
+      rotation={preview_rotation}
       nftWidth={nft_width}
     >
       <Head>
@@ -279,15 +307,9 @@ const Card: React.FunctionComponent<Props> = ({
             <div className="background">
               <div className="background-gradient">
                 <div className="background-gradient reverse-background-mask">
-                  <video
-                    className="background-video"
-                    id="player-video"
-                    src={nftCardData.video}
-                    playsInline
-                    autoPlay
-                    loop
-                    muted
-                  ></video>
+                  {nftCardData.mux_playback_id && (
+                    <VideoPlayer src={nftCardData.mux_playback_id} />
+                  )}
                   <div className="reverse-logo-background"></div>
                   <img
                     className="reverse-verified-logo"

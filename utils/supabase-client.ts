@@ -192,3 +192,20 @@ export const setNftApprovalTrue = (nft_id: number) =>
     .from("nft")
     .update([{ approved: true }])
     .match({ id: nft_id });
+
+export const setMuxValues = (
+  nft_id: number,
+  asset_id: string | null,
+  playback_id: string | null,
+  upload_id: string | null
+) =>
+  supabase
+    .from("nft")
+    .update([
+      {
+        mux_asset_id: asset_id,
+        mux_playback_id: playback_id,
+        mux_upload_id: upload_id,
+      },
+    ])
+    .match({ id: nft_id });

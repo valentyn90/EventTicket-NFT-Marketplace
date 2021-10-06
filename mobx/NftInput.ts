@@ -13,6 +13,8 @@ export class NftInput {
   preview_rotation: number = 0;
   photoUploading: boolean = false;
   videoUploading: boolean = false;
+  muxUploadId: string = "";
+  muxPlaybackId: string = "";
   localVideo: File | undefined = undefined;
   localSignature: any = null;
   localPhoto: File | undefined = undefined;

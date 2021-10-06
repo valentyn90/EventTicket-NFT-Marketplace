@@ -1,17 +1,7 @@
-import { supabase } from "@/utils/supabase-client";
-import {
-  Box,
-  Button,
-  Flex,
-  Image,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { NextApiRequest } from "next";
-import NextLink from "next/link";
-import React from "react";
+import Card from "@/components/NftCard/Card";
+import { Box, useColorModeValue } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import CardView from "@/components/NftCard/CardView";
+import React from "react";
 
 const CardId: React.FC = () => {
   const router = useRouter();
@@ -26,7 +16,7 @@ const CardId: React.FC = () => {
       {!int_id ? (
         <div></div>
       ) : (
-        <CardView nft_id={int_id} nft_width={600} reverse={false} />
+        <Card nft_id={int_id} nft_width={600} reverse={false} readOnly={true} />
       )}
     </Box>
   );

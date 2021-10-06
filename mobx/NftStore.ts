@@ -3,6 +3,7 @@ import {
   attachFileToNft,
   deleteNftById,
   insertFileToSupabase,
+  setMuxValues,
   setNftApprovalTrue,
   stepThreeSubmit,
   updateNft,
@@ -44,6 +45,10 @@ export class NftStore {
   finished = false;
   minted = false;
 
+  mux_upload_id: string | null = null;
+  mux_asset_id: string | null = null;
+  mux_playback_id: string | null = null;
+
   constructor(
     input: Nft,
     store: UserStore,
@@ -59,6 +64,9 @@ export class NftStore {
     this.video_name = nftVideoName;
     this.signature = nftSignature;
     this.id = input.id;
+    this.mux_asset_id = input.mux_asset_id;
+    this.mux_upload_id = input.mux_upload_id;
+    this.mux_playback_id = input.mux_playback_id;
     this.user_id = input.user_id;
     this.first_name = input.first_name;
     this.last_name = input.last_name;
@@ -105,6 +113,65 @@ export class NftStore {
       return false;
     } else {
       return true;
+    }
+  };
+
+  setInputValue = (field: string, value: any) => {
+    // @ts-ignore
+    this[field] = value;
+  };
+
+  getMuxUpload = async () => {
+    const checkUploadStatus = async () => {
+      // Get upload data by id
+      const res = await fetch(`/api/mux/upload/${this.mux_upload_id}`);
+
+      const data = await res.json();
+      if (data.upload) {
+        // if upload object is ready, set muxUploadId
+        this.setInputValue("mux_asset_id", data.upload.asset_id);
+        // once upload is available then start fetching the asset
+        this.getMuxAsset();
+        // this.store
+        clearInterval(checkUploadInterval);
+      }
+    };
+    // run method immediately
+    checkUploadStatus();
+    // run on interval after
+    const checkUploadInterval = setInterval(checkUploadStatus, 5000);
+  };
+
+  getMuxAsset = async () => {
+    const checkAssetStatus = async () => {
+      if (this.mux_asset_id) {
+        const res = await fetch(`/api/mux/asset/${this.mux_asset_id}`);
+        const data = await res.json();
+
+        if (data.asset?.status === "ready") {
+          this.store.nftInput.setVideoUploading(false);
+          this.setInputValue("mux_playback_id", data.asset.playback_id);
+          this.updateMuxIdsInSupabase();
+          clearInterval(checkAssetInterval);
+        }
+      }
+    };
+    // run method immediately
+    checkAssetStatus();
+    // run on interval after
+    const checkAssetInterval = setInterval(checkAssetStatus, 5000);
+  };
+
+  updateMuxIdsInSupabase = async () => {
+    try {
+      const { data, error } = await setMuxValues(
+        this.id,
+        this.mux_asset_id,
+        this.mux_playback_id,
+        this.mux_upload_id
+      );
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -185,7 +252,7 @@ export class NftStore {
   };
 
   deleteThisVideo = () => {
-    this.video = "";
+    this.mux_playback_id = null;
   };
 
   deleteThisSignature = () => {
