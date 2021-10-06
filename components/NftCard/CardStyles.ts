@@ -181,10 +181,11 @@ export const CardWrapper = styled.div<StyleProps>`
     position: absolute;
     top: 0px;
     display: block;
-    height: 898px;
-    // width: auto;
-    vertical-align: center;
+    min-height: 898px;
+    max-height: 950px;
+    min-width: 544px;
     max-width: 3000px;
+    vertical-align: center;
     left: 50%;
     transform: translate(-50%);
   }

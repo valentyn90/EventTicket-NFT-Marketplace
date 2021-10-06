@@ -10,15 +10,13 @@ export default function VideoPlayer({ src, previewOnly = false }: Props) {
   const videoRef = useRef(null);
 
   const videoSrc = `https://stream.mux.com/${src}.m3u8`;
+  const imagePreview = `https://image.mux.com/${src}/thumbnail.png?width=400&height=200&fit_mode=preserve&time=1`;
 
   useEffect(() => {
     const video: any = videoRef.current;
     if (!video) return;
-    if (previewOnly) {
-      video.controls = false;
-    } else {
-      video.controls = true;
-    }
+
+    video.controls = false;
     let hls: any;
 
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
@@ -46,7 +44,7 @@ export default function VideoPlayer({ src, previewOnly = false }: Props) {
   let videoComponent = null;
 
   if (previewOnly) {
-    videoComponent = <video ref={videoRef} preload="none" muted />;
+    videoComponent = <img src={imagePreview} />;
   } else {
     videoComponent = (
       <video
