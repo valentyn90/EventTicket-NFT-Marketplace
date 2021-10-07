@@ -93,7 +93,7 @@ const NavIndex: React.FC = () => {
               color="white"
               order={{ base: 2, md: 1 }}
               mr={[0, 0, 2]}
-              mt={[2, 2, 0]}
+              mt={[6, 6, 0]}
             >
               Recruit
             </Button>

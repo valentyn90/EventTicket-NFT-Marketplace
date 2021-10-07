@@ -53,8 +53,9 @@ const StepSix = () => {
             <Flex
               mt={["1rem", "1rem", "5rem"]}
               direction={["column", "column", "row"]}
+              justifyContent="center"
             >
-              <Box flex="1">
+              <Box flex={["none", "none", "1"]} h="750px" w={["none", "none", "380px"]}>
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Front
                 </Text>
@@ -65,7 +66,7 @@ const StepSix = () => {
                   reverse={false}
                 />
               </Box>
-              <Box flex="1">
+              <Box flex={["none", "none", "1"]} h="750px" w={["none", "none", "380px"]}>
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Back
                 </Text>

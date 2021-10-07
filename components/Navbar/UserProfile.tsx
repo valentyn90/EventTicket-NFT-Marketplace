@@ -1,7 +1,6 @@
 import { Avatar, Flex, HStack, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import * as React from "react";
-import { BsChevronDown } from "react-icons/bs";
 
 interface Props {
   name: string;
@@ -29,9 +28,6 @@ export const UserProfile: React.FC<Props> = (props) => {
           </HStack>
         </a>
       </NextLink>
-      <Flex order={{ base: 2 }} ml=".5rem">
-        <BsChevronDown />
-      </Flex>
     </Flex>
   );
 };

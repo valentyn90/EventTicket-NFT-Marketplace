@@ -253,7 +253,7 @@ function ActionPhotoUpload() {
         <input {...getInputProps()} />
         {uploadComponent}
       </div>
-      <Box mt="4" w="100%" display={["block", "block", "none"]}>
+      <Box mt="4" w="100%" h="650px" display={["block", "block", "none"]}>
         {/* Mobile display */}
         <Card
           nft_id={userStore.loadedNft?.id}

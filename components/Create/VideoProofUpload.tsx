@@ -203,7 +203,7 @@ function VideoProofUpload() {
         <input {...getInputProps()} />
         {component}
       </div>
-      <Box mt="4" w="100%" display={["block", "block", "none"]}>
+      <Box mt="4" w="100%" display={["block", "block", "none"]} h="650px">
         <Card
           nft_id={userStore.loadedNft?.id}
           nft_width={400}

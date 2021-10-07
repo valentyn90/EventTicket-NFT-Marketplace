@@ -122,7 +122,7 @@ const StepOne = () => {
                   <FormLabel>Graduation Year</FormLabel>
                   <Input
                     type="text"
-                    placeholder="`22"
+                    placeholder="22"
                     value={userStore.nftInput?.graduation_year || ""}
                     onChange={(e) =>
                       userStore.nftInput?.setInputValue(

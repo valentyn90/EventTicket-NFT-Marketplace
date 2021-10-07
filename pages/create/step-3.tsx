@@ -112,23 +112,12 @@ const StepThree = () => {
                     }
                   />
                 </FormControl>
-                <FormControl id="choiceQuote" mb={["2rem", "2rem", 0]}>
-                  <FormLabel>Choice Quote</FormLabel>
-                  <Input
-                    type="text"
-                    id="highSchool"
-                    placeholder="Knibb High Football Rules!!!"
-                    value={userStore.nftInput.quotes}
-                    onChange={(e) =>
-                      userStore.nftInput.setInputValue("quotes", e.target.value)
-                    }
-                  />
-                </FormControl>
                 {userStore.nft?.photo && (
                   <Box
                     mt={["2rem !important", "2rem !important", 0]}
                     mb={["2rem !important", "2rem !important", 0]}
                     display={["block", "block", "none"]}
+                    h="650px"
                   >
                     <Card
                       nft_id={userStore.nft?.id}
