@@ -203,7 +203,7 @@ export class UserStore {
   }
 
   get videoExists() {
-    return this.nft?.video !== "";
+    return this.nft?.mux_playback_id !== "";
   }
 
   get loadedNft() {
