@@ -113,6 +113,18 @@ export const CardWrapper = styled.div<StyleProps>`
     line-height: 65px;
     color: white;
   }
+  .athlete-school {
+    position: absolute;
+    top: 62%;
+    left: 50%;
+    transform: translate(-50%);
+    font-size: 22px;
+    font-weight: 200;
+    text-align: center;
+    color: white;
+    width: 400px;
+    opacity: 80%;
+  }
   .background-name {
     font-size: 100px;
     line-height: 95px;
@@ -155,17 +167,17 @@ export const CardWrapper = styled.div<StyleProps>`
     flex-direction: column;
     align-items: center;
     padding: 10px;
-    width: 60px;
+    width: 150px;
   }
   .basic-info {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: flex-start;
     width: 460px;
     text-align: center;
     position: absolute;
-    top: 63%;
+    top: 67%;
     left: 50%;
     transform: translate(-50%);
   }

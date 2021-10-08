@@ -34,7 +34,7 @@ const Card: React.FunctionComponent<Props> = ({
     last_name: "",
     sport: "",
     sport_position: "",
-    state: "",
+    usa_state: "",
     graduation_year: "",
   });
 
@@ -163,7 +163,7 @@ const Card: React.FunctionComponent<Props> = ({
     fullName = `${first_name} ${last_name}`;
 
     high_school = nftCardData.high_school;
-    usa_state = nftCardData.state;
+    usa_state = nftCardData.usa_state;
     location = `${high_school}, ${usa_state}`;
     sport_position = nftCardData.sport_position;
     sport = nftCardData.sport;
@@ -213,7 +213,7 @@ const Card: React.FunctionComponent<Props> = ({
 
     usa_state = localInputOrNot(
       userStore.nftInput.usa_state,
-      nftCardData.state
+      nftCardData.usa_state
     );
 
     location = `${high_school}, ${usa_state}`;
@@ -279,6 +279,7 @@ const Card: React.FunctionComponent<Props> = ({
               <div className="background-gradient overlay-gradient"></div>
 
               <div className="athlete-name">{fullName}</div>
+              <div className="athlete-school">{location}</div>
               <div className="basic-info">
                 <div className="info-group">
                   <div className="info-heading">Year</div>
@@ -287,10 +288,6 @@ const Card: React.FunctionComponent<Props> = ({
                 <div className="info-group">
                   <div className="info-heading">Position</div>
                   <div className="bold-info">{sport_position}</div>
-                </div>
-                <div className="info-group">
-                  <div className="info-heading">Hometown</div>
-                  <div className="bold-info">{location}</div>
                 </div>
                 <div className="info-group">
                   <div className="info-heading">Sport</div>
