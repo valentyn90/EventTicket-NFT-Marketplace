@@ -1,6 +1,12 @@
 import { transform } from "@chakra-ui/react";
-import React, { useEffect, useState, TouchEvent, CSSProperties, SyntheticEvent } from "react";
-import { RiFullscreenLine } from "react-icons/ri"
+import React, {
+  useEffect,
+  useState,
+  TouchEvent,
+  CSSProperties,
+  SyntheticEvent,
+} from "react";
+import { RiFullscreenLine } from "react-icons/ri";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -9,8 +15,8 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
 
-  @media only screen and (max-width:600px){
-    transform: scale(calc(400/600));
+  @media only screen and (max-width: 600px) {
+    transform: scale(calc(400 / 600));
     transform-origin: top center;
   }
 
@@ -185,7 +191,6 @@ const Wrapper = styled.div`
     mask-repeat: no-repeat;
     mask-position: top center;
     overflow: hidden;
-    
   }
 
   .background-video {
@@ -198,63 +203,65 @@ const Wrapper = styled.div`
     max-width: 3000px;
     left: 50%;
     transform: translate(-50%);
-    
   }
 
-  .reverse-logo-background{
+  .reverse-logo-background {
     position: absolute;
     height: 300px;
     width: 100%;
-    background: linear-gradient(180deg, #000D52 -25.39%, rgba(107, 117, 170, 0.452044) 80.43%, rgba(196, 196, 196, 0) 100%);
+    background: linear-gradient(
+      180deg,
+      #000d52 -25.39%,
+      rgba(107, 117, 170, 0.452044) 80.43%,
+      rgba(196, 196, 196, 0) 100%
+    );
   }
 
-  .reverse-verified-logo{
+  .reverse-verified-logo {
     position: absolute;
     top: 60px;
     left: 50%;
     transform: translate(-50%) scale(1.5);
-
   }
 
-  .reverse-name-background{
+  .reverse-name-background {
     position: absolute;
-    background-color: #000D52;
+    background-color: #000d52;
     bottom: 0px;
     width: 100%;
     height: 180px;
     opacity: 80%;
   }
 
-  .reverse-athlete-name{
+  .reverse-athlete-name {
     top: 82%;
     width: 200px;
     font-size: 36px;
     line-height: 38px;
   }
 
-  .card-container{
+  .card-container {
     position: relative;
     transform-style: preserve-3d;
     // perspective: 200px;
     transform-origin: center;
   }
 
-  .front{
+  .front {
     z-index: 2;
     backface-visibility: hidden;
     transform: rotateY(0deg);
   }
 
-  .reverse{
+  .reverse {
     backface-visibility: hidden;
     transform: rotateY(180deg);
   }
 
-  .viewer{
-
+  .viewer {
   }
 
-  .fullscreen{
+  .fullscreen {
     position: absolute;
     top: 90px;
     right: 10px;
@@ -263,12 +270,9 @@ const Wrapper = styled.div`
     color: white;
     opacity: 30%;
   }
-
 `;
 
-
-const Card = () => {
-
+const CardPlaceholder = () => {
   const [lastX, setLastX] = useState(-1);
   const [lastY, setLastY] = useState(0);
   const [cssTransform, setCssTransform] = useState<CSSProperties>({});
@@ -285,16 +289,13 @@ const Card = () => {
 
       if (min_val < max_val) {
         res = y * 180;
-      }
-      else {
+      } else {
         res = (y + 1) * 180;
       }
       setLastY(res);
-    }
-    else if (lastX === -1) {
+    } else if (lastX === -1) {
       setLastX(e.touches[0].clientX);
-    }
-    else {
+    } else {
       setLastY(lastY + e.touches[0].clientX - lastX);
       setLastX(e.touches[0].clientX);
     }
@@ -302,7 +303,7 @@ const Card = () => {
 
   const flipCard = () => {
     setLastY(lastY + 180);
-  }
+  };
 
   const goFullscreen = (e: SyntheticEvent) => {
     e.stopPropagation();
@@ -321,46 +322,46 @@ const Card = () => {
       //@ts-ignore
       el.webkitEnterFullscreen();
     }
-
-
-  }
+  };
 
   useEffect(() => {
     if (lastY % 360 === 0) {
       setCssTransform({
         transitionDelay: `100ms`,
         transform: `perspective(1000px) rotateY(${lastY}deg)`,
-        transition: `transform 500ms ease-in-out`
-
+        transition: `transform 500ms ease-in-out`,
       });
-    } else
-      if (lastY % 180 === 0) {
-        setCssTransform({
-          transform: `perspective(1000px) rotateY(${lastY}deg)`,
-          transition: `transform 300ms ease-in-out`
-
-        });
-      }
-      else {
-        setCssTransform({
-          transform: `perspective(1000px) rotateY(${lastY}deg)`,
-        }
-        );
-      }
-
+    } else if (lastY % 180 === 0) {
+      setCssTransform({
+        transform: `perspective(1000px) rotateY(${lastY}deg)`,
+        transition: `transform 300ms ease-in-out`,
+      });
+    } else {
+      setCssTransform({
+        transform: `perspective(1000px) rotateY(${lastY}deg)`,
+      });
+    }
   }, [lastY]);
 
-
   return (
-    <Wrapper >
+    <Wrapper>
       <div className="viewer">
-        <div className="card card-container" onTouchMove={handleTouchEvent} onTouchEnd={handleTouchEvent}
-          onClick={flipCard} style={cssTransform}>
+        <div
+          className="card card-container"
+          onTouchMove={handleTouchEvent}
+          onTouchEnd={handleTouchEvent}
+          onClick={flipCard}
+          style={cssTransform}
+        >
           <div className="card front">
             <div className="background">
               <div className="background-gradient">
                 <div className="background-stripes"></div>
-                <div className="background-name">BOBBY<br />SMITH</div>
+                <div className="background-name">
+                  BOBBY
+                  <br />
+                  SMITH
+                </div>
               </div>
               <div className="crop-background-img">
                 <img className="background-img" src="/img/qb-removebg.png" />
@@ -386,7 +387,6 @@ const Card = () => {
                   <div className="info-heading">Sport</div>
                   <div className="bold-info">Football</div>
                 </div>
-
               </div>
               <div className="signature"></div>
               <div className="serial-number">
@@ -398,22 +398,39 @@ const Card = () => {
             <div className="background">
               <div className="background-gradient">
                 <div className="background-gradient reverse-background-mask">
-                  <video className="background-video" id="player-video" src="https://linsky-planck.s3.amazonaws.com/hudson2.mp4"
-                    playsInline autoPlay loop muted></video>
+                  <video
+                    className="background-video"
+                    id="player-video"
+                    src="https://linsky-planck.s3.amazonaws.com/hudson2.mp4"
+                    playsInline
+                    autoPlay
+                    loop
+                    muted
+                  ></video>
                   <div className="reverse-logo-background"></div>
-                  <img className="reverse-verified-logo" src="/img/card-logo.svg" onClick={goFullscreen} />
+                  <img
+                    className="reverse-verified-logo"
+                    src="/img/card-logo.svg"
+                    onClick={goFullscreen}
+                  />
                   <div className="reverse-name-background"></div>
-                  <div className="athlete-name reverse-athlete-name">Bobby<br />Smith</div>
-                  <RiFullscreenLine className="fullscreen" onClick={goFullscreen} />
+                  <div className="athlete-name reverse-athlete-name">
+                    Bobby
+                    <br />
+                    Smith
+                  </div>
+                  <RiFullscreenLine
+                    className="fullscreen"
+                    onClick={goFullscreen}
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
-
       </div>
-    </Wrapper >
+    </Wrapper>
   );
 };
 
-export default Card;
+export default CardPlaceholder;

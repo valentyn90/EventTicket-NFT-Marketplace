@@ -1,13 +1,16 @@
 import Nft from "@/types/Nft";
+import UserDetails from "@/types/UserDetails";
 import {
   createNewNft,
   getFileFromSupabase,
+  getUserDetails,
   getUserNft,
   supabase,
 } from "@/utils/supabase-client";
 import { makeAutoObservable } from "mobx";
 import { NftInput } from "./NftInput";
 import { NftStore } from "./NftStore";
+import { UserDetailsStore } from "./UserDetailsStore";
 
 export class UserStore {
   loaded = false;
@@ -15,12 +18,15 @@ export class UserStore {
   email = "";
   name = "";
   avatar_url = "";
+
   nft: NftStore | null = null;
   nftInput: NftInput;
+  userDetails: UserDetailsStore;
 
   constructor() {
     makeAutoObservable(this);
     this.nftInput = new NftInput(null);
+    this.userDetails = new UserDetailsStore(this);
 
     supabase.auth.onAuthStateChange(async (event, session) => {
       await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth`, {
@@ -52,13 +58,32 @@ export class UserStore {
       if (res.status === 200) {
         // there is a user
         const { user } = await res.json();
+
+        // Check if user just signed up and needs to update the
+        // user details and referring info
+        const sign_up = localStorage.getItem("sign_up");
+        if (sign_up === "true") {
+          const referral_code = localStorage.getItem("referral_code");
+          await this.userDetails.initSignUp(referral_code, user.id);
+          localStorage.removeItem("sign_up");
+          localStorage.removeItem("referral_code");
+        }
+
+        // Get user details data from db
+        const { data: userData, error: userError } = await getUserDetails(
+          user.id
+        );
+
+        if (!userData) {
+          // User signed in with no user_details db object
+          await this.userDetails.initSignUp(null, user.id);
+        }
+
         // set user and fetch their NFT data.
         const { data, error } = await getUserNft(user.id);
         if (!error && data) {
           // check for files
           let nftPhoto = "";
-          let nftVideo = "";
-          let nftVideoName = "";
           let nftSignature = "";
           if (data.photo_file) {
             const { file, error } = await getFileFromSupabase(data.photo_file);
@@ -66,15 +91,7 @@ export class UserStore {
               nftPhoto = URL.createObjectURL(file);
             }
           }
-          if (data.clip_file) {
-            const { file, fileName } = await getFileFromSupabase(
-              data.clip_file
-            );
-            if (file) {
-              nftVideoName = fileName;
-              nftVideo = URL.createObjectURL(file);
-            }
-          }
+
           if (data.signature_file) {
             const { file } = await getFileFromSupabase(data.signature_file);
             if (file) {
@@ -87,39 +104,39 @@ export class UserStore {
             data,
             user,
             nftPhoto,
-            nftVideo,
-            nftVideoName,
-            nftSignature
+            nftSignature,
+            userData
           );
         } else {
           // no new user, create empty nftInput and keep nft as null
-          this.setNewData(user);
+          this.setNewData(user, userData);
         }
       } else if (res.status === 400) {
+        this.finishLoading();
         // no user
       }
     } catch (err) {
+      this.finishLoading();
       console.log({ err });
     }
+  };
+
+  finishLoading = () => {
+    this.loaded = true;
   };
 
   setInitialUserAndNft(
     nftData: Nft,
     user: any,
     nftPhoto: string,
-    nftVideo: string,
-    nftVideoName: string,
-    nftSignature: string
+    nftSignature: string,
+    userDetails: UserDetails | null
   ) {
-    this.nft = new NftStore(
-      nftData,
-      this,
-      nftPhoto,
-      nftVideo,
-      nftVideoName,
-      nftSignature
-    );
+    this.nft = new NftStore(nftData, this, nftPhoto, nftSignature);
     this.nftInput.setValues(nftData);
+    if (userDetails) {
+      this.userDetails.setInitValues(userDetails);
+    }
     this.loaded = true;
     this.id = user.id;
     this.email = user.email;
@@ -127,7 +144,10 @@ export class UserStore {
     this.avatar_url = user.user_metadata.avatar_url;
   }
 
-  setNewData(user: any) {
+  setNewData(user: any, userDetails: UserDetails | null) {
+    if (userDetails) {
+      this.userDetails.setInitValues(userDetails);
+    }
     this.loaded = true;
     this.id = user.id || "";
     this.email = user.email || "";

@@ -19,7 +19,7 @@ interface Props {
 }
 
 const Card: React.FunctionComponent<Props> = ({
-  nft_id = 36,
+  nft_id = 96,
   nft_width = 400,
   reverse = false,
   nft,
@@ -72,7 +72,6 @@ const Card: React.FunctionComponent<Props> = ({
   }, [
     nft_id,
     nft?.photo_file,
-    nft?.clip_file,
     nft?.signature_file,
     userStore.nft?.mux_playback_id,
   ]);
@@ -140,6 +139,7 @@ const Card: React.FunctionComponent<Props> = ({
 
   let signature;
   let photo;
+  let video;
   let graduation_year;
   let first_name;
   let last_name;
@@ -152,6 +152,7 @@ const Card: React.FunctionComponent<Props> = ({
   let preview_rotation;
   if (readOnly) {
     preview_rotation = 0;
+    video = nftCardData.mux_playback_id;
     signature = nftCardData.signature;
     photo = nftCardData.photo;
     graduation_year =
@@ -169,6 +170,13 @@ const Card: React.FunctionComponent<Props> = ({
     sport = nftCardData.sport;
   } else {
     preview_rotation = userStore.nftInput.preview_rotation;
+
+    if (userStore.nft?.mux_playback_id) {
+      video = userStore.nft?.mux_playback_id;
+    } else {
+      video = nftCardData.mux_playback_id;
+    }
+
     if (userStore.nftInput.localSignature !== null) {
       signature = userStore.nftInput.localSignature?.current?.toDataURL();
     } else {
@@ -304,9 +312,8 @@ const Card: React.FunctionComponent<Props> = ({
             <div className="background">
               <div className="background-gradient">
                 <div className="background-gradient reverse-background-mask">
-                  {nftCardData.mux_playback_id && (
-                    <VideoPlayer src={nftCardData.mux_playback_id} />
-                  )}
+                  <VideoPlayer src={video} />
+
                   <div className="reverse-logo-background"></div>
                   <img
                     className="reverse-verified-logo"

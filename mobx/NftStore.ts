@@ -24,14 +24,8 @@ export class NftStore {
   photo_file: number | undefined = undefined;
   photo: string = "";
 
-  clip_file: number | undefined = undefined;
-  video: string = "";
-  video_name: string = "";
-
   signature_file: number | undefined = undefined;
   signature: string = "";
-
-  video_link = "";
 
   sport = "";
   sport_position = "";
@@ -53,15 +47,11 @@ export class NftStore {
     input: Nft,
     store: UserStore,
     nftPhoto: string = "",
-    nftVideo: string = "",
-    nftVideoName: string = "",
     nftSignature: string = ""
   ) {
     makeAutoObservable(this);
     this.store = store;
     this.photo = nftPhoto;
-    this.video = nftVideo;
-    this.video_name = nftVideoName;
     this.signature = nftSignature;
     this.id = input.id;
     this.mux_asset_id = input.mux_asset_id;
@@ -71,9 +61,7 @@ export class NftStore {
     this.first_name = input.first_name;
     this.last_name = input.last_name;
     this.photo_file = input.photo_file;
-    this.clip_file = input.clip_file;
     this.signature_file = input.signature_file;
-    this.video_link = input.video_link;
     this.sport = input.sport;
     this.sport_position = input.sport_position;
     this.usa_state = input.usa_state;
@@ -89,7 +77,6 @@ export class NftStore {
     const res = await deleteNftById(
       this.id,
       this.photo_file,
-      this.clip_file,
       this.signature_file
     );
     if (res) {
@@ -257,50 +244,6 @@ export class NftStore {
 
   deleteThisSignature = () => {
     this.signature = "";
-  };
-
-  updateThisVideo = (video_id: number, videoFile: File) => {
-    this.clip_file = video_id;
-    this.video_name = videoFile.name;
-    this.video = URL.createObjectURL(videoFile);
-  };
-
-  uploadVideoToSupabase = async (videoFile: File): Promise<boolean> => {
-    try {
-      const filePath = `${this.store.id}/${new Date().getTime()}${
-        videoFile.name
-      }`;
-
-      // uploads the actual video file
-      const { data, error } = await uploadFileToStorage(filePath, videoFile);
-
-      if (error) {
-        alert(error.message);
-        return false;
-      }
-
-      // creates file object in database and attaches it to nft
-      const { data: data2, error: error2 } = await insertFileToSupabase(
-        filePath,
-        this.id
-      );
-
-      // 3. attach file object to user
-      const { data: data3, error: error3 } = await attachFileToNft(
-        "clip_file",
-        (data2 as any)[0].id,
-        this.id
-      );
-
-      // update files in stores
-      this.updateThisVideo((data2 as any)[0].id, videoFile);
-
-      return true;
-    } catch (err) {
-      alert("There was an error. Please contact website admin.");
-      console.log(err);
-      return false;
-    }
   };
 
   updateThisSignature = (id: number, sig_file: File) => {

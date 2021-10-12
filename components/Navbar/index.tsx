@@ -74,7 +74,7 @@ const NavIndex: React.FC = () => {
               </Button>
             </a>
           </NextLink>
-          <NextLink href="/signin">
+          <NextLink href="/signup">
             <a>
               <Button colorScheme="blue" color="white">
                 Sign Up For Free
@@ -88,15 +88,20 @@ const NavIndex: React.FC = () => {
             direction={["column", "column", "row"]}
             align={["flex-start", "flex-start", "center"]}
           >
-            <Button
-              colorScheme="blue"
-              color="white"
-              order={{ base: 2, md: 1 }}
-              mr={[0, 0, 2]}
-              mt={[6, 6, 0]}
-            >
-              Recruit
-            </Button>
+            <NextLink href="/recruit">
+              <a>
+                <Button
+                  colorScheme="blue"
+                  color="white"
+                  order={{ base: 2, md: 1 }}
+                  mr={[0, 0, 2]}
+                  mt={[6, 6, 0]}
+                  mb={[2, 2, 0]}
+                >
+                  Recruit
+                </Button>
+              </a>
+            </NextLink>
             <UserProfile
               name={userStore.name}
               avatarUrl={userStore.avatar_url}

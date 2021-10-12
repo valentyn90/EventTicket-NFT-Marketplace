@@ -11,6 +11,9 @@ import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import Head from "next/head";
 import React from "react";
+import Card from "@/components/NftCard/Card";
+import { observer } from "mobx-react-lite";
+import userStore from "@/mobx/UserStore";
 import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
 
 const Create: React.FC = () => {
@@ -22,8 +25,14 @@ const Create: React.FC = () => {
       px={{ base: "4", lg: "8" }}
     >
       <Head>
-        <meta property="og:image" content="https://verifiedink.us/img/verified-ink-site.png" />
-        <meta property="og:title" content="Create your own custom NFT with Verified Ink" />
+        <meta
+          property="og:image"
+          content="https://verifiedink.us/img/verified-ink-site.png"
+        />
+        <meta
+          property="og:title"
+          content="Create your own custom NFT with Verified Ink"
+        />
       </Head>
       <Box maxWidth="1200px" mx="auto">
         <Flex direction={["column", "column", "row"]}>
@@ -99,4 +108,4 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   }
 }
 
-export default Create;
+export default observer(Create);

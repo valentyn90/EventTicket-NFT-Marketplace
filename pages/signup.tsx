@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/Card";
 import { DividerWithText } from "@/components/ui/DividerWithText";
-import { signIn, supabase } from "@/utils/supabase-client";
+import { isReferralCodeUsed, signUp, supabase } from "@/utils/supabase-client";
 import {
   Box,
   Button,
@@ -10,10 +10,16 @@ import {
   Text,
   useColorModeValue,
   VStack,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Flex,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
 
 interface Props {}
@@ -21,14 +27,40 @@ interface Props {}
 const SignUp: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [outOfReferrals, setOutOfReferrals] = useState(false);
+  const router = useRouter();
 
-  async function handleSignin(e: React.FormEvent) {
+  const { referralCode } = router.query;
+
+  useEffect(() => {
+    // Check if referral code is at its limit
+    if (typeof referralCode === "string") {
+      isReferralCodeUsed(referralCode).then((res) => setOutOfReferrals(res));
+    }
+  }, [referralCode]);
+
+  async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
+    let refer_code = typeof referralCode === "string" ? referralCode : "";
+    setReferralInfo(refer_code);
     setLoading(true);
-    const emailSignIn = await signIn({ email });
+    const emailSignUp = await signUp({
+      email,
+    });
     setLoading(false);
-    if (emailSignIn) {
+    if (emailSignUp) {
       alert("Check your email for a login link.");
+    }
+  }
+
+  function setReferralInfo(referralCode: string) {
+    // When signing up
+    // Create local storage info to tell app
+    // About the sign up and to do the user detail/referral code stuff
+    // And check these items in userState.initUser()
+    localStorage.setItem("sign_up", "true");
+    if (referralCode) {
+      localStorage.setItem("referral_code", referralCode);
     }
   }
 
@@ -56,7 +88,12 @@ const SignUp: React.FC<Props> = () => {
               w="100%"
               colorScheme="twitter"
               onClick={() => {
-                signIn({ provider: "twitter" });
+                let refer_code =
+                  typeof referralCode === "string" ? referralCode : "";
+                setReferralInfo(refer_code);
+                signUp({
+                  provider: "twitter",
+                });
               }}
             >
               <FaTwitter />
@@ -70,7 +107,12 @@ const SignUp: React.FC<Props> = () => {
               color="currentColor"
               variant="outline"
               onClick={() => {
-                signIn({ provider: "google" });
+                let refer_code =
+                  typeof referralCode === "string" ? referralCode : "";
+                setReferralInfo(refer_code);
+                signUp({
+                  provider: "google",
+                });
               }}
             >
               <FaGoogle />
@@ -82,7 +124,7 @@ const SignUp: React.FC<Props> = () => {
           <DividerWithText mt={8} mb={8}>
             or continue with
           </DividerWithText>
-          <form onSubmit={handleSignin}>
+          <form onSubmit={handleSignup}>
             <Text fontWeight="bold">Email Address</Text>
             <Input
               value={email}
@@ -102,6 +144,38 @@ const SignUp: React.FC<Props> = () => {
             </Button>
           </form>
         </Card>
+        {outOfReferrals && (
+          <Alert status="warning" mt={8} rounded={{ sm: "lg" }} p={8}>
+            <Flex direction="column" alignItems="flex-start">
+              <AlertTitle mb={4} display="flex">
+                <AlertIcon mr={2} />
+                Referral Code Already Used
+              </AlertTitle>
+
+              <AlertDescription mb={4}>
+                You are welcome to sign up but it might take longer for your
+                card to be approved.
+              </AlertDescription>
+
+              <Button
+                colorScheme="orange"
+                px={4}
+                onClick={() => setOutOfReferrals(false)}
+              >
+                OK
+              </Button>
+            </Flex>
+          </Alert>
+        )}
+
+        {/* TODO: This card below should only show if total_referred_users > referral_limit for the referral link */}
+
+        {/* <Card mt="1rem" bg="red.500" id="alert">
+          <Text fontWeight="bold">Referral Code Already Used</Text>
+          <Text mt="1"> You are welcome to sign up, but it might take longer for your card to be approved. </Text>
+          <Button mt="3" onClick={() => document.getElementById("alert")?.remove()}>
+            OK          </Button>
+        </Card> */}
       </Box>
     </Box>
   );

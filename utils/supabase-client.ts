@@ -1,5 +1,6 @@
 import NftFormInput from "@/types/NftFormInput";
 import SignInOptions from "@/types/SignInOptions";
+import SignUpOptions from "@/types/SignUpOptions";
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(
@@ -12,11 +13,7 @@ export const signIn = async ({
   provider,
   goToStepOne,
 }: SignInOptions) => {
-  let redirect_url: string | undefined = `https://verifiedink.us/redirect`;
-
-  if (process.env.NEXT_PUBLIC_VERCEL_ENV == "development") {
-    redirect_url = "http://localhost:3000/redirect";
-  }
+  let redirect_url: string | undefined = `/redirect`;
 
   if (!goToStepOne) {
     redirect_url = undefined;
@@ -44,7 +41,77 @@ export const signIn = async ({
   return null;
 };
 
+export const signUp = async ({ email, provider }: SignUpOptions) => {
+  let redirect_url: string | undefined = `/redirect`;
+
+  if (email) {
+    const { error } = await supabase.auth.signIn(
+      { email },
+      { redirectTo: redirect_url }
+    );
+    if (error) {
+      console.log(error);
+      return false;
+    }
+  } else if (provider) {
+    const { error } = await supabase.auth.signIn(
+      { provider },
+      { redirectTo: redirect_url }
+    );
+    if (error) {
+      console.log(error);
+    }
+    return null;
+  }
+  return null;
+};
+
 export const signOut = () => supabase.auth.signOut();
+
+export const createUserDetails = (
+  user_id: string,
+  referral_code: string,
+  referring_user_id: string | null
+) =>
+  supabase.from("user_details").insert([
+    {
+      user_id,
+      referral_code,
+      referral_limit: 5,
+      referring_user_id,
+      verified_user: false,
+    },
+  ]);
+
+export const getUserDetails = (id: string) =>
+  supabase.from("user_details").select("*").eq("user_id", id).maybeSingle();
+
+export const getReferringUser = (referralCode: string) =>
+  supabase
+    .from("user_details")
+    .select("*")
+    .eq("referral_code", referralCode)
+    .maybeSingle();
+
+export const updateReferringUser = (id: string, num_referred: number) =>
+  supabase
+    .from("user_details")
+    .update([
+      {
+        total_referred_users: num_referred,
+      },
+    ])
+    .match({ id });
+
+export const updateUserReferredUser = (id: string, user_id: string) =>
+  supabase
+    .from("user_details")
+    .update([
+      {
+        referring_user_id: user_id,
+      },
+    ])
+    .match({ id });
 
 const getFileObject = (file_id: number) =>
   supabase.from("files").select("*").eq("id", file_id).maybeSingle();
@@ -117,7 +184,6 @@ export const getFileFromSupabase = async (
 export const deleteNftById = async (
   nft_id: number,
   photo_file: number | undefined,
-  clip_file: number | undefined,
   signature_file: number | undefined
 ): Promise<boolean> => {
   // Check if files exist on NFT and delete if they do.
@@ -128,13 +194,6 @@ export const deleteNftById = async (
       if (data) {
         await deleteStorageFile(data.file_name);
         await deleteFileById(photo_file);
-      }
-    }
-    if (clip_file) {
-      const { data, error } = await getFileObject(clip_file);
-      if (data) {
-        await deleteStorageFile(data.file_name);
-        await deleteFileById(clip_file);
       }
     }
     if (signature_file) {
@@ -209,3 +268,12 @@ export const setMuxValues = (
       },
     ])
     .match({ id: nft_id });
+
+export const isReferralCodeUsed = async (
+  referralCode: string
+): Promise<boolean> => {
+  const { data, error } = await getReferringUser(referralCode);
+  if (error) return false;
+  const { referral_limit, total_referred_users } = data;
+  return total_referred_users >= referral_limit;
+};
