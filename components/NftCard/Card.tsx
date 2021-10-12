@@ -1,5 +1,6 @@
 import { NftStore } from "@/mobx/NftStore";
 import userStore from "@/mobx/UserStore";
+import { Spinner } from "@chakra-ui/spinner";
 import { getFileFromSupabase, getNftById } from "@/utils/supabase-client";
 import { observer } from "mobx-react-lite";
 import Head from "next/head";
@@ -25,6 +26,7 @@ const Card: React.FunctionComponent<Props> = ({
   nft,
   readOnly = false,
 }) => {
+  const [loaded, setLoaded] = useState(false);
   const [nftCardData, setNftCardData] = useState({
     photo: "",
     mux_playback_id: "",
@@ -64,6 +66,8 @@ const Card: React.FunctionComponent<Props> = ({
         signature,
         photo,
       });
+      // setTimeout(() => setLoaded(true), 2000);
+      setLoaded(true);
     }
   }
 
@@ -274,35 +278,45 @@ const Card: React.FunctionComponent<Props> = ({
             <div className="background">
               <div className="background-gradient">
                 <div className="background-stripes"></div>
-                <div className="background-name">
-                  {first_name}
-                  <br />
-                  {last_name}
-                </div>
-              </div>
-              <div className="crop-background-img">
-                <img className="background-img" src={photo} />
+                {loaded && (
+                  <div className="background-name">
+                    {first_name}
+                    <br />
+                    {last_name}
+                  </div>
+                )}
               </div>
               <img className="verified-logo" src="/img/card-logo.svg" />
-              <div className="background-gradient overlay-gradient"></div>
+              {loaded ? (
+                <>
+                  <div className="crop-background-img">
+                    <img className="background-img" src={photo} />
+                  </div>
+                  <div className="background-gradient overlay-gradient"></div>
 
-              <div className="athlete-name">{fullName}</div>
-              <div className="athlete-school">{location}</div>
-              <div className="basic-info">
-                <div className="info-group">
-                  <div className="info-heading">Year</div>
-                  <div className="bold-info">{graduation_year}</div>
+                  <div className="athlete-name">{fullName}</div>
+                  <div className="athlete-school">{location}</div>
+                  <div className="basic-info">
+                    <div className="info-group">
+                      <div className="info-heading">Year</div>
+                      <div className="bold-info">{graduation_year}</div>
+                    </div>
+                    <div className="info-group">
+                      <div className="info-heading">Position</div>
+                      <div className="bold-info">{sport_position}</div>
+                    </div>
+                    <div className="info-group">
+                      <div className="info-heading">Sport</div>
+                      <div className="bold-info">{sport}</div>
+                    </div>
+                  </div>
+                  <div className="signature"></div>
+                </>
+              ) : (
+                <div className="loading-spinner">
+                  <Spinner color="white" w="150px" h="150px" />
                 </div>
-                <div className="info-group">
-                  <div className="info-heading">Position</div>
-                  <div className="bold-info">{sport_position}</div>
-                </div>
-                <div className="info-group">
-                  <div className="info-heading">Sport</div>
-                  <div className="bold-info">{sport}</div>
-                </div>
-              </div>
-              <div className="signature"></div>
+              )}
               <div className="serial-number">
                 <div className="bold-info">1</div>/100
               </div>

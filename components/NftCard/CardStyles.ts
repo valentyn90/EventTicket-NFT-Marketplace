@@ -267,4 +267,12 @@ export const CardWrapper = styled.div<StyleProps>`
     color: white;
     opacity: 30%;
   }
+
+  .loading-spinner {
+    transform: scale(2);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 `;

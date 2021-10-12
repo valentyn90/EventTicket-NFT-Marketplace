@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 
 interface Props {
@@ -8,9 +8,11 @@ interface Props {
 
 export default function VideoPlayer({ src, previewOnly = false }: Props) {
   const videoRef = useRef(null);
+  const [loaded, setLoaded] = useState(false);
 
   const videoSrc = `https://stream.mux.com/${src}.m3u8`;
-  const imagePreview = `https://image.mux.com/${src}/thumbnail.png?width=400&height=200&fit_mode=preserve&time=1`;
+  const safariSrc = `https://stream.mux.com/${src}/high.mp4`;
+  const imagePreview = `https://image.mux.com/${src}/thumbnail.png?width=400&height=400&fit_mode=preserve&time=1`;
 
   useEffect(() => {
     const video: any = videoRef.current;
@@ -20,8 +22,8 @@ export default function VideoPlayer({ src, previewOnly = false }: Props) {
     let hls: any;
 
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      // This will run in safari, where HLS is supported natively
-      video.src = videoSrc;
+      // This checks for safari browsers and plays the mp4 since m3u8 is a bandwidth hog for looping videos in safar
+      video.src = safariSrc;
     } else if (Hls.isSupported()) {
       // This will run in all other modern browsers
       hls = new Hls();
@@ -35,11 +37,12 @@ export default function VideoPlayer({ src, previewOnly = false }: Props) {
     }
 
     return () => {
+      setLoaded(true);
       if (hls) {
         hls.destroy();
       }
     };
-  }, [videoSrc, videoRef]);
+  }, [videoSrc, videoRef, imagePreview]);
 
   let videoComponent = null;
 
