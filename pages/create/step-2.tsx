@@ -72,7 +72,7 @@ const StepTwo = () => {
             <PhotoPreviewSide
               title="Something's Missing"
               subtitle="Your Ink needs the perfect action shot. You'll be able to change
-            it later, but let's get something in there now."
+              it later, but let's get something in there now."
               flex="1"
               nft_id={userStore.loadedNft?.id}
               nft={userStore.loadedNft}

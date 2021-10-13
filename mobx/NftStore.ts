@@ -1,10 +1,10 @@
 import Nft from "@/types/Nft";
 import {
+  approveNftCard,
   attachFileToNft,
   deleteNftById,
   insertFileToSupabase,
   setMuxValues,
-  setNftApprovalTrue,
   stepThreeSubmit,
   updateNft,
   uploadFileToStorage,
@@ -42,6 +42,8 @@ export class NftStore {
   mux_upload_id: string | null = null;
   mux_asset_id: string | null = null;
   mux_playback_id: string | null = null;
+
+  screenshot_url: string | null = null;
 
   constructor(
     input: Nft,
@@ -285,14 +287,24 @@ export class NftStore {
     }
   };
 
-  setNftApprovalTrue = async (): Promise<boolean> => {
-    const { data, error } = await setNftApprovalTrue(this.id);
+  async getNftCardScreenshot(): Promise<string | null> {
+    const res = await fetch(`/api/screenshot/create/${this.id}`);
+    if (res.status === 200) {
+      const { data } = await res.json();
+      return data.screenshot;
+    } else {
+      // error
+      console.log("Error getting nft card screenshot");
+    }
+    return null;
+  }
 
+  async stepSixSubmit(screenshot_url: string | null): Promise<boolean> {
+    const { data, error } = await approveNftCard(this.id, screenshot_url || "");
     if (error) {
       alert(error.message);
       return false;
     }
-
     return true;
-  };
+  }
 }

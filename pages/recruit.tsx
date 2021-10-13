@@ -1,23 +1,14 @@
-import { supabase } from "@/utils/supabase-client";
-import {
-  Box,
-  Button,
-  Flex,
-  Image,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { NextApiRequest } from "next";
-import NextLink from "next/link";
+import Card from "@/components/NftCard/Card";
+import userStore from "@/mobx/UserStore";
+import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import { observer } from "mobx-react-lite";
 import Head from "next/head";
 import React from "react";
-import Card from "@/components/NftCard/Card";
-import { observer } from "mobx-react-lite";
-import userStore from "@/mobx/UserStore";
 
 async function handleRecruitClick() {
-  const share_link = `${process.env.NEXT_PUBLIC_FRONTEND_URL
-    }/signup?referralCode=${userStore.userDetails.referral_code || "xxx"}`;
+  const share_link = `${
+    process.env.NEXT_PUBLIC_FRONTEND_URL
+  }/signup?referralCode=${userStore.userDetails.referral_code || "xxx"}`;
 
   const shareData = {
     title: "VerifiedInk",
@@ -36,12 +27,8 @@ async function handleRecruitClick() {
   } else {
     try {
       await navigator.share(shareData);
-    }
-    catch (err) {
-
-    }
+    } catch (err) {}
   }
-
 }
 
 const Recruit: React.FC = () => {

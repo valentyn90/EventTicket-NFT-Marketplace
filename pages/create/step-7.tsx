@@ -5,12 +5,11 @@ import {
   Box,
   Button,
   Flex,
-  Text,
-  VStack,
   Input,
   Spinner,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
@@ -37,10 +36,7 @@ const StepSeven = () => {
     } else {
       try {
         await navigator.share(shareData);
-      }
-      catch (err) {
-
-      }
+      } catch (err) {}
     }
   }
 

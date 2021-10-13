@@ -1,10 +1,10 @@
-import "@fontsource/open-sans";
-import "@fontsource/lato";
-import "@fontsource/kadwa";
-import type { AppProps } from "next/app";
-import { ChakraProvider } from "@chakra-ui/react";
 import Layout from "@/components/ui/layout/Layout";
 import theme from "@/utils/theme";
+import { ChakraProvider } from "@chakra-ui/react";
+import "@fontsource/kadwa";
+import "@fontsource/lato";
+import "@fontsource/open-sans";
+import type { AppProps } from "next/app";
 import Head from "next/head";
 import { GlobalStyle } from "../css/globalStyle";
 

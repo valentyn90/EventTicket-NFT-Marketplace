@@ -246,10 +246,10 @@ export const updateNft = (input: NftFormInput) =>
     ])
     .match({ id: input.nft_id });
 
-export const setNftApprovalTrue = (nft_id: number) =>
+export const approveNftCard = (nft_id: number, screenshot_url: string) =>
   supabase
     .from("nft")
-    .update([{ approved: true }])
+    .update([{ approved: true, screenshot_url }])
     .match({ id: nft_id });
 
 export const setMuxValues = (

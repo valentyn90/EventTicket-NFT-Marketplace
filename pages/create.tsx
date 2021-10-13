@@ -1,20 +1,11 @@
-import { supabase } from "@/utils/supabase-client";
-import {
-  Box,
-  Button,
-  Flex,
-  Image,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { NextApiRequest } from "next";
-import NextLink from "next/link";
-import Head from "next/head";
-import React from "react";
-import Card from "@/components/NftCard/Card";
-import { observer } from "mobx-react-lite";
-import userStore from "@/mobx/UserStore";
 import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
+import { supabase } from "@/utils/supabase-client";
+import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import { observer } from "mobx-react-lite";
+import { NextApiRequest } from "next";
+import Head from "next/head";
+import NextLink from "next/link";
+import React from "react";
 
 const Create: React.FC = () => {
   return (

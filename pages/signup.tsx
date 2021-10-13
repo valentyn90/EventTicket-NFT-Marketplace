@@ -2,24 +2,24 @@ import { Card } from "@/components/ui/Card";
 import { DividerWithText } from "@/components/ui/DividerWithText";
 import { isReferralCodeUsed, signUp, supabase } from "@/utils/supabase-client";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
+  Flex,
   Heading,
   Input,
   Spinner,
   Text,
   useColorModeValue,
   VStack,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  Flex,
-  AlertDescription,
 } from "@chakra-ui/react";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
 
 interface Props {}
@@ -167,15 +167,6 @@ const SignUp: React.FC<Props> = () => {
             </Flex>
           </Alert>
         )}
-
-        {/* TODO: This card below should only show if total_referred_users > referral_limit for the referral link */}
-
-        {/* <Card mt="1rem" bg="red.500" id="alert">
-          <Text fontWeight="bold">Referral Code Already Used</Text>
-          <Text mt="1"> You are welcome to sign up, but it might take longer for your card to be approved. </Text>
-          <Button mt="3" onClick={() => document.getElementById("alert")?.remove()}>
-            OK          </Button>
-        </Card> */}
       </Box>
     </Box>
   );

@@ -94,4 +94,12 @@ export class UserDetailsStore {
       return false;
     }
   };
+
+  resetValues() {
+    this.details_id = "";
+    this.referral_code = "";
+    this.verified = false;
+    this.total_referred_users = 0;
+    this.referring_user_id = null;
+  }
 }

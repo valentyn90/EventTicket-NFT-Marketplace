@@ -163,6 +163,7 @@ export class UserStore {
     this.avatar_url = "";
     this.nft = null;
     this.nftInput.resetValues();
+    this.userDetails.resetValues();
   }
 
   get loggedIn() {

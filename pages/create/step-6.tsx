@@ -14,7 +14,9 @@ const StepSix = () => {
   async function handleStepSixSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    const res = await userStore.nft?.setNftApprovalTrue();
+    let screenshot_url = await userStore.nft?.getNftCardScreenshot();
+    if (!screenshot_url) screenshot_url = null;
+    const res = await userStore.nft?.stepSixSubmit(screenshot_url);
     setSubmitting(false);
     if (res) {
       router.push("/create/step-7");
@@ -55,7 +57,11 @@ const StepSix = () => {
               direction={["column", "column", "row"]}
               justifyContent="center"
             >
-              <Box flex={["none", "none", "1"]} h="750px" w={["none", "none", "380px"]}>
+              <Box
+                flex={["none", "none", "1"]}
+                h="750px"
+                w={["none", "none", "380px"]}
+              >
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Front
                 </Text>
@@ -66,7 +72,11 @@ const StepSix = () => {
                   reverse={false}
                 />
               </Box>
-              <Box flex={["none", "none", "1"]} h="750px" w={["none", "none", "380px"]}>
+              <Box
+                flex={["none", "none", "1"]}
+                h="750px"
+                w={["none", "none", "380px"]}
+              >
                 <Text textAlign="center" mb="2" fontSize="2xl">
                   Back
                 </Text>
