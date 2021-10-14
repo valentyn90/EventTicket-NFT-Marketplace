@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "@/components/Navbar";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { background } from "@chakra-ui/styled-system";
+import { useColorMode } from "@chakra-ui/react";
 
 interface Props {
   children: React.ReactNode;
@@ -11,8 +11,13 @@ interface Props {
 const Layout: React.FC<Props> = ({ children }) => {
 
   const router = useRouter();
-  console.log(router.pathname)
   const showNav = router.pathname === '/screenshot/[id]' ? false : true;
+  const { colorMode, setColorMode } = useColorMode();
+
+  if (!showNav) {
+    setColorMode("light")
+  }
+
   return (
     <>
       <Head>
