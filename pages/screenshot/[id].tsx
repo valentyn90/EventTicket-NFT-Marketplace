@@ -4,7 +4,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
-  background: white !important;
+  // background: white !important;
   margin: 0 !important;
   padding: 0 !important;
 `;
