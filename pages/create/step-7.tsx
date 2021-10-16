@@ -1,21 +1,14 @@
 import CreateLayout from "@/components/Create/CreateLayout";
 import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
-import {
-  Box,
-  Button,
-  Flex,
-  Input,
-  Spinner,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
 const StepSeven = () => {
   const [referralCode, setReferralCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
   async function handleRecruitClick() {
     const share_link = "https://verifiedink.us/card/" + userStore.nft?.id;
 
@@ -40,48 +33,61 @@ const StepSeven = () => {
     }
   }
 
-  let component;
-  if (userStore.userDetails.referring_user_id) {
-    component = (
-      <>
-        <Text colorScheme="gray">
-          We’ll keep you updated on your Verified Ink Proof status. For now you
-          can admire your creation. Patience is a virtue.
-          <br />
-          If you want some company, recruit a few teammates to Verified. You’ll
-          get one of their Inks when they sign up.
-        </Text>
-        <Button onClick={handleRecruitClick} colorScheme="blue" color="white">
-          Share my Verified Ink
-        </Button>
-      </>
-    );
-  } else {
-    component = (
-      <>
-        <Text colorScheme="gray">Enter a referral code:</Text>
-        <Flex>
-          <Input
-            placeholder="xxx"
-            value={referralCode}
-            onChange={(e) => setReferralCode(e.target.value)}
-          />
-          <Button
-            ml={2}
-            onClick={async () => {
-              setSubmitting(true);
-              const res = await userStore.userDetails.updateReferringUserId(
-                referralCode
-              );
-              setSubmitting(false);
-            }}
-          >
-            {submitting ? <Spinner /> : "Submit"}
-          </Button>
-        </Flex>
-      </>
-    );
-  }
+  let component = (
+    <>
+      <Text colorScheme="gray">
+        We’ll keep you updated on your Verified Ink Proof status. For now you
+        can admire your creation. Patience is a virtue.
+        <br />
+        If you want some company, recruit a few teammates to Verified. You’ll
+        get one of their Inks when they sign up.
+      </Text>
+      <Button onClick={handleRecruitClick} colorScheme="blue" color="white">
+        Share my Verified Ink
+      </Button>
+    </>
+  );
+  // if (userStore.userDetails.referring_user_id) {
+  //   component = (
+  //     <>
+  //       <Text colorScheme="gray">
+  //         We’ll keep you updated on your Verified Ink Proof status. For now you
+  //         can admire your creation. Patience is a virtue.
+  //         <br />
+  //         If you want some company, recruit a few teammates to Verified. You’ll
+  //         get one of their Inks when they sign up.
+  //       </Text>
+  //       <Button onClick={handleRecruitClick} colorScheme="blue" color="white">
+  //         Share my Verified Ink
+  //       </Button>
+  //     </>
+  //   );
+  // } else {
+  //   component = (
+  //     <>
+  //       <Text colorScheme="gray">Enter a referral code:</Text>
+  //       <Flex>
+  //         <Input
+  //           placeholder="xxx"
+  //           value={referralCode}
+  //           onChange={(e) => setReferralCode(e.target.value)}
+  //         />
+  //         <Button
+  //           ml={2}
+  //           onClick={async () => {
+  //             setSubmitting(true);
+  //             const res = await userStore.userDetails.updateReferringUserId(
+  //               referralCode
+  //             );
+  //             setSubmitting(false);
+  //           }}
+  //         >
+  //           {submitting ? <Spinner /> : "Submit"}
+  //         </Button>
+  //       </Flex>
+  //     </>
+  //   );
+  // }
 
   return (
     <CreateLayout>

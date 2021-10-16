@@ -1,4 +1,5 @@
 import Nft from "@/types/Nft";
+import dataURLtoFile from "@/utils/dataUrlToFile";
 import {
   approveNftCard,
   attachFileToNft,
@@ -7,6 +8,7 @@ import {
   setMuxValues,
   stepThreeSubmit,
   updateNft,
+  updateNftScreenshotUrl,
   uploadFileToStorage,
 } from "@/utils/supabase-client";
 import { makeAutoObservable } from "mobx";
@@ -43,7 +45,7 @@ export class NftStore {
   mux_asset_id: string | null = null;
   mux_playback_id: string | null = null;
 
-  screenshot_url: string | null = null;
+  screenshot_file_id: number | null = null;
 
   constructor(
     input: Nft,
@@ -73,6 +75,7 @@ export class NftStore {
     this.approved = input.approved;
     this.finished = input.finished;
     this.minted = input.minted;
+    this.screenshot_file_id = input.screenshot_file_id;
   }
 
   deleteThisNft = async (): Promise<boolean> => {
@@ -287,20 +290,74 @@ export class NftStore {
     }
   };
 
-  async getNftCardScreenshot(): Promise<string | null> {
-    const res = await fetch(`/api/screenshot/create/${this.id}`);
-    if (res.status === 200) {
-      const { data } = await res.json();
-      return data.screenshot;
+  async setNftCardScreenshot(): Promise<boolean> {
+    if (!this.screenshot_file_id) {
+      // Get screenshot of nft card
+      const res = await fetch(`/api/screenshot/create/${this.id}`);
+      if (res.status === 200) {
+        const file_name = `nftcard_screenshot.png`;
+        const data = await res.text();
+
+        // This is the image file to upload to supabase
+        const base64Image = dataURLtoFile(data, file_name);
+
+        const file_path = `${
+          this.store.id
+        }/${new Date().getTime()}${file_name}`;
+
+        try {
+          // Upload file
+          const { data: uploadData, error: uploadError } =
+            await uploadFileToStorage(file_path, base64Image);
+
+          if (!uploadError) {
+            // Create new file object in db and attach to user
+            const { data: insertData, error: insertError } =
+              await insertFileToSupabase(file_path, this.id);
+
+            if (!insertError) {
+              // attach file object to user
+              const { data: attachData, error: attachError } =
+                await attachFileToNft(
+                  "screenshot_file_id",
+                  (insertData as any)[0].id,
+                  this.id
+                );
+              if (!attachError) {
+                // done
+                this.setInputValue(
+                  "screenshot_file_id",
+                  (insertData as any)[0].id
+                );
+                return true;
+              } else {
+                alert(attachError.message);
+                return false;
+              }
+            } else {
+              alert(insertError.message);
+              return false;
+            }
+          } else {
+            alert(uploadError.message);
+            return false;
+          }
+        } catch (err) {
+          console.log(err);
+          return false;
+        }
+      } else {
+        // error
+        console.log("Error getting nft card screenshot");
+        return false;
+      }
     } else {
-      // error
-      console.log("Error getting nft card screenshot");
+      return false;
     }
-    return null;
   }
 
-  async stepSixSubmit(screenshot_url: string | null): Promise<boolean> {
-    const { data, error } = await approveNftCard(this.id, screenshot_url || "");
+  async stepSixSubmit(): Promise<boolean> {
+    const { data, error } = await approveNftCard(this.id);
     if (error) {
       alert(error.message);
       return false;

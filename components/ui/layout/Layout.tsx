@@ -15,7 +15,7 @@ const Layout: React.FC<Props> = ({ children }) => {
   const { colorMode, setColorMode } = useColorMode();
 
   if (!showNav) {
-    setColorMode("light")
+    setColorMode("dark")
   }
 
   return (

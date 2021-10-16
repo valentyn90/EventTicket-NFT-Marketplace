@@ -246,11 +246,16 @@ export const updateNft = (input: NftFormInput) =>
     ])
     .match({ id: input.nft_id });
 
-export const approveNftCard = (nft_id: number, screenshot_url: string) =>
+export const approveNftCard = (nft_id: number) =>
   supabase
     .from("nft")
-    .update([{ approved: true, screenshot_url }])
+    .update([{ approved: true }])
     .match({ id: nft_id });
+
+export const updateNftScreenshotUrl = (
+  nft_id: number,
+  screenshot_url: string
+) => supabase.from("nft").update([{ screenshot_url }]).match({ id: nft_id });
 
 export const setMuxValues = (
   nft_id: number,

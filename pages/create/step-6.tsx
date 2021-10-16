@@ -14,11 +14,11 @@ const StepSix = () => {
   async function handleStepSixSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    let screenshot_url = await userStore.nft?.getNftCardScreenshot();
-    if (!screenshot_url) screenshot_url = null;
-    const res = await userStore.nft?.stepSixSubmit(screenshot_url);
+    const res = await userStore.nft?.stepSixSubmit();
     setSubmitting(false);
     if (res) {
+      // Begin screenshot get in background
+      userStore.nft?.setNftCardScreenshot();
       router.push("/create/step-7");
     }
   }

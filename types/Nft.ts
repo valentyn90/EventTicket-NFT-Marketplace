@@ -19,6 +19,7 @@ interface Nft {
   mux_playback_id: string | null;
   mux_upload_id: string | null;
   mux_asset_id: string | null;
+  screenshot_file_id: number | null;
 }
 
 export default Nft;

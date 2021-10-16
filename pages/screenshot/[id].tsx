@@ -9,13 +9,16 @@ const Wrapper = styled.div`
   padding: 0 !important;
 `;
 
-const Screenshot = () => {
+const Screenshot: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
   let int_id = parseInt(id as string);
   return (
+
     <Wrapper>
-      {int_id && (
+      {!int_id ? (
+        <div></div>
+      ) : (
         <Card nft_id={int_id} nft_width={600} reverse={false} readOnly={true} />
       )}
     </Wrapper>

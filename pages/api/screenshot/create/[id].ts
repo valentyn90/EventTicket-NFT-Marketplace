@@ -8,7 +8,7 @@ export default async function handler(
   const id = req.query.id as string;
   const width = 800;
   const height = 1200;
-  const output = "json"; //switch this to image when storing the image
+  const output = "image"; // image = res.blob, json = res.json
   const file_type = "png";
   const omit_background = "true";
   const wait_for_event = "load";
@@ -20,9 +20,13 @@ export default async function handler(
   const query_url = `https://shot.screenshotapi.net/screenshot?token=${process.env.NEXT_PUBLIC_SCREENSHOT_API_TOKEN}&url=${verifiedink_url}${query}`;
   try {
     const fetch_res = await fetch(query_url);
-    const data = await fetch_res.json();
-    res.status(200).json({ data });
-    return true;
+    const data = await fetch_res.blob();
+
+    data.arrayBuffer().then((buf) => {
+      var base64data =
+        "data:image/png;base64, " + Buffer.from(buf).toString("base64");
+      res.send(base64data);
+    });
   } catch (err) {
     console.log(err);
     res.status(400);
