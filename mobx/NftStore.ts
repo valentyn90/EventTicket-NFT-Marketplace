@@ -193,9 +193,8 @@ export class NftStore {
   uploadPhotoToSupabase = async (): Promise<boolean> => {
     try {
       // 1. set the path name
-      const filePath = `${this.store.id}/${new Date().getTime()}${
-        this.store.nftInput.localPhoto?.name
-      }`;
+      const filePath = `${this.store.id}/${new Date().getTime()}${this.store.nftInput.localPhoto?.name
+        }`;
 
       // 1. upload image file
       const { data, error } = await uploadFileToStorage(
@@ -258,9 +257,8 @@ export class NftStore {
 
   uploadSignatureToSupabase = async (sigFile: File): Promise<boolean> => {
     try {
-      const filePath = `${
-        this.store.id
-      }/${new Date().getTime()}signaturePic.png`;
+      const filePath = `${this.store.id
+        }/${new Date().getTime()}signaturePic.png`;
 
       const { data, error } = await uploadFileToStorage(filePath, sigFile);
 
@@ -291,69 +289,65 @@ export class NftStore {
   };
 
   async setNftCardScreenshot(): Promise<boolean> {
-    if (!this.screenshot_file_id) {
-      // Get screenshot of nft card
-      const res = await fetch(`/api/screenshot/create/${this.id}`);
-      if (res.status === 200) {
-        const file_name = `nftcard_screenshot.png`;
-        const data = await res.text();
+    // Get screenshot of nft card
+    const res = await fetch(`/api/screenshot/create/${this.id}`);
+    if (res.status === 200) {
+      const file_name = `nftcard_screenshot.png`;
+      const data = await res.text();
 
-        // This is the image file to upload to supabase
-        const base64Image = dataURLtoFile(data, file_name);
+      // This is the image file to upload to supabase
+      const base64Image = dataURLtoFile(data, file_name);
 
-        const file_path = `${
-          this.store.id
+      const file_path = `${this.store.id
         }/${new Date().getTime()}${file_name}`;
 
-        try {
-          // Upload file
-          const { data: uploadData, error: uploadError } =
-            await uploadFileToStorage(file_path, base64Image);
+      try {
+        // Upload file
+        const { data: uploadData, error: uploadError } =
+          await uploadFileToStorage(file_path, base64Image);
 
-          if (!uploadError) {
-            // Create new file object in db and attach to user
-            const { data: insertData, error: insertError } =
-              await insertFileToSupabase(file_path, this.id);
+        if (!uploadError) {
+          // Create new file object in db and attach to user
+          const { data: insertData, error: insertError } =
+            await insertFileToSupabase(file_path, this.id);
 
-            if (!insertError) {
-              // attach file object to user
-              const { data: attachData, error: attachError } =
-                await attachFileToNft(
-                  "screenshot_file_id",
-                  (insertData as any)[0].id,
-                  this.id
-                );
-              if (!attachError) {
-                // done
-                this.setInputValue(
-                  "screenshot_file_id",
-                  (insertData as any)[0].id
-                );
-                return true;
-              } else {
-                alert(attachError.message);
-                return false;
-              }
+          if (!insertError) {
+            // attach file object to user
+            const { data: attachData, error: attachError } =
+              await attachFileToNft(
+                "screenshot_file_id",
+                (insertData as any)[0].id,
+                this.id
+              );
+            if (!attachError) {
+              // done
+              this.setInputValue(
+                "screenshot_file_id",
+                (insertData as any)[0].id
+              );
+              return true;
             } else {
-              alert(insertError.message);
+              alert(attachError.message);
               return false;
             }
           } else {
-            alert(uploadError.message);
+            alert(insertError.message);
             return false;
           }
-        } catch (err) {
-          console.log(err);
+        } else {
+          alert(uploadError.message);
           return false;
         }
-      } else {
-        // error
-        console.log("Error getting nft card screenshot");
+      } catch (err) {
+        console.log(err);
         return false;
       }
     } else {
+      // error
+      console.log("Error getting nft card screenshot");
       return false;
     }
+
   }
 
   async stepSixSubmit(): Promise<boolean> {
