@@ -17,6 +17,8 @@ interface Props {
   reverse?: boolean | undefined;
   nft?: NftStore | null;
   readOnly?: boolean;
+  db_first_name?: string;
+  public_url?: string;
 }
 
 const Card: React.FunctionComponent<Props> = ({
@@ -25,6 +27,8 @@ const Card: React.FunctionComponent<Props> = ({
   reverse = false,
   nft,
   readOnly = false,
+  db_first_name,
+  public_url,
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [nftCardData, setNftCardData] = useState({
@@ -249,13 +253,20 @@ const Card: React.FunctionComponent<Props> = ({
           property="og:title"
           content={
             "Check out " +
-            (first_name ? first_name + "'s" : "") +
+            (db_first_name
+              ? `${db_first_name}\'s`
+              : first_name && first_name + "'s") +
             " Verified Ink"
           }
+          key="title"
         />
         <meta
           property="og:image"
-          content="https://verifiedink.us/img/verified-ink-site.png"
+          content={`${typeof public_url === "string" && public_url.length > 0
+            ? public_url
+            : "https://verifiedink.us/img/verified-ink-site.png"
+            }`}
+          key="preview"
         />
         <meta
           property="description"

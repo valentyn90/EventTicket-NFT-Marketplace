@@ -117,6 +117,8 @@ const getFileObject = (file_id: number) =>
   supabase.from("files").select("*").eq("id", file_id).maybeSingle();
 const getSupabaseFile = (file_name: string) =>
   supabase.storage.from("private").download(file_name);
+const getSupabaseFileLink = (file_name: string) =>
+  supabase.storage.from("private").getPublicUrl(file_name);
 const deleteStorageFile = (file_name: string) =>
   supabase.storage.from("private").remove([file_name]);
 const deleteFileById = (file_id: number) =>
@@ -178,6 +180,38 @@ export const getFileFromSupabase = async (
     error: null,
     file: dataFile,
     fileName: (/[^/]*$/.exec(data.file_name) as any)[0],
+  };
+};
+
+export const getFileLinkFromSupabase = async (
+  file_id: number
+): Promise<{ error: string | null; publicUrl: string | undefined }> => {
+  if (file_id === null) {
+    return {
+      error: "No FileId Supplied",
+      publicUrl: "",
+    }
+  }
+  const { data, error } = await getFileObject(file_id);
+  if (error) {
+    return {
+      error: error.message,
+      publicUrl: "",
+    };
+  }
+
+  const { data: dataResponse, error: errorFile } = await getSupabaseFileLink(
+    data.file_name
+  );
+  if (errorFile) {
+    return {
+      error: errorFile.message,
+      publicUrl: "",
+    };
+  }
+  return {
+    error: null,
+    publicUrl: dataResponse?.publicURL
   };
 };
 
