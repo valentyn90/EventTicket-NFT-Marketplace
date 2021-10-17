@@ -3,7 +3,7 @@ interface Nft {
   clip_file: number;
   finished: boolean;
   first_name: string;
-  graduation_year: number;
+  graduation_year: string;
   high_school: string;
   id: number;
   last_name: string;

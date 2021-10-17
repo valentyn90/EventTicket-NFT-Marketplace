@@ -57,11 +57,11 @@ const StepFive = () => {
             <Flex flex="1" direction="column" position="relative">
               {userStore.signatureExists ? (
                 <>
-                  <div
+                  <Box
                     style={{
                       position: "absolute",
-                      top: "3%",
-                      left: "2%",
+                      top: "45px",
+                      left: "10px",
                       fontSize: "20px",
                       transform: "rotate(45deg)",
                       cursor: "pointer",
@@ -72,7 +72,7 @@ const StepFive = () => {
                     }}
                   >
                     +
-                  </div>
+                  </Box>
                   <Text mt={["4", "4", 0]}>Your Signature</Text>
                   <Box
                     border="2px solid #E2E8F0"

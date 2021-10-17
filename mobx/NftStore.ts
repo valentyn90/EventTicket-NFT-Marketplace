@@ -35,7 +35,7 @@ export class NftStore {
 
   quotes = "";
   high_school = "";
-  graduation_year: number | undefined = undefined;
+  graduation_year = "";
 
   approved = false;
   finished = false;
@@ -174,7 +174,6 @@ export class NftStore {
       usaState: this.store.nftInput.usa_state,
       sport: this.store.nftInput.sport,
       sportPosition: this.store.nftInput.sport_position,
-      choiceQuote: this.store.nftInput.quotes,
     });
 
     if (error) {

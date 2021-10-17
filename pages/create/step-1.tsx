@@ -22,6 +22,12 @@ const StepOne = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
+  function padGradYear(grad_year: string) {
+    console.log(typeof grad_year)
+    const year_str = grad_year.toString()
+    return year_str.padStart(2, "0")
+  }
+
   async function handleStepOneSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -123,7 +129,7 @@ const StepOne = () => {
                   <Input
                     type="text"
                     placeholder="22"
-                    value={userStore.nftInput?.graduation_year || ""}
+                    value={padGradYear(userStore.nftInput?.graduation_year) || ""}
                     onChange={(e) =>
                       userStore.nftInput?.setInputValue(
                         "graduation_year",
