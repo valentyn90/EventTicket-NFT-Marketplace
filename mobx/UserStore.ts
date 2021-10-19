@@ -201,8 +201,7 @@ export class UserStore {
         this.nft.high_school === this.nftInput.high_school &&
         this.nft.usa_state === this.nftInput.usa_state &&
         this.nft.sport === this.nftInput.sport &&
-        this.nft.sport_position === this.nftInput.sport_position &&
-        this.nft.quotes === this.nftInput.quotes
+        this.nft.sport_position === this.nftInput.sport_position
       ) {
         return true;
       }

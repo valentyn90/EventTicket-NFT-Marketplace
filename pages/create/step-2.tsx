@@ -71,8 +71,7 @@ const StepTwo = () => {
             {/* Left side */}
             <PhotoPreviewSide
               title="Something's Missing"
-              subtitle="Your Ink needs the perfect action shot. You'll be able to change
-              it later, but let's get something in there now."
+              subtitle="Your Ink needs the perfect action shot. Pick a photo of just you, we'll remove the background."
               flex="1"
               nft_id={userStore.loadedNft?.id}
               nft={userStore.loadedNft}
@@ -91,7 +90,7 @@ const StepTwo = () => {
                 type="submit"
                 disabled={userStore.nftInput?.photoUploading}
               >
-                {submitting ? <Spinner /> : "Let's See It"}
+                {submitting ? <Spinner /> : "Looks Good"}
               </Button>
             </Flex>
           </Flex>

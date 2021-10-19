@@ -262,8 +262,7 @@ export const stepThreeSubmit = (input: NftFormInput) =>
         high_school: input.highSchool,
         usa_state: input.usaState,
         sport: input.sport,
-        sport_position: input.sportPosition,
-        quotes: input.choiceQuote,
+        sport_position: input.sportPosition
       },
     ])
     .match({ id: input.nft_id });

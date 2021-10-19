@@ -3,7 +3,7 @@ interface NftFormInput {
   nft_id?: number;
   firstName?: string;
   lastName?: string;
-  gradYear?: number;
+  gradYear?: string;
   highSchool?: string;
   usaState?: string;
   sport?: string;

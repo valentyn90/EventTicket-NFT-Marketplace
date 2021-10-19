@@ -125,7 +125,7 @@ const StepThree = () => {
                     />
                   </Box>
                 )}
-                <Button colorScheme="blue" color="white" type="submit">
+                <Button mt="2rem !important" colorScheme="blue" color="white" type="submit">
                   {submitting ? <Spinner /> : "Looking Good"}
                 </Button>
               </Stack>
