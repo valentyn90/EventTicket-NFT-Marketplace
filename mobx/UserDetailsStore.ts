@@ -7,7 +7,7 @@ import {
   getReferringUser,
   updateReferringUser,
   updateUserReferredUser,
-} from "@/utils/supabase-client";
+} from "@/supabase/supabase-client";
 
 export class UserDetailsStore {
   store: UserStore;

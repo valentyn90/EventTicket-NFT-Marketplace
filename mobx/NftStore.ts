@@ -10,7 +10,7 @@ import {
   updateNft,
   updateNftScreenshotUrl,
   uploadFileToStorage,
-} from "@/utils/supabase-client";
+} from "@/supabase/supabase-client";
 import { makeAutoObservable } from "mobx";
 import { UserStore } from "./UserStore";
 

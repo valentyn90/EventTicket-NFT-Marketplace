@@ -1,6 +1,10 @@
 import { Card } from "@/components/ui/Card";
 import { DividerWithText } from "@/components/ui/DividerWithText";
-import { isReferralCodeUsed, signUp, supabase } from "@/utils/supabase-client";
+import {
+  isReferralCodeUsed,
+  signUp,
+  supabase,
+} from "@/supabase/supabase-client";
 import {
   Alert,
   AlertDescription,

@@ -17,7 +17,7 @@ export const CardWrapper = styled.div<StyleProps>`
   transform-origin: top center;
 
   @media only screen and (max-width: 600px) {
-    transform: scale(calc(400 / 600));
+    transform: scale(calc(300 / 600));
     transform-origin: top center;
   }
 
@@ -25,6 +25,8 @@ export const CardWrapper = styled.div<StyleProps>`
     position: absolute;
     width: 544px;
     height: 975px;
+    left: 0px;
+    bottom: 0px;
   }
   .background {
     position: absolute;

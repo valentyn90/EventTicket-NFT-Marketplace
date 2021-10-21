@@ -1,5 +1,5 @@
 import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
-import { supabase } from "@/utils/supabase-client";
+import { supabase } from "@/supabase/supabase-client";
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import { NextApiRequest } from "next";

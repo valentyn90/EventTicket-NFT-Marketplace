@@ -1,6 +1,6 @@
 import CreateLayout from "@/components/Create/CreateLayout";
 import userStore from "@/mobx/UserStore";
-import { supabase } from "@/utils/supabase-client";
+import { supabase } from "@/supabase/supabase-client";
 import {
   Button,
   Divider,

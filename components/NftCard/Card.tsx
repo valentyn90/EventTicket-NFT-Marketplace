@@ -1,7 +1,7 @@
 import { NftStore } from "@/mobx/NftStore";
 import userStore from "@/mobx/UserStore";
 import { Spinner } from "@chakra-ui/spinner";
-import { getFileFromSupabase, getNftById } from "@/utils/supabase-client";
+import { getFileFromSupabase, getNftById } from "@/supabase/supabase-client";
 import { observer } from "mobx-react-lite";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -15,6 +15,8 @@ interface Props {
   nft_id?: number | undefined;
   nft_width?: number | undefined;
   reverse?: boolean | undefined;
+  flip?: boolean | undefined;
+  initFlip?: boolean | undefined;
   nft?: NftStore | null;
   readOnly?: boolean;
   db_first_name?: string;
@@ -25,6 +27,8 @@ const Card: React.FunctionComponent<Props> = ({
   nft_id = 96,
   nft_width = 400,
   reverse = false,
+  flip = false,
+  initFlip = false,
   nft,
   readOnly = false,
   db_first_name,
@@ -45,6 +49,19 @@ const Card: React.FunctionComponent<Props> = ({
   });
 
   async function getCardData() {
+    setNftCardData({
+      photo: "",
+      mux_playback_id: "",
+      high_school: "",
+      signature: "",
+      first_name: "",
+      last_name: "",
+      sport: "",
+      sport_position: "",
+      usa_state: "",
+      graduation_year: "",
+    });
+    setLoaded(false);
     const { data, error } = await getNftById(nft_id);
     if (!error && data) {
       // check/get all the files
@@ -65,12 +82,10 @@ const Card: React.FunctionComponent<Props> = ({
         }
       }
       setNftCardData({
-        ...nftCardData,
         ...data,
         signature,
         photo,
       });
-      // setTimeout(() => setLoaded(true), 2000);
       setLoaded(true);
     }
   }
@@ -105,6 +120,14 @@ const Card: React.FunctionComponent<Props> = ({
   const flipCard = () => {
     setLastY(lastY + 180);
   };
+
+  useEffect(() => {
+    // Check if this is the first time the card modal loaded
+    // So the card doesn't flip automatically when modal is opened
+    if (initFlip) {
+      flipCard();
+    }
+  }, [flip]);
 
   useEffect(() => {
     if (lastY % 360 === 0) {
@@ -262,10 +285,11 @@ const Card: React.FunctionComponent<Props> = ({
         />
         <meta
           property="og:image"
-          content={`${typeof public_url === "string" && public_url.length > 0
-            ? public_url
-            : "https://verifiedink.us/img/verified-ink-site.png"
-            }`}
+          content={`${
+            typeof public_url === "string" && public_url.length > 0
+              ? public_url
+              : "https://verifiedink.us/img/verified-ink-site.png"
+          }`}
           key="preview"
         />
         <meta

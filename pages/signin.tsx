@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/Card";
 import { DividerWithText } from "@/components/ui/DividerWithText";
-import { signIn, supabase } from "@/utils/supabase-client";
+import { signIn, supabase } from "@/supabase/supabase-client";
 import {
   Box,
   Button,

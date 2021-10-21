@@ -1,6 +1,6 @@
 import Card from "@/components/NftCard/Card";
 import Nft from "@/types/Nft";
-import { getFileLinkFromSupabase, getNftById } from "@/utils/supabase-client";
+import { getFileLinkFromSupabase, getNftById } from "@/supabase/supabase-client";
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";

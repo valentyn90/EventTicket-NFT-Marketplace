@@ -6,8 +6,9 @@ import {
   getUserDetails,
   getUserNft,
   supabase,
-} from "@/utils/supabase-client";
+} from "@/supabase/supabase-client";
 import { makeAutoObservable } from "mobx";
+import { MarketplaceStore } from "./MarketplaceStore";
 import { NftInput } from "./NftInput";
 import { NftStore } from "./NftStore";
 import { UserDetailsStore } from "./UserDetailsStore";
@@ -22,11 +23,13 @@ export class UserStore {
   nft: NftStore | null = null;
   nftInput: NftInput;
   userDetails: UserDetailsStore;
+  marketplace: MarketplaceStore;
 
   constructor() {
     makeAutoObservable(this);
     this.nftInput = new NftInput(null);
     this.userDetails = new UserDetailsStore(this);
+    this.marketplace = new MarketplaceStore(this);
 
     supabase.auth.onAuthStateChange(async (event, session) => {
       await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth`, {

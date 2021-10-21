@@ -1,5 +1,5 @@
 import userStore from "@/mobx/UserStore";
-import { signOut, supabase } from "@/utils/supabase-client";
+import { signOut, supabase } from "@/supabase/supabase-client";
 import { Box, Button, Heading, useColorModeValue } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import type { NextApiRequest } from "next";

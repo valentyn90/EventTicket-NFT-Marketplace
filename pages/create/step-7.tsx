@@ -1,6 +1,7 @@
 import CreateLayout from "@/components/Create/CreateLayout";
 import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
+import { handleRecruitClick } from "@/utils/shareCard";
 import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
@@ -8,30 +9,6 @@ import React, { useState } from "react";
 const StepSeven = () => {
   const [referralCode, setReferralCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
-  async function handleRecruitClick() {
-    const share_link = "https://verifiedink.us/card/" + userStore.nft?.id;
-
-    const shareData = {
-      title: "VerifiedInk",
-      text: "Checkout my Verified Ink",
-      url: share_link,
-    };
-
-    if (navigator.share === undefined) {
-      const ta = document.createElement("textarea");
-      ta.innerText = share_link;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-      alert("link has been copied to your clipboard");
-    } else {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {}
-    }
-  }
 
   let component = (
     <>
@@ -42,7 +19,11 @@ const StepSeven = () => {
         If you want some company, recruit a few teammates to Verified. You’ll
         get one of their Inks when they sign up.
       </Text>
-      <Button onClick={handleRecruitClick} colorScheme="blue" color="white">
+      <Button
+        onClick={() => handleRecruitClick(userStore.nft?.id)}
+        colorScheme="blue"
+        color="white"
+      >
         Share my Verified Ink
       </Button>
     </>

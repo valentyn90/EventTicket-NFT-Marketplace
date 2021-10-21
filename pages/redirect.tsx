@@ -1,4 +1,4 @@
-import { supabase } from "@/utils/supabase-client";
+import { supabase } from "@/supabase/supabase-client";
 import { Center, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
