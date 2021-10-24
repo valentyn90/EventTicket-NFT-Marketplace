@@ -18,6 +18,17 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="https://verifiedink.us/img/verified-ink-site.png"
           key="preview"
         />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-68N30YNDQ1"></script>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-68N30YNDQ1');
+          `,
+        }}
+        />
       </Head>
       <GlobalStyle />
       <Layout>

@@ -2,6 +2,7 @@ import NftFormInput from "@/types/NftFormInput";
 import SignInOptions from "@/types/SignInOptions";
 import SignUpOptions from "@/types/SignUpOptions";
 import { createClient } from "@supabase/supabase-js";
+import * as ga from "@/utils/ga";
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL as string,
@@ -14,6 +15,10 @@ export const signIn = async ({
   goToStepOne,
 }: SignInOptions) => {
   let redirect_url: string | undefined = `/redirect`;
+  ga.event({
+    action: "login",
+    params: { provider: provider }
+  })
 
   if (!goToStepOne) {
     redirect_url = undefined;
@@ -43,6 +48,10 @@ export const signIn = async ({
 
 export const signUp = async ({ email, provider }: SignUpOptions) => {
   let redirect_url: string | undefined = `/redirect`;
+  ga.event({
+    action: "sign_up",
+    params: { provider: provider }
+  })
 
   if (email) {
     const { error } = await supabase.auth.signIn(

@@ -2,7 +2,9 @@ import React from "react";
 import Navbar from "@/components/Navbar";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useColorMode } from "@chakra-ui/react";
+import { Box, useColorMode } from "@chakra-ui/react";
+import CookieConsent from "react-cookie-consent";
+import { CookieBanner } from "components/ui/CookieBanner";
 
 interface Props {
   children: React.ReactNode;
@@ -27,7 +29,13 @@ const Layout: React.FC<Props> = ({ children }) => {
       </Head>
       {showNav && <Navbar />}
       {/* Margin for fixed navbar position */}
-      <main style={{ marginTop: "56px" }}>{children}</main>
+      <main style={{ marginTop: "56px" }}>{children}
+        <Box minH="2xs" >
+          <CookieBanner />
+        </Box>
+      </main>
+
+
     </>
   );
 };
