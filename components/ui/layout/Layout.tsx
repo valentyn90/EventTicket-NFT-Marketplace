@@ -3,7 +3,6 @@ import Navbar from "@/components/Navbar";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Box, useColorMode } from "@chakra-ui/react";
-import CookieConsent from "react-cookie-consent";
 import { CookieBanner } from "components/ui/CookieBanner";
 
 interface Props {
