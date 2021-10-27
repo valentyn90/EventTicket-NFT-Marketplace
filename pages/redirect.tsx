@@ -3,7 +3,7 @@ import { Center, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 
-interface Props {}
+interface Props { }
 
 const Redirect: React.FC<Props> = () => {
   const router = useRouter();

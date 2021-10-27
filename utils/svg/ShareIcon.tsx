@@ -2,16 +2,17 @@ import React from "react";
 
 interface Props {
   marginRight?: string;
+  color?: string;
 }
 
-const ShareIcon: React.FC<Props> = ({ marginRight }) => {
+const ShareIcon: React.FC<Props> = ({ marginRight, color }) => {
   return (
     <svg
-      style={{ marginRight }}
+      style={{ marginRight, color }}
       width="18"
       height="18"
       viewBox="0 0 18 18"
-      fill="none"
+      fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

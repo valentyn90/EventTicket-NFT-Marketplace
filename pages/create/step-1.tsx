@@ -23,9 +23,8 @@ const StepOne = () => {
   const [submitting, setSubmitting] = useState(false);
 
   function padGradYear(grad_year: string) {
-    console.log(typeof grad_year)
-    const year_str = grad_year.toString()
-    return year_str.padStart(2, "0")
+    const year_str = grad_year.toString();
+    return year_str.padStart(2, "0");
   }
 
   async function handleStepOneSubmit(e: React.FormEvent) {
@@ -39,7 +38,7 @@ const StepOne = () => {
       } else {
         // update NFT in db
         setSubmitting(true);
-        const res = await userStore.nft.updateThisNft();
+        const res = await userStore.nft.updateStepOne();
         setSubmitting(false);
         if (res) {
           // successfully updated
@@ -129,7 +128,9 @@ const StepOne = () => {
                   <Input
                     type="text"
                     placeholder="22"
-                    value={padGradYear(userStore.nftInput?.graduation_year) || ""}
+                    value={
+                      padGradYear(userStore.nftInput?.graduation_year) || ""
+                    }
                     onChange={(e) =>
                       userStore.nftInput?.setInputValue(
                         "graduation_year",

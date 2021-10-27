@@ -12,6 +12,7 @@ import { MarketplaceStore } from "./MarketplaceStore";
 import { NftInput } from "./NftInput";
 import { NftStore } from "./NftStore";
 import { UserDetailsStore } from "./UserDetailsStore";
+import { updateUsername } from "@/supabase/userDetails";
 
 export class UserStore {
   loaded = false;
@@ -24,6 +25,18 @@ export class UserStore {
   nftInput: NftInput;
   userDetails: UserDetailsStore;
   marketplace: MarketplaceStore;
+
+  resetThisState() {
+    this.loaded = true;
+    this.id = "";
+    this.email = "";
+    this.name = "";
+    this.avatar_url = "";
+    this.nft = null;
+    this.nftInput.resetValues();
+    this.userDetails.resetValues();
+    this.marketplace.resetValues();
+  }
 
   constructor() {
     makeAutoObservable(this);
@@ -67,7 +80,12 @@ export class UserStore {
         const sign_up = localStorage.getItem("sign_up");
         if (sign_up === "true") {
           const referral_code = localStorage.getItem("referral_code");
-          await this.userDetails.initSignUp(referral_code, user.id);
+          await this.userDetails.initSignUp(
+            referral_code,
+            user.id,
+            user.email,
+            user.user_metadata.user_name
+          );
           localStorage.removeItem("sign_up");
           localStorage.removeItem("referral_code");
         }
@@ -79,7 +97,12 @@ export class UserStore {
 
         if (!userData) {
           // User signed in with no user_details db object
-          await this.userDetails.initSignUp(null, user.id);
+          await this.userDetails.initSignUp(
+            null,
+            user.id,
+            user.email,
+            user.user_metadata.user_name
+          );
         }
 
         // set user and fetch their NFT data.
@@ -158,15 +181,16 @@ export class UserStore {
     this.avatar_url = user.user_metadata?.avatar_url || "";
   }
 
-  resetThisState() {
-    this.loaded = true;
-    this.id = "";
-    this.email = "";
-    this.name = "";
-    this.avatar_url = "";
-    this.nft = null;
-    this.nftInput.resetValues();
-    this.userDetails.resetValues();
+  get nftMintingProgress() {
+    if (this.nft?.minted) {
+      return 3;
+    } else if (this.nft?.approved) {
+      return 2;
+    } else if (this.stepOneSkip) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   get loggedIn() {
@@ -255,12 +279,19 @@ export class UserStore {
       user_id: this.id,
     });
 
+    const user_name = `${this.nftInput?.first_name} ${this.nftInput?.last_name}`;
+    const { data: data2, error: error2 } = await updateUsername(
+      user_name,
+      this.userDetails.id
+    );
+
     if (error) {
       alert(error.message);
       return false;
     } else {
       if (data) {
         this.nft = new NftStore(data[0], this);
+        this.userDetails.setFieldValue("user_name", user_name);
         return true;
       } else {
         return false;

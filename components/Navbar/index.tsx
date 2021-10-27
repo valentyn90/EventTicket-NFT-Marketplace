@@ -1,11 +1,18 @@
 import userStore from "@/mobx/UserStore";
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { signOut } from "@/supabase/supabase-client";
+import { ChevronDownIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
   HStack,
-  Text,
+  Box,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  VStack,
   useColorMode,
+  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
@@ -38,6 +45,7 @@ const NavIndex: React.FC = () => {
                   Verified
                 </Text>
                 <Text
+                  marginTop="unset"
                   fontWeight="light"
                   alignSelf="flex-start"
                   textTransform="uppercase"
@@ -88,6 +96,31 @@ const NavIndex: React.FC = () => {
             direction={["column", "column", "row"]}
             align={["flex-start", "flex-start", "center"]}
           >
+            <Box display={["block", "block", "none"]}>
+              {/* Display mobile profile nav */}
+              <UserProfile
+                name={userStore.name}
+                avatarUrl={userStore.avatar_url}
+                email={userStore.email}
+              />
+              <VStack mt={4} align="start">
+                <NextLink href="/profile">
+                  <a>
+                    <Text color="blue.400" fontSize="md">
+                      Profile
+                    </Text>
+                  </a>
+                </NextLink>
+                <NextLink href="/collection">
+                  <a>
+                    <Text color="blue.400" fontSize="md">
+                      Collection
+                    </Text>
+                  </a>
+                </NextLink>
+              </VStack>
+            </Box>
+
             <NextLink href="/recruit">
               <a>
                 <Button
@@ -102,11 +135,39 @@ const NavIndex: React.FC = () => {
                 </Button>
               </a>
             </NextLink>
-            <UserProfile
-              name={userStore.name}
-              avatarUrl={userStore.avatar_url}
-              email={userStore.email}
-            />
+            <Box display={["none", "none", "block"]}>
+              {/* Display dropdown menu only in desktop */}
+              <Menu>
+                <MenuButton
+                  variant="transparent"
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                >
+                  <UserProfile
+                    name={userStore.name}
+                    avatarUrl={userStore.avatar_url}
+                    email={userStore.email}
+                  />
+                </MenuButton>
+                <MenuList>
+                  <MenuItem>
+                    <NextLink href="/profile">
+                      <a style={{ width: "100%" }}>Profile</a>
+                    </NextLink>
+                  </MenuItem>
+                  <MenuItem>
+                    <NextLink href="/collection">
+                      <a style={{ width: "100%" }}>Collection</a>
+                    </NextLink>
+                  </MenuItem>
+                  <MenuItem>
+                    <Button colorScheme="blue" color="white" onClick={signOut}>
+                      Logout
+                    </Button>
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
           </Flex>
         </Navbar.UserProfile>
       )}

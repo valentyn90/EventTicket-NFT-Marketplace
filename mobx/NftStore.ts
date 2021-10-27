@@ -13,6 +13,7 @@ import {
 } from "@/supabase/supabase-client";
 import { makeAutoObservable } from "mobx";
 import { UserStore } from "./UserStore";
+import { updateUsername } from "@/supabase/userDetails";
 
 export class NftStore {
   store: UserStore;
@@ -93,22 +94,30 @@ export class NftStore {
     }
   };
 
-  updateThisNft = async (): Promise<boolean> => {
+  updateStepOne = async (): Promise<boolean> => {
     const { data, error } = await updateNft({
       nft_id: this.id,
       firstName: this.store.nftInput?.first_name,
       lastName: this.store.nftInput?.last_name,
       gradYear: this.store.nftInput?.graduation_year,
     });
+
+    const user_name = `${this.store.nftInput?.first_name} ${this.store.nftInput?.last_name}`;
+    const { data: data2, error: error2 } = await updateUsername(
+      user_name,
+      this.store.userDetails.id
+    );
+
     if (error) {
       alert(error.message);
       return false;
     } else {
+      this.store.userDetails.setFieldValue("user_name", user_name);
       return true;
     }
   };
 
-  setInputValue = (field: string, value: any) => {
+  setFieldValue = (field: string, value: any) => {
     // @ts-ignore
     this[field] = value;
   };
@@ -121,7 +130,7 @@ export class NftStore {
       const data = await res.json();
       if (data.upload) {
         // if upload object is ready, set muxUploadId
-        this.setInputValue("mux_asset_id", data.upload.asset_id);
+        this.setFieldValue("mux_asset_id", data.upload.asset_id);
         // once upload is available then start fetching the asset
         this.getMuxAsset();
         // this.store
@@ -142,7 +151,7 @@ export class NftStore {
 
         if (data.asset?.status === "ready") {
           this.store.nftInput.setVideoUploading(false);
-          this.setInputValue("mux_playback_id", data.asset.playback_id);
+          this.setFieldValue("mux_playback_id", data.asset.playback_id);
           this.updateMuxIdsInSupabase();
           clearInterval(checkAssetInterval);
         }
@@ -192,8 +201,9 @@ export class NftStore {
   uploadPhotoToSupabase = async (): Promise<boolean> => {
     try {
       // 1. set the path name
-      const filePath = `${this.store.id}/${new Date().getTime()}${this.store.nftInput.localPhoto?.name
-        }`;
+      const filePath = `${this.store.id}/${new Date().getTime()}${
+        this.store.nftInput.localPhoto?.name
+      }`;
 
       // 1. upload image file
       const { data, error } = await uploadFileToStorage(
@@ -256,8 +266,9 @@ export class NftStore {
 
   uploadSignatureToSupabase = async (sigFile: File): Promise<boolean> => {
     try {
-      const filePath = `${this.store.id
-        }/${new Date().getTime()}signaturePic.png`;
+      const filePath = `${
+        this.store.id
+      }/${new Date().getTime()}signaturePic.png`;
 
       const { data, error } = await uploadFileToStorage(filePath, sigFile);
 
@@ -297,8 +308,7 @@ export class NftStore {
       // This is the image file to upload to supabase
       const base64Image = dataURLtoFile(data, file_name);
 
-      const file_path = `${this.store.id
-        }/${new Date().getTime()}${file_name}`;
+      const file_path = `${this.store.id}/${new Date().getTime()}${file_name}`;
 
       try {
         // Upload file
@@ -320,7 +330,7 @@ export class NftStore {
               );
             if (!attachError) {
               // done
-              this.setInputValue(
+              this.setFieldValue(
                 "screenshot_file_id",
                 (insertData as any)[0].id
               );
@@ -346,11 +356,11 @@ export class NftStore {
       console.log("Error getting nft card screenshot");
       return false;
     }
-
   }
 
   async stepSixSubmit(): Promise<boolean> {
     const { data, error } = await approveNftCard(this.id);
+    this.setFieldValue("approved", true);
     if (error) {
       alert(error.message);
       return false;

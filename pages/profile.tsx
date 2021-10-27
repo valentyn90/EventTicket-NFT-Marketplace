@@ -1,6 +1,18 @@
+import MintingProgress from "@/components/Profile/MintingProgress";
+import PersonalInfo from "@/components/Profile/PersonalInfo";
+import ReferralCode from "@/components/Profile/ReferralCode";
+import VerifiedStatus from "@/components/Profile/VerifiedStatus";
 import userStore from "@/mobx/UserStore";
 import { signOut, supabase } from "@/supabase/supabase-client";
-import { Box, Button, Heading, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  useColorModeValue,
+  VStack,
+  Spinner,
+} from "@chakra-ui/react";
+import { Center } from "@chakra-ui/layout";
 import { observer } from "mobx-react-lite";
 import type { NextApiRequest } from "next";
 import { useRouter } from "next/router";
@@ -24,13 +36,23 @@ const Profile: React.FC<Props> = (props) => {
       py="12"
       px={{ base: "4", lg: "8" }}
     >
-      <Box maxW="md" mx="auto">
-        <Heading textAlign="center" size="xl" fontWeight="extrabold">
-          Signed in.
-        </Heading>
-        <Button onClick={signOut}>Logout</Button>
-        <p>user email: {userStore?.email}</p>
-      </Box>
+      <Container maxW="container.sm">
+        <VStack spacing={8} alignItems="start">
+          {userStore.loaded ? (
+            <>
+              <PersonalInfo />
+              <VerifiedStatus />
+              <MintingProgress />
+              <ReferralCode />
+              <Button colorScheme="blue" color="white" onClick={signOut}>
+                Logout
+              </Button>
+            </>
+          ) : (
+            <Spinner size="xl" alignSelf="center" mt="50%" />
+          )}
+        </VStack>
+      </Container>
     </Box>
   );
 };

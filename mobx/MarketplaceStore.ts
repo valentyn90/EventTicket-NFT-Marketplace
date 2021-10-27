@@ -8,6 +8,11 @@ export class MarketplaceStore {
   selectedNft: Nft | null = null;
   openModal = false;
 
+  resetValues() {
+    this.selectedNft = null;
+    this.openModal = false;
+  }
+
   constructor(store: UserStore) {
     makeAutoObservable(this);
     this.store = store;

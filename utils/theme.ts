@@ -5,6 +5,14 @@ const config: ThemeConfig = {
   useSystemColorMode: false,
 };
 
+const Alert = {
+  baseStyle: {
+    container: {
+      top: "60px",
+    },
+  },
+};
+
 const theme = extendTheme({
   config,
   fonts: {
@@ -17,6 +25,9 @@ const theme = extendTheme({
       200: "#0051CA",
     },
     viBlue: "#0051CA",
+  },
+  components: {
+    Alert,
   },
 });
 

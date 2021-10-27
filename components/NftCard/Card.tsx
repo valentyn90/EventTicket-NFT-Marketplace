@@ -164,7 +164,11 @@ const Card: React.FunctionComponent<Props> = ({
         return notLocal;
       }
     } else {
-      return notLocal;
+      if (notLocal) {
+        return notLocal;
+      } else {
+        return "";
+      }
     }
   };
 
@@ -255,7 +259,15 @@ const Card: React.FunctionComponent<Props> = ({
       nftCardData.usa_state
     );
 
-    location = `${high_school}, ${usa_state}`;
+    if (high_school && usa_state) {
+      location = `${high_school}, ${usa_state}`;
+    } else if (high_school && !usa_state) {
+      location = high_school;
+    } else if (!high_school && usa_state) {
+      location = usa_state;
+    } else {
+      location = "";
+    }
 
     sport_position = localInputOrNot(
       userStore.nftInput.sport_position,

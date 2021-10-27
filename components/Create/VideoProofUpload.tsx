@@ -93,7 +93,7 @@ function VideoProofUpload() {
 
     userStore.nftInput.setVideoUploading(true);
     const { muxId, muxUrl } = await createUpload();
-    userStore.nft?.setInputValue("mux_upload_id", muxId);
+    userStore.nft?.setFieldValue("mux_upload_id", muxId);
     startUpload(file, muxUrl);
     // startUpload begins a series of async methods
     // Begins upload process to mux, then ends with updating supabase db with mux ids

@@ -80,7 +80,10 @@ export const signOut = () => supabase.auth.signOut();
 export const createUserDetails = (
   user_id: string,
   referral_code: string,
-  referring_user_id: string | null
+  referring_user_id: string | null,
+  verified_user: boolean,
+  email: string,
+  twitter: string = ""
 ) =>
   supabase.from("user_details").insert([
     {
@@ -88,7 +91,9 @@ export const createUserDetails = (
       referral_code,
       referral_limit: 5,
       referring_user_id,
-      verified_user: false,
+      verified_user,
+      email,
+      twitter,
     },
   ]);
 
@@ -118,6 +123,7 @@ export const updateUserReferredUser = (id: string, user_id: string) =>
     .update([
       {
         referring_user_id: user_id,
+        verified_user: true,
       },
     ])
     .match({ id });
@@ -199,7 +205,7 @@ export const getFileLinkFromSupabase = async (
     return {
       error: "No FileId Supplied",
       publicUrl: "",
-    }
+    };
   }
   const { data, error } = await getFileObject(file_id);
   if (error) {
@@ -220,7 +226,7 @@ export const getFileLinkFromSupabase = async (
   }
   return {
     error: null,
-    publicUrl: dataResponse?.publicURL
+    publicUrl: dataResponse?.publicURL,
   };
 };
 
@@ -271,7 +277,7 @@ export const stepThreeSubmit = (input: NftFormInput) =>
         high_school: input.highSchool,
         usa_state: input.usaState,
         sport: input.sport,
-        sport_position: input.sportPosition
+        sport_position: input.sportPosition,
       },
     ])
     .match({ id: input.nft_id });
