@@ -32,7 +32,7 @@ const PersonalInfo = () => {
       <Avatar
         size={avatarSize}
         mr={[4, 4, 14]}
-        name="Dan Abrahmov"
+        name={userStore.userDetails.user_name}
         src={userStore.avatar_url}
         boxShadow="xl"
       />

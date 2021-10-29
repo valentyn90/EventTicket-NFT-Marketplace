@@ -1,16 +1,24 @@
-import CardModal from "@/components/Marketplace/CardModal";
-import MarketplaceCardList from "@/components/Marketplace/MarketplaceCardList";
+import CardList from "@/components/NftCard/CardList";
+import CardListItemModal from "@/components/NftCard/CardListItemModal";
 import ViLogo from "@/components/ui/logos/ViLogo";
+import { getMintedNfts } from "@/supabase/marketplace";
+import Nft from "@/types/Nft";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Box, Container, Flex, Text } from "@chakra-ui/layout";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const Marketplace: React.FC = () => {
-  const logoColor = useColorModeValue("blue", "white");
+  const logoColor = useColorModeValue("blue.500", "white");
+
+  const [mintedNfts, setMintedNfts] = useState<Nft[]>([]);
+  useEffect(() => {
+    getMintedNfts().then((res) => setMintedNfts([...res]));
+  }, []);
+
   return (
     <Container maxW="3xl" mb={8}>
-      <Box align="center" pt={8}>
+      <Box align="center" py="12">
         <ViLogo width="150px" height="150px" />
         <Flex mt={2} align="center" justify="center">
           <Text
@@ -31,13 +39,19 @@ const Marketplace: React.FC = () => {
             Ink
           </Text>
         </Flex>
-        <Text mt={2} mb={4} textAlign="start" colorScheme="gray" fontSize={["l", "l", "xl"]}>
+        <Text
+          mt={2}
+          mb={4}
+          textAlign="start"
+          colorScheme="gray"
+          fontSize={["l", "l", "xl"]}
+        >
           Verified Ink cards are limited run NFTs created and minted by High
           School athletes. The marketplace isn’t live yet, but you can view all
           minted cards here.{" "}
         </Text>
-        <MarketplaceCardList />
-        <CardModal />
+        <CardList listType="marketplace" nfts={mintedNfts} />
+        <CardListItemModal />
       </Box>
     </Container>
   );

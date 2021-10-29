@@ -99,7 +99,7 @@ const NavIndex: React.FC = () => {
             <Box display={["block", "block", "none"]}>
               {/* Display mobile profile nav */}
               <UserProfile
-                name={userStore.name}
+                name={userStore.userDetails.user_name}
                 avatarUrl={userStore.avatar_url}
                 email={userStore.email}
               />
@@ -118,6 +118,9 @@ const NavIndex: React.FC = () => {
                     </Text>
                   </a>
                 </NextLink>
+                <Button colorScheme="blue" color="white" onClick={signOut}>
+                  Logout
+                </Button>
               </VStack>
             </Box>
 
@@ -160,11 +163,11 @@ const NavIndex: React.FC = () => {
                       <a style={{ width: "100%" }}>Collection</a>
                     </NextLink>
                   </MenuItem>
-                  <MenuItem>
+                  <Box w="100%" p="0.4rem 0.8rem">
                     <Button colorScheme="blue" color="white" onClick={signOut}>
                       Logout
                     </Button>
-                  </MenuItem>
+                  </Box>
                 </MenuList>
               </Menu>
             </Box>

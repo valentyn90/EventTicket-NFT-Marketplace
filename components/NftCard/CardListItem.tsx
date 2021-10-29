@@ -1,5 +1,6 @@
 import userStore from "@/mobx/UserStore";
 import { getFileFromSupabase } from "@/supabase/supabase-client";
+import { CardListType } from "@/types/CardListType";
 import Nft from "@/types/Nft";
 import { Button } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
@@ -10,11 +11,14 @@ import React, { useEffect, useState } from "react";
 
 interface Props {
   nft: Nft;
+  listType: CardListType;
 }
 
-const MarketplaceCard: React.FC<Props> = ({ nft }) => {
+const CardListItem: React.FC<Props> = ({ nft, listType }) => {
   const [loaded, setLoaded] = useState(false);
-  const [screenshot, setScreenshot] = useState("https://verifiedink.us/img/card-mask.png");
+  const [screenshot, setScreenshot] = useState(
+    "https://verifiedink.us/img/card-mask.png"
+  );
 
   useEffect(() => {
     if (nft.screenshot_file_id) {
@@ -58,7 +62,9 @@ const MarketplaceCard: React.FC<Props> = ({ nft }) => {
             h="100%"
             position="relative"
             display="block"
-            onClick={() => userStore.marketplace.openModalWithNft(nft)}
+            onClick={() =>
+              userStore.marketplace.openModalWithNft(nft, listType)
+            }
           >
             <Image
               position="absolute"
@@ -76,14 +82,21 @@ const MarketplaceCard: React.FC<Props> = ({ nft }) => {
               colorScheme="blue"
               variant="outline"
               onClick={() => {
-                userStore.marketplace.openModalWithNft(nft);
+                userStore.marketplace.openModalWithNft(nft, listType);
               }}
             >
               View
             </Button>
-            <Button size="sm" variant="outline" disabled>
-              Bid
-            </Button>
+            {listType === "marketplace" && (
+              <Button size="sm" variant="outline" disabled>
+                Bid
+              </Button>
+            )}
+            {listType === "collection" && (
+              <Button size="sm" variant="outline" disabled>
+                Sell
+              </Button>
+            )}
           </Flex>
         </>
       ) : (
@@ -93,4 +106,4 @@ const MarketplaceCard: React.FC<Props> = ({ nft }) => {
   );
 };
 
-export default observer(MarketplaceCard);
+export default observer(CardListItem);

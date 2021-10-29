@@ -3,7 +3,6 @@ import { Text, VStack } from "@chakra-ui/layout";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import Steps from "rsuite/Steps";
-import "rsuite/dist/rsuite.min.css";
 
 const styles = {
   display: "inline-table",

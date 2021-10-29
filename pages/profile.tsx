@@ -8,27 +8,17 @@ import {
   Box,
   Button,
   Container,
+  Spinner,
   useColorModeValue,
   VStack,
-  Spinner,
 } from "@chakra-ui/react";
-import { Center } from "@chakra-ui/layout";
 import { observer } from "mobx-react-lite";
 import type { NextApiRequest } from "next";
-import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 
 interface Props {}
 
 const Profile: React.FC<Props> = (props) => {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!userStore.loggedIn) {
-      router.push("/signin");
-    }
-  }, [userStore.loggedIn, router]);
-
   return (
     <Box
       bg={useColorModeValue("gray.50", "inherit")}
