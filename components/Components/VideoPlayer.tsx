@@ -11,7 +11,7 @@ export default function VideoPlayer({ src, previewOnly = false }: Props) {
   const [loaded, setLoaded] = useState(false);
 
   const videoSrc = `https://stream.mux.com/${src}.m3u8`;
-  const safariSrc = `https://stream.mux.com/${src}/high.mp4`;
+  const safariSrc = `https://stream.mux.com/${src}/medium.mp4`;
   const imagePreview = `https://image.mux.com/${src}/thumbnail.png?width=400&height=400&fit_mode=preserve&time=1`;
 
   useEffect(() => {
