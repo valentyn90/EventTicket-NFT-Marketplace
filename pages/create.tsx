@@ -1,4 +1,4 @@
-import CardPlaceholder from "@/components/NftCard/CardPlaceholder";
+import Card from "@/components/NftCard/Card";
 import { supabase } from "@/supabase/supabase-client";
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
@@ -54,7 +54,7 @@ const Create: React.FC = () => {
             </Text>
           </Flex>
           <Box flex="1" align="center" mt={["2rem", "2rem", 0]}>
-            <CardPlaceholder />
+            <Card nft_id={93} readOnly={true} />
           </Box>
         </Flex>
       </Box>

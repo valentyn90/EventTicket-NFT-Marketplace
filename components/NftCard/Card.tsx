@@ -24,7 +24,7 @@ interface Props {
 }
 
 const Card: React.FunctionComponent<Props> = ({
-  nft_id = 96,
+  nft_id = 93,
   nft_width = 400,
   reverse = false,
   flip = false,
@@ -297,11 +297,10 @@ const Card: React.FunctionComponent<Props> = ({
         />
         <meta
           property="og:image"
-          content={`${
-            typeof public_url === "string" && public_url.length > 0
-              ? public_url
-              : "https://verifiedink.us/img/verified-ink-site.png"
-          }`}
+          content={`${typeof public_url === "string" && public_url.length > 0
+            ? public_url
+            : "https://verifiedink.us/img/verified-ink-site.png"
+            }`}
           key="preview"
         />
         <meta
@@ -365,7 +364,7 @@ const Card: React.FunctionComponent<Props> = ({
                 </div>
               )}
               <div className="serial-number">
-                <div className="bold-info">1</div>/100
+                <div className="bold-info">1</div>/10
               </div>
             </div>
           </div>
