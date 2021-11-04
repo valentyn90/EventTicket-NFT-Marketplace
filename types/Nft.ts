@@ -1,3 +1,5 @@
+import UserDetails from "./UserDetails";
+
 interface Nft {
   approved: boolean;
   clip_file: number;
@@ -20,6 +22,9 @@ interface Nft {
   mux_upload_id: string | null;
   mux_asset_id: string | null;
   screenshot_file_id: number | null;
+  user_details_id: string;
+  admin_feedback: string;
+  user_details?: UserDetails;
 }
 
 export default Nft;

@@ -38,7 +38,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       >
         {children}
         <Box minH="2xs">
-          <CookieBanner />
+          {showNav && <CookieBanner />}
         </Box>
       </Box>
     </>

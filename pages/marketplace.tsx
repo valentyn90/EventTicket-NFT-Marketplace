@@ -1,5 +1,5 @@
 import CardList from "@/components/NftCard/CardList";
-import CardListItemModal from "@/components/NftCard/CardListItemModal";
+import AppModal from "@/components/ui/AppModal";
 import ViLogo from "@/components/ui/logos/ViLogo";
 import { getMintedNfts } from "@/supabase/marketplace";
 import Nft from "@/types/Nft";
@@ -51,7 +51,7 @@ const Marketplace: React.FC = () => {
           minted cards here.{" "}
         </Text>
         <CardList listType="marketplace" nfts={mintedNfts} />
-        <CardListItemModal />
+        <AppModal />
       </Box>
     </Container>
   );

@@ -17,8 +17,8 @@ export const signIn = async ({
   let redirect_url: string | undefined = `/redirect`;
   ga.event({
     action: "login",
-    params: { provider: provider }
-  })
+    params: { provider: provider },
+  });
 
   if (!goToStepOne) {
     redirect_url = undefined;
@@ -50,8 +50,8 @@ export const signUp = async ({ email, provider }: SignUpOptions) => {
   let redirect_url: string | undefined = `/redirect`;
   ga.event({
     action: "sign_up",
-    params: { provider: provider }
-  })
+    params: { provider: provider },
+  });
 
   if (email) {
     const { error } = await supabase.auth.signIn(
@@ -76,57 +76,6 @@ export const signUp = async ({ email, provider }: SignUpOptions) => {
 };
 
 export const signOut = () => supabase.auth.signOut();
-
-export const createUserDetails = (
-  user_id: string,
-  referral_code: string,
-  referring_user_id: string | null,
-  verified_user: boolean,
-  email: string,
-  twitter: string = ""
-) =>
-  supabase.from("user_details").insert([
-    {
-      user_id,
-      referral_code,
-      referral_limit: 5,
-      referring_user_id,
-      verified_user,
-      email,
-      twitter,
-    },
-  ]);
-
-export const getUserDetails = (id: string) =>
-  supabase.from("user_details").select("*").eq("user_id", id).maybeSingle();
-
-export const getReferringUser = (referralCode: string) =>
-  supabase
-    .from("user_details")
-    .select("*")
-    .eq("referral_code", referralCode)
-    .maybeSingle();
-
-export const updateReferringUser = (id: string, num_referred: number) =>
-  supabase
-    .from("user_details")
-    .update([
-      {
-        total_referred_users: num_referred,
-      },
-    ])
-    .match({ id });
-
-export const updateUserReferredUser = (id: string, user_id: string) =>
-  supabase
-    .from("user_details")
-    .update([
-      {
-        referring_user_id: user_id,
-        verified_user: true,
-      },
-    ])
-    .match({ id });
 
 const getFileObject = (file_id: number) =>
   supabase.from("files").select("*").eq("id", file_id).maybeSingle();
@@ -266,6 +215,7 @@ export const createNewNft = (input: NftFormInput) =>
       last_name: input.lastName,
       graduation_year: input.gradYear,
       user_id: input.user_id,
+      user_details_id: input.user_details_id,
     },
   ]);
 
@@ -321,12 +271,3 @@ export const setMuxValues = (
       },
     ])
     .match({ id: nft_id });
-
-export const isReferralCodeUsed = async (
-  referralCode: string
-): Promise<boolean> => {
-  const { data, error } = await getReferringUser(referralCode);
-  if (error) return false;
-  const { referral_limit, total_referred_users } = data;
-  return total_referred_users >= referral_limit;
-};

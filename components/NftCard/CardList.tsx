@@ -1,11 +1,11 @@
-import { CardListType } from "@/types/CardListType";
+import { ModalContentType } from "@/types/ModalContentType";
 import Nft from "@/types/Nft";
 import { Grid } from "@chakra-ui/layout";
 import React from "react";
 import CardListItem from "./CardListItem";
 
 interface Props {
-  listType: CardListType;
+  listType: ModalContentType;
   nfts: Nft[];
 }
 

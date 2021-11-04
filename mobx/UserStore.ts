@@ -3,16 +3,15 @@ import UserDetails from "@/types/UserDetails";
 import {
   createNewNft,
   getFileFromSupabase,
-  getUserDetails,
   getUserNft,
   supabase,
 } from "@/supabase/supabase-client";
 import { makeAutoObservable } from "mobx";
-import { MarketplaceStore } from "./MarketplaceStore";
 import { NftInput } from "./NftInput";
 import { NftStore } from "./NftStore";
 import { UserDetailsStore } from "./UserDetailsStore";
-import { updateUsername } from "@/supabase/userDetails";
+import { getUserDetails, updateUsername } from "@/supabase/userDetails";
+import { UiStore } from "./UiStore";
 
 export class UserStore {
   loaded = false;
@@ -24,7 +23,7 @@ export class UserStore {
   nft: NftStore | null = null;
   nftInput: NftInput;
   userDetails: UserDetailsStore;
-  marketplace: MarketplaceStore;
+  ui: UiStore;
 
   resetThisState() {
     this.loaded = true;
@@ -35,14 +34,14 @@ export class UserStore {
     this.nft = null;
     this.nftInput.resetValues();
     this.userDetails.resetValues();
-    this.marketplace.resetValues();
+    this.ui.resetValues();
   }
 
   constructor() {
     makeAutoObservable(this);
     this.nftInput = new NftInput(null);
     this.userDetails = new UserDetailsStore(this);
-    this.marketplace = new MarketplaceStore(this);
+    this.ui = new UiStore(this);
 
     supabase.auth.onAuthStateChange(async (event, session) => {
       await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/auth`, {
@@ -277,6 +276,7 @@ export class UserStore {
       lastName: this.nftInput?.last_name,
       gradYear: this.nftInput?.graduation_year,
       user_id: this.id,
+      user_details_id: this.userDetails.id,
     });
 
     const user_name = `${this.nftInput?.first_name} ${this.nftInput?.last_name}`;

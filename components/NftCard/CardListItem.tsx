@@ -1,6 +1,6 @@
 import userStore from "@/mobx/UserStore";
 import { getFileFromSupabase } from "@/supabase/supabase-client";
-import { CardListType } from "@/types/CardListType";
+import { ModalContentType } from "@/types/ModalContentType";
 import Nft from "@/types/Nft";
 import { Button } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 
 interface Props {
   nft: Nft;
-  listType: CardListType;
+  listType: ModalContentType;
 }
 
 const CardListItem: React.FC<Props> = ({ nft, listType }) => {
@@ -62,9 +62,7 @@ const CardListItem: React.FC<Props> = ({ nft, listType }) => {
             h="100%"
             position="relative"
             display="block"
-            onClick={() =>
-              userStore.marketplace.openModalWithNft(nft, listType)
-            }
+            onClick={() => userStore.ui.openModalWithNft(nft, listType)}
           >
             <Image
               position="absolute"
@@ -82,7 +80,7 @@ const CardListItem: React.FC<Props> = ({ nft, listType }) => {
               colorScheme="blue"
               variant="outline"
               onClick={() => {
-                userStore.marketplace.openModalWithNft(nft, listType);
+                userStore.ui.openModalWithNft(nft, listType);
               }}
             >
               View

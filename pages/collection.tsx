@@ -1,5 +1,5 @@
 import CardList from "@/components/NftCard/CardList";
-import CardListItemModal from "@/components/NftCard/CardListItemModal";
+import AppModal from "@/components/ui/AppModal";
 import { DividerWithText } from "@/components/ui/DividerWithText";
 import userStore from "@/mobx/UserStore";
 import { getUserNft, supabase } from "@/supabase/supabase-client";
@@ -37,7 +37,6 @@ const Collection = () => {
   const titleSize = useBreakpointValue({ base: "3xl", lg: "4xl" });
   const titleColor = useColorModeValue("blue.500", "white");
   const introColor = useColorModeValue("gray.600", "white");
-  const readMoreColor = useColorModeValue("gray.600", "white");
   const bgColor = useColorModeValue("gray.50", "inherit");
 
   const [mintedNfts, setMintedNfts] = useState<Nft[]>([]);
@@ -84,11 +83,11 @@ const Collection = () => {
           {userStore.loaded ? (
             <>
               <CardList listType="collection" nfts={mintedNfts} />
-              <CardListItemModal />
             </>
           ) : (
             <Spinner size="xl" />
           )}
+          <AppModal />
         </VStack>
       </Container>
     </Box>

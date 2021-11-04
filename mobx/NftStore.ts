@@ -20,6 +20,7 @@ export class NftStore {
 
   id: number;
   user_id = "";
+  user_details_id = "";
 
   first_name = "";
   last_name = "";
@@ -63,6 +64,7 @@ export class NftStore {
     this.mux_upload_id = input.mux_upload_id;
     this.mux_playback_id = input.mux_playback_id;
     this.user_id = input.user_id;
+    this.user_details_id = input.user_details_id;
     this.first_name = input.first_name;
     this.last_name = input.last_name;
     this.photo_file = input.photo_file;
@@ -298,9 +300,12 @@ export class NftStore {
     }
   };
 
-  async setNftCardScreenshot(): Promise<boolean> {
+  async setNftCardScreenshot(
+    nft_id: number,
+    user_id: string
+  ): Promise<boolean> {
     // Get screenshot of nft card
-    const res = await fetch(`/api/screenshot/create/${this.id}`);
+    const res = await fetch(`/api/screenshot/create/${nft_id}`);
     if (res.status === 200) {
       const file_name = `nftcard_screenshot.png`;
       const data = await res.text();
@@ -308,7 +313,7 @@ export class NftStore {
       // This is the image file to upload to supabase
       const base64Image = dataURLtoFile(data, file_name);
 
-      const file_path = `${this.store.id}/${new Date().getTime()}${file_name}`;
+      const file_path = `${user_id}/${new Date().getTime()}${file_name}`;
 
       try {
         // Upload file
@@ -318,7 +323,7 @@ export class NftStore {
         if (!uploadError) {
           // Create new file object in db and attach to user
           const { data: insertData, error: insertError } =
-            await insertFileToSupabase(file_path, this.id);
+            await insertFileToSupabase(file_path, nft_id);
 
           if (!insertError) {
             // attach file object to user
@@ -326,14 +331,16 @@ export class NftStore {
               await attachFileToNft(
                 "screenshot_file_id",
                 (insertData as any)[0].id,
-                this.id
+                nft_id
               );
             if (!attachError) {
               // done
-              this.setFieldValue(
-                "screenshot_file_id",
-                (insertData as any)[0].id
-              );
+              if (nft_id === this.id) {
+                this.setFieldValue(
+                  "screenshot_file_id",
+                  (insertData as any)[0].id
+                );
+              }
               return true;
             } else {
               alert(attachError.message);
@@ -360,11 +367,11 @@ export class NftStore {
 
   async stepSixSubmit(): Promise<boolean> {
     const { data, error } = await approveNftCard(this.id);
-    this.setFieldValue("approved", true);
     if (error) {
       alert(error.message);
       return false;
     }
+    this.setFieldValue("approved", true);
     return true;
   }
 }

@@ -2,13 +2,12 @@ import UserDetails from "@/types/UserDetails";
 import { nanoid } from "nanoid";
 import { makeAutoObservable } from "mobx";
 import { UserStore } from "./UserStore";
+import { createUserDetails, updateUsername } from "@/supabase/userDetails";
 import {
-  createUserDetails,
   getReferringUser,
   updateReferringUser,
   updateUserReferredUser,
-} from "@/supabase/supabase-client";
-import { updateUsername } from "@/supabase/userDetails";
+} from "@/supabase/recruit";
 
 export class UserDetailsStore {
   store: UserStore;

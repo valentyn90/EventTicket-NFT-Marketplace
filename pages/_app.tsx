@@ -7,11 +7,12 @@ import "@fontsource/open-sans";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { GlobalStyle } from "../css/globalStyle";
-import "../css/rsuite.css";
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import userStore from "@/mobx/UserStore";
 import { useRouter } from "next/router";
+
+import "../css/rsuite.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
