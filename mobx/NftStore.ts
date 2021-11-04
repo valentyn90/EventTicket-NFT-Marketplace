@@ -5,6 +5,7 @@ import {
   attachFileToNft,
   deleteNftById,
   insertFileToSupabase,
+  saveTeamColors,
   setMuxValues,
   stepThreeSubmit,
   updateNft,
@@ -49,6 +50,10 @@ export class NftStore {
 
   screenshot_file_id: number | null = null;
 
+  color_top: string | null = null;
+  color_bottom: string | null = null;
+  color_transition: string | null = null;
+
   constructor(
     input: Nft,
     store: UserStore,
@@ -79,6 +84,9 @@ export class NftStore {
     this.finished = input.finished;
     this.minted = input.minted;
     this.screenshot_file_id = input.screenshot_file_id;
+    this.color_top = input.color_top;
+    this.color_bottom = input.color_bottom;
+    this.color_transition = input.color_transition;
   }
 
   deleteThisNft = async (): Promise<boolean> => {
@@ -192,6 +200,27 @@ export class NftStore {
       return false;
     } else {
       return true;
+    }
+  };
+
+  saveTeamColors = async (): Promise<boolean> => {
+    const { data, error } = await saveTeamColors(
+      this.id,
+      this.store.nftInput.color_top,
+      this.store.nftInput.color_bottom,
+      this.store.nftInput.color_transition
+    );
+    if (data) {
+      this.setFieldValue("color_top", this.store.nftInput.color_top);
+      this.setFieldValue("color_bottom", this.store.nftInput.color_bottom);
+      this.setFieldValue(
+        "color_transition",
+        this.store.nftInput.color_transition
+      );
+      return true;
+    } else {
+      console.log(error);
+      return false;
     }
   };
 
@@ -365,7 +394,7 @@ export class NftStore {
     }
   }
 
-  async stepSixSubmit(): Promise<boolean> {
+  async stepSevenSubmit(): Promise<boolean> {
     const { data, error } = await approveNftCard(this.id);
     if (error) {
       alert(error.message);

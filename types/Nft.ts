@@ -24,6 +24,9 @@ interface Nft {
   screenshot_file_id: number | null;
   user_details_id: string;
   admin_feedback: string;
+  color_top: string | null;
+  color_bottom: string | null;
+  color_transition: string | null;
   user_details?: UserDetails;
 }
 

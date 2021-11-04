@@ -271,3 +271,20 @@ export const setMuxValues = (
       },
     ])
     .match({ id: nft_id });
+
+export const saveTeamColors = (
+  nft_id: number,
+  color_top: string,
+  color_bottom: string,
+  color_transition: string
+) =>
+  supabase
+    .from("nft")
+    .update([
+      {
+        color_top,
+        color_bottom,
+        color_transition,
+      },
+    ])
+    .match({ id: nft_id });

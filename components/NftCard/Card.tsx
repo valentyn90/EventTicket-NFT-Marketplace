@@ -46,6 +46,9 @@ const Card: React.FunctionComponent<Props> = ({
     sport_position: "",
     usa_state: "",
     graduation_year: "",
+    color_top: "",
+    color_bottom: "",
+    color_transition: "",
   });
 
   async function getCardData() {
@@ -60,6 +63,9 @@ const Card: React.FunctionComponent<Props> = ({
       sport_position: "",
       usa_state: "",
       graduation_year: "",
+      color_top: "",
+      color_bottom: "",
+      color_transition: "",
     });
     setLoaded(false);
     const { data, error } = await getNftById(nft_id);
@@ -102,7 +108,7 @@ const Card: React.FunctionComponent<Props> = ({
   const router = useRouter();
 
   useEffect(() => {
-    if (router.pathname.includes("step-4")) {
+    if (router.pathname.includes("step-5")) {
       setLastY(180);
     }
   }, [router.pathname]);
@@ -185,7 +191,20 @@ const Card: React.FunctionComponent<Props> = ({
   let sport_position;
   let sport;
   let preview_rotation;
+
+  let topColor;
+  let bottomColor;
+  let transitionColor;
+  // else {
+  //   topColor = userStore.nftInput.color_top || "#4f66e1";
+  //   bottomColor = userStore.nftInput.color_bottom || "#cb0000";
+  //   transitionColor = userStore.nftInput.color_transition || "#3d142d";
+  // }
+
   if (readOnly) {
+    topColor = nftCardData.color_top || "#4f66e1";
+    bottomColor = nftCardData.color_bottom || "#cb0000";
+    transitionColor = nftCardData.color_transition || "#3d142d";
     preview_rotation = 0;
     video = nftCardData.mux_playback_id;
     signature = nftCardData.signature;
@@ -275,6 +294,19 @@ const Card: React.FunctionComponent<Props> = ({
     );
 
     sport = localInputOrNot(userStore.nftInput.sport, nftCardData.sport);
+
+    topColor = localInputOrNot(
+      userStore.nftInput.color_top,
+      nftCardData.color_top
+    );
+    bottomColor = localInputOrNot(
+      userStore.nftInput.color_bottom,
+      nftCardData.color_bottom
+    );
+    transitionColor = localInputOrNot(
+      userStore.nftInput.color_transition,
+      nftCardData.color_transition
+    );
   }
 
   return (
@@ -282,6 +314,9 @@ const Card: React.FunctionComponent<Props> = ({
       signatureFile={signature}
       rotation={preview_rotation}
       nftWidth={nft_width}
+      topColor={topColor}
+      bottomColor={bottomColor}
+      transitionColor={transitionColor}
     >
       <Head>
         <meta
@@ -297,10 +332,11 @@ const Card: React.FunctionComponent<Props> = ({
         />
         <meta
           property="og:image"
-          content={`${typeof public_url === "string" && public_url.length > 0
-            ? public_url
-            : "https://verifiedink.us/img/verified-ink-site.png"
-            }`}
+          content={`${
+            typeof public_url === "string" && public_url.length > 0
+              ? public_url
+              : "https://verifiedink.us/img/verified-ink-site.png"
+          }`}
           key="preview"
         />
         <meta

@@ -1,23 +1,47 @@
+import ColorPicker from "@/components/Create/ColorPicker";
 import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
-import VideoProofUpload from "@/components/Create/VideoProofUpload";
+import Card from "@/components/NftCard/Card";
+import { CardBox } from "@/components/ui/CardBox";
 import userStore from "@/mobx/UserStore";
-import { Button, Divider, Flex, Spinner } from "@chakra-ui/react";
+import {
+  Button,
+  Divider,
+  Flex,
+  Spinner,
+  useToast,
+  Box,
+} from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 const StepFour = () => {
+  const toast = useToast();
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
 
   async function handleStepFourSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (userStore.videoExists) {
+
+    if (userStore.stepFourSkip) {
       router.push("/create/step-5");
     } else {
-      alert("Upload a video before moving on.");
+      setSubmitting(true);
+      const res = await userStore.nft?.saveTeamColors();
+      setSubmitting(false);
+      if (res) {
+        router.push("/create/step-5");
+      } else {
+        toast({
+          position: "top",
+          description: "Error saving team colors",
+          status: "error",
+          duration: 3500,
+          isClosable: true,
+        });
+      }
     }
   }
 
@@ -27,14 +51,29 @@ const StepFour = () => {
         <Flex direction="column">
           <Flex direction={["column", "column", "row"]}>
             <PhotoPreviewSide
-              title="Video Proof"
-              subtitle="Upload a short clip showing off your skills. 10-20 seconds is perfect, we'll clip it if it's over 30."
+              title="Team Colors"
+              subtitle="Make your card pop with your team's colors."
               flex="1"
               nft_id={userStore.nft?.id}
               nft={userStore.loadedNft}
             />
             <Flex flex="1" direction="column">
-              <VideoProofUpload />
+              <ColorPicker />
+              <Box
+                mt={["2rem !important", "2rem !important", 0]}
+                mb={["2rem !important", "2rem !important", 0]}
+                display={["block", "block", "none"]}
+                h={["500x", "500x", "450px"]}
+              >
+                <CardBox>
+                  <Card
+                    nft_id={userStore.nft?.id}
+                    nft={userStore.loadedNft}
+                    nft_width={400}
+                    reverse={false}
+                  />
+                </CardBox>
+              </Box>
               <Button
                 display="block"
                 ml="auto"
@@ -43,9 +82,9 @@ const StepFour = () => {
                 colorScheme="blue"
                 color="white"
                 type="submit"
-                disabled={userStore.nftInput.videoUploading}
+                disabled={submitting}
               >
-                {submitting ? <Spinner /> : "Time to Sign"}
+                {submitting ? <Spinner /> : "Looking Good"}
               </Button>
             </Flex>
           </Flex>

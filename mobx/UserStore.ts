@@ -235,7 +235,22 @@ export class UserStore {
     return false;
   }
 
-  get stepFiveSkip() {
+  get stepFourSkip() {
+    if (this.nft) {
+      if (
+        (this.nftInput.color_top === this.nft.color_top,
+        this.nftInput.color_bottom === this.nft.color_bottom,
+        this.nftInput.color_transition === this.nft.color_transition)
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  get stepSixSkip() {
     if (this.nft) {
       if (this.nft.signature !== "" && !this.nftInput.localSignature) {
         return true;

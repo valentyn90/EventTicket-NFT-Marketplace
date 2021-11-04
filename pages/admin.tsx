@@ -223,7 +223,6 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   } else {
     const { data, error } = await getUserDetails(user.id);
     if (data) {
-      console.log(data)
       if (data.role === process.env.NEXT_PUBLIC_ADMIN_ROLE) {
         return { props: {} };
       }

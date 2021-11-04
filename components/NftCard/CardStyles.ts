@@ -4,6 +4,9 @@ interface StyleProps {
   signatureFile: string | null;
   rotation: number | null;
   nftWidth: number;
+  topColor: string;
+  bottomColor: string;
+  transitionColor: string;
 }
 
 export const CardWrapper = styled.div<StyleProps>`
@@ -43,9 +46,9 @@ export const CardWrapper = styled.div<StyleProps>`
     bottom: 0%;
     background: linear-gradient(
       219.17deg,
-      #4f66e1 -10.14%,
-      #3d142d 48.6%,
-      #cb0000 101.53%
+      ${(props) => props.topColor} -10.14%,
+      ${(props) => props.transitionColor} 48.6%,
+      ${(props) => props.bottomColor} 101.53%
     );
     mix-blend-mode: normal;
     mask-image: url(/img/card-mask.png);

@@ -18,6 +18,10 @@ export class NftInput {
   localSignature: any = null;
   localPhoto: File | undefined = undefined;
 
+  color_top: string = "";
+  color_bottom: string = "";
+  color_transition: string = "";
+
   constructor(input: Nft | null) {
     makeAutoObservable(this);
     this.first_name = input?.first_name || "";
@@ -27,6 +31,9 @@ export class NftInput {
     this.usa_state = input?.usa_state || "";
     this.high_school = input?.high_school || "";
     this.graduation_year = input?.graduation_year || "";
+    this.color_top = input?.color_top || "";
+    this.color_bottom = input?.color_bottom || "";
+    this.color_transition = input?.color_transition || "";
   }
 
   setValues = (input: Nft) => {
@@ -37,6 +44,9 @@ export class NftInput {
     this.usa_state = input?.usa_state || "";
     this.high_school = input?.high_school || "";
     this.graduation_year = input?.graduation_year || "";
+    this.color_top = input?.color_top || "";
+    this.color_bottom = input?.color_bottom || "";
+    this.color_transition = input?.color_transition || "";
   };
 
   resetValues = () => {
@@ -53,6 +63,9 @@ export class NftInput {
     this.localVideo = undefined;
     this.localSignature = null;
     this.localPhoto = undefined;
+    this.color_top = "";
+    this.color_bottom = "";
+    this.color_transition = "";
   };
 
   setLocalPhoto = (photo: File) => {

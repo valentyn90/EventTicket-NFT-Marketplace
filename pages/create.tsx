@@ -79,14 +79,14 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
       if (data.finished && !data.approved) {
         return {
           redirect: {
-            destination: "/create/step-6",
+            destination: "/create/step-7",
             permanent: false,
           },
         };
       } else if (data.finished && data.approved) {
         return {
           redirect: {
-            destination: "/create/step-7",
+            destination: "/create/step-8",
             permanent: false,
           },
         };

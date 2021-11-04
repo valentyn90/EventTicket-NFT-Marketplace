@@ -1,25 +1,44 @@
 import CreateLayout from "@/components/Create/CreateLayout";
+import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
 import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import SignaturePad from "react-signature-pad-wrapper";
 
 const StepSix = () => {
+  const signatureRef: any = useRef(null);
+
   const router = useRouter();
+
   const [submitting, setSubmitting] = useState(false);
+
+  function handleClear() {
+    if (signatureRef) {
+      signatureRef.current.instance.clear();
+      userStore.nftInput.setLocalSignature(null);
+    }
+  }
 
   async function handleStepSixSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitting(true);
-    const res = await userStore.nft?.stepSixSubmit();
-    setSubmitting(false);
-    if (res) {
-      // Begin screenshot get in background
-      userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
+    if (userStore.stepSixSkip) {
       router.push("/create/step-7");
+    } else {
+      setSubmitting(true);
+      const newSigFile = await dataUrlToFile(
+        signatureRef.current.toDataURL(),
+        "signaturePic.png"
+      );
+      const res = await userStore.nft?.uploadSignatureToSupabase(newSigFile);
+      setSubmitting(false);
+      if (res) {
+        // success
+        router.push("/create/step-7");
+      }
     }
   }
 
@@ -27,44 +46,80 @@ const StepSix = () => {
     <CreateLayout>
       <form onSubmit={handleStepSixSubmit}>
         <Flex direction="column">
-          <Flex direction="column">
-            <Text fontSize="3xl" fontWeight="bold">
-              Your Verified Ink Proof
-            </Text>
-            <Flex direction={["column", "column", "row"]}>
-              <Text
-                flex="1"
-                width={["100%", "100%", "75%"]}
-                mt={["1rem", "1rem", 0]}
-                colorScheme="gray"
-              >
-                That wasn’t so hard. Take a good look, ensure everything is
-                right. Once you approve the proof, it’s set. We’ll kick off the
-                minting process and keep you updated every step of the way.
-              </Text>
-              <Text
-                flex="1"
-                width={["100%", "100%", "75%"]}
-                mt={["1rem", "1rem", 0]}
-                colorScheme="gray"
-              >
-                If you found an issue, just go back and fix it, then come back
-                to this proof page at any time.
-              </Text>
-            </Flex>
-            <Flex
-              mt={["1rem", "1rem", "5rem"]}
-              direction={["column", "column", "row"]}
-              justifyContent="center"
-            >
+          <Flex direction={["column", "column", "row"]}>
+            <PhotoPreviewSide
+              title="Let's get your Signature"
+              subtitle="You can just sign in the space with your finger or trackpad. If you want to use a mouse, best of luck to you."
+              flex="1"
+              nft_id={userStore.nft?.id}
+              nft={userStore.loadedNft}
+            />
+            <Flex flex="1" direction="column" position="relative">
+              {userStore.signatureExists ? (
+                <>
+                  <Box
+                    style={{
+                      position: "absolute",
+                      top: "45px",
+                      left: "10px",
+                      fontSize: "20px",
+                      transform: "rotate(45deg)",
+                      cursor: "pointer",
+                      zIndex: 12,
+                    }}
+                    onClick={() => {
+                      userStore.nft?.deleteThisSignature();
+                    }}
+                  >
+                    +
+                  </Box>
+                  <Text mt={["4", "4", 0]}>Your Signature</Text>
+                  <Box
+                    border="2px solid #E2E8F0"
+                    mt="2"
+                    mb="2"
+                    borderRadius="5px"
+                  >
+                    <img src={userStore.nft?.signature} alt="" />
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Text>Sign Here</Text>
+                  <Box
+                    cursor={["pointer", "pointer", "default"]}
+                    border="2px solid #E2E8F0"
+                    mt="2"
+                    mb="2"
+                    borderRadius="5px"
+                    onTouchEnd={() => {
+                      userStore.nftInput.setLocalSignature(signatureRef);
+                    }}
+                    onClick={() => {
+                      userStore.nftInput.setLocalSignature(signatureRef);
+                    }}
+                  >
+                    <SignaturePad
+                      ref={signatureRef}
+                      options={{
+                        minWidth: 1.5,
+                        maxWidth: 3.5,
+                        penColor: "black",
+                        dotSize: 3,
+                      }}
+                    />
+                  </Box>
+                  <Flex mt="2" mb="2">
+                    <Button onClick={handleClear}>Clear</Button>
+                  </Flex>
+                </>
+              )}
               <Box
-                flex={["none", "none", "1"]}
-                h="750px"
-                w={["none", "none", "380px"]}
+                mt={["2rem !important", "2rem !important", 0]}
+                mb={["2rem !important", "2rem !important", 0]}
+                display={["block", "block", "none"]}
+                h={["500px", "500px", "450px"]}
               >
-                <Text textAlign="center" mb="2" fontSize="2xl">
-                  Front
-                </Text>
                 <Card
                   nft_id={userStore.nft?.id}
                   nft={userStore.loadedNft}
@@ -72,33 +127,23 @@ const StepSix = () => {
                   reverse={false}
                 />
               </Box>
-              <Box
-                flex={["none", "none", "1"]}
-                h="750px"
-                w={["none", "none", "380px"]}
+              <Button
+                colorScheme="blue"
+                color="white"
+                type="submit"
+                alignSelf="flex-end"
               >
-                <Text textAlign="center" mb="2" fontSize="2xl">
-                  Back
-                </Text>
-                <Card
-                  nft_id={userStore.nft?.id}
-                  nft={userStore.loadedNft}
-                  nft_width={400}
-                  reverse={true}
-                />
-              </Box>
+                {submitting ? <Spinner /> : "Proof Time"}
+              </Button>
             </Flex>
           </Flex>
           <Divider mt="6" mb="6" />
-          <Flex justify="space-between">
+          <Flex>
             <NextLink href="/create/step-5">
               <a>
                 <Button>Back</Button>
               </a>
             </NextLink>
-            <Button colorScheme="blue" color="white" type="submit">
-              {submitting ? <Spinner /> : "Approved!"}
-            </Button>
           </Flex>
         </Flex>
       </form>
@@ -107,3 +152,9 @@ const StepSix = () => {
 };
 
 export default observer(StepSix);
+
+async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
+  const res: Response = await fetch(dataUrl);
+  const blob: Blob = await res.blob();
+  return new File([blob], fileName, { type: "image/png" });
+}
