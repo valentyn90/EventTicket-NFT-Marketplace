@@ -25,24 +25,21 @@ const StepFour = () => {
   async function handleStepFourSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (userStore.stepFourSkip) {
+    setSubmitting(true);
+    const res = await userStore.nft?.saveTeamColors();
+    setSubmitting(false);
+    if (res) {
       router.push("/create/step-5");
     } else {
-      setSubmitting(true);
-      const res = await userStore.nft?.saveTeamColors();
-      setSubmitting(false);
-      if (res) {
-        router.push("/create/step-5");
-      } else {
-        toast({
-          position: "top",
-          description: "Error saving team colors",
-          status: "error",
-          duration: 3500,
-          isClosable: true,
-        });
-      }
+      toast({
+        position: "top",
+        description: "Error saving team colors",
+        status: "error",
+        duration: 3500,
+        isClosable: true,
+      });
     }
+
   }
 
   return (
