@@ -11,7 +11,7 @@ const Create: React.FC = () => {
   return (
     <Box
       bg={useColorModeValue("gray.50", "inherit")}
-      minH="100vh"
+      // minH="100vh"
       py="12"
       px={{ base: "4", lg: "8" }}
     >
@@ -27,7 +27,7 @@ const Create: React.FC = () => {
       </Head>
       <Box maxWidth="1200px" mx="auto">
         <Flex direction={["column", "column", "row"]}>
-          <Flex direction="column" spacing={4} flex="1" align="start">
+          <Flex direction="column" spacing={4} align="start">
             <Text colorScheme="gray" mb="4">
               GET VERIFIED
             </Text>
@@ -53,7 +53,7 @@ const Create: React.FC = () => {
               </NextLink>
             </Text>
           </Flex>
-          <Box flex="1" align="center" mt={["2rem", "2rem", 0]}>
+          <Box  align="center" mt={["2rem", "2rem", 0]} h={["500px","650px","650px"]}>
             <Card nft_id={93} readOnly={true} />
           </Box>
         </Flex>

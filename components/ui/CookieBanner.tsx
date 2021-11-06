@@ -1,4 +1,4 @@
-import { Button, HStack, Link, StackProps, Text } from "@chakra-ui/react";
+import { Box, Button, HStack, Link, StackProps, Text } from "@chakra-ui/react";
 import * as React from "react";
 import { useEffect, useState } from "react";
 
@@ -16,11 +16,14 @@ export const CookieBanner = (props: StackProps): JSX.Element | null => {
       setVisible(true);
     }
   }, []);
+
+
   if (!visible) {
     return null;
   }
 
   return (
+    
     <HStack
       justify="center"
       spacing="4"
@@ -37,7 +40,7 @@ export const CookieBanner = (props: StackProps): JSX.Element | null => {
       <Text color="white" fontSize={{ base: "sm", md: "md" }}>
         By using our website, you agree to the use of cookies as described in
         our{" "}
-        <Link href="#" textDecoration="underline">
+        <Link href="/privacy" textDecoration="underline">
           cookie policy
         </Link>
       </Text>
@@ -52,5 +55,6 @@ export const CookieBanner = (props: StackProps): JSX.Element | null => {
         Accept
       </Button>
     </HStack>
+    
   );
 };

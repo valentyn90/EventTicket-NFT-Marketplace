@@ -4,6 +4,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { Box, useColorModeValue, useColorMode } from "@chakra-ui/react";
 import { CookieBanner } from "components/ui/CookieBanner";
+import Footer from "@/components/Footer/Footer";
 
 interface Props {
   children: React.ReactNode;
@@ -32,15 +33,14 @@ const Layout: React.FC<Props> = ({ children }) => {
       {showNav && <Navbar />}
       {/* Margin for fixed navbar position */}
       <Box
-        minH="calc(100vh - 56px)"
+        minH="calc(100vh - 56px - 286px)"
         mt="56px"
         bg={useColorModeValue("gray.50", "inherit")}
       >
         {children}
-        <Box minH="2xs">
-          {showNav && <CookieBanner />}
-        </Box>
       </Box>
+      {showNav && <Footer />}
+      {showNav && <CookieBanner />}
     </>
   );
 };
