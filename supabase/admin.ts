@@ -9,6 +9,9 @@ export const getAllNfts = async (range: number) => {
      user_details ( verified_user, id ),
      files:screenshot_file_id (file_name)`
     )
+    .order(
+      "id", {ascending: false}
+    )
     .range(range, range + 50);
   if (data) return data;
   else {

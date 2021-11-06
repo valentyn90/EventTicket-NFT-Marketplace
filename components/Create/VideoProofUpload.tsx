@@ -2,7 +2,7 @@ import userStore from "@/mobx/UserStore";
 import * as UpChunk from "@mux/upchunk";
 import { Box, Spinner, Text } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Card from "../NftCard/Card";
 import VideoPlayer from "../Components/VideoPlayer";
@@ -40,6 +40,7 @@ const rejectStyle = {
 function VideoProofUpload() {
   const [isPreparing, setIsPreparing] = useState(false);
   const [progress, setProgress] = useState<any>(null);
+  const [seconds, setSeconds] = useState(30);
 
   const createUpload = async (): Promise<{ muxId: any; muxUrl: any }> => {
     try {
@@ -74,6 +75,7 @@ function VideoProofUpload() {
     upload.on("success", () => {
       // start the fetch in nftstore methods
       setIsPreparing(true);
+      setSeconds(30)
       userStore.nft?.getMuxUpload();
     });
   };
@@ -186,10 +188,32 @@ function VideoProofUpload() {
     }
   }
 
+  useEffect(() => {
+    let myInterval = setInterval(() => {
+      if (seconds > 0) {
+        setSeconds(seconds - 1);
+      }
+      if (seconds === 0) {
+        clearInterval(myInterval)
+      }
+    }, 1000)
+    return () => {
+      clearInterval(myInterval);
+    };
+  });
+
   let uploadComponent;
   if (userStore.nftInput.videoUploading) {
     uploadComponent = isPreparing ? (
-      <div>Preparing..</div>
+
+      <div>Preparing...
+        <div>{seconds === 0
+          ? "We're still working. This can take a few minutes for long videos."
+          :  `${seconds}s`
+        }
+        </div>
+
+      </div>
     ) : (
       <div>Uploading...{progress ? `${progress}%` : ""}</div>
     );
@@ -204,7 +228,7 @@ function VideoProofUpload() {
         <input {...getInputProps()} />
         {component}
       </div>
-      <Box mt="4" w="100%" display={["block", "block", "none"]} h="650px">
+      <Box mt="4" w="100%" display={["block", "block", "none"]} h="500px">
         <Card
           nft_id={userStore.loadedNft?.id}
           nft_width={400}

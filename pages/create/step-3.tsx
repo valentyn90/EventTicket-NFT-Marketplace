@@ -116,7 +116,7 @@ const StepThree = () => {
                     mt={["2rem !important", "2rem !important", 0]}
                     mb={["2rem !important", "2rem !important", 0]}
                     display={["block", "block", "none"]}
-                    h="650px"
+                    h={["500px","650px","650px"]}
                   >
                     <Card
                       nft_id={userStore.nft?.id}
