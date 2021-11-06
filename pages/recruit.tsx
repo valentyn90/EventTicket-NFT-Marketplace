@@ -1,12 +1,13 @@
 import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
 import ShareIcon from "@/utils/svg/ShareIcon";
-import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, useColorModeValue, useToast } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import Head from "next/head";
 import React from "react";
 
 async function handleRecruitClick() {
+
   const share_link = `${
     process.env.NEXT_PUBLIC_FRONTEND_URL
   }/signup?referralCode=${userStore.userDetails.referral_code || "xxx"}`;
@@ -24,7 +25,7 @@ async function handleRecruitClick() {
     ta.select();
     document.execCommand("copy");
     ta.remove();
-    alert("Your recruiting link has been copied to your clipboard");
+    return "Clipboard"
   } else {
     try {
       await navigator.share(shareData);
@@ -33,6 +34,21 @@ async function handleRecruitClick() {
 }
 
 const Recruit: React.FC = () => {
+  const toast = useToast();
+
+  async function handleClick() {
+    const result = await handleRecruitClick()
+    if(result === "Clipboard"){
+      toast({
+        position: "top",
+        description: "Your recruiting link has been copied to your clipboard",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
+
   return (
     <Box
       bg={useColorModeValue("gray.50", "inherit")}
@@ -62,11 +78,11 @@ const Recruit: React.FC = () => {
             <Text w="75%" colorScheme="gray" mb="4">
               Invite up to five friends to create their own Verified Ink. You
               will receive one card of each referral and one card of each of
-              their referrals (up to 25 total).
+              their referrals (up to 30 total).
             </Text>
 
             <Button
-              onClick={handleRecruitClick}
+              onClick={handleClick}
               colorScheme="blue"
               color="white"
               mb="4"

@@ -13,16 +13,23 @@ export async function handleRecruitClick(id: number | undefined) {
     document.body.appendChild(ta);
     var selection = document.getSelection();
     var range = document.createRange();
-    range.selectNode(ta)
+    range.selectNode(ta);
     selection?.removeAllRanges();
-    selection?.addRange(range)
+    selection?.addRange(range);
     // ta.select();
     document.execCommand("copy");
     ta.remove();
-    alert("link has been copied to your clipboard");
+    return new Promise((resolve) => {
+      resolve("Clipboard")
+    })
   } else {
     try {
-      await navigator.share(shareData);
-    } catch (err) { }
+      return new Promise((resolve) => {
+        navigator
+          .share(shareData)
+          .then((res) => resolve("Link copied to clipboard."))
+          .catch((err) => resolve(err));
+      });
+    } catch (err) {}
   }
 }

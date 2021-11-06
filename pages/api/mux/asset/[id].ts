@@ -21,6 +21,8 @@ export default async function assetHandler(
             status: asset.status,
             errors: asset.errors,
             playback_id: (asset.playback_ids as any)[0].id,
+            max_stored_resolution: asset.max_stored_resolution,
+            static_renditions: asset.static_renditions
           },
         });
       } catch (e) {

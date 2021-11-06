@@ -56,13 +56,13 @@
   vertical-align: middle;
 }
 .rs-steps-item-content {
-  color: #8e8e93;
+  color: #575757;
   display: inline-block;
   position: relative;
   width: 100%;
 }
 .rs-steps-item-status-process .rs-steps-item-content {
-  color: #575757;
+  color: #8e8e93;
 }
 .rs-steps-item-status-error .rs-steps-item-content {
   color: #f44336;

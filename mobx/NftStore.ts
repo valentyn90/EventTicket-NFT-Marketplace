@@ -47,6 +47,7 @@ export class NftStore {
   mux_upload_id: string | null = null;
   mux_asset_id: string | null = null;
   mux_playback_id: string | null = null;
+  mux_max_resolution: string | null = null;
 
   screenshot_file_id: number | null = null;
 
@@ -68,6 +69,7 @@ export class NftStore {
     this.mux_asset_id = input.mux_asset_id;
     this.mux_upload_id = input.mux_upload_id;
     this.mux_playback_id = input.mux_playback_id;
+    this.mux_max_resolution = input.mux_max_resolution;
     this.user_id = input.user_id;
     this.user_details_id = input.user_details_id;
     this.first_name = input.first_name;
@@ -159,10 +161,10 @@ export class NftStore {
         const res = await fetch(`/api/mux/asset/${this.mux_asset_id}`);
         const data = await res.json();
 
-        if (data.asset?.status === "ready") {
+        if (data.asset?.status === "ready" && data.asset?.static_renditions.status === "ready") {
           this.store.nftInput.setVideoUploading(false);
           this.setFieldValue("mux_playback_id", data.asset.playback_id);
-          this.updateMuxIdsInSupabase();
+          this.updateMuxIdsInSupabase(data.asset.static_renditions.files.length);
           clearInterval(checkAssetInterval);
         }
       }
@@ -173,13 +175,22 @@ export class NftStore {
     const checkAssetInterval = setInterval(checkAssetStatus, 5000);
   };
 
-  updateMuxIdsInSupabase = async () => {
+  updateMuxIdsInSupabase = async (static_reditions: string) => {
+
+    const count_renditions = parseInt(static_reditions);
+    let file_name = "low"
+    if(count_renditions > 2){
+      file_name = "high"
+    } else if (count_renditions > 1){
+      file_name = "medium"
+    }
     try {
       const { data, error } = await setMuxValues(
         this.id,
         this.mux_asset_id,
         this.mux_playback_id,
-        this.mux_upload_id
+        this.mux_upload_id,
+        file_name
       );
     } catch (err) {
       console.log(err);

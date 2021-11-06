@@ -38,6 +38,7 @@ const Card: React.FunctionComponent<Props> = ({
   const [nftCardData, setNftCardData] = useState({
     photo: "",
     mux_playback_id: "",
+    mux_max_resolution: "",
     high_school: "",
     signature: "",
     first_name: "",
@@ -55,6 +56,7 @@ const Card: React.FunctionComponent<Props> = ({
     setNftCardData({
       photo: "",
       mux_playback_id: "",
+      mux_max_resolution: "",
       high_school: "",
       signature: "",
       first_name: "",
@@ -181,6 +183,7 @@ const Card: React.FunctionComponent<Props> = ({
   let signature;
   let photo;
   let video;
+  let video_resolution = nftCardData.mux_max_resolution || "";
   let graduation_year;
   let first_name;
   let last_name;
@@ -195,11 +198,6 @@ const Card: React.FunctionComponent<Props> = ({
   let topColor;
   let bottomColor;
   let transitionColor;
-  // else {
-  //   topColor = userStore.nftInput.color_top || "#4f66e1";
-  //   bottomColor = userStore.nftInput.color_bottom || "#cb0000";
-  //   transitionColor = userStore.nftInput.color_transition || "#3d142d";
-  // }
 
   if (readOnly) {
     topColor = nftCardData.color_top || "#4f66e1";
@@ -229,6 +227,12 @@ const Card: React.FunctionComponent<Props> = ({
       video = userStore.nft?.mux_playback_id;
     } else {
       video = nftCardData.mux_playback_id;
+    }
+
+    if (userStore.nft?.mux_max_resolution) {
+      video_resolution = userStore.nft?.mux_max_resolution;
+    } else {
+      video_resolution = nftCardData.mux_max_resolution;
     }
 
     if (userStore.nftInput.localSignature !== null) {
@@ -408,7 +412,7 @@ const Card: React.FunctionComponent<Props> = ({
             <div className="background">
               <div className="background-gradient">
                 <div className="background-gradient reverse-background-mask">
-                  <VideoPlayer src={video} />
+                  <VideoPlayer src={video} max_resolution={video_resolution} />
 
                   <div className="reverse-logo-background"></div>
                   <img

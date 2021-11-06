@@ -22,11 +22,6 @@ const StepOne = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
-  function padGradYear(grad_year: string) {
-    const year_str = grad_year.toString();
-    return year_str.padStart(2, "0");
-  }
-
   async function handleStepOneSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -71,6 +66,13 @@ const StepOne = () => {
     } else {
       alert("No NFT to delete.");
     }
+  }
+
+  function paddedDigit(num: string) {
+    if (num.length === 1) return `0${num}`;
+    if (num.length === 2) return num;
+    if (num.length === 0) return `00`;
+    if (num.length > 2) return `${num[num.length - 2]}${num[num.length - 1]}`;
   }
 
   return (
@@ -128,15 +130,15 @@ const StepOne = () => {
                   <Input
                     type="text"
                     placeholder="22"
-                    value={
-                      padGradYear(userStore.nftInput?.graduation_year) || ""
-                    }
-                    onChange={(e) =>
+                    value={paddedDigit(
+                      String(userStore.nftInput?.graduation_year)
+                    )}
+                    onChange={(e) => {
                       userStore.nftInput?.setInputValue(
                         "graduation_year",
                         e.target.value
-                      )
-                    }
+                      );
+                    }}
                   />
                 </FormControl>
               </Stack>

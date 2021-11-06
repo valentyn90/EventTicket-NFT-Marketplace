@@ -175,6 +175,7 @@ function VideoProofUpload() {
           </div>
           <Box style={{ opacity: ".5" }}>
             <VideoPlayer
+              max_resolution={userStore.nft?.mux_max_resolution}
               src={userStore.nft?.mux_playback_id}
               previewOnly={true}
             />

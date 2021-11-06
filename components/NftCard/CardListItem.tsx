@@ -20,16 +20,17 @@ const CardListItem: React.FC<Props> = ({ nft, listType }) => {
     "https://verifiedink.us/img/card-mask.png"
   );
 
-  useEffect(() => {
+  useEffect( () => {
     if (nft.screenshot_file_id) {
-      getFileFromSupabase(nft.screenshot_file_id).then((res) => {
-        setLoaded(true);
+       getFileFromSupabase(nft.screenshot_file_id).then((res) => {
         if (res.file) {
           const uri = URL.createObjectURL(res.file);
           setScreenshot(uri);
+          setLoaded(true);
         }
         if (res.error) {
           console.log(res.error);
+          setLoaded(true);
         }
       });
     } else {
@@ -72,6 +73,7 @@ const CardListItem: React.FC<Props> = ({ nft, listType }) => {
               height="100%"
               objectFit="contain"
               src={screenshot}
+              fallbackSrc="https://verifiedink.us/img/card-mask.png"
             />
           </Box>
           <Flex pt={4} justifyContent="space-around" w="100%">

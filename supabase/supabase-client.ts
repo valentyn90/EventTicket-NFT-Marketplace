@@ -259,7 +259,8 @@ export const setMuxValues = (
   nft_id: number,
   asset_id: string | null,
   playback_id: string | null,
-  upload_id: string | null
+  upload_id: string | null,
+  mux_max_resolution: string | null
 ) =>
   supabase
     .from("nft")
@@ -268,6 +269,7 @@ export const setMuxValues = (
         mux_asset_id: asset_id,
         mux_playback_id: playback_id,
         mux_upload_id: upload_id,
+        mux_max_resolution,
       },
     ])
     .match({ id: nft_id });

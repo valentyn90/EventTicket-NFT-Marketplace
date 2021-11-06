@@ -49,7 +49,9 @@ function MyApp({ Component, pageProps }: AppProps) {
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
 
-          gtag('config', 'G-68N30YNDQ1');
+          gtag('config', 'G-68N30YNDQ1',{
+            cookie_flags: 'secure;samesite=none'
+          });
           `,
           }}
         />

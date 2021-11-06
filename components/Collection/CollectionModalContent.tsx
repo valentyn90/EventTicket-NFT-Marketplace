@@ -5,9 +5,11 @@ import { Button } from "@chakra-ui/button";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
+import { useToast } from "@chakra-ui/toast";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import ShareButton from "../Components/ShareButton";
 import Card from "../NftCard/Card";
 import { CardBox } from "../ui/CardBox";
 
@@ -24,6 +26,7 @@ const CollectionModalContent: React.FC<Props> = ({
   setInitFlip,
   setFlipCard,
 }) => {
+  const toast = useToast();
   const textColor = useColorModeValue("gray.600", "white");
   return (
     <Flex
@@ -70,8 +73,6 @@ const CollectionModalContent: React.FC<Props> = ({
           </Text>
           <Select color={textColor} w="100px">
             <option>1</option>
-            <option>2</option>
-            <option>3</option>
           </Select>
         </HStack>
         <HStack w="100%" justifyContent="space-between">
@@ -95,16 +96,7 @@ const CollectionModalContent: React.FC<Props> = ({
           </Button>
         </HStack>
 
-        <Button
-          px={10}
-          w="100%"
-          colorScheme="blue"
-          onClick={() => handleRecruitClick(userStore.ui.selectedNft?.id)}
-          color="white"
-        >
-          <ShareIcon marginRight="6px" />
-          Share
-        </Button>
+        <ShareButton id={userStore.ui.selectedNft?.id} />
       </VStack>
     </Flex>
   );

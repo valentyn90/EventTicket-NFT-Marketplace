@@ -7,6 +7,7 @@ import { Box, Flex, Text, VStack } from "@chakra-ui/layout";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import ShareButton from "../Components/ShareButton";
 import Card from "../NftCard/Card";
 import { CardBox } from "../ui/CardBox";
 
@@ -64,16 +65,8 @@ const MarketplaceModalContent: React.FC<Props> = ({
           Make an offer
         </Button>
 
-        <Button
-          px={10}
-          w="100%"
-          colorScheme="blue"
-          onClick={() => handleRecruitClick(userStore.ui.selectedNft?.id)}
-          color="white"
-        >
-          <ShareIcon marginRight="6px" />
-          Share
-        </Button>
+        <ShareButton id={userStore.ui.selectedNft?.id} />
+        
       </VStack>
     </Flex>
   );

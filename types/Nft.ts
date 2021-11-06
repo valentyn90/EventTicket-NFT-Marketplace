@@ -21,6 +21,7 @@ interface Nft {
   mux_playback_id: string | null;
   mux_upload_id: string | null;
   mux_asset_id: string | null;
+  mux_max_resolution: string | null;
   screenshot_file_id: number | null;
   user_details_id: string;
   admin_feedback: string;
