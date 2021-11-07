@@ -3,7 +3,7 @@ import { Flex, HStack, Text, TextProps } from '@chakra-ui/layout'
 
 import React from 'react'
 import ViLogo from '../ui/logos/ViLogo'
-import { LinkGrid } from './LinkGrid'
+import { LinkGrid }  from './LinkGrid'
 import Link from 'next/link'
 
 export const Footer: React.FC = (props) => {
@@ -43,7 +43,7 @@ export const Footer: React.FC = (props) => {
                     </Link>
                 </Box>
                 <Stack direction={{ base: 'column', md: 'row' }} spacing={{ base: '10', md: '20' }}>
-                    <LinkGrid spacing={{ base: '10', md: '20', lg: '28' }} flex="1" />
+                    <LinkGrid />
                 </Stack>
             </Stack>
             <Stack
