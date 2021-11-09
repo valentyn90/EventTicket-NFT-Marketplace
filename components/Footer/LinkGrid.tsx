@@ -22,8 +22,8 @@ export const LinkGrid: React.FC = (props: SimpleGridProps) => {
             <Box minW="130px">
                 <FooterHeading mb="4">Product</FooterHeading>
                 <Stack>
-                    <a onClick={handleClick}>FAQ</a>
-                    {/* <Link href="/faq">FAQ</Link> */}
+                    {/* <a onClick={handleClick}>FAQ</a> */}
+                    <Link href="/faq">FAQ</Link>
                     <Link href="mailto:support@verifiedink.us">Help</Link>
 
                 </Stack>
@@ -31,10 +31,8 @@ export const LinkGrid: React.FC = (props: SimpleGridProps) => {
             <Box minW="130px">
                 <FooterHeading mb="4">Legal</FooterHeading>
                 <Stack>
-                    {/* <Link href="/terms">Terms</Link>
-      <Link href="/privacy">Privacy</Link> */}
-                    <a onClick={handleClick}>Terms</a>
-                    <a onClick={handleClick}>Privacy</a>
+                    <Link href="/terms">Terms</Link>
+                    <Link href="/privacy">Privacy</Link>
                 </Stack>
             </Box>
         </SimpleGrid>

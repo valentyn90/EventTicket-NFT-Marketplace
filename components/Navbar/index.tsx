@@ -61,8 +61,9 @@ const NavIndex: React.FC = () => {
       <Navbar.Links>
         <NavTabLink>Create</NavTabLink>
         <NavTabLink>Marketplace</NavTabLink>
+        {userStore.loggedIn && <NavTabLink>Collection</NavTabLink>}
       </Navbar.Links>
-      <Navbar.ColorMode>
+      {/* <Navbar.ColorMode>
         <Button
           mr={2}
           onClick={toggleColorMode}
@@ -72,7 +73,7 @@ const NavIndex: React.FC = () => {
         >
           {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
         </Button>
-      </Navbar.ColorMode>
+      </Navbar.ColorMode> */}
       {!userStore.loggedIn ? (
         <Navbar.SignIn>
           <NextLink href="/signin">
@@ -104,21 +105,7 @@ const NavIndex: React.FC = () => {
                 email={userStore.email}
               />
               <VStack mt={4} align="start">
-                <NextLink href="/profile">
-                  <a>
-                    <Text color="blue.400" fontSize="md">
-                      Profile
-                    </Text>
-                  </a>
-                </NextLink>
-                <NextLink href="/collection">
-                  <a>
-                    <Text color="blue.400" fontSize="md">
-                      Collection
-                    </Text>
-                  </a>
-                </NextLink>
-                <Button colorScheme="blue" color="white" onClick={signOut}>
+                <Button colorScheme="blue" color="white" onClick={signOut} minW="93px">
                   Logout
                 </Button>
               </VStack>
@@ -129,10 +116,12 @@ const NavIndex: React.FC = () => {
                 <Button
                   colorScheme="blue"
                   color="white"
+                  variant="outline"
                   order={{ base: 2, md: 1 }}
                   mr={[0, 0, 2]}
                   mt={[6, 6, 0]}
                   mb={[2, 2, 0]}
+                  minW="93px"
                 >
                   Recruit
                 </Button>
@@ -158,11 +147,6 @@ const NavIndex: React.FC = () => {
                       <a style={{ width: "100%" }}>Profile</a>
                     </NextLink>
                   </MenuItem>
-                  <MenuItem>
-                    <NextLink href="/collection">
-                      <a style={{ width: "100%" }}>Collection</a>
-                    </NextLink>
-                  </MenuItem>
                   <Box w="100%" p="0.4rem 0.8rem">
                     <Button colorScheme="blue" color="white" onClick={signOut}>
                       Logout
@@ -174,7 +158,7 @@ const NavIndex: React.FC = () => {
           </Flex>
         </Navbar.UserProfile>
       )}
-      <Navbar.ColorModeMobile>
+      {/* <Navbar.ColorModeMobile>
         <Button
           mr={4}
           onClick={toggleColorMode}
@@ -185,7 +169,7 @@ const NavIndex: React.FC = () => {
         >
           {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
         </Button>
-      </Navbar.ColorModeMobile>
+      </Navbar.ColorModeMobile> */}
     </Navbar>
   );
 };

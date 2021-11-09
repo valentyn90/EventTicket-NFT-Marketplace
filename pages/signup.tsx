@@ -122,7 +122,7 @@ const SignUp: React.FC<Props> = () => {
               </Text>
             </Button>
           </VStack>
-          <DividerWithText mt={8} mb={8}>
+          {/* <DividerWithText mt={8} mb={8}>
             or continue with
           </DividerWithText>
           <form onSubmit={handleSignup}>
@@ -143,7 +143,7 @@ const SignUp: React.FC<Props> = () => {
             >
               {loading ? <Spinner /> : "Sign up"}
             </Button>
-          </form>
+          </form> */}
         </Card>
         {outOfReferrals && (
           <Alert status="warning" mt={8} rounded={{ sm: "lg" }} p={8}>

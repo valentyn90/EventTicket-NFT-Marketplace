@@ -90,7 +90,7 @@ const SignIn: React.FC<Props> = () => {
               </Text>
             </Button>
           </VStack>
-          <DividerWithText mt={8} mb={8}>
+          {/* <DividerWithText mt={8} mb={8}>
             or continue with
           </DividerWithText>
           <form onSubmit={handleSignin}>
@@ -122,7 +122,7 @@ const SignIn: React.FC<Props> = () => {
                 </Text>
               </VStack>
             )}
-          </form>
+          </form> */}
         </Card>
       </Box>
     </Box>
