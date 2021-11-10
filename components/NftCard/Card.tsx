@@ -311,6 +311,14 @@ const Card: React.FunctionComponent<Props> = ({
       userStore.nftInput.color_transition,
       nftCardData.color_transition
     );
+
+    if(!topColor || !bottomColor || !transitionColor){
+      topColor = nftCardData.color_top || "#4f66e1";
+      bottomColor = nftCardData.color_bottom || "#cb0000";
+      transitionColor = nftCardData.color_transition || "#3d142d";
+    }
+    
+
   }
 
   return (
