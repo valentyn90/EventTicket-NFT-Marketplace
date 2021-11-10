@@ -19,10 +19,9 @@ import type { NextApiRequest } from "next";
 import React, { useEffect, useState } from "react";
 
 const Collection = () => {
-  const collectionTextString = `This is your collection of VerifiedInk NFTs. Within a few weeks
-  you’ll be able to gift these to teammates and sell them on the
-  marketplace. For now you’ll see your VerifiedInk and the VerfiedInk
-  of anyone you recruited.`;
+  const collectionTextString = `This is your personal collection of VerifiedInk NFTs \
+  you and your referrals have minted. Soon, you’ll be able to gift or trade these to \
+  friends and sell the on the marketplace.`;
 
   const [readMore, setReadMore] = useState(false);
   const collectionText = useBreakpointValue({
@@ -61,6 +60,7 @@ const Collection = () => {
       <Container maxW="3xl">
         <VStack spacing={4} align="center">
           <Avatar
+            bgColor="blue.500"
             size={avatarSize}
             name={userStore.userDetails.user_name}
             src={userStore.avatar_url}
@@ -69,15 +69,8 @@ const Collection = () => {
           <Text color={titleColor} fontSize={titleSize} fontWeight="bold">
             COLLECTION
           </Text>
-          <Text color={introColor} w={["100%", "80%", "70%"]} fontSize={"lg"}>
-            {readMore ? collectionTextString : collectionText}
-            <DividerWithText
-              my={4}
-              onClick={() => setReadMore(!readMore)}
-              display={["flex", "none"]}
-            >
-              {readMore ? "read less" : "read more"}
-            </DividerWithText>
+          <Text color={introColor} w={["100%", "80%", "70%"]} fontSize={["md", "lg", "lg"]}>
+            {collectionTextString}
           </Text>
           <br />
           {userStore.loaded ? (

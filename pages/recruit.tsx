@@ -8,9 +8,8 @@ import React from "react";
 
 async function handleRecruitClick() {
 
-  const share_link = `${
-    process.env.NEXT_PUBLIC_FRONTEND_URL
-  }/signup?referralCode=${userStore.userDetails.referral_code || "xxx"}`;
+  const share_link = `${process.env.NEXT_PUBLIC_FRONTEND_URL
+    }/signup?referralCode=${userStore.userDetails.referral_code || "xxx"}`;
 
   const shareData = {
     title: "VerifiedInk",
@@ -29,7 +28,7 @@ async function handleRecruitClick() {
   } else {
     try {
       await navigator.share(shareData);
-    } catch (err) {}
+    } catch (err) { }
   }
 }
 
@@ -38,7 +37,7 @@ const Recruit: React.FC = () => {
 
   async function handleClick() {
     const result = await handleRecruitClick()
-    if(result === "Clipboard"){
+    if (result === "Clipboard") {
       toast({
         position: "top",
         description: "Your recruiting link has been copied to your clipboard",
@@ -73,12 +72,12 @@ const Recruit: React.FC = () => {
               RECRUIT
             </Text>
             <Text fontSize="4xl" fontWeight="bold" mb="4">
-              Bring <span style={{ color: "#0051CA" }}>your</span> team
+              Bring <span style={{ color: "#0051CA" }}>Your</span> Team
             </Text>
-            <Text w="75%" colorScheme="gray" mb="4">
-              Invite up to five friends to create their own Verified Ink. You
-              will receive one card of each referral and one card of each of
-              their referrals (up to 30 total).
+            <Text w={["100%","100%","75%"]} colorScheme="gray" mb="4">
+              Invite up to five friends. <br />
+              You’ll get one of their cards.<br />
+              And one of the cards of each person they refer. (Up to 30)
             </Text>
 
             <Button

@@ -21,10 +21,10 @@ const theme = extendTheme({
   },
   colors: {
     blue: {
-      500: "#0051CA",
-      200: "#0051CA",
+      500: "#4688F1",
+      200: "#4688F1",
     },
-    viBlue: "#0051CA",
+    viBlue: "#4688F1",
   },
   components: {
     Alert,

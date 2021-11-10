@@ -29,7 +29,7 @@ const StepSeven = () => {
         <Flex direction="column">
           <Flex direction="column">
             <Text fontSize="3xl" fontWeight="bold">
-              Your Verified Ink Proof
+              Your VerifiedInk Proof
             </Text>
             <Flex direction={["column", "column", "row"]}>
               <Text
@@ -38,9 +38,9 @@ const StepSeven = () => {
                 mt={["1rem", "1rem", 0]}
                 colorScheme="gray"
               >
-                That wasn’t so hard. Take a good look, ensure everything is
-                right. Once you approve the proof, it’s set. We’ll kick off the
-                minting process and keep you updated every step of the way.
+                Take a look that everything is how you want it.
+                If you see any issues, you can go back and fix them.
+                Once it's approved, we will start the minting process.
               </Text>
               <Text
                 flex="1"

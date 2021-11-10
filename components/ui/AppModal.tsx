@@ -15,6 +15,7 @@ import AdminFeedback from "../Admin/AdminFeedback";
 import AdminModalContent from "../Admin/AdminModalContent";
 import CollectionModalContent from "../Collection/CollectionModalContent";
 import MarketplaceModalContent from "../Marketplace/MarketplaceModalContent";
+import { BetaModal } from "./BetaModal";
 
 const AppModal = () => {
   const [initFlip, setInitFlip] = useState(false);

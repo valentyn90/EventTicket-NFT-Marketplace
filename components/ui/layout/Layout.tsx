@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Box, useColorModeValue, useColorMode } from "@chakra-ui/react";
 import { CookieBanner } from "components/ui/CookieBanner";
 import Footer from "@/components/Footer/Footer";
+import { BetaModal } from "../BetaModal";
 
 interface Props {
   children: React.ReactNode;
@@ -37,6 +38,7 @@ const Layout: React.FC<Props> = ({ children }) => {
         mt="56px"
         bg={useColorModeValue("gray.50", "inherit")}
       >
+        {showNav && <BetaModal/>}
         {children}
       </Box>
       {showNav && <Footer />}

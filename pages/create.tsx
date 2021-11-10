@@ -29,20 +29,24 @@ const Create: React.FC = () => {
         <Flex direction={["column", "column", "row"]}>
           <Flex direction="column" spacing={4} align="start">
             <Text colorScheme="gray" mb="4">
-              GET VERIFIED
+            THE NFT YOU ALWAYS HAVE A STAKE IN
             </Text>
             <Text fontSize="4xl" fontWeight="bold" mb="4">
-              Own <span style={{ color: "#0051CA" }}>your</span> image
+              Own <span style={{ color: "#4688F1" }}>Your</span> Image
             </Text>
             <Text w="75%" colorScheme="gray" mb="4">
-              Take a few minutes to create your Verified Ink and own it for
-              life. Even after you trade or sell your Verified Ink, you'll
-              continue to receive royalties on all future profits.
+            It takes just a few minutes to create your first digital 
+            collectible and own it for life. Even after you trade or 
+            sell your VerifiedInk, you’ll continue to receive royalties 
+            on future sales.
+            </Text>
+            <Text w="75%" colorScheme="gray" mb="4">
+            Your career is in your hands. Your collectibles should be too.
             </Text>
             <NextLink href="/create/step-1">
               <a>
                 <Button colorScheme="blue" color="white" mb="4">
-                  Get Your Verified Ink
+                  Get Your VerifiedInk
                 </Button>
               </a>
             </NextLink>

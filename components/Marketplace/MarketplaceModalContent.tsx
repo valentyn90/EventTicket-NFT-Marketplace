@@ -57,7 +57,7 @@ const MarketplaceModalContent: React.FC<Props> = ({
             {userStore.ui.selectedNft?.last_name}
           </Text>
           <Text color={textColor} fontSize={["l", "l", "2xl"]} mb={8}>
-            10 Cards Minted on 10/19/21
+            10 Cards Minted
           </Text>
         </Box>
 

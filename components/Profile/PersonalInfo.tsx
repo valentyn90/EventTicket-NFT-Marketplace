@@ -30,7 +30,7 @@ const PersonalInfo = () => {
   return (
     <Flex width="100%">
       <Avatar
-        bg="#0051CA"
+        bgColor="blue.500"
         size={avatarSize}
         mr={[4, 4, 14]}
         src={userStore.avatar_url}

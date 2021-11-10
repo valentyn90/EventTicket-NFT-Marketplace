@@ -19,9 +19,7 @@ export async function handleRecruitClick(id: number | undefined) {
     // ta.select();
     document.execCommand("copy");
     ta.remove();
-    return new Promise((resolve) => {
-      resolve("Clipboard")
-    })
+    return "Clipboard";
   } else {
     try {
       return new Promise((resolve) => {

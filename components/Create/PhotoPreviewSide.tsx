@@ -21,7 +21,7 @@ const PhotoPreviewSide = ({
       <Text fontSize="3xl" fontWeight="bold">
         {title}
       </Text>
-      <Text w="75%">{subtitle}</Text>
+      <Text w={["100%","75%"]}>{subtitle}</Text>
       <Box mt="2rem" display={["none", "none", "block"]} h={["500px","650px","650px"]}>
         {nft ? (
           <Card nft_id={nft_id} nft_width={400} reverse={false} nft={nft} />

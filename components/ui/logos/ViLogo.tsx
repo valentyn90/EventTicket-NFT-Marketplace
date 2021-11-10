@@ -33,7 +33,7 @@ const ViLogo: React.FC<Props> = ({ width, height }) => {
           fillRule="evenodd"
           clipRule="evenodd"
           d="M58.0974 120L102.622 41.9612H70.1459L35.325 103.146L45.0563 120H58.0974Z"
-          fill="#0051CA"
+          fill="black"
         />
       </svg>
     );
@@ -63,7 +63,7 @@ const ViLogo: React.FC<Props> = ({ width, height }) => {
             fillRule="evenodd"
             clipRule="evenodd"
             d="M58.0974 120L102.622 41.9611H70.1459L35.325 103.146L45.0563 120H58.0974Z"
-            fill="#0051CA"
+            fill="#4688F1"
           />
         </g>
         <defs>

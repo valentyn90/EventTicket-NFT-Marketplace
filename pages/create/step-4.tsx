@@ -48,8 +48,8 @@ const StepFour = () => {
         <Flex direction="column">
           <Flex direction={["column", "column", "row"]}>
             <PhotoPreviewSide
-              title="Team Colors"
-              subtitle="Make your card pop with your team's colors."
+              title="Customize the Look"
+              subtitle="Make your card unique by choosing its colors."
               flex="1"
               nft_id={userStore.nft?.id}
               nft={userStore.loadedNft}

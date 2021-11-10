@@ -84,11 +84,10 @@ const StepOne = () => {
             {/* Text */}
             <Flex direction="column" flex="1">
               <Text fontSize="3xl" fontWeight="bold">
-                It Starts With <span style={{ color: "#3182ce" }}>You</span>
+                It Starts With <span style={{ color: "blue:500" }}>You</span>
               </Text>
               <Text mt="1">
-                Let's get some basic info to start filling out your Verified
-                Ink.
+                Let's get some basic info to start creating your VerifiedInk.
               </Text>
             </Flex>
             <Flex
@@ -147,13 +146,7 @@ const StepOne = () => {
           <Divider mt="6" mb="6" />
           {/* Button row */}
           <Flex justify="space-between">
-            <Button
-              colorScheme="red"
-              variant="outline"
-              onClick={handleDeleteNft}
-            >
-              Delete Existing NFT
-            </Button>
+           
             <Button colorScheme="blue" color="white" type="submit">
               {submitting ? <Spinner /> : "Next step"}
             </Button>

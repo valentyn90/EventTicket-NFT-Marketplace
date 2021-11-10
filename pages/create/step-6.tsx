@@ -48,8 +48,9 @@ const StepSix = () => {
         <Flex direction="column">
           <Flex direction={["column", "column", "row"]}>
             <PhotoPreviewSide
-              title="Let's get your Signature"
-              subtitle="You can just sign in the space with your finger or trackpad. If you want to use a mouse, best of luck to you."
+              title="Signing Time"
+              subtitle="Use this space to autograph your collectible.
+              We recommend using your finger or a trackpad."
               flex="1"
               nft_id={userStore.nft?.id}
               nft={userStore.loadedNft}

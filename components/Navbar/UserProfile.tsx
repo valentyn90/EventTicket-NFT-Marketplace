@@ -16,7 +16,7 @@ export const UserProfile: React.FC<Props> = (props) => {
       <NextLink href="/profile">
         <a>
           <HStack spacing={1} order={{ base: 1 }} flex="1" cursor="pointer">
-            <Avatar name={name} src={avatarUrl || ""} size="sm" />
+            <Avatar name={name} src={avatarUrl || ""} size="sm" bgColor="blue.500"/>
             <Flex direction="column" display={{ base: "flex", md: "none" }}>
               <Text fontWeight="bold" lineHeight="shorter">
                 {name}

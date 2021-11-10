@@ -44,8 +44,8 @@ const StepThree = () => {
           {/* Top Row */}
           <Flex direction={["column", "column", "row"]}>
             <PhotoPreviewSide
-              title="Just a few more details"
-              subtitle="We won't ask many more questions, we know you're super important and busy."
+              title="The Important Details"
+              subtitle="We’re almost there. Now, tell the world where you compete."
               flex="1"
               nft_id={userStore.nft?.id}
               nft={userStore.loadedNft}

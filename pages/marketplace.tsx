@@ -26,7 +26,7 @@ const Marketplace: React.FC = () => {
             textTransform="uppercase"
             fontWeight="semibold"
             fontSize="4xl"
-            mr={2}
+            mr={1}
           >
             Verified
           </Text>
@@ -46,9 +46,7 @@ const Marketplace: React.FC = () => {
           colorScheme="gray"
           fontSize={["l", "l", "xl"]}
         >
-          Verified Ink cards are limited run NFTs created and minted by High
-          School athletes. The marketplace isn’t live yet, but you can view all
-          minted cards here.{" "}
+          COMING SOON. This is where you will be able to buy, sell, and trade among the next generation of star athletes.
         </Text>
         <CardList listType="marketplace" nfts={mintedNfts} />
         <AppModal />

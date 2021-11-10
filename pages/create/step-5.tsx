@@ -27,8 +27,9 @@ const StepFive = () => {
         <Flex direction="column">
           <Flex direction={["column", "column", "row"]}>
             <PhotoPreviewSide
-              title="Video Proof"
-              subtitle="Upload a short clip showing off your skills. 10-20 seconds is perfect, we'll clip it if it's over 30."
+              title="Your Personal Highlight"
+              subtitle="Just a couple more steps. Upload a short video clip showing off your skills.
+              10-20 seconds is perfect, 30 seconds maximum."
               flex="1"
               nft_id={userStore.nft?.id}
               nft={userStore.loadedNft}

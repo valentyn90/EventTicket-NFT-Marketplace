@@ -19,7 +19,7 @@ const CardList: React.FC<Props> = ({ nfts, listType }) => {
         "repeat(auto-fit, 175px)",
         "repeat(auto-fit, 200px)",
       ]}
-      justifyContent={["space-between", "space-around", "center"]}
+      justifyContent={["space-around", "space-around", "center"]}
       gap={[2, 4, 8]}
     >
       {nfts.map((nft) => {

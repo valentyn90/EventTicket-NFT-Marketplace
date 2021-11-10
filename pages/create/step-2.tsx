@@ -70,8 +70,9 @@ const StepTwo = () => {
           <Flex direction={["column", "column", "row"]}>
             {/* Left side */}
             <PhotoPreviewSide
-              title="Something's Missing"
-              subtitle="Your Ink needs the perfect action shot. Pick a photo of just you, we'll remove the background."
+              title="In the Action"
+              subtitle="Your collectible needs the perfect action shot.
+              Choose a photo of just you, and we’ll take care of the rest."
               flex="1"
               nft_id={userStore.loadedNft?.id}
               nft={userStore.loadedNft}
