@@ -28,11 +28,11 @@ const StepEight = () => {
   let component = (
     <>
       <Text colorScheme="gray">
-        Thanks for generating your VerifiedInk collectibles.
+        Thanks for generating your VerifiedInk.
         We’ll keep you updated on the status.
         <br />
         If you want some company, recruit a few teammates. You’ll
-        get one of their VerifiedInks when they mint.
+        receive one of their VerifiedInks when they mint.
       </Text>
       <Button
         onClick={() => {

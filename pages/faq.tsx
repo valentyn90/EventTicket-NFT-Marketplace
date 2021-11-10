@@ -27,7 +27,7 @@ const data = {
       first sale (4% on each subsequent sale). Athletes own a piece of their Ink forever, even if they sell it."
     },
     {
-      title: "How can I get someone else’s VerifiedInk?",
+      title: "How can I expand my VerifiedInk collection?",
       content: "The best way right now is to refer five friends using your referral code and have them \
       each refer five friends. You will get one copy of every Ink up to a total of 30."
     },
