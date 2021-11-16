@@ -290,3 +290,8 @@ export const saveTeamColors = (
       },
     ])
     .match({ id: nft_id });
+
+    export const addEmailToWaitlist = (
+      email: string
+    ) =>
+    supabase.from("waitlist").insert([{email}])

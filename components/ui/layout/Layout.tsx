@@ -14,6 +14,7 @@ interface Props {
 const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const showNav = router.pathname === "/screenshot/[id]" ? false : true;
+  const showNavForLanding = router.pathname === "/" ? false : true;
   const { colorMode, setColorMode } = useColorMode();
 
   if (!showNav) {
@@ -31,18 +32,26 @@ const Layout: React.FC<Props> = ({ children }) => {
           key="preview"
         />
       </Head>
-      {showNav && <Navbar />}
+      {showNav && showNavForLanding && <Navbar />}
       {/* Margin for fixed navbar position */}
-      <Box
-        minH="calc(100vh - 56px - 286px)"
-        mt="56px"
-        bg={useColorModeValue("gray.50", "inherit")}
-      >
-        {showNav && <BetaModal/>}
-        {children}
-      </Box>
-      {showNav && <Footer />}
-      {showNav && <CookieBanner />}
+      {showNav && showNavForLanding ?
+        <Box
+          minH="calc(100vh - 56px - 286px)"
+          mt="56px"
+          bg={useColorModeValue("gray.50", "inherit")}
+        >
+          {children}
+        </Box> :
+        <Box
+          minH="100vh"
+          // mt="56px"
+          bg={useColorModeValue("gray.50", "inherit")}
+        >
+          {children}
+        </Box>
+      }
+      {showNav && showNavForLanding && <Footer />}
+      {showNav && showNavForLanding && <CookieBanner />}
     </>
   );
 };
