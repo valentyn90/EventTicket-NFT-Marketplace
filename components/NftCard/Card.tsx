@@ -352,6 +352,15 @@ const Card: React.FunctionComponent<Props> = ({
           key="preview"
         />
         <meta
+          property="twitter:image"
+          content={`${
+            typeof public_url === "string" && public_url.length > 0
+              ? public_url
+              : "https://verifiedink.us/img/twitter-site-image.png"
+          }`}
+          key="twitter-image"
+        />
+        <meta
           property="description"
           content="Create your own custom NFT with Verified Ink"
         />

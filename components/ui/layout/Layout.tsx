@@ -26,6 +26,9 @@ const Layout: React.FC<Props> = ({ children }) => {
       <Head>
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2" />
         <meta property="og:title" content="Verified Ink" key="title" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://verifiedink.us/img/twitter-site-image.png" key="twitter-image" />
+        {/* <meta name="twitter:site" content="" /> */}
         <meta
           property="og:image"
           content="https://verifiedink.us/img/verified-ink-site.png"
