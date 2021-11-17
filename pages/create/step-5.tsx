@@ -23,43 +23,41 @@ const StepFive = () => {
 
   return (
     <CreateLayout>
-      <form onSubmit={handleStepFiveSubmit}>
-        <Flex direction="column">
-          <Flex direction={["column", "column", "row"]}>
-            <PhotoPreviewSide
-              title="Your Personal Highlight"
-              subtitle="Just a couple more steps. Upload a short video clip showing off your skills.
+      <Flex direction="column">
+        <Flex direction={["column", "column", "row"]}>
+          <PhotoPreviewSide
+            title="Your Personal Highlight"
+            subtitle="Just a couple more steps. Upload a short video clip showing off your skills.
               10-20 seconds is perfect, 30 seconds maximum."
-              flex="1"
-              nft_id={userStore.nft?.id}
-              nft={userStore.loadedNft}
-            />
-            <Flex flex="1" direction="column">
-              <VideoProofUpload />
-              <Button
-                display="block"
-                ml="auto"
-                mt="2rem"
-                align="end"
-                colorScheme="blue"
-                color="white"
-                type="submit"
-                disabled={userStore.nftInput.videoUploading}
-              >
-                {submitting ? <Spinner /> : "Time to Sign"}
-              </Button>
-            </Flex>
-          </Flex>
-          <Divider mt="6" mb="6" />
-          <Flex>
-            <NextLink href="/create/step-4">
-              <a>
-                <Button>Back</Button>
-              </a>
-            </NextLink>
+            flex="1"
+            nft_id={userStore.nft?.id}
+            nft={userStore.loadedNft}
+          />
+          <Flex flex="1" direction="column">
+            <VideoProofUpload />
+            <Button
+              display="block"
+              ml="auto"
+              mt="2rem"
+              align="end"
+              colorScheme="blue"
+              color="white"
+              onClick={handleStepFiveSubmit}
+              disabled={userStore.nftInput.videoUploading}
+            >
+              {submitting ? <Spinner /> : "Time to Sign"}
+            </Button>
           </Flex>
         </Flex>
-      </form>
+        <Divider mt="6" mb="6" />
+        <Flex>
+          <NextLink href="/create/step-4">
+            <a>
+              <Button>Back</Button>
+            </a>
+          </NextLink>
+        </Flex>
+      </Flex>
     </CreateLayout>
   );
 };

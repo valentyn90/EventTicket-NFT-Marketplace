@@ -145,7 +145,6 @@ export class NftStore {
         this.setFieldValue("mux_asset_id", data.upload.asset_id);
         // once upload is available then start fetching the asset
         this.getMuxAsset();
-        // this.store
         clearInterval(checkUploadInterval);
       }
     };
@@ -160,11 +159,22 @@ export class NftStore {
       if (this.mux_asset_id) {
         const res = await fetch(`/api/mux/asset/${this.mux_asset_id}`);
         const data = await res.json();
-
-        if (data.asset?.status === "ready" && data.asset?.static_renditions.status === "ready") {
-          this.store.nftInput.setVideoUploading(false);
+        // First check if status is ready
+        if (data.asset?.status === "ready") {
+          // Use m3u8 video
           this.setFieldValue("mux_playback_id", data.asset.playback_id);
-          this.updateMuxIdsInSupabase(data.asset.static_renditions.files.length);
+          this.store.nftInput.setVideoUploading(false);
+
+          // but continue to work until static renditions is ready then this is done
+          if (data.asset?.static_renditions.status === "ready") {
+            this.updateMuxIdsInSupabase(
+              data.asset.static_renditions.files.length
+            );
+            clearInterval(checkAssetInterval);
+          }
+        } else if (data.asset?.errors?.messages) {
+          this.store.nftInput.setVideoUploading(false);
+          this.store.nftInput.setErrorMessage(data.asset?.errors?.messages[0]);
           clearInterval(checkAssetInterval);
         }
       }
@@ -176,13 +186,12 @@ export class NftStore {
   };
 
   updateMuxIdsInSupabase = async (static_reditions: string) => {
-
     const count_renditions = parseInt(static_reditions);
-    let file_name = "low"
-    if(count_renditions > 2){
-      file_name = "high"
-    } else if (count_renditions > 1){
-      file_name = "medium"
+    let file_name = "low";
+    if (count_renditions > 2) {
+      file_name = "high";
+    } else if (count_renditions > 1) {
+      file_name = "medium";
     }
     try {
       const { data, error } = await setMuxValues(

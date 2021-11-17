@@ -1,6 +1,7 @@
 import userStore from "@/mobx/UserStore";
 import * as UpChunk from "@mux/upchunk";
-import { Box, Spinner, Text } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/toast";
+import { Box, Spinner, Input, Text, HStack, Button } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -38,9 +39,23 @@ const rejectStyle = {
 };
 
 function VideoProofUpload() {
+  const toast = useToast();
+  const [hudlUrl, setHudlUrl] = useState("");
   const [isPreparing, setIsPreparing] = useState(false);
   const [progress, setProgress] = useState<any>(null);
   const [seconds, setSeconds] = useState(30);
+
+  useEffect(() => {
+    if (userStore.nftInput.errorMessage) {
+      toast({
+        position: "top",
+        status: "error",
+        description: userStore.nftInput.errorMessage,
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }, [userStore.nftInput.errorMessage]);
 
   const createUpload = async (): Promise<{ muxId: any; muxUrl: any }> => {
     try {
@@ -75,9 +90,76 @@ function VideoProofUpload() {
     upload.on("success", () => {
       // start the fetch in nftstore methods
       setIsPreparing(true);
-      setSeconds(30)
+      setSeconds(30);
       userStore.nft?.getMuxUpload();
     });
+  };
+
+  const hudlSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (hudlUrl.includes("hudl.com/video")) {
+      userStore.nftInput.setVideoUploading(true);
+
+      // ensure propper formatting
+      const hudlSuffix = hudlUrl.split("hudl.com/video")[1];
+      const hudleFetchURL = `https://www.hudl.com/video${hudlSuffix}`;
+
+      // get meta og value from next api
+      const { videoUrl } = await fetch(`/api/meta/getVideo`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ hudlUrl: hudleFetchURL }),
+      }).then((res) => res.json());
+
+      if (videoUrl) {
+        const res = await fetch(`/api/mux/asset/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ videoUrl }),
+        }).then((res) => res.json());
+
+        if (res.asset) {
+          // now i have the asset id and can make interval requests to asset.get/id
+          userStore.nft?.setFieldValue("mux_asset_id", res.asset.id);
+          await userStore.nft?.getMuxAsset();
+        } else {
+          userStore.nftInput.setVideoUploading(false);
+          toast({
+            position: "top",
+            status: "error",
+            description:
+              "There was an error uploading the linked file. Try again or attempt with a different video URL",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      } else {
+        userStore.nftInput.setVideoUploading(false);
+        toast({
+          position: "top",
+          status: "error",
+          description:
+            "We could not find a video at that link. Please ensure you pasted the actual video URL, which should \
+           start with hudl.com/video/",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } else {
+      toast({
+        position: "top",
+        status: "error",
+        description:
+          "Enter a Hudl video URL which should \
+        start with hudl.com/video/",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   async function onDrop(files: any) {
@@ -194,9 +276,9 @@ function VideoProofUpload() {
         setSeconds(seconds - 1);
       }
       if (seconds === 0) {
-        clearInterval(myInterval)
+        clearInterval(myInterval);
       }
-    }, 1000)
+    }, 1000);
     return () => {
       clearInterval(myInterval);
     };
@@ -205,14 +287,13 @@ function VideoProofUpload() {
   let uploadComponent;
   if (userStore.nftInput.videoUploading) {
     uploadComponent = isPreparing ? (
-
-      <div>Preparing...
-        <div>{seconds === 0
-          ? "We're still working. This can take a few minutes for long videos."
-          :  `${seconds}s`
-        }
+      <div>
+        Preparing...
+        <div>
+          {seconds === 0
+            ? "We're still working. This can take a few minutes for long videos."
+            : `${seconds}s`}
         </div>
-
       </div>
     ) : (
       <div>Uploading...{progress ? `${progress}%` : ""}</div>
@@ -228,6 +309,25 @@ function VideoProofUpload() {
         <input {...getInputProps()} />
         {component}
       </div>
+      <Text my={4}>Upload video with Hudl link:</Text>
+      <form onSubmit={hudlSubmit}>
+        <HStack>
+          <Input
+            value={hudlUrl}
+            onChange={(e) => setHudlUrl(e.target.value)}
+            placeholder="https://www.hudl.com/video/2/155191/60cf86f19a9b"
+          />
+          <Button
+            type="submit"
+            disabled={
+              userStore.nftInput.videoUploading ||
+              !hudlUrl.includes("hudl.com/video")
+            }
+          >
+            {userStore.nftInput.videoUploading ? <Spinner /> : "Upload video"}
+          </Button>
+        </HStack>
+      </form>
       <Box mt="4" w="100%" display={["block", "block", "none"]} h="500px">
         <Card
           nft_id={userStore.loadedNft?.id}

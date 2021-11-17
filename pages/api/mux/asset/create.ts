@@ -5,16 +5,20 @@ const { Video } = new Mux(
   process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET
 );
 
-export default async function assetHandler(
+export default async function assetCreateHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { method } = req;
 
   switch (method) {
-    case "GET":
+    case "POST":
       try {
-        const asset = await Video.Assets.get(req.query.id as string);
+        const asset = await Video.Assets.create({
+          input: req.body.videoUrl,
+          playback_policy: "public",
+          mp4_support: "standard",
+        });
         res.json({
           asset: {
             id: asset.id,

@@ -22,6 +22,8 @@ export class NftInput {
   color_bottom: string = "";
   color_transition: string = "";
 
+  errorMessage = "";
+
   constructor(input: Nft | null) {
     makeAutoObservable(this);
     this.first_name = input?.first_name || "";
@@ -70,6 +72,13 @@ export class NftInput {
 
   setLocalPhoto = (photo: File) => {
     this.localPhoto = photo;
+  };
+
+  setErrorMessage = (msg: string) => {
+    this.errorMessage = msg;
+    setTimeout(() => {
+      this.setInputValue("errorMessage", "");
+    }, 3000);
   };
 
   resetLocalPhoto = () => {
