@@ -1,18 +1,32 @@
 import { supabase } from "@/supabase/supabase-client";
-import { Center, Spinner } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
+import Cookies from "cookies";
+import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 
-interface Props { }
+interface Props {
+  redirect: string;
+}
 
-const Redirect: React.FC<Props> = () => {
+const Redirect: React.FC<Props> = ({ redirect }) => {
   const router = useRouter();
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        // NOTE: Need to wait for the cookie to be written
-        router.push("/create");
+        setTimeout(() => {
+          if (event === "SIGNED_IN") {
+            if (redirect === "true") {
+              router.push("/create/step-1");
+            } else {
+              // NOTE: Need to wait for the cookie to be written
+              router.push("/create");
+            }
+          } else {
+            router.push("/signin");
+          }
+        }, 1000);
       }
     );
 
@@ -34,5 +48,20 @@ const Redirect: React.FC<Props> = () => {
     </div>
   );
 };
+
+export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+  const cookies = new Cookies(req);
+
+  let redirect =
+    cookies.get("redirect-step-1") === undefined
+      ? null
+      : cookies.get("redirect-step-1");
+
+  return {
+    props: {
+      redirect,
+    },
+  };
+}
 
 export default Redirect;

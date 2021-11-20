@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/Card";
-import { DividerWithText } from "@/components/ui/DividerWithText";
 import { isReferralCodeUsed } from "@/supabase/recruit";
 import { signUp, supabase } from "@/supabase/supabase-client";
 import {
@@ -11,8 +10,6 @@ import {
   Button,
   Flex,
   Heading,
-  Input,
-  Spinner,
   Text,
   useColorModeValue,
   VStack,
@@ -150,7 +147,7 @@ const SignUp: React.FC<Props> = () => {
             <Flex direction="column" alignItems="flex-start">
               <AlertTitle mb={4} display="flex">
                 <AlertIcon mr={2} />
-                Referral Code Already Used
+                Referral Code Limit Reached
               </AlertTitle>
 
               <AlertDescription mb={4}>

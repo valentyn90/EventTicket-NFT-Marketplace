@@ -9,20 +9,12 @@ export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
 );
 
-export const signIn = async ({
-  email,
-  provider,
-  goToStepOne,
-}: SignInOptions) => {
-  let redirect_url: string | undefined = `/redirect`;
+export const signIn = async ({ email, provider }: SignInOptions) => {
+  let redirect_url: string = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/redirect`;
   ga.event({
     action: "login",
     params: { provider: provider },
   });
-
-  if (!goToStepOne) {
-    redirect_url = undefined;
-  }
 
   if (email) {
     const { error } = await supabase.auth.signIn(
@@ -47,7 +39,7 @@ export const signIn = async ({
 };
 
 export const signUp = async ({ email, provider }: SignUpOptions) => {
-  let redirect_url: string | undefined = `/redirect`;
+  let redirect_url: string = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/redirect`;
   ga.event({
     action: "sign_up",
     params: { provider: provider },
@@ -291,7 +283,5 @@ export const saveTeamColors = (
     ])
     .match({ id: nft_id });
 
-    export const addEmailToWaitlist = (
-      email: string
-    ) =>
-    supabase.from("waitlist").insert([{email}])
+export const addEmailToWaitlist = (email: string) =>
+  supabase.from("waitlist").insert([{ email }]);

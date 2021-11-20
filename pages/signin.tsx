@@ -1,12 +1,9 @@
 import { Card } from "@/components/ui/Card";
-import { DividerWithText } from "@/components/ui/DividerWithText";
 import { signIn, supabase } from "@/supabase/supabase-client";
 import {
   Box,
   Button,
   Heading,
-  Input,
-  Spinner,
   Text,
   useColorModeValue,
   VStack,
@@ -26,15 +23,10 @@ const SignIn: React.FC<Props> = () => {
 
   const router = useRouter();
 
-  const { notLoggedIn } = router.query;
-
-  const goToStepOne =
-    notLoggedIn !== undefined ? notLoggedIn === "true" : false;
-
   async function handleSignin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const emailSignIn = await signIn({ email, goToStepOne });
+    const emailSignIn = await signIn({ email });
     setLoading(false);
     if (emailSignIn) {
       setEmailLinkSent(true);
@@ -66,7 +58,7 @@ const SignIn: React.FC<Props> = () => {
               w="100%"
               colorScheme="twitter"
               onClick={() => {
-                signIn({ provider: "twitter", goToStepOne });
+                signIn({ provider: "twitter" });
               }}
             >
               <FaTwitter />
@@ -81,7 +73,7 @@ const SignIn: React.FC<Props> = () => {
               color="currentColor"
               variant="outline"
               onClick={() => {
-                signIn({ provider: "google", goToStepOne });
+                signIn({ provider: "google" });
               }}
             >
               <FaGoogle />

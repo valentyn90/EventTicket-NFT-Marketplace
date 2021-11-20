@@ -12,8 +12,9 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import Cookies from "cookies";
 import { observer } from "mobx-react-lite";
-import { NextApiRequest } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
@@ -146,7 +147,6 @@ const StepOne = () => {
           <Divider mt="6" mb="6" />
           {/* Button row */}
           <Flex justify="space-between">
-           
             <Button colorScheme="blue" color="white" type="submit">
               {submitting ? <Spinner /> : "Next step"}
             </Button>
@@ -157,13 +157,25 @@ const StepOne = () => {
   );
 };
 
-export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+export async function getServerSideProps({
+  req,
+  res,
+}: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}) {
   const { user } = await supabase.auth.api.getUserByCookie(req);
 
   if (!user) {
+    const cookies = new Cookies(req, res);
+
+    cookies.set("redirect-step-1", true, {
+      maxAge: 1000 * 60 * 60,
+    });
+
     return {
       redirect: {
-        destination: "/signin?notLoggedIn=true",
+        destination: "/signup",
         permanent: false,
       },
     };
