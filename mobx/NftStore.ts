@@ -255,15 +255,26 @@ export class NftStore {
       const filePath = `${this.store.id}/${new Date().getTime()}${
         this.store.nftInput.localPhoto?.name
       }`;
+      const ogFilePath = `${this.store.id}/${new Date().getTime()}${
+        this.store.nftInput.ogPhoto?.name
+      }`;
 
       // 1. upload image file
       const { data, error } = await uploadFileToStorage(
         filePath,
         this.store.nftInput.localPhoto as File
       );
+      const { data: ogData, error: ogError } = await uploadFileToStorage(
+        ogFilePath,
+        this.store.nftInput.ogPhoto as File
+      );
 
       if (error) {
         alert(error.message);
+        return false;
+      }
+      if (ogError) {
+        alert(ogError.message);
         return false;
       }
 
@@ -273,9 +284,17 @@ export class NftStore {
         filePath,
         this.id
       );
+      const { data: ogData2, error: ogError2 } = await insertFileToSupabase(
+        ogFilePath,
+        this.id
+      );
 
       if (error2) {
         alert(error2.message);
+        return false;
+      }
+      if (ogError2) {
+        alert(ogError2.message);
         return false;
       }
 
@@ -283,6 +302,11 @@ export class NftStore {
       const { data: data3, error: error3 } = await attachFileToNft(
         "photo_file",
         (data2 as any)[0].id,
+        this.id
+      );
+      const { data: ogData3, error: ogError3 } = await attachFileToNft(
+        "og_photo_id",
+        (ogData2 as any)[0].id,
         this.id
       );
 

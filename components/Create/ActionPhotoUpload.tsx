@@ -51,10 +51,7 @@ function ActionPhotoUpload() {
 
   async function onDrop(files: any) {
     const file = files[0];
-
-    /**
-     * 1. If phot
-     */
+    userStore.nftInput.setInputValue("ogPhoto", file);
 
     userStore.nftInput.setPhotoUploading(true);
 
@@ -240,7 +237,12 @@ function ActionPhotoUpload() {
         <input {...getInputProps()} />
         {uploadComponent}
       </div>
-      <Box mt="4" w="100%" h={["500px","650px","650px"]} display={["block", "block", "none"]}>
+      <Box
+        mt="4"
+        w="100%"
+        h={["500px", "650px", "650px"]}
+        display={["block", "block", "none"]}
+      >
         {/* Mobile display */}
         <Card
           nft_id={userStore.loadedNft?.id}

@@ -17,6 +17,7 @@ export class NftInput {
   localVideo: File | undefined = undefined;
   localSignature: any = null;
   localPhoto: File | undefined = undefined;
+  ogPhoto: File | undefined = undefined;
 
   color_top: string = "";
   color_bottom: string = "";
@@ -84,6 +85,7 @@ export class NftInput {
   resetLocalPhoto = () => {
     this.preview_rotation = 0;
     this.localPhoto = undefined;
+    this.ogPhoto = undefined;
   };
 
   setLocalSignature = (sig: any) => {
