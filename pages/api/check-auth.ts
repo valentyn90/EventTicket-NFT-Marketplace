@@ -9,6 +9,6 @@ export default async function handler(
   if (user) {
     res.status(200).json({ user });
   } else {
-    res.status(400).end();
+    res.status(401).end();
   }
 }
