@@ -50,6 +50,8 @@ const Card: React.FunctionComponent<Props> = ({
     color_top: "",
     color_bottom: "",
     color_transition: "",
+    crop_values: [],
+    slow_video: false,
   });
 
   async function getCardData() {
@@ -68,6 +70,8 @@ const Card: React.FunctionComponent<Props> = ({
       color_top: "",
       color_bottom: "",
       color_transition: "",
+      crop_values: [],
+      slow_video: false,
     });
     setLoaded(false);
     const { data, error } = await getNftById(nft_id);
@@ -198,6 +202,9 @@ const Card: React.FunctionComponent<Props> = ({
   let topColor;
   let bottomColor;
   let transitionColor;
+
+  let crop_values = nftCardData.crop_values || [];
+  let slow_video = nftCardData.slow_video || false;
 
   if (readOnly) {
     topColor = nftCardData.color_top || "#4f66e1";
@@ -427,7 +434,12 @@ const Card: React.FunctionComponent<Props> = ({
             <div className="background">
               <div className="background-gradient">
                 <div className="background-gradient reverse-background-mask">
-                  <VideoPlayer src={video} max_resolution={video_resolution} />
+                  <VideoPlayer
+                    src={video}
+                    max_resolution={video_resolution}
+                    crop_values={crop_values}
+                    slow_video={slow_video}
+                  />
 
                   <div className="reverse-logo-background"></div>
                   <img

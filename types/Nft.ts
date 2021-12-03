@@ -1,3 +1,4 @@
+import CropValue from "./CropValue";
 import UserDetails from "./UserDetails";
 
 interface Nft {
@@ -28,6 +29,9 @@ interface Nft {
   color_top: string | null;
   color_bottom: string | null;
   color_transition: string | null;
+  crop_keyframes: string | null;
+  slow_video: boolean;
+  crop_values: CropValue[];
   user_details?: UserDetails;
 }
 

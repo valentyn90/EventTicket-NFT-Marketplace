@@ -13,6 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 interface Props {
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const AdminTableRow: React.FC<Props> = ({ nft }) => {
+  const router = useRouter();
   const toast = useToast();
   const [verify, setVerify] = useState(
     nft.user_details?.verified_user || false
@@ -153,6 +155,9 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
       <Td>{getNftProgress(nft)}</Td>
       <Td align="center">
         <HStack justify="center" w="100%">
+          <Button onClick={() => router.push(`/admin/crop/${nft.id}`)}>
+            Crop Vid
+          </Button>
           <Button
             onClick={() =>
               userStore.ui.openAdminEditModal(true, "admin-edit", nft)

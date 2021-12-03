@@ -1,3 +1,4 @@
+import CropValue from "@/types/CropValue";
 import Nft from "@/types/Nft";
 import { supabase } from "./supabase-client";
 
@@ -9,9 +10,7 @@ export const getAllNfts = async (range: number) => {
      user_details ( verified_user, id ),
      files:screenshot_file_id (file_name)`
     )
-    .order(
-      "id", {ascending: false}
-    )
+    .order("id", { ascending: false })
     .range(range, range + 50);
   if (data) return data;
   else {
@@ -147,3 +146,25 @@ export const mintNft = async (nft_id: number, user_id: string) => {
 
   return true;
 };
+
+export const getCropVideoData = (nft_id: number) =>
+  supabase
+    .from("nft")
+    .select("mux_playback_id, crop_values, slow_video")
+    .eq("id", nft_id)
+    .single();
+
+export const saveCropVideoData = (
+  nft_id: number,
+  crop_values: CropValue[],
+  slow_video: boolean
+) =>
+  supabase
+    .from("nft")
+    .update([
+      {
+        crop_values,
+        slow_video,
+      },
+    ])
+    .match({ id: nft_id });

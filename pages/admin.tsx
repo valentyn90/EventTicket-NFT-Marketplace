@@ -222,10 +222,9 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
     };
   } else {
     const { data, error } = await getUserDetails(user.id);
-    if (data) {
-      if (data.role === process.env.NEXT_PUBLIC_ADMIN_ROLE) {
-        return { props: {} };
-      }
+
+    if (data?.role === process.env.NEXT_PUBLIC_ADMIN_ROLE) {
+      return { props: {} };
     } else {
       return {
         redirect: {
@@ -235,12 +234,6 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
       };
     }
   }
-  return {
-    redirect: {
-      destination: "/create",
-      permanent: false,
-    },
-  };
 }
 
 export default observer(Admin);

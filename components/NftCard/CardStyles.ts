@@ -194,7 +194,7 @@ export const CardWrapper = styled.div<StyleProps>`
     overflow: hidden;
   }
 
-  .background-video {
+  .background-video-centered {
     position: absolute;
     top: 0px;
     display: block;
@@ -207,8 +207,22 @@ export const CardWrapper = styled.div<StyleProps>`
     transform: translate(-50%);
   }
 
+  .background-video {
+    position: absolute;
+    top: 0px;
+    display: block;
+    min-height: 898px;
+    max-height: 950px;
+    min-width: 544px;
+    max-width: 3000px;
+    vertical-align: center;
+    // left: 50%;
+    // transform: translate(-50%);
+  }
+
   .reverse-logo-background {
     position: absolute;
+    top: 0px;
     height: 300px;
     width: 100%;
     background: linear-gradient(
@@ -224,6 +238,7 @@ export const CardWrapper = styled.div<StyleProps>`
     top: 60px;
     left: 50%;
     transform: translate(-50%) scale(1.5);
+    z-index: 2;
   }
 
   .reverse-name-background {
