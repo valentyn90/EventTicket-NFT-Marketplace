@@ -168,3 +168,27 @@ export const saveCropVideoData = (
       },
     ])
     .match({ id: nft_id });
+
+export const getMuxPlaybackId = (id: number) =>
+  supabase
+    .from("nft")
+    .select("mux_playback_id, mux_asset_id")
+    .eq("id", id)
+    .single();
+
+export const updateMuxValues = (
+  nft_id: number,
+  asset_id: string | null,
+  playback_id: string | null,
+  mux_max_resolution: string | null
+) =>
+  supabase
+    .from("nft")
+    .update([
+      {
+        mux_asset_id: asset_id,
+        mux_playback_id: playback_id,
+        mux_max_resolution,
+      },
+    ])
+    .match({ id: nft_id });

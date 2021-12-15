@@ -1,4 +1,8 @@
-import { GetServerSideProps } from "next";
+import { getCropVideoData, saveCropVideoData } from "@/supabase/admin";
+import { supabase } from "@/supabase/supabase-client";
+import { getUserDetails } from "@/supabase/userDetails";
+import CropValue from "@/types/CropValue";
+import { Button } from "@chakra-ui/button";
 import {
   Box,
   Center,
@@ -8,23 +12,13 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/layout";
-import React, {
-  CSSProperties,
-  useRef,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
-import styled, { css, keyframes } from "styled-components";
-import { supabase } from "@/supabase/supabase-client";
-import { getUserDetails } from "@/supabase/userDetails";
 import { Spinner } from "@chakra-ui/spinner";
-import { getCropVideoData, saveCropVideoData } from "@/supabase/admin";
-import { useToast } from "@chakra-ui/toast";
-import { Button } from "@chakra-ui/button";
 import { Switch } from "@chakra-ui/switch";
-import CropValue from "@/types/CropValue";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
+import { useToast } from "@chakra-ui/toast";
+import { GetServerSideProps } from "next";
+import React, { CSSProperties, useEffect, useRef, useState } from "react";
+import styled, { keyframes } from "styled-components";
 
 const Wrapper = styled.div`
   .crop-container {
@@ -127,14 +121,14 @@ const CropId: React.FC<Props> = ({ id }) => {
     getCropVideoData(id).then(({ data, error }) => {
       setLoaded(true);
       if (data) {
-        setMuxId(data.mux_playback_id);
-        setSlowVideo(data.slow_video);
+        setMuxId(data.mux_playback_id || "");
+        setSlowVideo(data.slow_video || false);
         setCropValues(data.crop_values || []);
       } else if (error) {
         console.log(error);
         toast({
           position: "top",
-          description: "There was an error getting the mux playback id",
+          description: error.message,
           status: "error",
           duration: 3000,
           isClosable: true,
@@ -348,8 +342,8 @@ const CropId: React.FC<Props> = ({ id }) => {
               mb={4}
               marginInline={20}
             >
-              The video on the right is showing the video as
-              it would be seen on the card. Space bar will play/pause.
+              The video on the right is showing the video as it would be seen on
+              the card. Space bar will play/pause.
             </Text>
 
             <Flex justify="space-around" align="flex-start">
