@@ -155,8 +155,8 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
       <Td>{getNftProgress(nft)}</Td>
       <Td align="center">
         <HStack justify="center" w="100%">
-          <Button onClick={() => router.push(`/admin/crop/${nft.id}`)}>
-            Crop Vid
+          <Button onClick={() => router.push(`/admin/clip/${nft.id}`)}>
+            Clip/Crop
           </Button>
           <Button
             onClick={() =>
