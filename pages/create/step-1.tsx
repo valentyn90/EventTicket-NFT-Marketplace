@@ -166,7 +166,7 @@ export async function getServerSideProps({
 }) {
   const { user } = await supabase.auth.api.getUserByCookie(req);
   const cookies = new Cookies(req, res);
-  
+
   if (!user) {
     cookies.set("redirect-step-1", true, {
       maxAge: 1000 * 60 * 60,
@@ -180,7 +180,7 @@ export async function getServerSideProps({
     };
   }
   else {
-    cookies.set("redirect-step-1", false, {
+    cookies.set("redirect-step-1", "redirected", {
       maxAge: 1000 * 60 * 60,
     });
   }
