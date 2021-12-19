@@ -130,14 +130,15 @@ const StepEight = () => {
   let component = (
     <>
       <Text colorScheme="gray" w={["100%", "100%", "60%"]}>
-      You've made your VerifiedInk, let's now grow your collection by inviting friends 
-      and teammates to make theirs. You'll receive a free VerifiedInk of each person 
-      that mints through your link AND another one of each person who mints through 
-      their referral.
+        You've made your VerifiedInk, now grow your collection by inviting friends and
+        teammates to make theirs. You'll receive a VerifiedInk of each person that mints
+        through your link AND another one of each person they refer.
+
         <br />
         <br />
-        If five of your referrals mint an Ink, we'll drop you an exclusive 1 of 1 Gold 
-        Founder's edition release of your Ink.
+        If five of your referrals mint an Ink within the next 48 hours, we'll grant you
+        five more referrals and drop you an exclusive 1 of 1 Gold Founder's edition
+        release of your Ink.
         <br />
         <br />
         Enough reading, time to grow your team!
