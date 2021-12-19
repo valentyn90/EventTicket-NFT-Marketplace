@@ -7,14 +7,15 @@ import React from "react";
 
 interface Props {
   id?: number;
+  buttonText?: string;
 }
 
-const ShareButton: React.FC<Props> = ({ id }) => {
+const ShareButton: React.FC<Props> = ({ id, buttonText = "Share" }) => {
   const toast = useToast();
 
   async function handleClick(id: number | undefined) {
-    const result = await handleRecruitClick(id)
-    if( result === "Clipboard") {
+    const result = await handleRecruitClick(id);
+    if (result === "Clipboard") {
       toast({
         position: "top",
         description: "Link is copied to your clipboard.",
@@ -34,10 +35,10 @@ const ShareButton: React.FC<Props> = ({ id }) => {
       flex="row"
       alignItems="center"
       px={8}
-      width={["100%", "100%", "unset"]}
+      // width={["100%", "100%", "unset"]}
     >
       <ShareIcon marginRight="10px" />
-      <Text pb="2px">Share</Text>
+      <Text pb="2px">{buttonText}</Text>
     </Button>
   );
 };

@@ -21,6 +21,7 @@ interface Props {
   readOnly?: boolean;
   db_first_name?: string;
   public_url?: string;
+  founders?: boolean;
 }
 
 const Card: React.FunctionComponent<Props> = ({
@@ -33,6 +34,7 @@ const Card: React.FunctionComponent<Props> = ({
   readOnly = false,
   db_first_name,
   public_url,
+  founders = false,
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [nftCardData, setNftCardData] = useState({
@@ -117,10 +119,16 @@ const Card: React.FunctionComponent<Props> = ({
     if (router.pathname.includes("step-5")) {
       setLastY(180);
     }
+    if (router.pathname.includes("step-8")) {
+      setStep8CardSize(true);
+    } else {
+      setStep8CardSize(false);
+    }
   }, [router.pathname]);
 
   const [viewportWidth, setVieportWidth] = useState(800);
 
+  const [step8CardSize, setStep8CardSize] = useState(false);
   const [lastX, setLastX] = useState(-1);
   const [lastY, setLastY] = useState(reverse ? 180 : 0);
   const [cssTransform, setCssTransform] = useState<CSSProperties>({});
@@ -334,6 +342,8 @@ const Card: React.FunctionComponent<Props> = ({
       topColor={topColor}
       bottomColor={bottomColor}
       transitionColor={transitionColor}
+      founders={founders}
+      step8={step8CardSize}
     >
       <Head>
         <meta
@@ -341,9 +351,9 @@ const Card: React.FunctionComponent<Props> = ({
           content={
             "Check out " +
             (db_first_name
-              ? `${db_first_name}\'s`
-              : first_name && first_name + "'s") +
-            " Verified Ink"
+              ? `${db_first_name}\'s `
+              : "") +
+            "Verified Ink"
           }
           key="title"
         />

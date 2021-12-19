@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 interface StyleProps {
   signatureFile: string | null;
@@ -7,7 +7,25 @@ interface StyleProps {
   topColor: string;
   bottomColor: string;
   transitionColor: string;
+  founders: boolean;
+  step8: boolean;
 }
+
+const ShinyAnimationCss = css`
+  @keyframes shiny {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  animation: shiny 10s ease infinite;
+`;
 
 export const CardWrapper = styled.div<StyleProps>`
   position: relative;
@@ -19,10 +37,12 @@ export const CardWrapper = styled.div<StyleProps>`
 
   transform-origin: top center;
 
-  @media only screen and (max-width: 600px) {
-    transform: scale(calc(300 / 600));
-    transform-origin: top center;
-  }
+  ${(props) =>
+    !props.step8 &&
+    `@media only screen and (max-width: 600px) {
+      transform: scale(calc(300 / 600));
+      transform-origin: top center;
+    }`}
 
   .card {
     position: absolute;
@@ -44,12 +64,26 @@ export const CardWrapper = styled.div<StyleProps>`
     right: 0%;
     top: 0%;
     bottom: 0%;
-    background: linear-gradient(
-      219.17deg,
-      ${(props) => props.topColor} -10.14%,
-      ${(props) => props.transitionColor} 48.6%,
-      ${(props) => props.bottomColor} 101.53%
-    );
+    ${(props) =>
+      props.founders
+        ? `
+        background: linear-gradient(
+          45deg,
+          #bf953f,
+          #fcf6ba,
+          #b38728,
+          #fbf5b7,
+          #aa771c
+          );
+        background-size: 400% 400%;
+        ${ShinyAnimationCss}
+        `
+        : `background: linear-gradient(
+        219.17deg,
+        ${props.topColor} -10.14%,
+        ${props.transitionColor} 48.6%,
+        ${props.bottomColor} 101.53%
+        );`}
     mix-blend-mode: normal;
     mask-image: url(/img/card-mask.png);
     mask-repeat: no-repeat;

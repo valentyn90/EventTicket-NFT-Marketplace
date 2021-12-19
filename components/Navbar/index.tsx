@@ -17,15 +17,24 @@ import {
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
-import * as React from "react";
+import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
 import ViLogo from "../ui/logos/ViLogo";
 import { Navbar } from "./Navbar";
 import { NavTabLink } from "./NavTabLink";
 import { UserProfile } from "./UserProfile";
 
 const NavIndex: React.FC = () => {
+  const router = useRouter();
   const logoColor = useColorModeValue("blue", "white");
   const { colorMode, toggleColorMode } = useColorMode();
+  const [referralString, setReferralString] = useState("");
+
+  useEffect(() => {
+    if (router.query.referralCode) {
+      setReferralString(`?referralCode=${router.query.referralCode}`);
+    }
+  }, [router.query]);
 
   return (
     <Navbar>
@@ -83,7 +92,7 @@ const NavIndex: React.FC = () => {
               </Button>
             </a>
           </NextLink>
-          <NextLink href="/signup">
+          <NextLink href={`/signup/${referralString}`}>
             <a>
               <Button colorScheme="blue" color="white">
                 Sign Up For Free
@@ -105,7 +114,12 @@ const NavIndex: React.FC = () => {
                 email={userStore.email}
               />
               <VStack mt={4} align="start">
-                <Button colorScheme="blue" color="white" onClick={signOut} minW="93px">
+                <Button
+                  colorScheme="blue"
+                  color="white"
+                  onClick={signOut}
+                  minW="93px"
+                >
                   Logout
                 </Button>
               </VStack>

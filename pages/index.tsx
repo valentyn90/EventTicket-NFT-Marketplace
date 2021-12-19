@@ -1,11 +1,10 @@
 import { SplashModal } from "@/components/ui/SplashModal";
-import { NextApiRequest } from "next";
-
-import React from "react";
 import Cookies from "cookies";
+import { NextApiRequest } from "next";
+import React from "react";
 
 const Index: React.FC = () => {
-  return <SplashModal></SplashModal>;
+  return <SplashModal />;
 };
 
 export async function getServerSideProps({ req }: { req: NextApiRequest }) {
@@ -19,7 +18,9 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
       },
     };
   } else {
-    return { props: {} };
+    return {
+      props: {},
+    };
   }
 }
 

@@ -1,42 +1,28 @@
 import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
+import { supabase } from "@/supabase/supabase-client";
+import { handleRecruitClick } from "@/utils/recruitShareLink";
 import ShareIcon from "@/utils/svg/ShareIcon";
-import { Box, Button, Flex, Text, useColorModeValue, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  useColorModeValue,
+  useToast,
+} from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import React from "react";
-
-async function handleRecruitClick() {
-
-  const share_link = `${process.env.NEXT_PUBLIC_FRONTEND_URL
-    }/signup?referralCode=${userStore.userDetails.referral_code || "xxx"}`;
-
-  const shareData = {
-    title: "VerifiedInk",
-    text: "Create your own Verified Ink",
-    url: share_link,
-  };
-
-  if (navigator.share === undefined) {
-    const ta = document.createElement("textarea");
-    ta.innerText = share_link;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    ta.remove();
-    return "Clipboard"
-  } else {
-    try {
-      await navigator.share(shareData);
-    } catch (err) { }
-  }
-}
 
 const Recruit: React.FC = () => {
   const toast = useToast();
 
   async function handleClick() {
-    const result = await handleRecruitClick()
+    const result = await handleRecruitClick(
+      userStore.userDetails.referral_code
+    );
     if (result === "Clipboard") {
       toast({
         position: "top",
@@ -74,9 +60,10 @@ const Recruit: React.FC = () => {
             <Text fontSize="4xl" fontWeight="bold" mb="4">
               Bring <span style={{ color: "#0051CA" }}>Your</span> Team
             </Text>
-            <Text w={["100%","100%","75%"]} colorScheme="gray" mb="4">
+            <Text w={["100%", "100%", "75%"]} colorScheme="gray" mb="4">
               Invite up to five friends. <br />
-              You’ll get one of their cards.<br />
+              You’ll get one of their cards.
+              <br />
               And one of the cards of each person they refer. (Up to 30)
             </Text>
 
@@ -110,5 +97,23 @@ const Recruit: React.FC = () => {
     </Box>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { user } = await supabase.auth.api.getUserByCookie(context.req);
+
+  if (user) {
+    return {
+      redirect: {
+        destination: "/create/step-8",
+        permanent: false,
+      },
+    };
+  } else {
+    return {
+      props: {},
+    };
+  }
+
+}
 
 export default observer(Recruit);
