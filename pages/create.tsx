@@ -90,9 +90,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const cookies = new Cookies(context.req, context.res);
 
-  cookies.set("redirect-step-1", true, {
-    maxAge: 1000 * 60 * 60,
-  });
+  let redirect_cookie_exists =
+    cookies.get("redirect-step-1") === undefined
+      ? false
+      : true;
+
+  if (!redirect_cookie_exists) {
+    cookies.set("redirect-step-1", true, {
+      maxAge: 1000 * 60 * 60,
+    });
+  }
 
   let nftId = null;
   let referral_code = null;
