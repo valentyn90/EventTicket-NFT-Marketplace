@@ -38,6 +38,7 @@
     "mobx-react-lite": "^3.2.0",
     "nanoid": "^3.1.29",
     "next": "^11.0.1",
+    "node-mailjet": "^3.3.4",
     "plyr": "^3.6.9",
     "plyr-react": "^3.2.1",
     "puppeteer-core": "8.0.*",
@@ -53,6 +54,7 @@
     "rsuite": "^5.0.3",
     "styled-components": "^5.3.0",
     "swr": "^0.5.6",
+    "twit": "^2.2.11",
     "validator": "^13.7.0"
   },
   "devDependencies": {

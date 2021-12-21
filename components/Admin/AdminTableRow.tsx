@@ -44,7 +44,7 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
     if (nft.screenshot_file_id) {
       getFileFromSupabase(nft.screenshot_file_id).then((res) => {
         if (res.file) {
-          const uri = URL.createObjectURL(res.file);
+          const uri = URL.createObjectURL(res.file as Blob);
           setScreenshot(uri);
         }
         if (res.error) {
@@ -127,6 +127,25 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
   async function handleMint() {
     setMinting(true);
     const res = await mintNft(nft.id, nft.user_id);
+    const res2 = await fetch(`/api/outreach/${nft.id}/?message_type=minted`);
+    if (res2.status === 200) {
+      toast({
+        position: "top",
+        description: `Twitter message sent for ${nft.id}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    else {
+      toast({
+        position: "top",
+        status: "error",
+        description: `This user doesn't have a twitter handle.`,
+        duration: 3000,
+        isClosable: true,
+      });
+    }
     userStore.ui.refetchAdminData();
     setMinting(false);
   }
