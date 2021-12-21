@@ -72,7 +72,8 @@ const StepTwo = () => {
             <PhotoPreviewSide
               title="In the Action"
               subtitle="Your collectible needs the perfect action shot.
-              Choose a photo of just you, and we’ll take care of the rest."
+              Choose a high quality photo of just you, and we’ll take care of the rest.
+              If the cropping is off, we’ll fix it during our review."
               flex="1"
               nft_id={userStore.loadedNft?.id}
               nft={userStore.loadedNft}
