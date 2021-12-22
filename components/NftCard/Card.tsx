@@ -22,6 +22,7 @@ interface Props {
   db_first_name?: string;
   public_url?: string;
   founders?: boolean;
+  recruit_share?: boolean
 }
 
 const Card: React.FunctionComponent<Props> = ({
@@ -35,6 +36,7 @@ const Card: React.FunctionComponent<Props> = ({
   db_first_name,
   public_url,
   founders = false,
+  recruit_share = false
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [nftCardData, setNftCardData] = useState({
@@ -114,13 +116,8 @@ const Card: React.FunctionComponent<Props> = ({
   ]);
 
   const router = useRouter();
-  const [referralPreview, setReferralPreview] = useState(false)
  
   useEffect(() => {
-    if(router.asPath.includes("create?referralCode")){
-      setReferralPreview(true);
-    }
-
     if (router.pathname.includes("step-5")) {
       setLastY(180);
     }
@@ -382,9 +379,9 @@ const Card: React.FunctionComponent<Props> = ({
         />
         <meta
           property="description"
-          content={referralPreview ? 
+          content={`${recruit_share ? 
             "Check out this NFT I made. Just for athletes. I get paid every single time it sells. Here's a referral if you want to make your own."
-            :"Create your own custom NFT with Verified Ink"}
+            :"Create your own custom NFT with Verified Ink"}`}
         />
       </Head>
       <div className="viewer">

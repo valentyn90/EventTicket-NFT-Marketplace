@@ -18,6 +18,7 @@ interface Props {
 
 const Create: React.FC<Props> = ({ nftId, referral_code, publicUrl, first_name }) => {
   let referralString = referral_code ? `?referralCode=${referral_code}` : "";
+  let recruitShare = referralString ? true : false;
   return (
     <Box
       bg={useColorModeValue("gray.50", "inherit")}
@@ -76,7 +77,7 @@ const Create: React.FC<Props> = ({ nftId, referral_code, publicUrl, first_name }
             mt={["2rem", "2rem", 0]}
             h={["500px", "650px", "650px"]}
           >
-            <Card nft_id={nftId || 93} public_url={publicUrl || undefined} readOnly={true} db_first_name={first_name || undefined} />
+            <Card nft_id={nftId || 93} public_url={publicUrl || undefined} readOnly={true} db_first_name={first_name || undefined} recruit_share={recruitShare} />
           </Box>
         </Flex>
       </Box>
