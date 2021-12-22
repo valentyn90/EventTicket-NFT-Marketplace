@@ -54,7 +54,7 @@ Your VerifiedInk has been minted. You can view and share your VerifiedInk here: 
 
 Now, you can grow your collection. Send your referral code to 5 other athletes and you automatically receive one \
 of their inks. So refer the best players you know before someone else does. If you get 5 people to create Inks in \
-the next 48 hours you will get 5 more referrals and a 1 of 1 founders drop.
+the next 48 hours you will get 5 more referrals and a 1 of 1 Founder's drop.
 
 Happy collection growing!
 -Nate

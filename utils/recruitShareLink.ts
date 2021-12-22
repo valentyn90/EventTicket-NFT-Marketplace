@@ -4,7 +4,8 @@ export async function handleRecruitClick(referralCode: string) {
 
   const shareData = {
     title: "VerifiedInk",
-    text: "Create your own Verified Ink",
+    text: "Check out this NFT I made. Just for athletes. I get paid every single time it sells. \
+    Here's a referral link if you want to make your own.",
     url: share_link,
   };
 

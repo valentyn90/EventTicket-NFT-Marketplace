@@ -84,14 +84,14 @@ const Card: React.FunctionComponent<Props> = ({
       if (data.photo_file) {
         const { error, file } = await getFileFromSupabase(data.photo_file);
         if (!error) {
-          var uri = URL.createObjectURL(file);
+          var uri = URL.createObjectURL(file as Blob);
           photo = uri;
         }
       }
       if (data.signature_file) {
         const { error, file } = await getFileFromSupabase(data.signature_file);
         if (!error) {
-          var uri = URL.createObjectURL(file);
+          var uri = URL.createObjectURL(file as Blob);
           signature = uri;
         }
       }
@@ -114,8 +114,13 @@ const Card: React.FunctionComponent<Props> = ({
   ]);
 
   const router = useRouter();
-
+  const [referralPreview, setReferralPreview] = useState(false)
+ 
   useEffect(() => {
+    if(router.asPath.includes("create?referralCode")){
+      setReferralPreview(true);
+    }
+
     if (router.pathname.includes("step-5")) {
       setLastY(180);
     }
@@ -377,7 +382,9 @@ const Card: React.FunctionComponent<Props> = ({
         />
         <meta
           property="description"
-          content="Create your own custom NFT with Verified Ink"
+          content={referralPreview ? 
+            "Check out this NFT I made. Just for athletes. I get paid every single time it sells. Here's a referral if you want to make your own."
+            :"Create your own custom NFT with Verified Ink"}
         />
       </Head>
       <div className="viewer">
@@ -436,7 +443,7 @@ const Card: React.FunctionComponent<Props> = ({
                 </div>
               )}
               <div className="serial-number">
-                <div className="bold-info">1</div>/10
+                <div className="bold-info">1</div>/{founders ? 1 : 10}
               </div>
             </div>
           </div>
