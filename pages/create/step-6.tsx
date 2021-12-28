@@ -37,6 +37,7 @@ const StepSix = () => {
       setSubmitting(false);
       if (res) {
         // success
+        userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
         router.push("/create/step-7");
       }
     }

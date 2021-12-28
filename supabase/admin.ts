@@ -36,7 +36,7 @@ export const adminUpdateNft = async (nft_id: number, input: Nft) =>
     ])
     .match({ id: nft_id });
 
-export const addAdminFeedback = async (nft_id: number, feedback: string) =>
+export const addAdminFeedback = async (nft_id: number, feedback: any) =>
   supabase
     .from("nft")
     .update([

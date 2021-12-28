@@ -124,10 +124,36 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
     }
   }
 
+  async function handleAbandoned(){
+    const res = await fetch(`/api/outreach/${nft.id}?message_type=abandoned`);
+    if( res.status === 200){
+      toast({
+        position: "top",
+        description: `Abandoned message sent for ${nft.id}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
+
+  async function remindRecruit(){
+    const res = await fetch(`/api/outreach/${nft.id}?message_type=remind_recruit`);
+    if( res.status === 200){
+      toast({
+        position: "top",
+        description: `Remind recruit message sent for ${nft.id}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
+
   async function handleMint() {
     setMinting(true);
     const res = await mintNft(nft.id, nft.user_id);
-    const res2 = await fetch(`/api/outreach/${nft.id}/?message_type=minted`);
+    const res2 = await fetch(`/api/outreach/${nft.id}?message_type=minted`);
     if (res2.status === 200) {
       toast({
         position: "top",
@@ -141,7 +167,7 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
       toast({
         position: "top",
         status: "error",
-        description: `This user doesn't have a twitter handle.`,
+        description: `Something bad happened`,
         duration: 3000,
         isClosable: true,
       });
@@ -197,9 +223,15 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
           >
             Feedback
           </Button>
+          <Button onClick={handleAbandoned}>
+            Nudge User
+            </Button>
           <Button disabled={nft.minted} onClick={handleMint}>
             {minting ? <Spinner /> : "Mint"}
           </Button>
+          <Button disabled={!nft.minted} onClick={remindRecruit}>
+            Recruit
+            </Button>
         </HStack>
       </Td>
     </Tr>

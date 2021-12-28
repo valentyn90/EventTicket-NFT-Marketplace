@@ -21,6 +21,7 @@
     "@fontsource/open-sans": "^4.4.5",
     "@mux/mux-node": "^3.3.1",
     "@mux/upchunk": "^2.2.2",
+    "@sendgrid/mail": "^7.6.0",
     "@supabase/supabase-js": "^1.15.1",
     "@supabase/ui": "^0.27.3",
     "abort-controller": "^3.0.0",

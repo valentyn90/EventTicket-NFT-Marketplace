@@ -12,6 +12,8 @@ interface Props {
 const Redirect: React.FC<Props> = ({ redirect }) => {
   const router = useRouter();
 
+  // TODO: Handle the following error: /redirect?error=server_error&error_description=Error+getting+user+email+from+external+provider
+
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {

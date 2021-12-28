@@ -25,7 +25,7 @@ interface Nft {
   mux_max_resolution: string | null;
   screenshot_file_id: number | null;
   user_details_id: string;
-  admin_feedback: string;
+  admin_feedback: any;
   color_top: string | null;
   color_bottom: string | null;
   color_transition: string | null;

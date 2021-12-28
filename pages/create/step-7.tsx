@@ -14,11 +14,12 @@ const StepSeven = () => {
   async function handleStepSixSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
+    userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
     const res = await userStore.nft?.stepSevenSubmit();
+    const res2 = await fetch(`/api/outreach/${userStore.nft?.id}?message_type=created`);
     setSubmitting(false);
-    if (res) {
-      // Begin screenshot get in background
-      userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
+    if (res2 && res) {
+      
       router.push("/create/step-8");
     }
   }
