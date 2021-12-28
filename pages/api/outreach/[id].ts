@@ -26,11 +26,11 @@ export default async function outreach(
                 const twitter_handle = user_details.data.twitter;
                 const referral_code = user_details.data.referral_code;
                 const response = await sendCreatedDM(twitter_handle, nft_id, referral_code);
-                // console.log(response);
+                console.log(response);
             }
             if (user_details.data.email !== "") {
                 const email_response = await sendMail(parseInt(nft_id), "created");
-                // console.log(email_response);
+                console.log(email_response);
             }
             return res.status(200).json({ "message": "Sent Created Messages" });
 
@@ -39,11 +39,11 @@ export default async function outreach(
             if (user_details.data.twitter !== "") {
                 const twitter_handle = user_details.data.twitter;
                 const response = await sendAbandonedDM(twitter_handle, nft_id);
-                // console.log(response);
+                console.log(response);
             }
             if (user_details.data.email !== "") {
                 const email_response = await sendMail(parseInt(nft_id), "abandoned");
-                // console.log(email_response);
+                console.log(email_response);
             }
             return res.status(200).json({ "message": "Sent Abandoned Messages" });
 
@@ -51,11 +51,11 @@ export default async function outreach(
             if (user_details.data.twitter !== "") {
                 const twitter_handle = user_details.data.twitter;
                 const response = await sendChangesRequiredDM(twitter_handle, nft_id);
-                // console.log(response);
+                console.log(response);
             }
             if (user_details.data.email !== "") {
                 const email_response = await sendMail(parseInt(nft_id), "changes_required");
-                // console.log(email_response);
+                console.log(email_response);
             }
             return res.status(200).json({ "message": "Sent Changes Required Messages" });
         
@@ -64,11 +64,11 @@ export default async function outreach(
                 const twitter_handle = user_details.data.twitter;
                 const referral_code = user_details.data.referral_code;
                 const response = await sendMintedDM(twitter_handle, nft_id, referral_code);
-                // console.log(response);
+                console.log(response);
             }
             if (user_details.data.email !== "") {
                 const email_response = await sendMail(parseInt(nft_id), "minted");
-                // console.log(email_response);
+                console.log(email_response);
             }
             return res.status(200).json({ "message": "Sent Mint Messages" });
 
