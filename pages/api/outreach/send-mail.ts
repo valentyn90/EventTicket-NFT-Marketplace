@@ -32,7 +32,7 @@ async function sendMail(nft_id: number = 96, template: string = 'minted') {
 
   const { publicUrl, error: error2 } = await getFileLinkFromSupabase(data.screenshot_file_id);
 
-
+ 
   const msg = {
     to: user_details.data.email,
     from: 'Nate@verifiedink.us',
@@ -46,6 +46,8 @@ async function sendMail(nft_id: number = 96, template: string = 'minted') {
       share_link: `https://verifiedink.us/share?referralCode=${user_details.data.referral_code}`
     }
   }
+
+  console.log(msg)
 
   sgMail
     .send(msg)
