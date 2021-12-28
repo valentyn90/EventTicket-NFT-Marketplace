@@ -178,6 +178,7 @@ const Admin = () => {
                 <Th>nft_id</Th>
                 <Th>Preview</Th>
                 <Th>Verified</Th>
+                <Th>Twitter</Th>
                 <Th>Progress</Th>
                 <Th textAlign="center">Actions</Th>
               </Tr>

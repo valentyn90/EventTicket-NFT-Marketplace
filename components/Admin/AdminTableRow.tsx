@@ -1,5 +1,5 @@
 import userStore from "@/mobx/UserStore";
-import { mintNft, verifyUserAndRecruits } from "@/supabase/admin";
+import { mintNft, updateTwitter, verifyUserAndRecruits } from "@/supabase/admin";
 import { getFileFromSupabase } from "@/supabase/supabase-client";
 import { unlockNft } from "@/supabase/userDetails";
 import Nft from "@/types/Nft";
@@ -33,6 +33,7 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
   const [screenshot, setScreenshot] = useState(
     "https://verifiedink.us/img/card-mask.png"
   );
+  const [twitter, setTwitter] = useState(nft.user_details?.twitter || "");
 
   useEffect(() => {
     if (nft.user_details?.verified_user) {
@@ -63,6 +64,19 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
       return `1. Started`;
     } else {
       return `0. Not started`;
+    }
+  }
+
+  async function callUpdateTwitter() {
+    const res = await updateTwitter(nft.user_details_id, twitter)
+    if(res){
+      toast({
+        position: "top",
+        description: `Updated twitter to: ${twitter}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }
 
@@ -124,9 +138,9 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
     }
   }
 
-  async function handleAbandoned(){
+  async function handleAbandoned() {
     const res = await fetch(`/api/outreach/${nft.id}?message_type=abandoned`);
-    if( res.status === 200){
+    if (res.status === 200) {
       toast({
         position: "top",
         description: `Abandoned message sent for ${nft.id}`,
@@ -137,9 +151,9 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
     }
   }
 
-  async function remindRecruit(){
+  async function remindRecruit() {
     const res = await fetch(`/api/outreach/${nft.id}?message_type=remind_recruit`);
-    if( res.status === 200){
+    if (res.status === 200) {
       toast({
         position: "top",
         description: `Remind recruit message sent for ${nft.id}`,
@@ -197,6 +211,9 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
           <input type="checkbox" onChange={handleVerify} checked={verify} />
         )}
       </Td>
+      <Td justifySelf="center">
+        <input type="text" value={twitter} onChange={(e) => setTwitter(e.target.value)} onBlur={callUpdateTwitter} style={{ backgroundColor: 'transparent' }} />
+      </Td>
       <Td>{getNftProgress(nft)}</Td>
       <Td align="center">
         <HStack justify="center" w="100%">
@@ -224,14 +241,14 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
             Feedback
           </Button>
           <Button onClick={handleAbandoned}>
-            Nudge User
-            </Button>
+            Nudge
+          </Button>
           <Button disabled={nft.minted} onClick={handleMint}>
             {minting ? <Spinner /> : "Mint"}
           </Button>
           <Button disabled={!nft.minted} onClick={remindRecruit}>
             Recruit
-            </Button>
+          </Button>
         </HStack>
       </Td>
     </Tr>

@@ -7,7 +7,7 @@ export const getAllNfts = async (range: number) => {
     .from("nft")
     .select(
       `*,
-     user_details ( verified_user, id ),
+     user_details ( verified_user, id, twitter ),
      files:screenshot_file_id (file_name)`
     )
     .order("id", { ascending: false })
@@ -192,3 +192,9 @@ export const updateMuxValues = (
       },
     ])
     .match({ id: nft_id });
+
+  export const updateTwitter = async (user_details_id: string, twitter: string) => {
+    const res = await fetch(`/api/admin/update-twitter?user_details_id=${user_details_id}&twitter=${twitter}`);
+
+    return res
+  }
