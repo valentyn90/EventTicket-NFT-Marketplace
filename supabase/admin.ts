@@ -135,14 +135,54 @@ export const mintNft = async (nft_id: number, user_id: string) => {
     ])
     .match({ id: nft_id });
 
-  const { data: data2, error: error2 } = await supabase
+  //Find referral to two levels
+  const { data: user, error: error2 } = await supabase
+    .from("user_details")
+    .select("referring_user_id")
+    .eq("user_id", user_id)
+
+  const verified_treasury = "348d305f-3156-44ec-98f6-5d052bea2aa8"
+  let referral_1 = user_id;
+  let referral_2 = user_id;
+
+  if (user) {
+    if (user[0].referring_user_id) {
+      referral_1 = user[0].referring_user_id;
+
+      const { data: user2, error: error3 } = await supabase
+        .from("user_details")
+        .select("referring_user_id")
+        .eq("user_id", referral_1)
+
+        if (user2) {
+          if (user2[0].referring_user_id) {
+            referral_2 = user2[0].referring_user_id;
+          }
+        }
+
+    }
+  }
+
+  console.log(`referral_1: ${referral_1}`);
+  console.log(`referral_2: ${referral_2}`);
+
+  const { data: data2, error: error4 } = await supabase
     .from("nft_owner")
-    .insert([
-      {
-        nft_id,
-        owner_id: user_id,
-      },
-    ]);
+    .upsert(
+      [ {nft_id, owner_id: user_id, serial_no: 1},
+        {nft_id, owner_id: user_id, serial_no: 2},
+        {nft_id, owner_id: user_id, serial_no: 3},
+        {nft_id, owner_id: user_id, serial_no: 4},
+        {nft_id, owner_id: user_id, serial_no: 5},
+        {nft_id, owner_id: user_id, serial_no: 6},
+        {nft_id, owner_id: user_id, serial_no: 7},
+        {nft_id, owner_id: referral_2, serial_no: 8},
+        {nft_id, owner_id: referral_1, serial_no: 9},
+        {nft_id, owner_id: verified_treasury, serial_no: 10},
+
+      ]
+    )
+
 
   return true;
 };
@@ -193,8 +233,8 @@ export const updateMuxValues = (
     ])
     .match({ id: nft_id });
 
-  export const updateTwitter = async (user_details_id: string, twitter: string) => {
-    const res = await fetch(`/api/admin/update-twitter?user_details_id=${user_details_id}&twitter=${twitter}`);
+export const updateTwitter = async (user_details_id: string, twitter: string) => {
+  const res = await fetch(`/api/admin/update-twitter?user_details_id=${user_details_id}&twitter=${twitter}`);
 
-    return res
-  }
+  return res
+}

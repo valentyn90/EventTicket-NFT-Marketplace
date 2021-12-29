@@ -107,6 +107,22 @@ export const uploadFileToStorage = (filePath: string, photoFile: File) =>
 
 export const getUserNft = (user_id: string) =>
   supabase.from("nft").select("*").eq("user_id", user_id).maybeSingle();
+
+export const getOwnedNfts = async (user_id: string) => {
+
+  const { data, error } = await supabase.from("nft_owner").select("*").eq("owner_id", user_id);
+
+  if (data) {
+    const nft_arr = data.map((nft) => nft.nft_id);
+    return supabase.from("nft").select("*").in("id", nft_arr);
+  }
+  else {
+    return supabase.from("nft").select("*").eq("user_id", user_id);
+  }
+
+
+}
+
 export const getNftById = (nft_id: number) =>
   supabase.from("nft").select("*").eq("id", nft_id).maybeSingle();
 

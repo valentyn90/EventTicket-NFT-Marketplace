@@ -2,7 +2,7 @@ import CardList from "@/components/NftCard/CardList";
 import AppModal from "@/components/ui/AppModal";
 import { DividerWithText } from "@/components/ui/DividerWithText";
 import userStore from "@/mobx/UserStore";
-import { getUserNft, supabase } from "@/supabase/supabase-client";
+import { getOwnedNfts, supabase } from "@/supabase/supabase-client";
 import Nft from "@/types/Nft";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { useBreakpointValue } from "@chakra-ui/media-query";
@@ -23,15 +23,6 @@ const Collection = () => {
   you and your referrals have minted. Soon, you’ll be able to gift or trade these to \
   friends and sell the on the marketplace.`;
 
-  const [readMore, setReadMore] = useState(false);
-  const collectionText = useBreakpointValue({
-    base: `${collectionTextString.substr(
-      0,
-      collectionTextString.length / 2 + 4
-    )}...`,
-    sm: collectionTextString,
-  });
-
   const avatarSize = useBreakpointValue({ base: "2xl", lg: "2xl" });
   const titleSize = useBreakpointValue({ base: "3xl", lg: "4xl" });
   const titleColor = useColorModeValue("blue.500", "white");
@@ -42,9 +33,9 @@ const Collection = () => {
 
   useEffect(() => {
     if (userStore.loaded) {
-      getUserNft(userStore.id).then((res) => {
-        if (res.data) {
-          setMintedNfts([res.data]);
+      getOwnedNfts(userStore.id).then((res) => {
+        if (res.data ) {
+          setMintedNfts(res.data);
         }
       });
     }
