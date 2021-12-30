@@ -88,7 +88,8 @@ function VideoPlayer({
     if (!video) return;
 
     if (router.pathname.includes("create/step")) {
-      safariSrc = videoSrc;
+      // mp4 only
+      // safariSrc = videoSrc;
     }
     video.controls = false;
     let hls: any;
@@ -103,10 +104,12 @@ function VideoPlayer({
       Hls.isSupported() &&
       videoSrc != "https://stream.mux.com/.m3u8"
     ) {
+      // mp4 only
       // This will run in all other modern browsers
-      hls = new Hls();
-      hls.loadSource(videoSrc);
-      hls.attachMedia(video);
+      // hls = new Hls();
+      // hls.loadSource(videoSrc);
+      // hls.attachMedia(video);
+      video.src = safariSrc
     } else if (videoSrc != "https://stream.mux.com/.m3u8") {
       // video.src = videoSrc;
       console.error(
