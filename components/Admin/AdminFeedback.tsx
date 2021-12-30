@@ -35,7 +35,7 @@ const AdminFeedback = () => {
       feedback
     );
 
-    const res2 = await fetch(`/api/outreach/${userStore.nft?.id}?message_type=changes_required`);
+    const res2 = await fetch(`/api/outreach/${userStore.ui.selectedNft?.id}?message_type=changes_required`);
     if (error) {
       toast({
         position: "top",
