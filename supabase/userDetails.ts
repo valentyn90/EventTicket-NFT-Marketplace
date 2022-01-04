@@ -1,24 +1,35 @@
 import { supabase } from "./supabase-client";
 
-export const createUserDetails = (
+export const createUserDetails = async (
   user_id: string,
   referral_code: string,
   referring_user_id: string | null,
   verified_user: boolean,
   email: string,
   twitter: string = ""
-) =>
-  supabase.from("user_details").insert([
-    {
-      user_id,
-      referral_code,
-      referral_limit: 5,
-      referring_user_id,
-      verified_user,
-      email,
-      twitter,
-    },
-  ]);
+) => {
+  // first check if user details exists
+  const { data, error } = await getUserDetails(user_id);
+
+  if (data) {
+    return { data, error };
+  } else {
+    return supabase
+      .from("user_details")
+      .insert([
+        {
+          user_id,
+          referral_code,
+          referral_limit: 5,
+          referring_user_id,
+          verified_user,
+          email,
+          twitter,
+        },
+      ])
+      .single();
+  }
+};
 
 export const getUserDetails = (id: string) =>
   supabase.from("user_details").select("*").eq("user_id", id).maybeSingle();

@@ -95,13 +95,13 @@ export class UserStore {
         );
 
         if (!userData) {
-          // User signed in with no user_details db object
           await this.userDetails.initSignUp(
             null,
             user.id,
             user.email,
             user.user_metadata.user_name
           );
+          // User signed in with no user_details db object
         }
 
         // set user and fetch their NFT data.
@@ -234,7 +234,6 @@ export class UserStore {
     }
     return false;
   }
-
 
   get stepSixSkip() {
     if (this.nft) {

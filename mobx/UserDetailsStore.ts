@@ -82,7 +82,7 @@ export class UserDetailsStore {
       twitter_username
     );
     if (data) {
-      this.setInitValues(data[0]);
+      this.setInitValues(data);
     }
     if (error) {
       alert(error.message);
