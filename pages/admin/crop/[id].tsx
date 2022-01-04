@@ -17,6 +17,7 @@ import { Switch } from "@chakra-ui/switch";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import { useToast } from "@chakra-ui/toast";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import React, { CSSProperties, useEffect, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
 
@@ -98,6 +99,7 @@ const CenteredVideo = styled.div<StyleProps>`
 `;
 
 const CropId: React.FC<Props> = ({ id }) => {
+  const router = useRouter();
   const toast = useToast();
   const [loaded, setLoaded] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
@@ -335,6 +337,11 @@ const CropId: React.FC<Props> = ({ id }) => {
           </Center>
         ) : (
           <>
+            <Center>
+              <Button mb={4} onClick={() => router.push("/admin")}>
+                Back to admin
+              </Button>
+            </Center>
             <Text
               fontSize="xl"
               fontWeight="bold"
