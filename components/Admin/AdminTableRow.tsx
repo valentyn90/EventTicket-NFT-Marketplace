@@ -1,5 +1,9 @@
 import userStore from "@/mobx/UserStore";
-import { mintNft, updateTwitter, verifyUserAndRecruits } from "@/supabase/admin";
+import {
+  mintNft,
+  updateTwitter,
+  verifyUserAndRecruits,
+} from "@/supabase/admin";
 import { getFileFromSupabase } from "@/supabase/supabase-client";
 import { unlockNft } from "@/supabase/userDetails";
 import Nft from "@/types/Nft";
@@ -68,8 +72,8 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
   }
 
   async function callUpdateTwitter() {
-    const res = await updateTwitter(nft.user_details_id, twitter)
-    if(res){
+    const res = await updateTwitter(nft.user_details_id, twitter);
+    if (res) {
       toast({
         position: "top",
         description: `Updated twitter to: ${twitter}`,
@@ -152,7 +156,9 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
   }
 
   async function remindRecruit() {
-    const res = await fetch(`/api/outreach/${nft.id}?message_type=remind_recruit`);
+    const res = await fetch(
+      `/api/outreach/${nft.id}?message_type=remind_recruit`
+    );
     if (res.status === 200) {
       toast({
         position: "top",
@@ -176,8 +182,7 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
         duration: 3000,
         isClosable: true,
       });
-    }
-    else {
+    } else {
       toast({
         position: "top",
         status: "error",
@@ -212,11 +217,24 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
         )}
       </Td>
       <Td justifySelf="center">
-        <input type="text" value={twitter} onChange={(e) => setTwitter(e.target.value)} onBlur={callUpdateTwitter} style={{ backgroundColor: 'transparent' }} />
+        <input
+          type="text"
+          value={twitter}
+          onChange={(e) => setTwitter(e.target.value)}
+          onBlur={callUpdateTwitter}
+          style={{ backgroundColor: "transparent" }}
+        />
       </Td>
       <Td>{getNftProgress(nft)}</Td>
       <Td align="center">
         <HStack justify="center" w="100%">
+          <Button
+            onClick={() => {
+              userStore.ui.openAdminEditModal(true, "admin-update-photo", nft);
+            }}
+          >
+            Update Photo
+          </Button>
           <Button onClick={() => router.push(`/admin/clip/${nft.id}`)}>
             Clip/Crop
           </Button>
@@ -240,9 +258,7 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
           >
             Feedback
           </Button>
-          <Button onClick={handleAbandoned}>
-            Nudge
-          </Button>
+          <Button onClick={handleAbandoned}>Nudge</Button>
           <Button disabled={nft.minted} onClick={handleMint}>
             {minting ? <Spinner /> : "Mint"}
           </Button>

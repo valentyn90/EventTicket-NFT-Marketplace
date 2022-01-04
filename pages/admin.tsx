@@ -93,7 +93,7 @@ const Admin = () => {
       py={{ base: "8", lg: "12" }}
       px={{ base: "4", lg: "8" }}
     >
-      <Container maxW="8xl">
+      <Container maxW="10xl">
         <VStack align="start" spacing={10}>
           <Heading>Minting Admin</Heading>
           <HStack spacing={4} align="start">

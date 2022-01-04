@@ -3,4 +3,5 @@ export type ModalContentType =
   | "marketplace"
   | "admin"
   | "admin-edit"
-  | "admin-feedback";
+  | "admin-feedback"
+  | "admin-update-photo";

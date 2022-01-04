@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import AdminEditNft from "../Admin/AdminEditNft";
 import AdminFeedback from "../Admin/AdminFeedback";
 import AdminModalContent from "../Admin/AdminModalContent";
+import AdminUpdatePhoto from "../Admin/AdminUpdatePhoto";
 import CollectionModalContent from "../Collection/CollectionModalContent";
 import MarketplaceModalContent from "../Marketplace/MarketplaceModalContent";
 import { BetaModal } from "./BetaModal";
@@ -53,6 +54,10 @@ const AppModal = () => {
     }
     case "admin-feedback": {
       component = <AdminFeedback />;
+      break;
+    }
+    case "admin-update-photo": {
+      component = <AdminUpdatePhoto />;
       break;
     }
     case "collection": {
