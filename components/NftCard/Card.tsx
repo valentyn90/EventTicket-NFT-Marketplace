@@ -355,7 +355,7 @@ const Card: React.FunctionComponent<Props> = ({
             (db_first_name
               ? `${db_first_name}\'s `
               : "") +
-            "Verified Ink"
+            "VerifiedInk"
           }
           key="title"
         />
@@ -380,8 +380,8 @@ const Card: React.FunctionComponent<Props> = ({
         <meta
           property="description"
           content={`${recruit_share ? 
-            "Check out this NFT I made. Just for athletes. I get paid every single time it sells. Here's a referral if you want to make your own."
-            :"Create your own custom NFT with Verified Ink"}`}
+            "Check out this NFT I made with @VfdInk. Just for athletes. I get paid every single time it sells. Here's a referral link if you want to make your own."
+            :"Create your own custom NFT with VerifiedInk - @VfdInk"}`}
         />
       </Head>
       <div className="viewer">
