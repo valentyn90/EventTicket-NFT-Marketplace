@@ -1,6 +1,6 @@
 import Card from "@/components/NftCard/Card";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -10,6 +10,13 @@ const Wrapper = styled.div`
 `;
 
 const Screenshot: React.FC = () => {
+  useEffect(() => {
+    document.body.classList.add("no-background");
+
+    return () => {
+      document.body.classList.remove("no-background");
+    };
+  }, []);
   const router = useRouter();
   const { id } = router.query;
   let int_id = parseInt(id as string);

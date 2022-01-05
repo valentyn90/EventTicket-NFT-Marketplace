@@ -8,4 +8,8 @@ export const GlobalStyle = createGlobalStyle`
       text-decoration-color: var(--chakra-colors-blue-500);
     }
   }
+
+  .no-background {
+    background: transparent !important;
+  }
 `;

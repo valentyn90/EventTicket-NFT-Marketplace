@@ -292,6 +292,7 @@ export const CardWrapper = styled.div<StyleProps>`
   }
 
   .card-container {
+    background: transparent;
     position: relative;
     transform-style: preserve-3d;
     // perspective: 200px;

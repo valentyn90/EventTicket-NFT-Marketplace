@@ -14,7 +14,8 @@ export default async function handler(
       headless: chromium.headless,
     })
     const page = await browser.newPage();
-    await page.goto(`https://verifiedink.us/screenshot/${id}`, { waitUntil: 'networkidle0' });
+    await page.goto(`https://verifiedink.us/screenshot/${id}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('.background-img');
     const elementHandle = await page.$('.card-container');
     const data = await elementHandle?.screenshot({ omitBackground: true });
 
