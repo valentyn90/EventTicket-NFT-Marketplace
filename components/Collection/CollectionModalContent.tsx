@@ -1,4 +1,7 @@
 import userStore from "@/mobx/UserStore";
+import { getNftOwnerRows } from "@/supabase/collection";
+import NftOwner from "@/types/NftOwner";
+import getFormattedDate from "@/utils/getFormattedDate";
 import { handleRecruitClick } from "@/utils/shareCard";
 import ShareIcon from "@/utils/svg/ShareIcon";
 import { Button } from "@chakra-ui/button";
@@ -7,7 +10,7 @@ import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
 import { useToast } from "@chakra-ui/toast";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import ShareButton from "../Components/ShareButton";
 import Card from "../NftCard/Card";
@@ -28,6 +31,54 @@ const CollectionModalContent: React.FC<Props> = ({
 }) => {
   const toast = useToast();
   const textColor = useColorModeValue("gray.600", "white");
+  const [nftOwnerDetails, setNftOwnerDetails] = useState<NftOwner[]>([]);
+  const [numCardsOwned, setNumCardsOwned] = useState(1);
+  const [mintDate, setMintDate] = useState("");
+  const [selectedSN, setSelectedSN] = useState(1);
+  const [totalCards, setTotalCards] = useState(1);
+
+  useEffect(() => {
+    if (userStore.ui.selectedNft?.id) {
+
+      getNftOwnerRows(userStore.ui.selectedNft?.id).then(
+        ({ data, error }) => {
+          if (data) {
+            const owned_nfts = data.filter((nft: NftOwner) => nft.owner_id === userStore.id);
+            setNftOwnerDetails([
+              ...owned_nfts.sort((a: NftOwner, b: NftOwner) => {
+                if (a.serial_no < b.serial_no) return -1;
+                if (a.serial_no > b.serial_no) return 1;
+                return 0;
+              }),
+            ]);
+            setTotalCards(data.length);
+            setNumCardsOwned(owned_nfts.length);
+            if (owned_nfts[0]) {
+              setMintDate(getFormattedDate(owned_nfts[0].created_at));
+            }
+
+          } else if (error) {
+            toast({
+              position: "top",
+              description: error.message,
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          }
+        }
+      );
+    }
+
+    return () => {
+      setNftOwnerDetails([]);
+    };
+  }, [userStore.ui.selectedNft?.id]);
+
+  function handleSerialNoSelect(e: React.ChangeEvent<HTMLSelectElement>) {
+    setSelectedSN(Number(e.target.value));
+  }
+
   return (
     <Flex
       direction={["column", "column", "row"]}
@@ -60,19 +111,28 @@ const CollectionModalContent: React.FC<Props> = ({
             {userStore.ui.selectedNft?.last_name}
           </Text>
           <Text color={textColor} fontSize={["l", "l", "2xl"]} mb={8}>
-            10 Cards Minted on 10/19/21
+            {totalCards} Cards Minted on {mintDate}
           </Text>
         </Box>
 
         <Text color={textColor} fontSize={["l", "l", "2xl"]} mb={8}>
-          Own: 7/10 Cards
+          Own: {numCardsOwned}/{totalCards} Cards
         </Text>
         <HStack>
           <Text color={textColor} mr={2}>
             View SN:
           </Text>
-          <Select color={textColor} w="100px">
-            <option>1</option>
+          <Select
+            color={textColor}
+            w="100px"
+            onChange={handleSerialNoSelect}
+            value={selectedSN}
+          >
+            {nftOwnerDetails.map((detail) => (
+              <option value={detail.serial_no} key={detail.id}>
+                {detail.serial_no}
+              </option>
+            ))}
           </Select>
         </HStack>
         <HStack w="100%" justifyContent="space-between">

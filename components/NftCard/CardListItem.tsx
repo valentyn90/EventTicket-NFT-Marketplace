@@ -20,11 +20,11 @@ const CardListItem: React.FC<Props> = ({ nft, listType }) => {
     "https://verifiedink.us/img/card-mask.png"
   );
 
-  useEffect( () => {
+  useEffect(() => {
     if (nft.screenshot_file_id) {
-       getFileFromSupabase(nft.screenshot_file_id).then((res) => {
+      getFileFromSupabase(nft.screenshot_file_id).then((res) => {
         if (res.file) {
-          const uri = URL.createObjectURL(res.file);
+          const uri = URL.createObjectURL(res.file as any);
           setScreenshot(uri);
           setLoaded(true);
         }

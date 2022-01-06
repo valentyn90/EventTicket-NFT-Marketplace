@@ -2,7 +2,8 @@ import CardList from "@/components/NftCard/CardList";
 import AppModal from "@/components/ui/AppModal";
 import { DividerWithText } from "@/components/ui/DividerWithText";
 import userStore from "@/mobx/UserStore";
-import { getOwnedNfts, supabase } from "@/supabase/supabase-client";
+import { getOwnedNfts } from "@/supabase/collection";
+import { supabase } from "@/supabase/supabase-client";
 import Nft from "@/types/Nft";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { useBreakpointValue } from "@chakra-ui/media-query";
@@ -34,7 +35,7 @@ const Collection = () => {
   useEffect(() => {
     if (userStore.loaded) {
       getOwnedNfts(userStore.id).then((res) => {
-        if (res.data ) {
+        if (res.data) {
           setMintedNfts(res.data);
         }
       });
@@ -60,7 +61,11 @@ const Collection = () => {
           <Text color={titleColor} fontSize={titleSize} fontWeight="bold">
             COLLECTION
           </Text>
-          <Text color={introColor} w={["100%", "80%", "70%"]} fontSize={["md", "lg", "lg"]}>
+          <Text
+            color={introColor}
+            w={["100%", "80%", "70%"]}
+            fontSize={["md", "lg", "lg"]}
+          >
             {collectionTextString}
           </Text>
           <br />
