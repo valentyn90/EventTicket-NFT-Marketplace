@@ -35,7 +35,6 @@ interface SelectType {
 
 const Admin = () => {
   const bgColor = useColorModeValue("gray.50", "inherit");
-  const [totalNfts, setTotalNfts] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const [allNfts, setAllNfts] = useState<Nft[]>([]);
   const [filteredNfts, setFilteredNfts] = useState<Nft[]>([]);
@@ -44,23 +43,28 @@ const Admin = () => {
   const [range, setRange] = useState(0);
 
   useEffect(() => {
-    getAllNfts(range).then((res) => {
+    getAllNfts().then((res) => {
       setAllNfts(res);
-      setFilteredNfts(res);
+      setFilteredNfts(res.slice(range, range + 50));
     });
   }, [userStore.ui.refetchAdmin]);
 
   useEffect(() => {
-    setFilteredNfts(
-      allNfts.filter((nft) => {
-        let lowerSearchVal = searchValue.toLowerCase();
-        if (String(nft.id).includes(searchValue)) return true;
-        if (nft.first_name.toLowerCase().includes(lowerSearchVal)) return true;
-        if (nft.last_name.toLowerCase().includes(lowerSearchVal)) return true;
-        return false;
-      })
-    );
-  }, [searchValue]);
+    if (searchValue.length > 0) {
+      setFilteredNfts(
+        allNfts.filter((nft) => {
+          let lowerSearchVal = searchValue.toLowerCase();
+          if (String(nft.id).includes(searchValue)) return true;
+          if (nft.first_name.toLowerCase().includes(lowerSearchVal))
+            return true;
+          if (nft.last_name.toLowerCase().includes(lowerSearchVal)) return true;
+          return false;
+        })
+      );
+    } else {
+      setFilteredNfts(allNfts.slice(range, range + 50));
+    }
+  }, [searchValue, range]);
 
   useEffect(() => {
     // let filterValues: string[] = [];
@@ -191,15 +195,15 @@ const Admin = () => {
           </Table>
           <HStack w="100%" justify="space-between">
             <Button
-              onClick={() => setRange(range - 50 < 0 ? 0 : range - 50)}
-              disabled={range - 50 <= 0}
+              onClick={() => setRange(range - 50 <= 0 ? 0 : range - 50)}
+              disabled={range - 50 < 0}
               leftIcon={<ChevronLeftIcon />}
             >
               Previous 50
             </Button>
             <Button
               onClick={() => setRange(range + 50)}
-              disabled={range + 50 >= totalNfts}
+              disabled={range + 50 >= allNfts.length}
               rightIcon={<ChevronRightIcon />}
             >
               Next 50

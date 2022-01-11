@@ -7,14 +7,18 @@ import {
 import { getFileFromSupabase } from "@/supabase/supabase-client";
 import { unlockNft } from "@/supabase/userDetails";
 import Nft from "@/types/Nft";
+import getFormattedDate from "@/utils/getFormattedDate";
 import {
+  Box,
   Button,
   HStack,
   Image,
   Spinner,
   Td,
+  Text,
   Tr,
   useToast,
+  Wrap,
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
@@ -27,6 +31,8 @@ interface Props {
 const AdminTableRow: React.FC<Props> = ({ nft }) => {
   const router = useRouter();
   const toast = useToast();
+  const [feedbackDate, setFeedbackDate] = useState("");
+  const [nudgeDate, setNudgeDate] = useState("");
   const [verify, setVerify] = useState(
     nft.user_details?.verified_user || false
   );
@@ -38,6 +44,34 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
     "https://verifiedink.us/img/card-mask.png"
   );
   const [twitter, setTwitter] = useState(nft.user_details?.twitter || "");
+
+  useEffect(() => {
+    let feedbackFound = false;
+    let nudgeFound = false;
+    if (nft.admin_actions) {
+      nft.admin_actions?.forEach((action) => {
+        switch (action.type) {
+          case "feedback": {
+            if (!feedbackFound) {
+              setFeedbackDate(getFormattedDate(action.created_at));
+              feedbackFound = true;
+            }
+            break;
+          }
+          case "nudge": {
+            if (!nudgeFound) {
+              setNudgeDate(getFormattedDate(action.created_at));
+              nudgeFound = true;
+            }
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      });
+    }
+  }, [nft.admin_actions]);
 
   useEffect(() => {
     if (nft.user_details?.verified_user) {
@@ -153,6 +187,7 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
         isClosable: true,
       });
     }
+    userStore.ui.refetchAdminData();
   }
 
   async function remindRecruit() {
@@ -251,14 +286,28 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
           <Button onClick={handleScreenshot}>
             {screenshotBtn ? <Spinner /> : "Screenshot"}
           </Button>
-          <Button
-            onClick={() =>
-              userStore.ui.openAdminEditModal(true, "admin-feedback", nft)
-            }
-          >
-            Feedback
-          </Button>
-          <Button onClick={handleAbandoned}>Nudge</Button>
+          <Wrap justify="center" position="relative">
+            <Button
+              onClick={() =>
+                userStore.ui.openAdminEditModal(true, "admin-feedback", nft)
+              }
+            >
+              Feedback
+            </Button>
+            {feedbackDate && (
+              <Text position="absolute" top="-22px" align="center" fontSize="12px" color="gray.400">
+                {feedbackDate}
+              </Text>
+            )}
+          </Wrap>
+          <Wrap position="relative" justify="center">
+            <Button onClick={handleAbandoned}>Nudge</Button>
+            {nudgeDate && (
+              <Text position="absolute" top="-22px" align="center" fontSize="12px" color="gray.400">
+                {nudgeDate}
+              </Text>
+            )}
+          </Wrap>
           <Button disabled={nft.minted} onClick={handleMint}>
             {minting ? <Spinner /> : "Mint"}
           </Button>

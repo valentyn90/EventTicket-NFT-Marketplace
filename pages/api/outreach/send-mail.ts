@@ -47,12 +47,9 @@ async function sendMail(nft_id: number = 96, template: string = 'minted') {
     }
   }
 
-  console.log(msg)
-
   sgMail
     .send(msg)
     .then(() => {
-      console.log('Email sent')
       return JSON.stringify({ "success": true })
     })
     .catch((error: any) => {

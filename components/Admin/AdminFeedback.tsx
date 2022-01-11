@@ -14,19 +14,27 @@ const AdminFeedback = () => {
   const [feedback, setFeedback] = useState(
     userStore.ui.selectedNft.admin_feedback || ""
   );
-  const [info, setInfo] = useState(userStore.ui.selectedNft.admin_feedback?.info || "")
-  const [photo, setPhoto] = useState(userStore.ui.selectedNft.admin_feedback?.photo || "")
-  const [video, setVideo] = useState(userStore.ui.selectedNft.admin_feedback?.video || "")
-  const [signature, setSignature] = useState(userStore.ui.selectedNft.admin_feedback?.signature || "")
+  const [info, setInfo] = useState(
+    userStore.ui.selectedNft.admin_feedback?.info || ""
+  );
+  const [photo, setPhoto] = useState(
+    userStore.ui.selectedNft.admin_feedback?.photo || ""
+  );
+  const [video, setVideo] = useState(
+    userStore.ui.selectedNft.admin_feedback?.video || ""
+  );
+  const [signature, setSignature] = useState(
+    userStore.ui.selectedNft.admin_feedback?.signature || ""
+  );
 
   useEffect(() => {
-    setFeedback ({
+    setFeedback({
       info: info,
       photo: photo,
       video: video,
-      signature: signature
-    })
-  }, [info, photo, video, signature])
+      signature: signature,
+    });
+  }, [info, photo, video, signature]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,7 +43,9 @@ const AdminFeedback = () => {
       feedback
     );
 
-    const res2 = await fetch(`/api/outreach/${userStore.ui.selectedNft?.id}?message_type=changes_required`);
+    const res2 = await fetch(
+      `/api/outreach/${userStore.ui.selectedNft?.id}?message_type=changes_required`
+    );
     if (error) {
       toast({
         position: "top",

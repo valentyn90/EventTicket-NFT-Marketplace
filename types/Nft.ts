@@ -1,3 +1,4 @@
+import AdminActions from "./AdminActions";
 import CropValue from "./CropValue";
 import UserDetails from "./UserDetails";
 
@@ -33,6 +34,7 @@ interface Nft {
   slow_video: boolean;
   crop_values: CropValue[];
   user_details?: UserDetails;
+  admin_actions?: AdminActions[];
 }
 
 export default Nft;

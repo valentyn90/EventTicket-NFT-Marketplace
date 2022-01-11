@@ -2,16 +2,24 @@ import CropValue from "@/types/CropValue";
 import Nft from "@/types/Nft";
 import { supabase } from "./supabase-client";
 
-export const getAllNfts = async (range: number) => {
-  const { data, error } = await supabase
+export const getAllNfts = async (range?: number) => {
+  let query = supabase
     .from("nft")
     .select(
       `*,
-     user_details ( verified_user, id, twitter ),
-     files:screenshot_file_id (file_name)`
+   user_details ( verified_user, id, twitter ),
+   files:screenshot_file_id (file_name),
+   admin_actions(*)
+   `
     )
-    .order("id", { ascending: false })
-    .range(range, range + 50);
+    .order("id", { ascending: false });
+
+  if (range) {
+    query = query.range(range, range + 50);
+  }
+
+  const { data, error } = await query;
+
   if (data) return data;
   else {
     console.log(error);
@@ -139,9 +147,9 @@ export const mintNft = async (nft_id: number, user_id: string) => {
   const { data: user, error: error2 } = await supabase
     .from("user_details")
     .select("referring_user_id")
-    .eq("user_id", user_id)
+    .eq("user_id", user_id);
 
-  const verified_treasury = "348d305f-3156-44ec-98f6-5d052bea2aa8"
+  const verified_treasury = "348d305f-3156-44ec-98f6-5d052bea2aa8";
   let referral_1 = user_id;
   let referral_2 = user_id;
 
@@ -152,14 +160,13 @@ export const mintNft = async (nft_id: number, user_id: string) => {
       const { data: user2, error: error3 } = await supabase
         .from("user_details")
         .select("referring_user_id")
-        .eq("user_id", referral_1)
+        .eq("user_id", referral_1);
 
-        if (user2) {
-          if (user2[0].referring_user_id) {
-            referral_2 = user2[0].referring_user_id;
-          }
+      if (user2) {
+        if (user2[0].referring_user_id) {
+          referral_2 = user2[0].referring_user_id;
         }
-
+      }
     }
   }
 
@@ -168,21 +175,18 @@ export const mintNft = async (nft_id: number, user_id: string) => {
 
   const { data: data2, error: error4 } = await supabase
     .from("nft_owner")
-    .upsert(
-      [ {nft_id, owner_id: user_id, serial_no: 1},
-        {nft_id, owner_id: user_id, serial_no: 2},
-        {nft_id, owner_id: user_id, serial_no: 3},
-        {nft_id, owner_id: user_id, serial_no: 4},
-        {nft_id, owner_id: user_id, serial_no: 5},
-        {nft_id, owner_id: user_id, serial_no: 6},
-        {nft_id, owner_id: user_id, serial_no: 7},
-        {nft_id, owner_id: referral_2, serial_no: 8},
-        {nft_id, owner_id: referral_1, serial_no: 9},
-        {nft_id, owner_id: verified_treasury, serial_no: 10},
-
-      ]
-    )
-
+    .upsert([
+      { nft_id, owner_id: user_id, serial_no: 1 },
+      { nft_id, owner_id: user_id, serial_no: 2 },
+      { nft_id, owner_id: user_id, serial_no: 3 },
+      { nft_id, owner_id: user_id, serial_no: 4 },
+      { nft_id, owner_id: user_id, serial_no: 5 },
+      { nft_id, owner_id: user_id, serial_no: 6 },
+      { nft_id, owner_id: user_id, serial_no: 7 },
+      { nft_id, owner_id: referral_2, serial_no: 8 },
+      { nft_id, owner_id: referral_1, serial_no: 9 },
+      { nft_id, owner_id: verified_treasury, serial_no: 10 },
+    ]);
 
   return true;
 };
@@ -233,8 +237,13 @@ export const updateMuxValues = (
     ])
     .match({ id: nft_id });
 
-export const updateTwitter = async (user_details_id: string, twitter: string) => {
-  const res = await fetch(`/api/admin/update-twitter?user_details_id=${user_details_id}&twitter=${twitter}`);
+export const updateTwitter = async (
+  user_details_id: string,
+  twitter: string
+) => {
+  const res = await fetch(
+    `/api/admin/update-twitter?user_details_id=${user_details_id}&twitter=${twitter}`
+  );
 
-  return res
-}
+  return res;
+};
