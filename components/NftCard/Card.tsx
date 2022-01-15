@@ -22,7 +22,8 @@ interface Props {
   db_first_name?: string;
   public_url?: string;
   founders?: boolean;
-  recruit_share?: boolean
+  recruit_share?: boolean;
+  serial_no?: number | undefined;
 }
 
 const Card: React.FunctionComponent<Props> = ({
@@ -36,7 +37,8 @@ const Card: React.FunctionComponent<Props> = ({
   db_first_name,
   public_url,
   founders = false,
-  recruit_share = false
+  recruit_share = false,
+  serial_no = 1
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [nftCardData, setNftCardData] = useState({
@@ -116,7 +118,7 @@ const Card: React.FunctionComponent<Props> = ({
   ]);
 
   const router = useRouter();
- 
+
   useEffect(() => {
     if (router.pathname.includes("step-5")) {
       setLastY(180);
@@ -361,27 +363,25 @@ const Card: React.FunctionComponent<Props> = ({
         />
         <meta
           property="og:image"
-          content={`${
-            typeof public_url === "string" && public_url.length > 0
+          content={`${typeof public_url === "string" && public_url.length > 0
               ? public_url
               : "https://verifiedink.us/img/verified-ink-site.png"
-          }`}
+            }`}
           key="preview"
         />
         <meta
           property="twitter:image"
-          content={`${
-            typeof public_url === "string" && public_url.length > 0
+          content={`${typeof public_url === "string" && public_url.length > 0
               ? public_url
               : "https://verifiedink.us/img/twitter-site-image.png"
-          }`}
+            }`}
           key="twitter-image"
         />
         <meta
           property="description"
-          content={`${recruit_share ? 
+          content={`${recruit_share ?
             "Check out this NFT I made with @VfdInk. Just for athletes. I get paid every single time it sells. Here's a referral link if you want to make your own."
-            :"Create your own custom NFT with VerifiedInk - @VfdInk"}`}
+            : "Create your own custom NFT with VerifiedInk - @VfdInk"}`}
         />
       </Head>
       <div className="viewer">
@@ -440,7 +440,12 @@ const Card: React.FunctionComponent<Props> = ({
                 </div>
               )}
               <div className="serial-number">
-                <div className="bold-info">1</div>/{founders ? 1 : 10}
+                {founders ? (<>
+                  <div className="bold-info">1</div>/1
+                </>) :
+                  (<>
+                    <div className="bold-info">{serial_no}</div>/10
+                  </>)}
               </div>
             </div>
           </div>
