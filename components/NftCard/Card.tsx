@@ -372,7 +372,7 @@ const Card: React.FunctionComponent<Props> = ({
         <meta
           property="twitter:image"
           content={`${typeof public_url === "string" && public_url.length > 0
-              ? public_url
+              ? `https://verifiedink.us/api/meta/getTwitterPreview/${nft_id}`
               : "https://verifiedink.us/img/twitter-site-image.png"
             }`}
           key="twitter-image"
