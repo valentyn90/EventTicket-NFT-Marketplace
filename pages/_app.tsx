@@ -1,18 +1,35 @@
 import Layout from "@/components/ui/layout/Layout";
 import theme from "@/utils/theme";
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { ChakraProvider } from "@chakra-ui/react";
 import "@fontsource/kadwa";
 import "@fontsource/lato";
 import "@fontsource/open-sans";
-import type { AppProps } from "next/app";
+import { AppProps } from "next/app";
 import Head from "next/head";
 import { GlobalStyle } from "../css/globalStyle";
-import { useEffect } from "react";
+import { useEffect, FC, ReactNode } from "react";
 import { observer } from "mobx-react-lite";
 import userStore from "@/mobx/UserStore";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
-import "../css/rsuite.css";
+
+// import "../css/rsuite.css";
+
+require('../css/rsuite.css')
+
+require('@solana/wallet-adapter-react-ui/styles.css');
+
+const WalletConnectionProvider = dynamic<{ children: ReactNode }>(
+  () =>
+      import('../components/Components/WalletConnectionProvider').then(
+          ({ WalletConnectionProvider }) => WalletConnectionProvider
+      ),
+  {
+      ssr: false,
+  }
+);
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -31,6 +48,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider theme={theme}>
+      <WalletConnectionProvider>
+        <WalletModalProvider>
       <Head>
         <title>Verified Ink</title>
         <meta
@@ -60,6 +79,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Layout>
         <Component {...pageProps} />
       </Layout>
+      </WalletModalProvider>
+      </WalletConnectionProvider>
     </ChakraProvider>
   );
 }

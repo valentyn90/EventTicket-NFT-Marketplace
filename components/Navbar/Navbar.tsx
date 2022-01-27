@@ -1,5 +1,6 @@
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Button,
   Divider,
   Flex,
@@ -13,6 +14,7 @@ import {
   useColorModeValue as mode,
   useDisclosure,
 } from "@chakra-ui/react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import React, { isValidElement, ReactElement } from "react";
 import { MobileNavContent } from "./MobileNavContent";
 
@@ -21,6 +23,7 @@ export const Template: React.FC = (props) => {
     isValidElement
   );
   const mobileNav = useDisclosure();
+  const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
   return (
     <Flex
       top={0}
@@ -32,9 +35,10 @@ export const Template: React.FC = (props) => {
       bg={mode("white", "gray.800")}
       boxShadow="xl"
       borderBottomWidth={mode("0", "1px")}
+      align="center"
     >
       {children.find((child) => child.type === Brand)?.props.children}
-      <HStack display={{ base: "none", md: "flex" }} marginStart={16}>
+      <HStack display={{ base: "none", lg: "flex" }} marginStart={10}>
         <Tabs colorScheme="blue" variant="unstyled" isFitted>
           <TabList>
             {children.find((child) => child.type === Links)?.props.children}
@@ -50,14 +54,21 @@ export const Template: React.FC = (props) => {
       </HStack>
       <Spacer />
       {children.find((child) => child.type === ColorMode)?.props.children}
-      <HStack display={{ base: "none", md: "flex" }} spacing={3}>
+      <HStack display={{ base: "none", lg: "flex" }} spacing={3}>
         {children.find((child) => child.type === UserProfile)?.props.children}
       </HStack>
-      <HStack display={{ base: "none", md: "flex" }} spacing={3}>
+      <HStack display={{ base: "none", lg: "flex" }} spacing={3}>
         {children.find((child) => child.type === SignIn)?.props.children}
       </HStack>
+
+      <Box display={["block", "block", "block", "none"]} mr={4}>
+        {MARKET_ENABLED && (
+          <WalletMultiButton className="solana-wallet-multi-btn" />
+        )}
+      </Box>
+
       <IconButton
-        display={{ base: "flex", md: "none" }}
+        display={{ base: "flex", lg: "none" }}
         size="sm"
         aria-label="Open menu"
         fontSize="20px"
@@ -82,7 +93,7 @@ export const Template: React.FC = (props) => {
             <TabIndicator
               marginStart="-3"
               width={1}
-              borderTopRadius={{ base: "none", md: "md" }}
+              borderTopRadius={{ base: "none", lg: "md" }}
               bg={mode("blue.500", "blue.200")}
             />
           </Tabs>

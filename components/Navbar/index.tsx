@@ -14,7 +14,13 @@ import {
   useColorMode,
   Text,
   useColorModeValue,
+  StylesProvider,
+  styled,
 } from "@chakra-ui/react";
+import {
+  WalletDisconnectButton,
+  WalletMultiButton,
+} from "@solana/wallet-adapter-react-ui";
 import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -29,6 +35,8 @@ const NavIndex: React.FC = () => {
   const logoColor = useColorModeValue("blue", "white");
   const { colorMode, toggleColorMode } = useColorMode();
   const [referralString, setReferralString] = useState("");
+
+  const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
   useEffect(() => {
     if (router.query.referralCode) {
@@ -71,6 +79,9 @@ const NavIndex: React.FC = () => {
         <NavTabLink>Create</NavTabLink>
         <NavTabLink>Marketplace</NavTabLink>
         {userStore.loggedIn && <NavTabLink>Collection</NavTabLink>}
+        {userStore.loggedIn && MARKET_ENABLED && (
+          <NavTabLink>Listings</NavTabLink>
+        )}
       </Navbar.Links>
       {/* <Navbar.ColorMode>
         <Button
@@ -99,14 +110,21 @@ const NavIndex: React.FC = () => {
               </Button>
             </a>
           </NextLink>
+
+          <Box display={["none", "none", "none", "block"]}>
+            {/* only show in desktop, mobile view set in Navbar.tsx */}
+            {MARKET_ENABLED && (
+              <WalletMultiButton className="solana-wallet-multi-btn" />
+            )}
+          </Box>
         </Navbar.SignIn>
       ) : (
         <Navbar.UserProfile>
           <Flex
-            direction={["column", "column", "row"]}
-            align={["flex-start", "flex-start", "center"]}
+            direction={["column", "column", "column", "row"]}
+            align={["flex-start", "flex-start", "flex-start", "center"]}
           >
-            <Box display={["block", "block", "none"]}>
+            <Box display={["block", "block", "block", "none"]}>
               {/* Display mobile profile nav */}
               <UserProfile
                 name={userStore.userDetails.user_name}
@@ -131,17 +149,24 @@ const NavIndex: React.FC = () => {
                   colorScheme="blue"
                   color="white"
                   variant="outline"
-                  order={{ base: 2, md: 1 }}
-                  mr={[0, 0, 2]}
-                  mt={[6, 6, 0]}
-                  mb={[2, 2, 0]}
+                  order={{ base: 2, lg: 1 }}
+                  mr={[0, 0, 0, 2]}
+                  mt={[6, 6, 6, 0]}
+                  mb={[2, 2, 2, 0]}
                   minW="93px"
                 >
                   Recruit
                 </Button>
               </a>
             </NextLink>
-            <Box display={["none", "none", "block"]}>
+            <Box display={["none", "none", "none", "block"]}>
+              {/* only show in desktop, mobile view set in Navbar.tsx */}
+              {MARKET_ENABLED && (
+                <WalletMultiButton className="solana-wallet-multi-btn" />
+              )}
+            </Box>
+
+            <Box display={["none", "none", "none", "block"]}>
               {/* Display dropdown menu only in desktop */}
               <Menu>
                 <MenuButton

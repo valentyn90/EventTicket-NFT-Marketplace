@@ -1,5 +1,11 @@
-export async function handleRecruitClick(id: number | undefined) {
-  const share_link = "https://verifiedink.us/card/" + id;
+export async function handleRecruitClick(
+  id: number | undefined,
+  serial_no?: number
+) {
+  let share_link = "https://verifiedink.us/card/" + id;
+  if (serial_no) {
+    share_link += `?serial_no=${serial_no}`;
+  }
 
   const shareData = {
     title: "VerifiedInk",

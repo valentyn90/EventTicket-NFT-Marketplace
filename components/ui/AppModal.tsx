@@ -15,8 +15,8 @@ import AdminFeedback from "../Admin/AdminFeedback";
 import AdminModalContent from "../Admin/AdminModalContent";
 import AdminUpdatePhoto from "../Admin/AdminUpdatePhoto";
 import CollectionModalContent from "../Collection/CollectionModalContent";
+import MarketplaceModalBuy from "../Marketplace/MarketplaceModalBuy";
 import MarketplaceModalContent from "../Marketplace/MarketplaceModalContent";
-import { BetaModal } from "./BetaModal";
 
 const AppModal = () => {
   const [initFlip, setInitFlip] = useState(false);
@@ -60,9 +60,21 @@ const AppModal = () => {
       component = <AdminUpdatePhoto />;
       break;
     }
+    case "listings":
     case "collection": {
       component = (
         <CollectionModalContent
+          flipCard={flipCard}
+          initFlip={initFlip}
+          setInitFlip={setInitFlip}
+          setFlipCard={setFlipCard}
+        />
+      );
+      break;
+    }
+    case "marketplace-buy": {
+      component = (
+        <MarketplaceModalBuy
           flipCard={flipCard}
           initFlip={initFlip}
           setInitFlip={setInitFlip}

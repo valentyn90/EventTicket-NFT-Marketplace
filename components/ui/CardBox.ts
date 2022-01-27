@@ -8,15 +8,15 @@ export const CardBox = styled.div`
   .cardbox-refreshicon-div {
     cursor: pointer;
     position: absolute;
-    bottom: 15%;
-    right: 13%;
+    bottom: 15px;
+    right: 37px;
   }
 
   @media screen and (min-width: 30em) {
     .cardbox-refreshicon-div {
       position: absolute;
-      bottom: 7%;
-      right: 17%;
+      bottom: 19px;
+      right: 110px;
     }
   }
 
@@ -24,8 +24,8 @@ export const CardBox = styled.div`
     max-height: unset;
     .cardbox-refreshicon-div {
       position: absolute;
-      bottom: 10%;
-      right: 15%;
+      bottom: 350px;
+      right: 102px;
     }
   }
 `;

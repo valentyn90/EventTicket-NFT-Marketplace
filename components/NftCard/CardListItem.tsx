@@ -2,23 +2,41 @@ import userStore from "@/mobx/UserStore";
 import { getFileFromSupabase } from "@/supabase/supabase-client";
 import { ModalContentType } from "@/types/ModalContentType";
 import Nft from "@/types/Nft";
+import SellData from "@/types/SellData";
 import { Button } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
 import { Box, Flex } from "@chakra-ui/layout";
+import { useToast } from "@chakra-ui/react";
 import { Spinner } from "@chakra-ui/spinner";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
+import AlertModal from "../ui/AlertModal";
 
 interface Props {
   nft: Nft;
   listType: ModalContentType;
+  serial_no?: number;
+  sellData?: SellData[];
+  price?: number;
 }
 
-const CardListItem: React.FC<Props> = ({ nft, listType }) => {
+const CardListItem: React.FC<Props> = ({
+  nft,
+  listType,
+  serial_no = 1,
+  sellData,
+  price,
+}) => {
+  const toast = useToast();
   const [loaded, setLoaded] = useState(false);
   const [screenshot, setScreenshot] = useState(
     "https://verifiedink.us/img/card-mask.png"
   );
+  const [cancelling, setCancelling] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [confirmCancel, setConfirmCancel] = useState(false);
+
+  const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
   useEffect(() => {
     if (nft.screenshot_file_id) {
@@ -37,6 +55,90 @@ const CardListItem: React.FC<Props> = ({ nft, listType }) => {
       setLoaded(true);
     }
   }, [nft.screenshot_file_id]);
+
+  useEffect(() => {
+    if (confirmCancel) {
+      handleCancelListing()
+        .then(() => {
+          setConfirmCancel(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setConfirmCancel(false);
+        });
+    }
+  }, [confirmCancel]);
+
+  async function handleCancelListing() {
+    // get onchain success before?
+    if (!serial_no) {
+      toast({
+        position: "top",
+        description: "Serial number not found.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setCancelling(true);
+    const res = await fetch(`/api/marketplace/cancelOrder`, {
+      method: "POST",
+      headers: new Headers({ "Content-Type": "application/json" }),
+      credentials: "same-origin",
+      body: JSON.stringify({
+        serial_no,
+        nft_id: nft.id,
+        currency: "sol",
+        buy: false,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => {
+        console.log(err);
+      });
+    setCancelling(false);
+
+    if (res.error) {
+      // error
+      toast({
+        position: "top",
+        description: res.error || "There was an error.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else if (res.success) {
+      // success
+      userStore.ui.refetchListingsData();
+      toast({
+        position: "top",
+        description: "Successfully cancelled your listing.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
+
+  let marketplaceBtnVariant = "outline";
+  let marketplaceBtnScheme = "inherit";
+  let marketplaceBtnText = "Bid";
+  let marketplaceBtnColor = "inherit";
+
+  if (sellData && sellData.length > 0 && MARKET_ENABLED) {
+    sellData.sort((a, b) => {
+      if (a.order_book.price < b.order_book.price) return 1;
+      if (a.order_book.price > b.order_book.price) return -1;
+      return 0;
+    });
+
+    marketplaceBtnVariant = "solid";
+    marketplaceBtnScheme = "blue";
+    marketplaceBtnColor = "white";
+    marketplaceBtnText = `Buy ${sellData[0].order_book.price}`;
+  }
 
   return (
     <Box
@@ -63,7 +165,22 @@ const CardListItem: React.FC<Props> = ({ nft, listType }) => {
             h="100%"
             position="relative"
             display="block"
-            onClick={() => userStore.ui.openModalWithNft(nft, listType)}
+            onClick={() => {
+              if (listType === "collection") {
+                userStore.ui.setFieldValue("selectedSN", serial_no);
+                userStore.ui.setCollectionSellView(false);
+                userStore.ui.openModalWithNft(nft, listType);
+              }
+              if (listType === "listings") {
+                userStore.ui.setCollectionSellView(true);
+                userStore.ui.setFieldValue("selectedSN", serial_no);
+                userStore.ui.openModalWithNft(nft, listType);
+              }
+              if (listType === "marketplace") {
+                userStore.ui.setMarketplaceBuyCard(sellData!);
+                userStore.ui.openModalWithNft(nft, "marketplace-buy");
+              }
+            }}
           >
             <Image
               position="absolute"
@@ -82,18 +199,62 @@ const CardListItem: React.FC<Props> = ({ nft, listType }) => {
               colorScheme="blue"
               variant="outline"
               onClick={() => {
-                userStore.ui.openModalWithNft(nft, listType);
+                if (listType === "collection") {
+                  userStore.ui.setFieldValue("selectedSN", serial_no);
+                  userStore.ui.setCollectionSellView(false);
+                  userStore.ui.openModalWithNft(nft, listType);
+                }
+                if (listType === "listings") {
+                  userStore.ui.setCollectionSellView(true);
+                  userStore.ui.setFieldValue("selectedSN", serial_no);
+                  userStore.ui.openModalWithNft(nft, listType);
+                }
+                if (listType === "marketplace") {
+                  userStore.ui.setMarketplaceBuyCard(sellData!);
+                  userStore.ui.openModalWithNft(nft, "marketplace-buy");
+                }
               }}
             >
-              View
+              View {listType === "listings" && price && `◎ ${price}`}
             </Button>
+            {listType === "listings" && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setOpenAlert(true)}
+                disabled={cancelling || !MARKET_ENABLED}
+                colorScheme={"red"}
+              >
+                {cancelling ? <Spinner /> : "Cancel"}
+              </Button>
+            )}
             {listType === "marketplace" && (
-              <Button size="sm" variant="outline" disabled>
-                Bid
+              <Button
+                size="sm"
+                variant={marketplaceBtnVariant}
+                colorScheme={marketplaceBtnScheme}
+                color={marketplaceBtnColor}
+                disabled={sellData?.length === 0 || !MARKET_ENABLED}
+                onClick={() => {
+                  // find cheapest SN
+                  userStore.ui.setMarketplaceBuyCard(sellData!);
+                  userStore.ui.openModalWithNft(nft, "marketplace-buy");
+                }}
+              >
+                {marketplaceBtnText}
               </Button>
             )}
             {listType === "collection" && (
-              <Button size="sm" variant="outline" disabled>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  userStore.ui.setFieldValue("selectedSN", 1);
+                  userStore.ui.setCollectionSellView(true);
+                  userStore.ui.openModalWithNft(nft, listType);
+                }}
+                disabled={!MARKET_ENABLED}
+              >
                 Sell
               </Button>
             )}
@@ -102,6 +263,12 @@ const CardListItem: React.FC<Props> = ({ nft, listType }) => {
       ) : (
         <Spinner />
       )}
+      <AlertModal
+        isOpen={openAlert}
+        setIsOpen={setOpenAlert}
+        confirmCancel={confirmCancel}
+        setConfirmCancel={setConfirmCancel}
+      />
     </Box>
   );
 };

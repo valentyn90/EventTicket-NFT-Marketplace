@@ -19,6 +19,7 @@ export class UserStore {
   email = "";
   name = "";
   avatar_url = "";
+  publicKey: string | null = null;
 
   nft: NftStore | null = null;
   nftInput: NftInput;
@@ -31,6 +32,7 @@ export class UserStore {
     this.email = "";
     this.name = "";
     this.avatar_url = "";
+    this.publicKey = null;
     this.nft = null;
     this.nftInput.resetValues();
     this.userDetails.resetValues();
@@ -104,6 +106,22 @@ export class UserStore {
           // User signed in with no user_details db object
         }
 
+        // Get user's public key
+        const keyRes = await fetch(`/api/admin/get-user-key`, {
+          method: "POST",
+          headers: new Headers({ "Content-Type": "application/json" }),
+          credentials: "same-origin",
+          body: JSON.stringify({
+            user_id: user.id,
+          }),
+        })
+          .then((response) => response.json())
+          .catch((err) => console.log(err));
+
+        if (keyRes.key) {
+          this.publicKey = keyRes.key;
+        }
+
         // set user and fetch their NFT data.
         const { data, error } = await getUserNft(user.id);
         if (!error && data) {
@@ -113,6 +131,7 @@ export class UserStore {
           if (data.photo_file) {
             const { file, error } = await getFileFromSupabase(data.photo_file);
             if (file) {
+              //@ts-ignore
               nftPhoto = URL.createObjectURL(file);
             }
           }
@@ -120,6 +139,7 @@ export class UserStore {
           if (data.signature_file) {
             const { file } = await getFileFromSupabase(data.signature_file);
             if (file) {
+              //@ts-ignore
               nftSignature = URL.createObjectURL(file);
             }
           }

@@ -24,6 +24,8 @@ const Collection = () => {
   you and your referrals have minted. Soon, you’ll be able to gift or trade these to \
   friends and sell the on the marketplace.`;
 
+  const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
+
   const avatarSize = useBreakpointValue({ base: "2xl", lg: "2xl" });
   const titleSize = useBreakpointValue({ base: "3xl", lg: "4xl" });
   const titleColor = useColorModeValue("blue.500", "white");
@@ -76,9 +78,9 @@ const Collection = () => {
           ) : (
             <Spinner size="xl" />
           )}
-          <AppModal />
         </VStack>
       </Container>
+      <AppModal />
     </Box>
   );
 };

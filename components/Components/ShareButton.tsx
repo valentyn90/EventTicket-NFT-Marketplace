@@ -8,13 +8,34 @@ import React from "react";
 interface Props {
   id?: number;
   buttonText?: string;
+  serial_no?: number;
+  width?: string;
+  flex?: number;
+  color?: string;
+  variant?: string;
+  colorScheme?: string;
+  background?: string;
+  fill?: string;
+  borderColor?: string;
 }
 
-const ShareButton: React.FC<Props> = ({ id, buttonText = "Share" }) => {
+const ShareButton: React.FC<Props> = ({
+  id,
+  buttonText = "Share",
+  serial_no,
+  width = "100%",
+  flex = "unset",
+  variant = "solid",
+  color = "white",
+  colorScheme = "blue",
+  background,
+  fill = "white",
+  borderColor,
+}) => {
   const toast = useToast();
 
   async function handleClick(id: number | undefined) {
-    const result = await handleRecruitClick(id);
+    const result = await handleRecruitClick(id, serial_no);
     if (result === "Clipboard") {
       toast({
         position: "top",
@@ -29,15 +50,17 @@ const ShareButton: React.FC<Props> = ({ id, buttonText = "Share" }) => {
   return (
     <Button
       onClick={() => handleClick(id)}
-      colorScheme="blue"
-      color="white"
-      mb="4"
-      flex="row"
+      colorScheme={colorScheme}
+      color={color}
+      flex={flex}
       alignItems="center"
       px={8}
-      // width={["100%", "100%", "unset"]}
+      variant={variant}
+      width={width}
+      background={background}
+      borderColor={borderColor}
     >
-      <ShareIcon marginRight="10px" />
+      <ShareIcon marginRight="10px" fill={fill} />
       <Text pb="2px">{buttonText}</Text>
     </Button>
   );

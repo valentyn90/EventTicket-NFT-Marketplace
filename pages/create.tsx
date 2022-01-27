@@ -1,6 +1,10 @@
 import Card from "@/components/NftCard/Card";
 import { getReferringUserNftId } from "@/supabase/recruit";
-import { getFileLinkFromSupabase, getNftById, supabase } from "@/supabase/supabase-client";
+import {
+  getFileLinkFromSupabase,
+  getNftById,
+  supabase,
+} from "@/supabase/supabase-client";
 import { Box, Button, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import { GetServerSideProps, NextApiRequest } from "next";
@@ -16,7 +20,12 @@ interface Props {
   first_name?: string | null;
 }
 
-const Create: React.FC<Props> = ({ nftId, referral_code, publicUrl, first_name }) => {
+const Create: React.FC<Props> = ({
+  nftId,
+  referral_code,
+  publicUrl,
+  first_name,
+}) => {
   let referralString = referral_code ? `?referralCode=${referral_code}` : "";
   let recruitShare = referralString ? true : false;
   return (
@@ -47,9 +56,12 @@ const Create: React.FC<Props> = ({ nftId, referral_code, publicUrl, first_name }
             <Text fontSize="4xl" fontWeight="bold" mb="4">
               Own <span style={{ color: "#4688F1" }}>Your</span> Image
             </Text>
-            {first_name && <Text w="75%" colorScheme="gray" mb="4">
-              {first_name} just created their VerifiedInk and has invited you to join them!
-            </Text>}
+            {first_name && (
+              <Text w="75%" colorScheme="gray" mb="4">
+                {first_name} just created their VerifiedInk and has invited you
+                to join them!
+              </Text>
+            )}
             <Text w="75%" colorScheme="gray" mb="4">
               It takes just a few minutes to create your first digital
               collectible and own it for life. Even after you trade or sell your
@@ -58,26 +70,38 @@ const Create: React.FC<Props> = ({ nftId, referral_code, publicUrl, first_name }
             <Text w="75%" colorScheme="gray" mb="4">
               Your career is in your hands. Your collectibles should be too.
             </Text>
-            <NextLink href={referralString ? `/signup${referralString}` : "/create/step-1"}>
+            <NextLink
+              href={
+                referralString ? `/signup${referralString}` : "/create/step-1"
+              }
+            >
               <a>
                 <Button colorScheme="blue" color="white" mb="4">
                   Get Your VerifiedInk
                 </Button>
               </a>
             </NextLink>
-            {!referralString && <Text colorScheme="gray">
-              Don't have an account yet?{" "}
-              <NextLink href={`/signup${referralString}`}>
-                <a className="blue-link">Sign up</a>
-              </NextLink>
-            </Text>}
+            {!referralString && (
+              <Text colorScheme="gray">
+                Don't have an account yet?{" "}
+                <NextLink href={`/signup${referralString}`}>
+                  <a className="blue-link">Sign up</a>
+                </NextLink>
+              </Text>
+            )}
           </Flex>
           <Box
             align="center"
             mt={["2rem", "2rem", 0]}
             h={["500px", "650px", "650px"]}
           >
-            <Card nft_id={nftId || 93} public_url={publicUrl || undefined} readOnly={true} db_first_name={first_name || undefined} recruit_share={recruitShare} />
+            <Card
+              nft_id={nftId || 93}
+              public_url={publicUrl || undefined}
+              readOnly={true}
+              db_first_name={first_name || undefined}
+              recruit_share={recruitShare}
+            />
           </Box>
         </Flex>
       </Box>
@@ -92,9 +116,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookies = new Cookies(context.req, context.res);
 
   let redirect_cookie_exists =
-    cookies.get("redirect-step-1") === undefined
-      ? false
-      : true;
+    cookies.get("redirect-step-1") === undefined ? false : true;
 
   if (!redirect_cookie_exists) {
     cookies.set("redirect-step-1", true, {
@@ -113,21 +135,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (userNftId !== null) {
       nftId = userNftId.id;
       first_name = userNftId.first_name;
-    }
-    else {
+    } else {
       return {
-        props: {}
-      }
+        props: {},
+      };
     }
 
     const { data, error } = await getNftById(nftId);
-    if (error) { console.log("no nft found") }
+    if (error) {
+      console.log("no nft found");
+    }
 
     if (data) {
-      const { publicUrl: public_url, error: error2 } = await getFileLinkFromSupabase(data.screenshot_file_id);
+      const { publicUrl: public_url, error: error2 } =
+        await getFileLinkFromSupabase(data.screenshot_file_id);
 
       if (public_url) {
-        publicUrl = public_url
+        publicUrl = public_url;
       }
     }
   }
@@ -138,7 +162,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         nftId,
         referral_code,
         publicUrl,
-        first_name
+        first_name,
       },
     };
   } else {

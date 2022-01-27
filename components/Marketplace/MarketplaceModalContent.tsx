@@ -31,26 +31,28 @@ const MarketplaceModalContent: React.FC<Props> = ({
       maxH={["100%", "100%", "700px"]}
       pb={["0px", "0px", "unset"]}
     >
-      <CardBox>
-        <Card
-          nft_id={userStore.ui.selectedNft?.id}
-          readOnly={true}
-          flip={flipCard}
-          initFlip={initFlip}
-        />
-        <div
-          className="cardbox-refreshicon-div"
-          onClick={() => {
-            if (!initFlip) {
-              setInitFlip(true);
-            }
-            setFlipCard(!flipCard);
-          }}
-        >
-          <FiRefreshCw />
-        </div>
-      </CardBox>
-      <VStack spacing={6} align="start" justify="center">
+      <Box flex="1">
+        <CardBox>
+          <Card
+            nft_id={userStore.ui.selectedNft?.id}
+            readOnly={true}
+            flip={flipCard}
+            initFlip={initFlip}
+          />
+          <div
+            className="cardbox-refreshicon-div"
+            onClick={() => {
+              if (!initFlip) {
+                setInitFlip(true);
+              }
+              setFlipCard(!flipCard);
+            }}
+          >
+            <FiRefreshCw />
+          </div>
+        </CardBox>
+      </Box>
+      <VStack flex="1" spacing={6} align="start" justify="center">
         <Box>
           <Text color={textColor} fontSize={["4xl", "4xl", "6xl"]}>
             {userStore.ui.selectedNft?.first_name}{" "}
@@ -65,8 +67,12 @@ const MarketplaceModalContent: React.FC<Props> = ({
           Make an offer
         </Button>
 
-        <ShareButton id={userStore.ui.selectedNft?.id} />
-        
+        <ShareButton
+          id={userStore.ui.selectedNft?.id}
+          colorScheme="blue"
+          variant="solid"
+          color="white"
+        />
       </VStack>
     </Flex>
   );
