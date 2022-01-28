@@ -27,7 +27,7 @@ const WalletConnectionProvider = dynamic<{ children: ReactNode }>(
           ({ WalletConnectionProvider }) => WalletConnectionProvider
       ),
   {
-      ssr: false,
+      ssr: true,
   }
 );
 
