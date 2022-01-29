@@ -139,7 +139,7 @@ export async function uploadImageToArweave(nft_id: number, serial_no: number) {
   }
 
   const screenshot = await fetch(
-    `https://verifiedink.us/api/screenshot/create/${nft_id}?serial_no=${serial_no}`
+    `https://verified-api.vercel.app/api/screenshot/create/${nft_id}?serial_no=${serial_no}`
   );
   let dataurl  = await screenshot.text()
   dataurl = dataurl.split(", ")[1]

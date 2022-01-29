@@ -378,7 +378,7 @@ export class NftStore {
     user_id: string
   ): Promise<boolean> {
     // Get screenshot of nft card
-    const res = await fetch(`/api/screenshot/create/${nft_id}`);
+    const res = await fetch(`https://verified-api.vercel.app/api/screenshot/create/${nft_id}`);
     if (res.status === 200) {
       const file_name = `nftcard_screenshot.png`;
       const data = await res.text();
