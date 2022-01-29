@@ -373,6 +373,27 @@ export class NftStore {
     }
   };
 
+  async setNFTCardScreenshotTwitter(
+    nft_id: number
+  ): Promise<boolean> {
+    const res = await fetch(`/api/meta/getTwitterPreview/${nft_id}`);
+    if (res.status === 200) {
+      const blob = await res.blob()
+      const file = new File([blob], `${nft_id}.png`, { type: "image/png" });
+      const file_path = `twitter-preview/${nft_id}.png`
+      const { data: uploadData, error: uploadError } =
+          await uploadFileToStorage(file_path, file) ;
+      if(uploadError) {
+          console.log(uploadError)
+      }
+      else{
+        console.log('uploaded')
+      }
+      return true
+    }
+    return false
+  }
+
   async setNftCardScreenshot(
     nft_id: number,
     user_id: string
@@ -414,7 +435,11 @@ export class NftStore {
                   (insertData as any)[0].id
                 );
               }
-              return true;
+              const twitter_screenshot_res = await this.setNFTCardScreenshotTwitter(nft_id)
+              if(twitter_screenshot_res) {
+                return true;
+              }
+              else {return true;}
             } else {
               alert(attachError.message);
               return false;

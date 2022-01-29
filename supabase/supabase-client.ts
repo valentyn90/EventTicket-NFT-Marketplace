@@ -71,7 +71,7 @@ export const signOut = () => supabase.auth.signOut();
 
 const getFileObject = (file_id: number) =>
   supabase.from("files").select("*").eq("id", file_id).maybeSingle();
-const getSupabaseFile = (file_name: string) =>
+export const getSupabaseFile = (file_name: string) =>
   supabase.storage.from("private").download(file_name);
 const getSupabaseFileLink = (file_name: string) =>
   supabase.storage.from("private").getPublicUrl(file_name);
@@ -103,7 +103,7 @@ export const insertFileToSupabase = (file_name: string, nft_id: number) =>
   ]);
 
 export const uploadFileToStorage = (filePath: string, photoFile: File) =>
-  supabase.storage.from("private").upload(filePath, photoFile);
+  supabase.storage.from("private").upload(filePath, photoFile, {upsert: true});
 
 export const getUserNft = (user_id: string) =>
   supabase.from("nft").select("*").eq("user_id", user_id).maybeSingle();
