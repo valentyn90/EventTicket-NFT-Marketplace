@@ -376,22 +376,8 @@ export class NftStore {
   async setNFTCardScreenshotTwitter(
     nft_id: number
   ): Promise<boolean> {
-    const res = await fetch(`/api/meta/getTwitterPreview/${nft_id}`);
-    if (res.status === 200) {
-      const blob = await res.blob()
-      const file = new File([blob], `${nft_id}.png`, { type: "image/png" });
-      const file_path = `twitter-preview/${nft_id}.png`
-      const { data: uploadData, error: uploadError } =
-          await uploadFileToStorage(file_path, file) ;
-      if(uploadError) {
-          console.log(uploadError)
-      }
-      else{
-        console.log('uploaded')
-      }
-      return true
-    }
-    return false
+    const res =  fetch(`/api/meta/uploadTwitterPreview/${nft_id}`);
+    return true
   }
 
   async setNftCardScreenshot(
