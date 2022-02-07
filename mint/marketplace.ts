@@ -16,6 +16,8 @@ import { getPriceWithMantissa } from "./utils/various";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { RiContactsBookLine } from "react-icons/ri";
+import { KeySystems } from "hls.js";
+import { truncate } from "fs/promises";
 
 export const createOrder = async (
   mint: string,
@@ -60,7 +62,7 @@ export const cancelOrder = async (
 
   const { data, error } = await supabase
     .from("order_book")
-    .update({ active: false, onchain_success: false })
+    .update({ active: false, onchain_success: true })
     .match({
       mint,
       price,
@@ -84,26 +86,24 @@ export const sell = async (
   price: number,
   currency: string,
   buy: boolean,
+  seller_private_key: web3.Keypair,
   user_id?: string,
   public_key?: string,
   retry_count: number = 0
 ): Promise<any> => {
-  const auctionHouseSigns = false;
+  const auctionHouseSigns = true;
   const tokenSize = 1;
-  // const auctionHouseKeypair = await web3.Keypair.fromSecretKey(base58.decode("SECRETKEY"))
-  const auctionHouseKeypair = null;
+  const auctionHouseKeypair = seller_keypair;
   const env = process.env.NEXT_PUBLIC_SOL_ENV as string;
 
   const auctionHouseKey = new web3.PublicKey(auctionHouse);
-  const walletKeyPair = seller_keypair;
+  const walletKeyPair = seller_private_key;
 
   const mintKey = new web3.PublicKey(mint);
 
   const auctionHouseKeypairLoaded = auctionHouseKeypair
-    ? await web3.Keypair.fromSecretKey(base58.decode("SECRETKEY")) //loadWalletKey(auctionHouseKeypair)
-    : null;
   const anchorProgram = await loadAuctionHouseProgram(
-    auctionHouseSigns ? auctionHouseKeypairLoaded! : walletKeyPair,
+    auctionHouseSigns ? auctionHouseKeypairLoaded : walletKeyPair,
     env
   );
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(
@@ -160,7 +160,7 @@ export const sell = async (
       new BN(0)
     );
 
-    const signers: web3.Keypair[] = [seller_keypair];
+    const signers: web3.Keypair[] = [auctionHouseKeypair, walletKeyPair];
 
     const instruction = await anchorProgram.instruction.sell(
       tradeBump,
@@ -197,15 +197,17 @@ export const sell = async (
         .map((k) => (k.isSigner = true));
     }
 
-    if (!auctionHouseSigns) {
+    if (auctionHouseSigns) {
       instruction.keys
         .filter((k) => k.pubkey.equals(walletKeyPair.publicKey))
         .map((k) => (k.isSigner = true));
     }
 
+      // console.log(`signers: ${signers.map((k) => k.publicKey.toBase58())}`)
+
     const tx = await sendTransactionWithRetryWithKeypair(
       anchorProgram.provider.connection,
-      auctionHouseSigns ? auctionHouseKeypairLoaded! : walletKeyPair,
+      auctionHouseKeypair,
       [instruction],
       signers,
       "max"
@@ -214,9 +216,9 @@ export const sell = async (
     return tx;
   } catch (e: any) {
     if (e.message.includes("Failed to find") && retry_count < 3) {
-      console.log("Failed to find mint, trying in 20 seconds");
+      console.log("Failed to find mint, trying in 5 seconds");
       // Wait 20 seconds and retry
-      await new Promise((resolve) => setTimeout(resolve, 20000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       return sell(
         auctionHouse,
         seller_keypair,
@@ -224,6 +226,7 @@ export const sell = async (
         price,
         currency,
         buy,
+        seller_private_key,
         undefined,
         undefined,
         retry_count + 1
@@ -231,17 +234,10 @@ export const sell = async (
     } else return { error: e.message };
   }
 
-  log.info(
-    "Set",
-    tokenSize,
-    mint,
-    "for sale for",
-    price,
-    "from your account with Auction House",
-    auctionHouse
-  );
 };
 
+
+// NEED TO UPDATE THIS CANCEL FUNCTION TO WORK AS ABOVE
 export const cancel = async (
   auctionHouse: string,
   seller_keypair: web3.Keypair,
@@ -249,23 +245,22 @@ export const cancel = async (
   price: number,
   currency: string,
   buy: boolean,
+  seller_private_key: web3.Keypair,
   user_id?: string,
   public_key?: string
 ): Promise<any> => {
-  const auctionHouseSigns = false;
+  const auctionHouseSigns = true;
   const tokenSize = 1;
   // const auctionHouseKeypair = await web3.Keypair.fromSecretKey(base58.decode("SECRETKEY"))
-  const auctionHouseKeypair = null;
-  const env = "devnet";
+  const auctionHouseKeypair = seller_keypair;
+  const env = process.env.NEXT_PUBLIC_SOL_ENV as string;
 
   const auctionHouseKey = new web3.PublicKey(auctionHouse);
-  const walletKeyPair = seller_keypair;
+  const walletKeyPair = seller_private_key;
 
   const mintKey = new web3.PublicKey(mint);
 
   const auctionHouseKeypairLoaded = auctionHouseKeypair
-    ? await web3.Keypair.fromSecretKey(base58.decode("SECRETKEY")) //loadWalletKey(auctionHouseKeypair)
-    : null;
   const anchorProgram = await loadAuctionHouseProgram(
     auctionHouseSigns ? auctionHouseKeypairLoaded! : walletKeyPair,
     env
@@ -320,7 +315,7 @@ export const cancel = async (
 
   console.log(`tradeState: ${tradeState}`);
 
-  const signers: web3.Keypair[] = [];
+  const signers: web3.Keypair[] = [auctionHouseKeypair, walletKeyPair];
 
   const instruction = await anchorProgram.instruction.cancel(
     buyPriceAdjusted,
@@ -352,7 +347,7 @@ export const cancel = async (
       .map((k) => (k.isSigner = true));
   }
 
-  if (!auctionHouseSigns) {
+  if (auctionHouseSigns) {
     instruction.keys
       .filter((k) => k.pubkey.equals(walletKeyPair.publicKey))
       .map((k) => (k.isSigner = true));
@@ -362,7 +357,7 @@ export const cancel = async (
 
   const tx = await sendTransactionWithRetryWithKeypair(
     anchorProgram.provider.connection,
-    auctionHouseSigns ? auctionHouseKeypairLoaded! : walletKeyPair,
+    auctionHouseKeypair,
     [instruction],
     signers,
     "max"

@@ -63,7 +63,7 @@ const CollectionModalContent: React.FC<Props> = ({
   const [confirmCancel, setConfirmCancel] = useState(false);
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
-  const sellerKey = process.env.NEXT_PUBLIC_SOL_SERVICE_KEY_PUBLIC;
+  const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
 
   useEffect(() => {
     if (userStore.ui.selectedNft?.id) {
@@ -145,12 +145,12 @@ const CollectionModalContent: React.FC<Props> = ({
     // Run once on load and set price in state
     if (userStore.ui.collectionSellView) {
       fetch(
-        "https://price-api.sonar.watch/prices/So11111111111111111111111111111111111111112"
+        "/api/marketplace/getPrice?mkt=SOL/USD"
       )
         .then((res) => res.json())
-        .then((data) => {
-          if (data.price) {
-            setSolPrice(data.price);
+        .then((result) => {
+          if (result.result.price) {
+            setSolPrice(result.result.price);
           } else {
             setSolPrice(0);
           }
@@ -346,11 +346,11 @@ const CollectionModalContent: React.FC<Props> = ({
     //   })
     // );
 
-    const auctionHouse = "zfQkKkdNbZB6Bnqe4ynEyT7gjHSd28mjj1xqPEVMAgT";
+    const auctionHouse = AUCTION_HOUSE!;
     const mint = orderBook.mint;
     const price = orderBook.price;
     // Will switch to use this once we enable anyone to sell on the marketplace
-    // const sellerKey = userStore.ui.sellData[selectedSN].order_book.public_key;
+    const sellerKey = orderBook.public_key;
 
     setBuying(true);
     const res = await buyAndExecute(

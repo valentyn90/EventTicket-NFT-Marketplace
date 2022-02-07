@@ -1,11 +1,12 @@
 import { cancel, cancelOrder, createOrder, sell } from "@/mint/marketplace";
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/supabase/supabase-admin";
-import { NFTMintMaster } from "@/mint/mint";
+import { getKeypair, NFTMintMaster } from "@/mint/mint";
 import { web3 } from "@project-serum/anchor";
 import base58 from "bs58";
 
 const verifiedSolSvcKey = process.env.VERIFIED_INK_SOL_SERVICE_KEY!;
+const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
 
 /**
  * Find order book row
@@ -81,11 +82,13 @@ export default async function create(
   }
 
   try {
+
+    const actual_seller_keypair = await getKeypair(user.id) as web3.Keypair;
     // now use active order mint to update blockchain data
     const sellerKeypair = await web3.Keypair.fromSecretKey(
       base58.decode(verifiedSolSvcKey)
     );
-    const auctionHouse = "zfQkKkdNbZB6Bnqe4ynEyT7gjHSd28mjj1xqPEVMAgT";
+    const auctionHouse = AUCTION_HOUSE!;
 
     console.log(activeOrder);
 
@@ -95,7 +98,8 @@ export default async function create(
       activeOrder.mint,
       activeOrder.price,
       activeOrder.currency,
-      activeOrder.buy
+      activeOrder.buy,
+      actual_seller_keypair // switch this to actual seller's keypair
     );
 
     console.log(`ahCancel: ${JSON.stringify(ahCancel)}`);

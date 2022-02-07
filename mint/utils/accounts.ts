@@ -35,6 +35,7 @@ import { AccountLayout, u64 } from '@solana/spl-token';
 import { getCluster } from './various';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { deserializeUnchecked } from 'borsh';
+import { Connection } from '@metaplex/js';
 
 export type AccountAndPubkey = {
   pubkey: string;
@@ -736,6 +737,17 @@ export async function getTokenAmount(
     amount = await anchorProgram.provider.connection.getBalance(account);
   }
   return amount;
+}
+
+export async function checkTokenBalance(
+	connection: Connection,
+	owner: PublicKey,
+	mint: PublicKey,
+): Promise<ReturnType<typeof connection.getTokenAccountsByOwner>> {
+
+	const balance = await connection.getTokenAccountsByOwner(owner, {mint}, 'processed')
+  return balance
+
 }
 
 export const getBalance = async (

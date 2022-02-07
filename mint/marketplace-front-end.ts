@@ -20,6 +20,7 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, Token } from "@solana/spl-token";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { Cluster } from "@solana/web3.js";
 import { decodeMetadata, Metadata } from "./utils/schema";
+import { env } from "process";
 
 export const buy = async (
   auctionHouse: string,
@@ -36,10 +37,9 @@ export const buy = async (
   const tokenSize = 1;
   // const auctionHouseKeypair = await web3.Keypair.fromSecretKey(base58.decode("SECRETKEY"))
   const auctionHouseKeypair = null;
-  const env = "devnet";
+  const env = process.env.NEXT_PUBLIC_SOL_ENV!;
 
   const auctionHouseKey = new web3.PublicKey(auctionHouse);
-  // const walletKeyPair = buyer_keypair;
 
   const mintKey = new web3.PublicKey(mint);
 
@@ -400,14 +400,13 @@ export async function executeSale(
   const metadataObj = await anchorProgram.provider.connection.getAccountInfo(
     metadata
   );
-  console.log(metadataObj.data);
-  console.log(Buffer.from(metadataObj.data));
+
   const metadataDecoded: Metadata = decodeMetadata(
     // @ts-ignore
     Buffer.from(metadataObj.data)
   );
 
-  console.log(metadataDecoded);
+  // console.log(metadataDecoded);
 
   const remainingAccounts = [];
 
@@ -490,7 +489,7 @@ export async function executeSale(
     .filter((k: any) => k.pubkey.equals(walletWrapper!.publicKey))
     .map((k: any) => (k.isSigner = true));
 
-  console.log(`Instruction keys: ${JSON.stringify(instruction.keys)}`);
+  // console.log(`Instruction keys: ${JSON.stringify(instruction.keys)}`);
 
   return {
     signers: signers,
@@ -559,19 +558,6 @@ export async function buyAndExecuteSale(
     "max"
   );
 
-  // let buyAndExecuteSaleResponse = {
-  //   txn: txData.txid,
-  //   buyer_wallet: buyerWalletPubKey.toBase58(),
-  //   seller_wallet: sellerWalletPubKey.toBase58(),
-  //   mint: mint,
-  //   price: buyPrice,
-  //   auction_house: auctionHouseKey.toBase58(),
-  //   error: txData.message
-  // }
-
-  // console.log(buyAndExecuteSaleResponse);
-  // return buyAndExecuteSaleResponse;
-
   return txData;
 }
 
@@ -585,10 +571,11 @@ export async function buyAndExecute(
 ): Promise<any> {
   const buyerKey = new web3.PublicKey(buyerWalletPubKey);
   const sellerKey = new web3.PublicKey(sellerWalletPubKey);
+  const env = process.env.NEXT_PUBLIC_SOL_ENV!;
 
   const auctionHouseWithDetails = await getAuctionHouseWithDetails(
     auctionHouse,
-    "devnet",
+    env,
     walletWrapper
   );
 

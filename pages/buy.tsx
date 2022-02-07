@@ -26,6 +26,8 @@ const Buy: React.FC = () => {
   const toast = useToast();
   const anchorWallet = useAnchorWallet();
 
+  const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
+
   const buyClick = useCallback(async () => {
     if (!publicKey) throw new WalletNotConnectedError();
 
@@ -37,7 +39,7 @@ const Buy: React.FC = () => {
       })
     );
 
-    const auctionHouse = "zfQkKkdNbZB6Bnqe4ynEyT7gjHSd28mjj1xqPEVMAgT";
+    const auctionHouse = AUCTION_HOUSE!;
     const mint = "BhyQBX9sV4uEvqFLSaXezR4Gq7geQT2wgvys2tiUCwJL"; // nft 162, serial_no 10
 
     setProcessing(true);
@@ -90,7 +92,7 @@ const Buy: React.FC = () => {
       })
     );
 
-    const auctionHouse = "zfQkKkdNbZB6Bnqe4ynEyT7gjHSd28mjj1xqPEVMAgT";
+    const auctionHouse = AUCTION_HOUSE!;
     const mint = "BhyQBX9sV4uEvqFLSaXezR4Gq7geQT2wgvys2tiUCwJL"; // nft 162, serial_no 10
     const seller = "CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"; // will look this up in the future
 

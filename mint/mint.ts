@@ -13,6 +13,7 @@ import { SelectPicker } from "rsuite";
 import { generateMetadata } from "./utils/metadata";
 import Key from "@/types/Key";
 import BigNumber from "bignumber.js";
+import { checkTokenBalance } from "./utils/accounts";
 
 
 //https://openquest.xyz/quest/create-burn-nft-solana
@@ -141,7 +142,7 @@ export async function uploadImageToArweave(nft_id: number, serial_no: number) {
   const screenshot = await fetch(
     `https://verified-api.vercel.app/api/screenshot/create/${nft_id}?serial_no=${serial_no}`
   );
-  let dataurl  = await screenshot.text()
+  let dataurl = await screenshot.text()
   dataurl = dataurl.split(", ")[1]
 
   const buffer = Buffer.from(dataurl, "base64");
@@ -218,6 +219,9 @@ export async function uploadToArweave(data: Buffer, tags: any) {
   return res;
 }
 
+function sleep(millis: any) {
+  return new Promise(resolve => setTimeout(resolve, millis));
+}
 // Function to mint master NFT - Current Cost ~$2 per NFT
 // This should check to ensure we haven't already minted the NFT would be nice to
 // have that be an on-chain check
@@ -227,6 +231,8 @@ export async function NFTMintMaster(
   serial_no: number
 ): Promise<{ mint: string | null }> {
   // Confirm the NFT doesn't already exist
+  const env = process.env.NEXT_PUBLIC_SOL_ENV!;
+
   try {
     const { data, error } = await supabase
       .from("nft_owner")
@@ -240,13 +246,14 @@ export async function NFTMintMaster(
       return data.mint;
     }
 
+    const user_id = data.owner_id;
     //TODO: Factor out Devnet to an Env variable and add genesysGo RPC service.
     const keypair = await web3.Keypair.fromSecretKey(
       base58.decode(verifiedSolSvcKey)
     );
     const wallet = new NodeWallet(keypair);
     const connection = new web3.Connection(
-      web3.clusterApiUrl("devnet"),
+      env =="devnet" ? web3.clusterApiUrl("devnet"): env,
       "confirmed"
     );
 
@@ -264,7 +271,38 @@ export async function NFTMintMaster(
       });
 
       const res = stringifyPubkeysAndBNsInObject(result);
+
+      // Send NFT to owner
+
+      // Get public key of owner
+      const { data: public_key, error: ownerError } = await supabase.from("keys").select("public_key").eq("user_id", user_id).single();
+
+
+      // const mint_key = new web3.PublicKey("3i6pnWCYxbF9oT1HK16TC1wqb6PKoHQFvRzRJp62EcCX");
+      const mint_key = new web3.PublicKey(res.mint);
+      // Need to wait for the mint key to propagate
+
+      await sleep(5000)
+ 
+      const balance = await checkTokenBalance(connection, wallet.publicKey, mint_key)
+
+      const source_pubkey = new web3.PublicKey(balance.value[0].pubkey)
+
+      const destination_pubkey = new web3.PublicKey(public_key.public_key)
+
+      const send_result = await actions.sendToken({
+        connection,
+        wallet,
+        source: source_pubkey,
+        destination: destination_pubkey,
+        mint: mint_key,
+        amount: 1
+      });
+
+      const transfer_res = stringifyPubkeysAndBNsInObject(send_result);
+
       console.log("Minted a new master NFT:", res);
+      console.log("Sent NFT to owner:", transfer_res);
 
       const { data, error } = await supabase
         .from("nft_owner")

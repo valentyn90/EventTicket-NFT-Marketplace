@@ -1,12 +1,13 @@
 import { createOrder, sell } from "@/mint/marketplace";
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/supabase/supabase-admin";
-import { NFTMintMaster } from "@/mint/mint";
+import { getKeypair, NFTMintMaster } from "@/mint/mint";
 import { web3 } from "@project-serum/anchor";
 import base58 from "bs58";
 import NftOwner from "@/types/NftOwner";
 
 const verifiedSolSvcKey = process.env.VERIFIED_INK_SOL_SERVICE_KEY!;
+const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
 
 export default async function create(
   req: NextApiRequest,
@@ -75,18 +76,22 @@ export default async function create(
       .single();
 
     if (keyData) {
-      const sellerKeypair = await web3.Keypair.fromSecretKey(
+      const serviceKeypair = await web3.Keypair.fromSecretKey(
         base58.decode(verifiedSolSvcKey)
       );
-      const auctionHouse = "zfQkKkdNbZB6Bnqe4ynEyT7gjHSd28mjj1xqPEVMAgT";
+
+      const seller_private_key = await getKeypair(user.id) as web3.Keypair;
+
+      const auctionHouse = AUCTION_HOUSE!;
 
       const ahSell = await sell(
         auctionHouse,
-        sellerKeypair,
+        serviceKeypair,
         mint,
         price,
         currency,
-        buy
+        buy,
+        seller_private_key
       );
 
       if (ahSell.txid) {

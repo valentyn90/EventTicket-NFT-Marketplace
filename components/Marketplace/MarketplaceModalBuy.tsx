@@ -53,7 +53,7 @@ const MarketplaceModalBuy: React.FC<Props> = ({
   const [selectedSN, setSelectedSN] = useState(0);
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
-  const sellerKey = process.env.NEXT_PUBLIC_SOL_SERVICE_KEY_PUBLIC;
+  const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
 
   useEffect(() => {
     // refetch sell data here
@@ -81,12 +81,12 @@ const MarketplaceModalBuy: React.FC<Props> = ({
   useEffect(() => {
     // Run once on load and set price in state
     fetch(
-      "https://price-api.sonar.watch/prices/So11111111111111111111111111111111111111112"
+      "/api/marketplace/getPrice?mkt=SOL/USD"
     )
       .then((res) => res.json())
-      .then((data) => {
-        if (data.price) {
-          setSolPrice(data.price);
+      .then((result) => {
+        if (result.result.price) {
+          setSolPrice(result.result.price);
         } else {
           setSolPrice(0);
         }
@@ -107,11 +107,11 @@ const MarketplaceModalBuy: React.FC<Props> = ({
     //   })
     // );
 
-    const auctionHouse = "zfQkKkdNbZB6Bnqe4ynEyT7gjHSd28mjj1xqPEVMAgT";
+    const auctionHouse = AUCTION_HOUSE!;
     const mint = userStore.ui.sellData[selectedSN].order_book.mint;
     const price = userStore.ui.sellData[selectedSN].order_book.price;
     // Will switch to use this once we enable anyone to sell on the marketplace
-    // const sellerKey = userStore.ui.sellData[selectedSN].order_book.public_key;
+    const sellerKey = userStore.ui.sellData[selectedSN].order_book.public_key;
 
     setBuying(true);
     const res = await buyAndExecute(

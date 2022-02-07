@@ -60,7 +60,7 @@ const CardId: React.FC<Props> = ({ data, publicUrl }) => {
   const [initFlip, setInitFlip] = useState(false);
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
-  const sellerKey = process.env.NEXT_PUBLIC_SOL_SERVICE_KEY_PUBLIC;
+  const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
 
   const { serial_no } = router.query;
   let serial_int = serial_no === undefined ? 1 : parseInt(serial_no as string);
@@ -104,12 +104,12 @@ const CardId: React.FC<Props> = ({ data, publicUrl }) => {
   useEffect(() => {
     // Run once on load and set price in state
     fetch(
-      "https://price-api.sonar.watch/prices/So11111111111111111111111111111111111111112"
+      "/api/marketplace/getPrice?mkt=SOL/USD"
     )
       .then((res) => res.json())
-      .then((data) => {
-        if (data.price) {
-          setSolPrice(data.price);
+      .then((result) => {
+        if (result.result.price) {
+          setSolPrice(result.result.price);
         } else {
           setSolPrice(0);
         }
@@ -130,9 +130,10 @@ const CardId: React.FC<Props> = ({ data, publicUrl }) => {
       })
     );
 
-    const auctionHouse = "zfQkKkdNbZB6Bnqe4ynEyT7gjHSd28mjj1xqPEVMAgT";
+    const auctionHouse = AUCTION_HOUSE!;
     const mint = sellData[selectedSN].order_book.mint;
     const price = sellData[selectedSN].order_book.price;
+    const sellerKey = sellData[selectedSN].order_book.public_key;
 
     setBuying(true);
     const res = await buyAndExecute(
