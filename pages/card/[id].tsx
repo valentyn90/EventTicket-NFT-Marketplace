@@ -1,42 +1,34 @@
+import ShareButton from "@/components/Components/ShareButton";
 import Card from "@/components/NftCard/Card";
-import Nft from "@/types/Nft";
+import { CardBox } from "@/components/ui/CardBox";
+import getSolPrice from "@/hooks/nft/getSolPrice";
+import useBuyNft from "@/hooks/nft/useBuyNft";
+import { getNftOwnerRows } from "@/supabase/collection";
+import { getSellData } from "@/supabase/marketplace";
 import {
   getFileLinkFromSupabase,
   getNftById,
 } from "@/supabase/supabase-client";
+import Nft from "@/types/Nft";
+import SellData from "@/types/SellData";
+import getFormattedDate from "@/utils/getFormattedDate";
 import {
   Box,
   Button,
-  Center,
   Container,
   Flex,
   HStack,
   Select,
   Spinner,
   Text,
-  useColorModeValue,
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import {
-  useAnchorWallet,
-  useConnection,
-  useWallet,
-} from "@solana/wallet-adapter-react";
+import { observer } from "mobx-react-lite";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import React, { useState, useEffect, useCallback } from "react";
-import { CardBox } from "@/components/ui/CardBox";
+import React, { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
-import { observer } from "mobx-react-lite";
-import SellData from "@/types/SellData";
-import { getSellData } from "@/supabase/marketplace";
-import { getNftOwnerRows } from "@/supabase/collection";
-import getFormattedDate from "@/utils/getFormattedDate";
-import ShareButton from "@/components/Components/ShareButton";
-import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
-import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
-import { buyAndExecute } from "@/mint/marketplace-front-end";
 
 interface Props {
   data: Nft | null;
@@ -46,21 +38,18 @@ interface Props {
 const CardId: React.FC<Props> = ({ data, publicUrl }) => {
   const toast = useToast();
   const router = useRouter();
-  const { publicKey, sendTransaction } = useWallet();
-  const anchorWallet = useAnchorWallet();
-  const { connection } = useConnection();
+  const { solPrice } = getSolPrice();
+
+  const { handleBuyNft, buyingNft, publicKey, refetchOrderData } = useBuyNft();
+
   const [flipCard, setFlipCard] = useState(false);
-  const [buying, setBuying] = useState(false);
-  const [solPrice, setSolPrice] = useState(0);
   const [sellData, setSellData] = useState<SellData[]>([]);
   const [selectedSN, setSelectedSN] = useState(0);
-  const [refetchSellData, setRefetchSellData] = useState(false);
   const [totalMintedCards, setTotalMintedCards] = useState(0);
   const [mintDate, setMintDate] = useState("");
   const [initFlip, setInitFlip] = useState(false);
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
-  const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
 
   const { serial_no } = router.query;
   let serial_int = serial_no === undefined ? 1 : parseInt(serial_no as string);
@@ -82,11 +71,11 @@ const CardId: React.FC<Props> = ({ data, publicUrl }) => {
   useEffect(() => {
     if (data?.id) {
       setSelectedSN(0);
-      getSellData(data?.id).then((data: any) => {
-        setSellData(data);
+      getSellData(data?.id).then((sellData: any) => {
+        setSellData(sellData);
       });
     }
-  }, [data?.id, refetchSellData]);
+  }, [data?.id, refetchOrderData]);
 
   useEffect(() => {
     if (data?.id) {
@@ -100,105 +89,6 @@ const CardId: React.FC<Props> = ({ data, publicUrl }) => {
       });
     }
   }, [data?.id]);
-
-  useEffect(() => {
-    // Run once on load and set price in state
-    fetch(
-      "/api/marketplace/getPrice?mkt=SOL/USD"
-    )
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.result.price) {
-          setSolPrice(result.result.price);
-        } else {
-          setSolPrice(0);
-        }
-      })
-      .catch((err) => {
-        setSolPrice(0);
-      });
-  }, [data?.id]);
-
-  const handleBuyNft = useCallback(async () => {
-    if (!publicKey) throw new WalletNotConnectedError();
-
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: publicKey,
-        toPubkey: Keypair.generate().publicKey,
-        lamports: 1,
-      })
-    );
-
-    const auctionHouse = AUCTION_HOUSE!;
-    const mint = sellData[selectedSN].order_book.mint;
-    const price = sellData[selectedSN].order_book.price;
-    const sellerKey = sellData[selectedSN].order_book.public_key;
-
-    setBuying(true);
-    const res = await buyAndExecute(
-      auctionHouse,
-      anchorWallet,
-      mint,
-      price,
-      anchorWallet?.publicKey.toBase58()!,
-      sellerKey!
-    );
-    console.log(res);
-
-    if (res.txid) {
-      // success
-      const updateRes = await fetch(`/api/marketplace/buyOrder`, {
-        method: "POST",
-        headers: new Headers({ "Content-Type": "application/json" }),
-        credentials: "same-origin",
-        body: JSON.stringify({
-          price,
-          mint,
-          transaction: res.txid,
-          publicKey: publicKey,
-          currency: "sol",
-        }),
-      })
-        .then((res) => res.json())
-        .catch((err) => {
-          console.log(err);
-        });
-      setBuying(false);
-
-      if (updateRes.success) {
-        if (updateRes.success === true) {
-          setRefetchSellData(!refetchSellData);
-          toast({
-            position: "top",
-            description: `Successfully purchased the NFT!`,
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } else {
-        if (updateRes.error) {
-          toast({
-            position: "top",
-            description: updateRes.error || "There was an error.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
-    } else {
-      setBuying(false);
-      toast({
-        position: "top",
-        description: res.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  }, [publicKey, sendTransaction, connection]);
 
   return (
     <Container maxW={"5xl"} pt={6}>
@@ -271,14 +161,15 @@ const CardId: React.FC<Props> = ({ data, publicUrl }) => {
                 color="white"
                 w="100%"
                 mb={4}
-                onClick={handleBuyNft}
-                disabled={buying || !publicKey || !MARKET_ENABLED}
+                onClick={() => handleBuyNft(sellData[selectedSN].order_book)}
+                disabled={buyingNft || !MARKET_ENABLED}
               >
-                {buying ? (
+                {buyingNft ? (
                   <Spinner />
                 ) : (
                   <>
-                    Buy for ◎ {sellData[selectedSN].order_book.price}
+                    {!publicKey && `Connect Wallet to `} Buy for ◎{" "}
+                    {sellData[selectedSN].order_book.price}
                     {solPrice !== 0 && (
                       <span style={{ marginLeft: "8px" }}>
                         {`($${(

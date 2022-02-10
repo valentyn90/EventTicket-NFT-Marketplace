@@ -1,4 +1,7 @@
-import { buyAndExecute } from "@/mint/marketplace-front-end";
+import getSolPrice from "@/hooks/nft/getSolPrice";
+import useBuyNft from "@/hooks/nft/useBuyNft";
+import useCancelNftListing from "@/hooks/nft/useCancelNftListing";
+import useListNft from "@/hooks/nft/useListNft";
 import userStore from "@/mobx/UserStore";
 import {
   getNftOwnerRows,
@@ -13,15 +16,8 @@ import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/select";
 import { useToast } from "@chakra-ui/toast";
-import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
-import {
-  useAnchorWallet,
-  useConnection,
-  useWallet,
-} from "@solana/wallet-adapter-react";
-import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import ShareButton from "../Components/ShareButton";
 import Card from "../NftCard/Card";
@@ -42,9 +38,11 @@ const CollectionModalContent: React.FC<Props> = ({
   setFlipCard,
 }) => {
   const toast = useToast();
-  const { publicKey, sendTransaction } = useWallet();
-  const anchorWallet = useAnchorWallet();
-  const { connection } = useConnection();
+
+  const { solPrice } = getSolPrice();
+  const { handleBuyNft, buyingNft, publicKey, refetchOrderData } = useBuyNft();
+  const { handleListNftForSale, listingNft } = useListNft();
+  const { handleCancelListing, cancellingNft } = useCancelNftListing();
 
   const textColor = useColorModeValue("gray.600", "white");
   const [nftOwnerDetails, setNftOwnerDetails] = useState<NftOwner[]>([]);
@@ -52,22 +50,17 @@ const CollectionModalContent: React.FC<Props> = ({
   const [mintDate, setMintDate] = useState("");
   const [selectedSN, setSelectedSN] = useState(userStore.ui.selectedSN || 1);
   const [totalCards, setTotalCards] = useState(1);
-  const [solPrice, setSolPrice] = useState(0);
   const [inputSolPrice, setInputSolPrice] = useState(true);
   const [solSellPrice, setSolSellPrice] = useState("");
-  const [listing, setListing] = useState(false);
-  const [buying, setBuying] = useState(false);
-  const [cancelling, setCancelling] = useState(false);
   const [orderBook, setOrderBook] = useState<OrderBook | null>(null);
   const [openAlert, setOpenAlert] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
-  const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
 
   useEffect(() => {
     if (userStore.ui.selectedNft?.id) {
-      // get all owned nft serial nos for user and their nft id
+      // get all owned nft serial nos for user and their nft id.
       getNftOwnerRows(userStore.ui.selectedNft?.id).then(({ data, error }) => {
         if (data) {
           const owned_nfts = data.filter(
@@ -139,31 +132,42 @@ const CollectionModalContent: React.FC<Props> = ({
     userStore.ui.collectionSellView,
     nftOwnerDetails,
     userStore.ui.refetchMarketplace,
+    refetchOrderData,
   ]);
 
   useEffect(() => {
-    // Run once on load and set price in state
-    if (userStore.ui.collectionSellView) {
-      fetch(
-        "/api/marketplace/getPrice?mkt=SOL/USD"
-      )
-        .then((res) => res.json())
-        .then((result) => {
-          if (result.result.price) {
-            setSolPrice(result.result.price);
-          } else {
-            setSolPrice(0);
-          }
-        })
-        .catch((err) => {
-          setSolPrice(0);
-        });
-    }
-  }, [userStore.ui.collectionSellView]);
-
-  useEffect(() => {
     if (confirmCancel) {
-      handleCancelListing()
+      if (!orderBook?.onchain_success) {
+        toast({
+          position: "top",
+          description: "Your NFT is still processing.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setConfirmCancel(false);
+        return;
+      }
+
+      // get serial no and nft id...
+      const nft_id = nftOwnerDetails.find(
+        (detail) =>
+          detail.serial_no === selectedSN &&
+          detail.nft_id === userStore.ui.selectedNft?.id
+      )?.nft_id;
+
+      if (!nft_id) {
+        toast({
+          position: "top",
+          description: "There was an error finding your NFT.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setConfirmCancel(false);
+        return;
+      }
+      handleCancelListing(nft_id, selectedSN, setSolSellPrice, setOrderBook)
         .then(() => {
           setConfirmCancel(false);
         })
@@ -173,248 +177,6 @@ const CollectionModalContent: React.FC<Props> = ({
         });
     }
   }, [confirmCancel]);
-
-  async function handleListNftForSale() {
-    if (Number(solSellPrice) <= 0) {
-      toast({
-        position: "top",
-        description: "Enter a sell price.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    const nft_id = nftOwnerDetails.find(
-      (detail) =>
-        detail.serial_no === selectedSN &&
-        detail.nft_id === userStore.ui.selectedNft?.id
-    )?.nft_id;
-
-    if (!nft_id) {
-      toast({
-        position: "top",
-        description: "There was an error finding your NFT.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    setListing(true);
-    const res = await fetch(`/api/marketplace/sellCustodiedInk`, {
-      method: "POST",
-      headers: new Headers({ "Content-Type": "application/json" }),
-      credentials: "same-origin",
-      body: JSON.stringify({
-        serial_no: selectedSN,
-        nft_id,
-        price: Number(solSellPrice),
-        currency: "sol",
-        buy: false,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => {
-        console.log(err);
-      });
-    setListing(false);
-
-    if (res.error) {
-      toast({
-        position: "top",
-        description: res.error || "There was an error selling your ink.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else if (res.success) {
-      // Show success view
-      if (res.success === true) {
-        userStore.ui.refetchListingsData();
-        toast({
-          position: "top",
-          description: `Successfully listed your NFT for ${solSellPrice} SOL!`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        if (res.order) {
-          setOrderBook(res.order);
-        }
-      }
-    }
-  }
-
-  async function handleCancelListing() {
-    if (!orderBook?.onchain_success) {
-      toast({
-        position: "top",
-        description: "Your NFT is still processing.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    // get serial no and nft id...
-    const nft_id = nftOwnerDetails.find(
-      (detail) =>
-        detail.serial_no === selectedSN &&
-        detail.nft_id === userStore.ui.selectedNft?.id
-    )?.nft_id;
-
-    if (!nft_id) {
-      toast({
-        position: "top",
-        description: "There was an error finding your NFT.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    setCancelling(true);
-    const res = await fetch(`/api/marketplace/cancelOrder`, {
-      method: "POST",
-      headers: new Headers({ "Content-Type": "application/json" }),
-      credentials: "same-origin",
-      body: JSON.stringify({
-        serial_no: selectedSN,
-        nft_id,
-        currency: "sol",
-        buy: false,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => {
-        console.log(err);
-      });
-    setCancelling(false);
-
-    if (res.error) {
-      // error
-      toast({
-        position: "top",
-        description: res.error || "There was an error.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else if (res.success) {
-      // success
-      userStore.ui.refetchListingsData();
-      setSolSellPrice("");
-      if (res.orderBook) {
-        setOrderBook(res.orderBook);
-      } else {
-        setOrderBook(null);
-      }
-      toast({
-        position: "top",
-        description: "Successfully cancelled your listing.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  }
-
-  const handleBuyNft = useCallback(async () => {
-    if (!publicKey) throw new WalletNotConnectedError();
-
-    if (!orderBook) {
-      toast({
-        position: "top",
-        description: "NFT Order not found.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    // const transaction = new Transaction().add(
-    //   SystemProgram.transfer({
-    //     fromPubkey: publicKey,
-    //     toPubkey: Keypair.generate().publicKey,
-    //     lamports: 1,
-    //   })
-    // );
-
-    const auctionHouse = AUCTION_HOUSE!;
-    const mint = orderBook.mint;
-    const price = orderBook.price;
-    // Will switch to use this once we enable anyone to sell on the marketplace
-    const sellerKey = orderBook.public_key;
-
-    setBuying(true);
-    const res = await buyAndExecute(
-      auctionHouse,
-      anchorWallet,
-      mint,
-      price,
-      anchorWallet?.publicKey.toBase58()!,
-      sellerKey!
-    );
-    console.log(res);
-    if (res.txid) {
-      // success
-      const updateRes = await fetch(`/api/marketplace/buyOrder`, {
-        method: "POST",
-        headers: new Headers({ "Content-Type": "application/json" }),
-        credentials: "same-origin",
-        body: JSON.stringify({
-          price,
-          mint,
-          transaction: res.txid,
-          publicKey: publicKey,
-          currency: "sol",
-        }),
-      })
-        .then((res) => res.json())
-        .catch((err) => {
-          console.log(err);
-        });
-      setBuying(false);
-
-      if (updateRes.success) {
-        if (updateRes.success === true) {
-          userStore.ui.refetchMarketplaceData();
-          toast({
-            position: "top",
-            description: `Successfully purchased the NFT!`,
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } else {
-        if (updateRes.error) {
-          toast({
-            position: "top",
-            description: updateRes.error || "There was an error.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
-    } else {
-      setBuying(false);
-      toast({
-        position: "top",
-        description: res.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  }, [publicKey, sendTransaction, connection, orderBook]);
 
   let component;
   if (userStore.ui.collectionSellView) {
@@ -431,14 +193,14 @@ const CollectionModalContent: React.FC<Props> = ({
             color="white"
             w="100%"
             mb={4}
-            onClick={handleBuyNft}
-            disabled={buying || !publicKey}
+            onClick={() => handleBuyNft(orderBook)}
+            disabled={buyingNft}
           >
-            {buying ? (
+            {buyingNft ? (
               <Spinner />
             ) : (
               <>
-                Buy for ◎ {orderBook.price}
+                {!publicKey && `Connect Wallet to `} Buy for ◎ {orderBook.price}
                 {solPrice !== 0 && (
                   <span style={{ marginLeft: "8px" }}>
                     {`($${(orderBook.price * solPrice).toFixed(2)})`}
@@ -500,12 +262,12 @@ const CollectionModalContent: React.FC<Props> = ({
               colorScheme="red"
               onClick={() => setOpenAlert(true)}
               disabled={
-                cancelling ||
+                cancellingNft ||
                 process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "false"
               }
               w="100%"
             >
-              {cancelling ? <Spinner /> : "Cancel Listing"}
+              {cancellingNft ? <Spinner /> : "Cancel Listing"}
             </Button>
           </VStack>
         </VStack>
@@ -565,13 +327,50 @@ const CollectionModalContent: React.FC<Props> = ({
             w="100%"
             colorScheme={"blue"}
             color="white"
-            onClick={handleListNftForSale}
+            onClick={() => {
+              const sellSolPrice = Number(solSellPrice);
+              const nft_id = nftOwnerDetails.find(
+                (detail) =>
+                  detail.serial_no === selectedSN &&
+                  detail.nft_id === userStore.ui.selectedNft?.id
+              )?.nft_id;
+
+              if (sellSolPrice <= 0) {
+                toast({
+                  position: "top",
+                  description: "Enter a sell price.",
+                  status: "error",
+                  duration: 3000,
+                  isClosable: true,
+                });
+                return;
+              }
+
+              if (!nft_id) {
+                toast({
+                  position: "top",
+                  description: "There was an error finding your NFT.",
+                  status: "error",
+                  duration: 3000,
+                  isClosable: true,
+                });
+                return;
+              }
+
+              handleListNftForSale(
+                sellSolPrice,
+                nft_id,
+                selectedSN,
+                setOrderBook
+              );
+            }}
             disabled={
+              listingNft ||
               solSellPrice === "" ||
               process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "false"
             }
           >
-            {listing ? (
+            {listingNft ? (
               <Spinner />
             ) : (
               `${

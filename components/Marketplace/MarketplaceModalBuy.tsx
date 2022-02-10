@@ -1,29 +1,15 @@
-import {
-  buy,
-  buyAndExecute,
-  buyAndExecuteSale,
-} from "@/mint/marketplace-front-end";
+import getSolPrice from "@/hooks/nft/getSolPrice";
+import useBuyNft from "@/hooks/nft/useBuyNft";
 import userStore from "@/mobx/UserStore";
 import { getNftOwnerRows } from "@/supabase/collection";
 import { getSellData } from "@/supabase/marketplace";
-import NftOwner from "@/types/NftOwner";
 import getFormattedDate from "@/utils/getFormattedDate";
-import { handleRecruitClick } from "@/utils/shareCard";
-import ShareIcon from "@/utils/svg/ShareIcon";
 import { Button } from "@chakra-ui/button";
 import { useColorModeValue } from "@chakra-ui/color-mode";
-import { Box, Flex, Text, VStack, HStack } from "@chakra-ui/layout";
+import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/layout";
 import { Select, Spinner, useToast } from "@chakra-ui/react";
-import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
-import {
-  useAnchorWallet,
-  useConnection,
-  useWallet,
-} from "@solana/wallet-adapter-react";
-import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import ShareButton from "../Components/ShareButton";
 import Card from "../NftCard/Card";
@@ -42,18 +28,14 @@ const MarketplaceModalBuy: React.FC<Props> = ({
   setInitFlip,
   setFlipCard,
 }) => {
-  const toast = useToast();
-  const { publicKey, sendTransaction } = useWallet();
-  const anchorWallet = useAnchorWallet();
-  const { connection } = useConnection();
-  const [buying, setBuying] = useState(false);
+  const { solPrice } = getSolPrice();
+  const { handleBuyNft, buyingNft, publicKey, refetchOrderData } = useBuyNft();
+
   const [totalMintedCards, setTotalMintedCards] = useState(1);
-  const [solPrice, setSolPrice] = useState(0);
   const [mintDate, setMintDate] = useState("");
   const [selectedSN, setSelectedSN] = useState(0);
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
-  const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
 
   useEffect(() => {
     // refetch sell data here
@@ -63,7 +45,7 @@ const MarketplaceModalBuy: React.FC<Props> = ({
         userStore.ui.setMarketplaceBuyCard(data);
       });
     }
-  }, [userStore.ui.refetchMarketplace]);
+  }, [userStore.ui.refetchMarketplace, refetchOrderData]);
 
   useEffect(() => {
     if (userStore.ui.selectedNft?.id) {
@@ -77,105 +59,6 @@ const MarketplaceModalBuy: React.FC<Props> = ({
       });
     }
   }, [userStore.ui.selectedNft?.id]);
-
-  useEffect(() => {
-    // Run once on load and set price in state
-    fetch(
-      "/api/marketplace/getPrice?mkt=SOL/USD"
-    )
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.result.price) {
-          setSolPrice(result.result.price);
-        } else {
-          setSolPrice(0);
-        }
-      })
-      .catch((err) => {
-        setSolPrice(0);
-      });
-  }, [userStore.ui.sellData]);
-
-  const handleBuyNft = useCallback(async () => {
-    if (!publicKey) throw new WalletNotConnectedError();
-
-    // const transaction = new Transaction().add(
-    //   SystemProgram.transfer({
-    //     fromPubkey: publicKey,
-    //     toPubkey: Keypair.generate().publicKey,
-    //     lamports: 1,
-    //   })
-    // );
-
-    const auctionHouse = AUCTION_HOUSE!;
-    const mint = userStore.ui.sellData[selectedSN].order_book.mint;
-    const price = userStore.ui.sellData[selectedSN].order_book.price;
-    // Will switch to use this once we enable anyone to sell on the marketplace
-    const sellerKey = userStore.ui.sellData[selectedSN].order_book.public_key;
-
-    setBuying(true);
-    const res = await buyAndExecute(
-      auctionHouse,
-      anchorWallet,
-      mint,
-      price,
-      anchorWallet?.publicKey.toBase58()!,
-      sellerKey!
-    );
-    console.log(res);
-    if (res.txid) {
-      // success
-      const updateRes = await fetch(`/api/marketplace/buyOrder`, {
-        method: "POST",
-        headers: new Headers({ "Content-Type": "application/json" }),
-        credentials: "same-origin",
-        body: JSON.stringify({
-          price,
-          mint,
-          transaction: res.txid,
-          publicKey: publicKey,
-          currency: "sol",
-        }),
-      })
-        .then((res) => res.json())
-        .catch((err) => {
-          console.log(err);
-        });
-      setBuying(false);
-
-      if (updateRes.success) {
-        if (updateRes.success === true) {
-          userStore.ui.refetchMarketplaceData();
-          toast({
-            position: "top",
-            description: `Successfully purchased the NFT!`,
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } else {
-        if (updateRes.error) {
-          toast({
-            position: "top",
-            description: updateRes.error || "There was an error.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      }
-    } else {
-      setBuying(false);
-      toast({
-        position: "top",
-        description: res.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  }, [publicKey, sendTransaction, connection]);
 
   const textColor = useColorModeValue("gray.600", "white");
   return (
@@ -243,14 +126,17 @@ const MarketplaceModalBuy: React.FC<Props> = ({
             color="white"
             w="100%"
             mb={4}
-            onClick={handleBuyNft}
-            disabled={buying || !publicKey || !MARKET_ENABLED}
+            onClick={() =>
+              handleBuyNft(userStore.ui.sellData[selectedSN].order_book)
+            }
+            disabled={buyingNft || !MARKET_ENABLED}
           >
-            {buying ? (
+            {buyingNft ? (
               <Spinner />
             ) : (
               <>
-                Buy for ◎ {userStore.ui.sellData[selectedSN].order_book.price}
+                {!publicKey && `Connect Wallet to `} Buy for ◎{" "}
+                {userStore.ui.sellData[selectedSN].order_book.price}
                 {solPrice !== 0 && (
                   <span style={{ marginLeft: "8px" }}>
                     {`($${(

@@ -1,3 +1,4 @@
+import useCancelNftListing from "@/hooks/nft/useCancelNftListing";
 import userStore from "@/mobx/UserStore";
 import { getFileFromSupabase } from "@/supabase/supabase-client";
 import { ModalContentType } from "@/types/ModalContentType";
@@ -28,11 +29,11 @@ const CardListItem: React.FC<Props> = ({
   price,
 }) => {
   const toast = useToast();
+  const { handleCancelListing, cancellingNft } = useCancelNftListing();
   const [loaded, setLoaded] = useState(false);
   const [screenshot, setScreenshot] = useState(
     "https://verifiedink.us/img/card-mask.png"
   );
-  const [cancelling, setCancelling] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
 
@@ -58,7 +59,17 @@ const CardListItem: React.FC<Props> = ({
 
   useEffect(() => {
     if (confirmCancel) {
-      handleCancelListing()
+      if (!serial_no) {
+        toast({
+          position: "top",
+          description: "Serial number not found.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+      handleCancelListing(nft.id, serial_no)
         .then(() => {
           setConfirmCancel(false);
         })
@@ -68,59 +79,6 @@ const CardListItem: React.FC<Props> = ({
         });
     }
   }, [confirmCancel]);
-
-  async function handleCancelListing() {
-    // get onchain success before?
-    if (!serial_no) {
-      toast({
-        position: "top",
-        description: "Serial number not found.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    setCancelling(true);
-    const res = await fetch(`/api/marketplace/cancelOrder`, {
-      method: "POST",
-      headers: new Headers({ "Content-Type": "application/json" }),
-      credentials: "same-origin",
-      body: JSON.stringify({
-        serial_no,
-        nft_id: nft.id,
-        currency: "sol",
-        buy: false,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => {
-        console.log(err);
-      });
-    setCancelling(false);
-
-    if (res.error) {
-      // error
-      toast({
-        position: "top",
-        description: res.error || "There was an error.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else if (res.success) {
-      // success
-      userStore.ui.refetchListingsData();
-      toast({
-        position: "top",
-        description: "Successfully cancelled your listing.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  }
 
   let marketplaceBtnVariant = "outline";
   let marketplaceBtnScheme = "inherit";
@@ -222,10 +180,10 @@ const CardListItem: React.FC<Props> = ({
                 size="sm"
                 variant="outline"
                 onClick={() => setOpenAlert(true)}
-                disabled={cancelling || !MARKET_ENABLED}
+                disabled={cancellingNft || !MARKET_ENABLED}
                 colorScheme={"red"}
               >
-                {cancelling ? <Spinner /> : "Cancel"}
+                {cancellingNft ? <Spinner /> : "Cancel"}
               </Button>
             )}
             {listType === "marketplace" && (
