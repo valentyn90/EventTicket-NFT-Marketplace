@@ -13,6 +13,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Cookies from "cookies";
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { NextApiRequest, NextApiResponse } from "next";
 import { useRouter } from "next/router";
@@ -141,6 +142,20 @@ const StepOne = () => {
                     }}
                   />
                 </FormControl>
+                <FormControl id="twitter">
+                  <FormLabel>Twitter</FormLabel>
+                  <Input
+                    type="text"
+                    placeholder="jack"
+                    value={userStore.nftInput?.twitter || ""}
+                    onChange={(e) =>
+                      userStore.nftInput?.setInputValue(
+                        "twitter",
+                        e.target.value
+                      )
+                    }
+                  />
+                </FormControl>
               </Stack>
             </Flex>
           </Flex>
@@ -178,8 +193,7 @@ export async function getServerSideProps({
         permanent: false,
       },
     };
-  }
-  else {
+  } else {
     cookies.set("redirect-step-1", "redirected", {
       maxAge: 1000 * 60 * 60,
     });

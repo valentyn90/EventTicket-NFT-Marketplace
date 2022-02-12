@@ -44,6 +44,16 @@ export const updateUsername = async (user_name: string, id: string) =>
     ])
     .match({ id });
 
+export const updateTwitter = async (twitter: string, id: string) =>
+  supabase
+    .from("user_details")
+    .update([
+      {
+        twitter,
+      },
+    ])
+    .match({ id });
+
 export const unlockNft = (nft_id: number) =>
   supabase
     .from("nft")

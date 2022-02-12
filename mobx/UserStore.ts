@@ -10,7 +10,11 @@ import { makeAutoObservable } from "mobx";
 import { NftInput } from "./NftInput";
 import { NftStore } from "./NftStore";
 import { UserDetailsStore } from "./UserDetailsStore";
-import { getUserDetails, updateUsername } from "@/supabase/userDetails";
+import {
+  getUserDetails,
+  updateTwitter,
+  updateUsername,
+} from "@/supabase/userDetails";
 import { UiStore } from "./UiStore";
 
 export class UserStore {
@@ -177,8 +181,13 @@ export class UserStore {
     nftSignature: string,
     userDetails: UserDetails | null
   ) {
+    const twitter = userDetails
+      ? userDetails.twitter
+        ? userDetails.twitter
+        : ""
+      : "";
     this.nft = new NftStore(nftData, this, nftPhoto, nftSignature);
-    this.nftInput.setValues(nftData);
+    this.nftInput.setValues(nftData, twitter);
     if (userDetails) {
       this.userDetails.setInitValues(userDetails);
     }
@@ -221,7 +230,8 @@ export class UserStore {
     if (
       this.nft?.first_name === this.nftInput?.first_name &&
       this.nft?.last_name === this.nftInput?.last_name &&
-      this.nft?.graduation_year === this.nftInput?.graduation_year
+      this.nft?.graduation_year === this.nftInput?.graduation_year &&
+      this.userDetails.twitter === this.nftInput?.twitter
     ) {
       return true;
     } else {
@@ -305,6 +315,9 @@ export class UserStore {
       this.userDetails.id
     );
 
+    const { data: updateTwitterData, error: updateTwitterError } =
+      await updateTwitter(this.nftInput.twitter, this.userDetails.id);
+
     if (error) {
       alert(error.message);
       return false;
@@ -312,6 +325,7 @@ export class UserStore {
       if (data) {
         this.nft = new NftStore(data[0], this);
         this.userDetails.setFieldValue("user_name", user_name);
+        this.userDetails.setFieldValue("twitter", this.nftInput.twitter);
         return true;
       } else {
         return false;

@@ -14,7 +14,7 @@ import {
 } from "@/supabase/supabase-client";
 import { makeAutoObservable } from "mobx";
 import { UserStore } from "./UserStore";
-import { updateUsername } from "@/supabase/userDetails";
+import { updateTwitter, updateUsername } from "@/supabase/userDetails";
 
 export class NftStore {
   store: UserStore;
@@ -120,11 +120,21 @@ export class NftStore {
       this.store.userDetails.id
     );
 
+    const { data: updateTwitterData, error: updateTwitterError } =
+      await updateTwitter(
+        this.store.nftInput.twitter,
+        this.store.userDetails.id
+      );
+
     if (error) {
       alert(error.message);
       return false;
     } else {
       this.store.userDetails.setFieldValue("user_name", user_name);
+      this.store.userDetails.setFieldValue(
+        "twitter",
+        this.store.nftInput.twitter
+      );
       return true;
     }
   };
@@ -373,11 +383,9 @@ export class NftStore {
     }
   };
 
-  async setNFTCardScreenshotTwitter(
-    nft_id: number
-  ): Promise<boolean> {
-    const res =  fetch(`/api/meta/uploadTwitterPreview/${nft_id}`);
-    return true
+  async setNFTCardScreenshotTwitter(nft_id: number): Promise<boolean> {
+    const res = fetch(`/api/meta/uploadTwitterPreview/${nft_id}`);
+    return true;
   }
 
   async setNftCardScreenshot(
@@ -385,7 +393,9 @@ export class NftStore {
     user_id: string
   ): Promise<boolean> {
     // Get screenshot of nft card
-    const res = await fetch(`https://verified-api.vercel.app/api/screenshot/create/${nft_id}`);
+    const res = await fetch(
+      `https://verified-api.vercel.app/api/screenshot/create/${nft_id}`
+    );
     if (res.status === 200) {
       const file_name = `nftcard_screenshot.png`;
       const data = await res.text();
@@ -421,11 +431,13 @@ export class NftStore {
                   (insertData as any)[0].id
                 );
               }
-              const twitter_screenshot_res = await this.setNFTCardScreenshotTwitter(nft_id)
-              if(twitter_screenshot_res) {
+              const twitter_screenshot_res =
+                await this.setNFTCardScreenshotTwitter(nft_id);
+              if (twitter_screenshot_res) {
+                return true;
+              } else {
                 return true;
               }
-              else {return true;}
             } else {
               alert(attachError.message);
               return false;

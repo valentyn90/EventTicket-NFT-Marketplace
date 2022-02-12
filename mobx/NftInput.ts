@@ -5,6 +5,7 @@ export class NftInput {
   first_name: string = "";
   last_name: string = "";
   graduation_year: string = "";
+  twitter: string = "";
   high_school: string = "";
   usa_state: string = "";
   sport: string = "";
@@ -39,9 +40,10 @@ export class NftInput {
     this.color_transition = input?.color_transition || "";
   }
 
-  setValues = (input: Nft) => {
+  setValues = (input: Nft, twitter: string) => {
     this.first_name = input?.first_name || "";
     this.last_name = input?.last_name || "";
+    this.twitter = twitter;
     this.sport = input?.sport || "";
     this.sport_position = input?.sport_position || "";
     this.usa_state = input?.usa_state || "";
@@ -56,6 +58,7 @@ export class NftInput {
     this.first_name = "";
     this.last_name = "";
     this.graduation_year = "";
+    this.twitter = "";
     this.high_school = "";
     this.usa_state = "";
     this.sport = "";
