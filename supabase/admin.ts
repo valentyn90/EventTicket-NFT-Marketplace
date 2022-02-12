@@ -2,7 +2,15 @@ import CropValue from "@/types/CropValue";
 import Nft from "@/types/Nft";
 import { supabase } from "./supabase-client";
 
-export const getAllNfts = async (range?: number) => {
+interface AdminNftInput {
+  range?: number;
+  progressFilter: string[];
+}
+
+export const getAdminNfts = async ({
+  range,
+  progressFilter,
+}: AdminNftInput) => {
   let query = supabase
     .from("nft")
     .select(
@@ -16,6 +24,91 @@ export const getAllNfts = async (range?: number) => {
 
   if (range) {
     query = query.range(range, range + 50);
+  }
+
+  if (progressFilter.length > 0) {
+    if (!progressFilter.includes("all")) {
+      // get all data from filters and combine them and return the list
+      let dataArr: any = [];
+      if (progressFilter.includes("3")) {
+        const { data: data3, error: error3 } = await supabase
+          .from("nft")
+          .select(
+            `*,
+        user_details ( verified_user, id, twitter ),
+        files:screenshot_file_id (file_name),
+        admin_actions(*)`
+          )
+          .order("id", { ascending: false })
+          .match({ minted: true });
+        if (data3) {
+          dataArr = [...dataArr, ...data3];
+        }
+      }
+      if (progressFilter.includes("2")) {
+        const { data: data2, error: error2 } = await supabase
+          .from("nft")
+          .select(
+            `*,
+        user_details ( verified_user, id, twitter ),
+        files:screenshot_file_id (file_name),
+        admin_actions(*)`
+          )
+          .order("id", { ascending: false })
+          .match({ approved: true }).is("minted", null );
+        if (data2) {
+          dataArr = [...dataArr, ...data2];
+        }
+      }
+      if (progressFilter.includes("1")) {
+        const { data: data1, error: error1 } = await supabase
+          .from("nft")
+          .select(
+            `*,
+        user_details ( verified_user, id, twitter ),
+        files:screenshot_file_id (file_name),
+        admin_actions(*)`
+          )
+          .order("id", { ascending: false })
+          .match({ approved: false })
+          .not("first_name", "is", null)
+          .not("last_name", "is", null)
+          .not("graduation_year", "is", null)
+          .is("minted", null );
+        if (data1) {
+          dataArr = [...dataArr, ...data1];
+        }
+      }
+      if (progressFilter.includes("0")) {
+        const { data: data0, error: error0 } = await supabase
+          .from("nft")
+          .select(
+            `*,
+        user_details ( verified_user, id, twitter ),
+        files:screenshot_file_id (file_name),
+        admin_actions(*)`
+          )
+          .order("id", { ascending: false })
+          .match({
+            approved: false,
+            first_name: null,
+            last_name: null,
+            graduation_year: null,
+          });
+
+        if (data0) {
+          dataArr = [...dataArr, ...data0];
+        }
+      }
+      return dataArr;
+    }
+  } else {
+    // no filter selected, show started & approved
+    query = query
+      .is("minted", null )
+      .not("first_name", "is", null)
+      .not("last_name", "is", null)
+      .not("graduation_year", "is", null);
   }
 
   const { data, error } = await query;

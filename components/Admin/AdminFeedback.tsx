@@ -2,18 +2,16 @@ import userStore from "@/mobx/UserStore";
 import { addAdminFeedback } from "@/supabase/admin";
 import { Button } from "@chakra-ui/button";
 import { Flex, Heading, VStack } from "@chakra-ui/layout";
-import { FormLabel } from "@chakra-ui/react";
+import { FormLabel, Spinner } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/textarea";
 import { useToast } from "@chakra-ui/toast";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const AdminFeedback = () => {
   if (userStore.ui.selectedNft === null) return null;
   const toast = useToast();
-  const [feedback, setFeedback] = useState(
-    userStore.ui.selectedNft.admin_feedback || ""
-  );
+  const [submitting, setSubmitting] = useState(false);
   const [info, setInfo] = useState(
     userStore.ui.selectedNft.admin_feedback?.info || ""
   );
@@ -27,25 +25,23 @@ const AdminFeedback = () => {
     userStore.ui.selectedNft.admin_feedback?.signature || ""
   );
 
-  useEffect(() => {
-    setFeedback({
-      info: info,
-      photo: photo,
-      video: video,
-      signature: signature,
-    });
-  }, [info, photo, video, signature]);
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitting(true);
     const { data, error } = await addAdminFeedback(
       userStore.ui.selectedNft?.id as number,
-      feedback
+      {
+        info,
+        photo,
+        video,
+        signature,
+      }
     );
 
     const res2 = await fetch(
       `/api/outreach/${userStore.ui.selectedNft?.id}?message_type=changes_required`
     );
+    setSubmitting(false);
     if (error) {
       toast({
         position: "top",
@@ -79,28 +75,28 @@ const AdminFeedback = () => {
           <FormLabel>Basic Info</FormLabel>
           <Textarea
             placeholder="Feedback"
-            value={feedback.info}
+            value={info}
             onChange={(e) => setInfo(e.target.value)}
           />
           <FormLabel>Photo</FormLabel>
           <Textarea
             placeholder="Feedback"
-            value={feedback.photo}
+            value={photo}
             onChange={(e) => setPhoto(e.target.value)}
           />
           <FormLabel>Video</FormLabel>
           <Textarea
             placeholder="Feedback"
-            value={feedback.video}
+            value={video}
             onChange={(e) => setVideo(e.target.value)}
           />
           <FormLabel>Signature</FormLabel>
           <Textarea
             placeholder="Feedback"
-            value={feedback.signature}
+            value={signature}
             onChange={(e) => setSignature(e.target.value)}
           />
-          <Button type="submit">Submit</Button>
+          <Button type="submit">{submitting ? <Spinner /> : "Submit"}</Button>
         </VStack>
       </form>
     </Flex>

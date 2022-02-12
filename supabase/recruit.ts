@@ -17,8 +17,8 @@ export const getReferringUser = async (referralCode: string) => {
     .eq("referral_code", referralCode)
     .maybeSingle();
 
-  return {data:data, error: error}
-}
+  return { data: data, error: error };
+};
 
 export const updateReferringUser = (id: string, num_referred: number) =>
   supabase
@@ -65,10 +65,7 @@ export const getReferringUserNft = async (user_id: string) => {
 };
 
 export const getReferringUserNftId = async (referralCode: string) => {
-
-  const { data: userDetails} = await getReferringUser(
-    referralCode
-  );
+  const { data: userDetails } = await getReferringUser(referralCode);
 
   if (userDetails) {
     // get nft id
@@ -80,5 +77,43 @@ export const getReferringUserNftId = async (referralCode: string) => {
     return nftId;
   } else {
     return null;
+  }
+};
+
+export const getReferrerUsername = async (nft_id: number) => {
+  const { data: nftData, error: nftError } = await supabase
+    .from("nft")
+    .select("user_id")
+    .match({ id: nft_id })
+    .single();
+
+  if (nftData) {
+    const user_id = nftData.user_id;
+
+    const { data, error } = await supabase
+      .from("user_details")
+      .select("referring_user_id")
+      .match({ user_id })
+      .single();
+
+    if (data) {
+      if (data.referring_user_id === null) return "";
+
+      const { data: referrerData, error: error2 } = await supabase
+        .from("user_details")
+        .select("user_name")
+        .match({ user_id: data.referring_user_id })
+        .single();
+
+      if (referrerData) {
+        return referrerData.user_name;
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
+  } else {
+    return "";
   }
 };

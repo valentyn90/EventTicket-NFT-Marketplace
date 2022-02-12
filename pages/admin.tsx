@@ -1,7 +1,7 @@
 import AdminTableRow from "@/components/Admin/AdminTableRow";
 import AppModal from "@/components/ui/AppModal";
 import userStore from "@/mobx/UserStore";
-import { getAllNfts } from "@/supabase/admin";
+import { getAdminNfts } from "@/supabase/admin";
 import { supabase } from "@/supabase/supabase-client";
 import { getUserDetails } from "@/supabase/userDetails";
 import Nft from "@/types/Nft";
@@ -39,15 +39,20 @@ const Admin = () => {
   const [allNfts, setAllNfts] = useState<Nft[]>([]);
   const [filteredNfts, setFilteredNfts] = useState<Nft[]>([]);
   const [progressFilter, setProgressFilter] = useState<SelectType[]>([]);
-  const [verifiedFilter, setVerifiedFilter] = useState<SelectType[]>([]);
   const [range, setRange] = useState(0);
 
   useEffect(() => {
-    getAllNfts().then((res) => {
+    let filterValues: string[] = [];
+    progressFilter.forEach((pf) => {
+      filterValues.push(pf.value);
+    });
+
+    getAdminNfts({ progressFilter: filterValues }).then((res) => {
       setAllNfts(res);
+      // console.log(res);
       setFilteredNfts(res.slice(range, range + 50));
     });
-  }, [userStore.ui.refetchAdmin]);
+  }, [userStore.ui.refetchAdmin, progressFilter]);
 
   useEffect(() => {
     if (searchValue.length > 0) {
@@ -64,30 +69,11 @@ const Admin = () => {
     } else {
       setFilteredNfts(allNfts.slice(range, range + 50));
     }
-  }, [searchValue, range]);
-
-  useEffect(() => {
-    // let filterValues: string[] = [];
-    // progressFilter.forEach((pf) => {
-    //   filterValues.push(pf.value)
-    // })
-  }, [progressFilter]);
-
-  useEffect(() => {
-    // verifiedFilter.forEach((vf) => {
-    //   if (vf.value === 'any') {
-    //   } else {
-    //     if
-    //   }
-    // })
-  }, [verifiedFilter]);
+  }, [searchValue, range, progressFilter]);
 
   function handleProgressSelect(e: SelectType[]) {
     setProgressFilter(e);
-  }
-
-  function handleVerifySelect(e: SelectType[]) {
-    setVerifiedFilter(e);
+    setRange(0);
   }
 
   return (
@@ -116,7 +102,6 @@ const Admin = () => {
             </InputGroup>
             <Box w="300px">
               <Select
-                isDisabled
                 isMulti
                 onChange={handleProgressSelect}
                 placeholder="Progress"
@@ -127,48 +112,23 @@ const Admin = () => {
                     variant: "outline",
                   },
                   {
-                    label: "0",
+                    label: "0. Not started",
                     value: "0",
                     variant: "outline",
                   },
                   {
-                    label: "1",
+                    label: "1. Started",
                     value: "1",
                     variant: "outline",
                   },
                   {
-                    label: "2",
+                    label: "2. User approved",
                     value: "2",
                     variant: "outline",
                   },
                   {
-                    label: "3",
+                    label: "3. Minted",
                     value: "3",
-                    variant: "outline",
-                  },
-                ]}
-              />
-            </Box>
-            <Box w="300px">
-              <Select
-                isMulti
-                onChange={handleVerifySelect}
-                isDisabled
-                placeholder="Verify Status"
-                options={[
-                  {
-                    label: "Any verified",
-                    value: "any",
-                    variant: "outline",
-                  },
-                  {
-                    label: "Verified",
-                    value: "verified",
-                    variant: "outline",
-                  },
-                  {
-                    label: "Unverified",
-                    value: "unverified",
                     variant: "outline",
                   },
                 ]}
@@ -181,7 +141,7 @@ const Admin = () => {
                 <Th>Name</Th>
                 <Th>nft_id</Th>
                 <Th>Preview</Th>
-                <Th>Verified</Th>
+                <Th>Referrer</Th>
                 <Th>Twitter</Th>
                 <Th>Progress</Th>
                 <Th textAlign="center">Actions</Th>

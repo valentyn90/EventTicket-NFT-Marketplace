@@ -4,12 +4,12 @@ import {
   updateTwitter,
   verifyUserAndRecruits,
 } from "@/supabase/admin";
+import { getReferrerUsername } from "@/supabase/recruit";
 import { getFileFromSupabase } from "@/supabase/supabase-client";
 import { unlockNft } from "@/supabase/userDetails";
 import Nft from "@/types/Nft";
 import getFormattedDate from "@/utils/getFormattedDate";
 import {
-  Box,
   Button,
   HStack,
   Image,
@@ -21,6 +21,7 @@ import {
   Wrap,
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -36,6 +37,7 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
   const [verify, setVerify] = useState(
     nft.user_details?.verified_user || false
   );
+  const [verifier, setVerifier] = useState("");
   const [unlock, setUnlock] = useState(nft.approved);
   const [submitting, setSubmitting] = useState(false);
   const [minting, setMinting] = useState(false);
@@ -46,30 +48,31 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
   const [twitter, setTwitter] = useState(nft.user_details?.twitter || "");
 
   useEffect(() => {
+    // get verifier user
+    if (verify) {
+      getReferrerUsername(nft.id).then((res) => setVerifier(res));
+    }
+  }, [verify]);
+
+  useEffect(() => {
     let feedbackFound = false;
     let nudgeFound = false;
     if (nft.admin_actions) {
-      nft.admin_actions?.forEach((action) => {
-        switch (action.type) {
-          case "feedback": {
-            if (!feedbackFound) {
-              setFeedbackDate(getFormattedDate(action.created_at));
-              feedbackFound = true;
-            }
-            break;
-          }
-          case "nudge": {
-            if (!nudgeFound) {
-              setNudgeDate(getFormattedDate(action.created_at));
-              nudgeFound = true;
-            }
-            break;
-          }
-          default: {
-            break;
+      for (var i = nft.admin_actions.length - 1; i >= 0; i--) {
+        const actionType = nft.admin_actions[i].type;
+        if (actionType === "feedback") {
+          if (!feedbackFound) {
+            setFeedbackDate(getFormattedDate(nft.admin_actions[i].created_at));
+            feedbackFound = true;
           }
         }
-      });
+        if (actionType === "nudge") {
+          if (!nudgeFound) {
+            setNudgeDate(getFormattedDate(nft.admin_actions[i].created_at));
+            nudgeFound = true;
+          }
+        }
+      }
     }
   }, [nft.admin_actions]);
 
@@ -217,6 +220,7 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
         duration: 3000,
         isClosable: true,
       });
+      handleScreenshot();
     } else {
       toast({
         position: "top",
@@ -233,7 +237,11 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
   return (
     <Tr key={nft.id}>
       <Td>{`${nft.first_name} ${nft.last_name}`}</Td>
-      <Td>{nft.id}</Td>
+      <Td>
+        <NextLink href={`/card/${nft.id}`}>
+          <a>{nft.id}</a>
+        </NextLink>
+      </Td>
       <Td>
         <Image
           cursor="pointer"
@@ -245,10 +253,13 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
         />
       </Td>
       <Td justifySelf="center">
-        {submitting ? (
+        {verifier !== "" ? (
+          <Text>{verifier}</Text>
+        ) : submitting ? (
           <Spinner />
         ) : (
-          <input type="checkbox" onChange={handleVerify} checked={verify} />
+          <div></div>
+          // <input type="checkbox" onChange={handleVerify} checked={verify} />
         )}
       </Td>
       <Td justifySelf="center">
@@ -295,7 +306,13 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
               Feedback
             </Button>
             {feedbackDate && (
-              <Text position="absolute" top="-22px" align="center" fontSize="12px" color="gray.400">
+              <Text
+                position="absolute"
+                top="-22px"
+                align="center"
+                fontSize="12px"
+                color="gray.400"
+              >
                 {feedbackDate}
               </Text>
             )}
@@ -303,7 +320,13 @@ const AdminTableRow: React.FC<Props> = ({ nft }) => {
           <Wrap position="relative" justify="center">
             <Button onClick={handleAbandoned}>Nudge</Button>
             {nudgeDate && (
-              <Text position="absolute" top="-22px" align="center" fontSize="12px" color="gray.400">
+              <Text
+                position="absolute"
+                top="-22px"
+                align="center"
+                fontSize="12px"
+                color="gray.400"
+              >
                 {nudgeDate}
               </Text>
             )}
