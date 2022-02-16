@@ -677,10 +677,11 @@ export async function loadAuctionHouseProgramAnchor(
 ) {
   if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
 
+  console.log(customRpcUrl)
   // @ts-ignore
   const solConnection = new anchor.web3.Connection(
     //@ts-ignore
-    customRpcUrl || web3.clusterApiUrl(env),
+    customRpcUrl ? customRpcUrl :  web3.clusterApiUrl(env),
   );
   const provider = new anchor.Provider(solConnection, walletWrapper!, {
     preflightCommitment: 'recent',

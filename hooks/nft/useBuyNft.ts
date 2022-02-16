@@ -69,6 +69,7 @@ const useBuyNft = () => {
             transaction: res.txid,
             publicKey: publicKey.toBase58(),
             currency: "sol",
+            sellerKey: sellerKey!
           }),
         })
           .then((res) => res.json())

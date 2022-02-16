@@ -82,6 +82,18 @@ export async function generateMetadata(nft_id: number, serial_no: number) {
           trait_type: "Serial Number",
           value: serial_no.toString(),
         },
+        {
+          trait_type: "Edition",
+          value: "1st Ink"
+        },
+        {
+          trait_type: "Mint Size",
+          value: "10"
+        },
+        {
+          trait_type: "Verified Year",
+          value: "2022"
+        },
       ],
       properties: {
         category: "image",

@@ -11,7 +11,7 @@ export default async function create(
     return res.status(500).json({ error: "Not authenticated." });
   }
 
-  const { price, transaction, mint, publicKey, currency } = req.body;
+  const { price, transaction, mint, publicKey, currency, sellerKey } = req.body;
 
   if (!price || !transaction || !mint) {
     return res.status(500).json({ error: "Invalid inputs." });
@@ -27,12 +27,12 @@ export default async function create(
         mint,
         currency,
         buyer_public_key: publicKey,
+        seller_public_key: sellerKey,
       },
     ]);
 
   if (saleError) {
     console.log(saleError);
-    return res.status(500).json({ error: saleError.message });
   }
 
   // place buy entry in orderbook
@@ -83,6 +83,9 @@ export default async function create(
     console.log(ownerUpdateError);
   }
 
+  if(saleError || orderError || orderUpdateError || ownerUpdateError) {
+    return res.status(500).json({ saleError, orderError, orderUpdateError, ownerUpdateError });
+  }
 
   return res.status(200).json({ success: true });
 }

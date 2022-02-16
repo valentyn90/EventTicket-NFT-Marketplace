@@ -24,6 +24,40 @@ export const getSellerOrderBookByMint = async (mint: string) =>
     .order("created_at", { ascending: false })
     .match({ mint, active: true, buy: false });
 
+export const getTotalSales = async (pubkey: string) => {
+  const { data, error } = await supabase
+    .from("completed_sale")
+    .select("*")
+    .match({seller_public_key: pubkey});
+
+  if (data){
+    const total = data.reduce((acc, curr) => acc + curr.price, 0);
+    const count = data.length;
+    return {total, count};
+  }
+  return {total:0, count:0};
+
+}
+
+
+export const getPublicKey = async (user_id: string) => {
+  const { data: keyData, error: keyError } = await supabase
+      .from("keys")
+      .select("public_key")
+      .eq("user_id", user_id)
+      .single();
+
+  console.log(keyData);
+
+  if (keyData) {
+    return keyData.public_key;
+  }
+  else{
+    return null
+  }
+
+}
+
 export const getActiveListings = async (user_id: string) => {
   // 1. get active listings in order book
   const { data, error } = await supabase

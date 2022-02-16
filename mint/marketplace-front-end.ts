@@ -603,9 +603,15 @@ export async function getAuctionHouseWithDetails(
     auctionHouseKey
   );
 
+  let customRpcUrl = null;
+  if(env != 'devnet'){
+    customRpcUrl = env
+  }
+
   const anchorProgram = await loadAuctionHouseProgramAnchor(
     walletWrapper,
-    env as Cluster
+    env as Cluster,
+    customRpcUrl
   );
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(
     auctionHouseKey

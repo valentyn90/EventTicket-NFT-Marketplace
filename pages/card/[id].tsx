@@ -27,6 +27,7 @@ import {
 import { observer } from "mobx-react-lite";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import { env } from "process";
 import React, { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 
@@ -48,6 +49,7 @@ const CardId: React.FC<Props> = ({ data, publicUrl }) => {
   const [totalMintedCards, setTotalMintedCards] = useState(0);
   const [mintDate, setMintDate] = useState("");
   const [initFlip, setInitFlip] = useState(false);
+  const [mintId, setMintId] = useState("");
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
@@ -85,6 +87,11 @@ const CardId: React.FC<Props> = ({ data, publicUrl }) => {
           if (ownerData[0]) {
             setMintDate(getFormattedDate(ownerData[0].created_at));
           }
+          ownerData.forEach((card) => {
+            if(card.serial_no == serial_no) {
+              setMintId(card.mint);
+            }
+          });
         }
       });
     }
@@ -131,9 +138,21 @@ const CardId: React.FC<Props> = ({ data, publicUrl }) => {
               <Text fontSize={["2xl", "2xl", "4xl"]}>
                 {data.first_name} {data.last_name}
               </Text>
-              <Text fontSize={["l", "l", "2xl"]} mb={6}>
+              <Text fontSize={["l", "l", "2xl"]} >
                 {totalMintedCards} Cards Minted on {mintDate}
               </Text>
+              {serial_no && (
+                <Text color={"gray"} cursor={"pointer"} fontSize={["xsm", "xsm", "sm"]} mb={6}
+                  onClick={() => {
+                    if(process.env.NEXT_PUBLIC_SOL_ENV!.includes("ssc-dao")) {
+                      window.open(`https://solscan.io/token/${mintId}`, '_blank');
+                    }
+                    else {window.open(`https://solscan.io/token/${mintId}?cluster=devnet`, '_blank');}
+                  }}
+                >
+                  {mintId}
+                </Text>)
+              }
               {sellData.length > 0 && (
                 <HStack>
                   <Text fontSize={["l", "l", "2xl"]} mr={2}>

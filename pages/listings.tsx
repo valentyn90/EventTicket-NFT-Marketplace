@@ -1,7 +1,7 @@
 import CardList from "@/components/NftCard/CardList";
 import AppModal from "@/components/ui/AppModal";
 import userStore from "@/mobx/UserStore";
-import { getActiveListings, getOwnedNfts } from "@/supabase/collection";
+import { getActiveListings, getOwnedNfts, getPublicKey, getTotalSales } from "@/supabase/collection";
 import { supabase } from "@/supabase/supabase-client";
 import Nft from "@/types/Nft";
 import NftOwner from "@/types/NftOwner";
@@ -21,6 +21,8 @@ import NextLink from "next/link";
 import { NextApiRequest } from "next";
 import React, { useState, useEffect } from "react";
 import ListingData from "@/types/ListingData";
+import { getBalance } from "@/utils/web3/queries";
+import getSolPrice from "@/hooks/nft/getSolPrice";
 
 const Listings = () => {
   const avatarSize = useBreakpointValue({ base: "2xl", lg: "2xl" });
@@ -28,6 +30,11 @@ const Listings = () => {
 
   const [activeNfts, setActiveNfts] = useState<Nft[]>([]);
   const [listingData, setListingData] = useState<ListingData[]>([]);
+  const [inksSold, setInksSold] = useState(0);
+  const [totalSales, setTotalSales] = useState(0);
+  const [balance, setBalance] = useState(0);
+
+  const { solPrice } = getSolPrice();
 
   useEffect(() => {
     if (userStore.loaded) {
@@ -39,6 +46,21 @@ const Listings = () => {
       });
     }
   }, [userStore.loaded, userStore.ui.refetchListings]);
+
+  useEffect(() => {
+    getPublicKey(userStore.id).then(async (res) => {
+      if (res) {
+        const balance_res = await getBalance(res);
+        setBalance(balance_res);
+
+        const totalSales_res = await getTotalSales(res)
+        setTotalSales(totalSales_res.total);
+        setInksSold(totalSales_res.count);
+      }
+    })
+  }, [balance, userStore.loaded])
+
+  
 
   return (
     <Box minH="100vh" py={{ base: "8", lg: "12" }} px={{ base: "4", lg: "8" }}>
@@ -56,22 +78,28 @@ const Listings = () => {
           </Text>
           <HStack spacing={8}>
             <VStack>
+            <HStack alignItems={"baseline"}>
               <Text fontWeight="bold" fontSize="2xl">
-                -
+              ◎{totalSales}
+              </Text>
+              <Text color="gray">(${(totalSales * solPrice).toLocaleString('en-US',{ maximumFractionDigits: 2 })})</Text>
+              </HStack>
+              <Text colorScheme="gray">Total Sales</Text>
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold" fontSize="2xl">
+                {inksSold}
               </Text>
               <Text colorScheme="gray">Inks Sold</Text>
             </VStack>
             <VStack>
+              <HStack alignItems={"baseline"}>
               <Text fontWeight="bold" fontSize="2xl">
-                -
+              ◎{balance}
               </Text>
-              <Text colorScheme="gray">Income</Text>
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold" fontSize="2xl">
-                -
-              </Text>
-              <Text colorScheme="gray">Royalties</Text>
+              <Text color="gray">(${(balance * solPrice).toLocaleString('en-US',{ maximumFractionDigits: 2 })})</Text>
+              </HStack>
+              <Text colorScheme="gray">Balance</Text>
             </VStack>
           </HStack>
           <Text fontSize="2xl" colorScheme="gray">
