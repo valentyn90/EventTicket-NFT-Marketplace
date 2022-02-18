@@ -285,7 +285,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
                 <Text
                   color={"gray"}
                   cursor={"pointer"}
-                  fontSize={["xsm", "xsm", "sm"]}
+                  fontSize={["sm", "sm", "sm"]}
                   mb={8}
                   onClick={() => {
                     if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("ssc-dao")) {
@@ -301,7 +301,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
                     }
                   }}
                 >
-                  Solana Mint: {mintId}
+                  Solana Mint: {mintId.substring(0, 8)}...
                 </Text>
               )}
               {nftOwnerDetails && nftOwnerDetails.length > 0 && (
