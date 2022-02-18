@@ -5,12 +5,6 @@ export default async function create(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { user } = await supabase.auth.api.getUserByCookie(req);
-
-  if (!user) {
-    return res.status(500).json({ error: "Not authenticated." });
-  }
-
   const { price, transaction, mint, publicKey, currency, sellerKey } = req.body;
 
   if (!price || !transaction || !mint) {
@@ -36,7 +30,7 @@ export default async function create(
   }
 
   // place buy entry in orderbook
-  
+
   const { data: order, error: orderError } = await supabase
     .from("order_book")
     .insert([
@@ -83,8 +77,10 @@ export default async function create(
     console.log(ownerUpdateError);
   }
 
-  if(saleError || orderError || orderUpdateError || ownerUpdateError) {
-    return res.status(500).json({ saleError, orderError, orderUpdateError, ownerUpdateError });
+  if (saleError || orderError || orderUpdateError || ownerUpdateError) {
+    return res
+      .status(500)
+      .json({ saleError, orderError, orderUpdateError, ownerUpdateError });
   }
 
   return res.status(200).json({ success: true });

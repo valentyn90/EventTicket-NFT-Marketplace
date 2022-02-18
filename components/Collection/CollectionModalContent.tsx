@@ -202,7 +202,7 @@ const CollectionModalContent: React.FC<Props> = ({
               <>
                 {!publicKey && `Connect Wallet to `} Buy for ◎ {orderBook.price}
                 {solPrice !== 0 && (
-                  <span style={{ marginLeft: "8px" }}>
+                  <span className="ml-8">
                     {`($${(orderBook.price * solPrice).toFixed(2)})`}
                   </span>
                 )}

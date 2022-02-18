@@ -1,3 +1,5 @@
+import NftOwner from "@/types/NftOwner";
+import OrderBook from "@/types/OrderBook";
 import { supabase } from "./supabase-client";
 
 export const getOwnedNfts = async (user_id: string) => {
@@ -17,6 +19,36 @@ export const getOwnedNfts = async (user_id: string) => {
 export const getNftOwnerRows = async (nft_id: number) =>
   supabase.from("nft_owner").select("*").eq("nft_id", nft_id);
 
+export const getTotalSales = async (pubkey: string) => {
+  const { data, error } = await supabase
+    .from("completed_sale")
+    .select("*")
+    .match({ seller_public_key: pubkey });
+
+  if (data) {
+    const total = data.reduce((acc, curr) => acc + curr.price, 0);
+    const count = data.length;
+    return { total, count };
+  }
+  return { total: 0, count: 0 };
+};
+
+export const getPublicKey = async (user_id: string) => {
+  const { data: keyData, error: keyError } = await supabase
+    .from("keys")
+    .select("public_key")
+    .eq("user_id", user_id)
+    .single();
+
+  console.log(keyData);
+
+  if (keyData) {
+    return keyData.public_key;
+  } else {
+    return null;
+  }
+};
+
 export const getSellerOrderBookByMint = async (mint: string) =>
   supabase
     .from("order_book")
@@ -24,39 +56,12 @@ export const getSellerOrderBookByMint = async (mint: string) =>
     .order("created_at", { ascending: false })
     .match({ mint, active: true, buy: false });
 
-export const getTotalSales = async (pubkey: string) => {
-  const { data, error } = await supabase
-    .from("completed_sale")
+export const getOrderBookByMint = async (mint: string) =>
+  supabase
+    .from("order_book")
     .select("*")
-    .match({seller_public_key: pubkey});
-
-  if (data){
-    const total = data.reduce((acc, curr) => acc + curr.price, 0);
-    const count = data.length;
-    return {total, count};
-  }
-  return {total:0, count:0};
-
-}
-
-
-export const getPublicKey = async (user_id: string) => {
-  const { data: keyData, error: keyError } = await supabase
-      .from("keys")
-      .select("public_key")
-      .eq("user_id", user_id)
-      .single();
-
-  console.log(keyData);
-
-  if (keyData) {
-    return keyData.public_key;
-  }
-  else{
-    return null
-  }
-
-}
+    .order("created_at", { ascending: false })
+    .match({ mint });
 
 export const getActiveListings = async (user_id: string) => {
   // 1. get active listings in order book
@@ -116,5 +121,60 @@ export const getActiveListings = async (user_id: string) => {
   return {
     nfts: nftData,
     ownerAndPriceData,
+  };
+};
+
+export const getAllNftOwnersAndOrderBooks = async (
+  nft_id: number
+): Promise<{ nftOwners: NftOwner[]; ownerData: OrderBook[] }> => {
+  // get all nft owner rows by nft id
+  // and all order books for the nft owner mint
+  const { data: nftOwners, error: nftError } = await getNftOwnerRows(nft_id);
+  if (nftError || !nftOwners) {
+    console.log(nftError);
+    return {
+      nftOwners: [],
+      ownerData: [],
+    };
+  }
+
+  const mints =
+    nftOwners
+      ?.filter((owner) => {
+        if (owner.mint !== null) return true;
+        else return false;
+      })
+      .map((owner) => owner.mint) || [];
+
+  const { data: orderBook, error: orderBookError } = await supabase
+    .from("order_book")
+    .select("*")
+    .in("mint", mints)
+    .match({ active: true, buy: false });
+
+  if (orderBookError) {
+    console.log(orderBookError);
+    return {
+      nftOwners,
+      ownerData: [],
+    };
+  }
+
+  const activeMints = (orderBook as OrderBook[])?.map((order) => order.mint);
+
+  const ownerData = (nftOwners as NftOwner[])
+    ?.filter((owner) => {
+      if (activeMints?.includes(owner.mint)) return true;
+      return false;
+    })
+    .map((owner) => {
+      return (orderBook as OrderBook[])?.find(
+        (order) => order.mint === owner.mint
+      )!;
+    });
+
+  return {
+    ownerData,
+    nftOwners,
   };
 };

@@ -80,7 +80,7 @@ export default async function create(
         base58.decode(verifiedSolSvcKey)
       );
 
-      const seller_private_key = await getKeypair(user.id) as web3.Keypair;
+      const seller_private_key = (await getKeypair(user.id)) as web3.Keypair;
 
       const auctionHouse = AUCTION_HOUSE!;
 

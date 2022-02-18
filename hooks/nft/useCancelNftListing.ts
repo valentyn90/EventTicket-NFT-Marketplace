@@ -48,11 +48,7 @@ const useCancelNftListing = () => {
         setSolSellPrice("");
       }
       if (setOrderBook) {
-        if (res.orderBook) {
-          setOrderBook(res.orderBook);
-        } else {
-          setOrderBook(null);
-        }
+        setOrderBook(null);
       }
       toast({
         position: "top",

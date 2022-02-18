@@ -52,7 +52,7 @@ export async function generateMetadata(nft_id: number, serial_no: number) {
       description: `${nft_details.first_name} ${nft_details.last_name}'s VerifiedInk.`,
       seller_fee_basis_points: 1000,
       image: image_url,
-      external_url: `https://verifiedink.us/card/${nft_details.id}`,
+      external_url: `https://verifiedink.us/card/${nft_details.id}?serial_no=${serial_no.toString()}`,
       attributes: [
         {
           trait_type: "Name",

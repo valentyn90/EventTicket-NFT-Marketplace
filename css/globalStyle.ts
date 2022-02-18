@@ -40,6 +40,10 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+  .ml-8 {
+    margin-left: 8px;
+  }
+
   @media screen and (max-width: 1100px){
     .solana-wallet-multi-btn {
       font-size: 14px;

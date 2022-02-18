@@ -32,84 +32,87 @@ const useBuyNft = () => {
         setVisible(true);
         return;
       }
+      try {
 
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: Keypair.generate().publicKey,
-          lamports: 1,
-        })
-      );
+        const auctionHouse = AUCTION_HOUSE!;
+        const mint = orderBook.mint;
+        const price = orderBook.price;
+        const sellerKey = orderBook.public_key;
 
-      const auctionHouse = AUCTION_HOUSE!;
-      const mint = orderBook.mint;
-      const price = orderBook.price;
-      const sellerKey = orderBook.public_key;
-
-      setBuyingNft(true);
-      const res = await buyAndExecute(
-        auctionHouse,
-        anchorWallet,
-        mint,
-        price,
-        anchorWallet?.publicKey.toBase58()!,
-        sellerKey!
-      );
-      console.log(res);
-
-      if (res.txid) {
-        // success
-        const updateRes = await fetch(`/api/marketplace/buyOrder`, {
-          method: "POST",
-          headers: new Headers({ "Content-Type": "application/json" }),
-          credentials: "same-origin",
-          body: JSON.stringify({
-            price,
-            mint,
-            transaction: res.txid,
-            publicKey: publicKey.toBase58(),
-            currency: "sol",
-            sellerKey: sellerKey!
-          }),
-        })
-          .then((res) => res.json())
-          .catch((err) => {
-            console.log(err);
-          });
-        setBuyingNft(false);
-
-        if (updateRes.success) {
-          if (updateRes.success === true) {
-            setRefetchOrderData(!refetchOrderData);
-            userStore.ui.refetchMarketplaceData();
-            toast({
-              position: "top",
-              description: `Successfully purchased the NFT!`,
-              status: "success",
-              duration: 3000,
-              isClosable: true,
+        setBuyingNft(true);
+        const res = await buyAndExecute(
+          auctionHouse,
+          anchorWallet,
+          mint,
+          price,
+          anchorWallet?.publicKey.toBase58()!,
+          sellerKey!
+        );
+        console.log(res);
+        if (res.txid) {
+          // success
+          const updateRes = await fetch(`/api/marketplace/buyOrder`, {
+            method: "POST",
+            headers: new Headers({ "Content-Type": "application/json" }),
+            credentials: "same-origin",
+            body: JSON.stringify({
+              price,
+              mint,
+              transaction: res.txid,
+              publicKey: publicKey.toBase58(),
+              currency: "sol",
+              sellerKey: sellerKey!
+            }),
+          })
+            .then((res) => res.json())
+            .catch((err) => {
+              console.log(err);
             });
+          setBuyingNft(false);
+
+          if (updateRes.success) {
+            if (updateRes.success === true) {
+              setRefetchOrderData(!refetchOrderData);
+              userStore.ui.refetchMarketplaceData();
+              toast({
+                position: "top",
+                description: `Successfully purchased the NFT!`,
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+              });
+            }
+          } else {
+            if (updateRes.error) {
+              toast({
+                position: "top",
+                description: updateRes.error || "Purchase was likely unsuccessful.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+              });
+            }
           }
         } else {
-          if (updateRes.error) {
-            toast({
-              position: "top",
-              description: updateRes.error || "There was an error.",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-            });
-          }
+          setBuyingNft(false);
+          toast({
+            position: "top",
+            description: res.message,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
         }
-      } else {
-        setBuyingNft(false);
+      } catch (err) {
+        console.log(err);
         toast({
           position: "top",
-          description: res.message,
+          description: "Purchase was likely unsuccessful.",
           status: "error",
-          duration: 3000,
+          duration: 5000,
           isClosable: true,
         });
+        setBuyingNft(false);
       }
     },
     [publicKey, sendTransaction, connection]
