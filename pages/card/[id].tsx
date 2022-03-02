@@ -278,9 +278,11 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
               <Text fontSize={["2xl", "2xl", "4xl"]}>
                 {nft.first_name} {nft.last_name}
               </Text>
+              {mintDate && 
               <Text fontSize={["l", "l", "2xl"]} >
                 {totalCards} Cards Minted on {mintDate}
               </Text>
+              }
               {mintId && (
                 <Text
                   color={"gray"}

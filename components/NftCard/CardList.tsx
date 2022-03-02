@@ -60,12 +60,12 @@ const CardList: React.FC<Props> = ({
       w="100%"
       mt={8}
       templateColumns={[
-        "repeat(auto-fit, 150px)",
-        "repeat(auto-fit, 175px)",
-        "repeat(auto-fit, 200px)",
+        "repeat(auto-fit, 170px)",
+        "repeat(auto-fit, 225px)",
+        "repeat(auto-fit, 250px)",
       ]}
       justifyContent={["space-around", "space-around", "center"]}
-      gap={[2, 4, 8]}
+      gap={[2, 4, 6]}
     >
       {cardList}
     </Grid>

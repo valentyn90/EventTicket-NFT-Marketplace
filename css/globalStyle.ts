@@ -64,4 +64,23 @@ export const GlobalStyle = createGlobalStyle`
       }
     }
   }
+
+  @keyframes card-twist {
+    50% {
+      transform: rotateY(40deg);
+    }
+    100% {
+      transform: rotateY(0deg);
+    }
+  }
+
+  .card-twist:hover {
+    animation: card-twist 0.5s ease-in-out;
+  }
+
+  .view-btn{
+    background-color: rgba(255, 255, 255, .15);  
+    backdrop-filter: blur(5px);
+  }
+
 `;

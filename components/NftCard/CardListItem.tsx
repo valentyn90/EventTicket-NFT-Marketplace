@@ -83,7 +83,7 @@ const CardListItem: React.FC<Props> = ({
   let marketplaceBtnVariant = "outline";
   let marketplaceBtnScheme = "inherit";
   let marketplaceBtnText = "Bid";
-  let marketplaceBtnColor = "inherit";
+  let marketplaceBtnColor = "gray";
 
   if (sellData && sellData.length > 0 && MARKET_ENABLED) {
     sellData.sort((a, b) => {
@@ -100,13 +100,13 @@ const CardListItem: React.FC<Props> = ({
 
   return (
     <Box
-      py={4}
-      px={2}
+      // py={4}
+      // px={2}
       mb={[6, 6, "unset"]}
-      w={["150px", "175px", "200px"]}
-      h={["300px", "400px", "400px"]}
-      borderWidth="1px"
-      borderRadius="lg"
+      w={["180px", "225px", "250px"]}
+      h={["360px", "450px", "500px"]}
+      // borderWidth="1px"
+      // borderRadius="lg"
       overflow="hidden"
       boxShadow="xl"
       display="flex"
@@ -139,6 +139,7 @@ const CardListItem: React.FC<Props> = ({
                 userStore.ui.openModalWithNft(nft, "marketplace-buy");
               }
             }}
+            
           >
             <Image
               position="absolute"
@@ -147,15 +148,27 @@ const CardListItem: React.FC<Props> = ({
               width="100%"
               height="100%"
               objectFit="contain"
+              className="card-twist"
               src={screenshot}
               fallbackSrc="https://verifiedink.us/img/card-mask.png"
             />
           </Box>
-          <Flex pt={4} justifyContent="space-around" w="100%">
-            <Button
-              size="sm"
-              colorScheme="blue"
-              variant="outline"
+          <Flex
+            pt={4}
+            // flexDir={["column", "column", "row"]}
+            justifyContent="space-around"
+            w="100%"
+          >
+            <Box
+            w="100%"
+            py="1"
+            cursor="pointer"
+            textAlign="center"
+            className="view-btn"
+              //size="sm"
+              // mb={["8px", "8px", "0"]}
+              // colorScheme="blue"
+              // variant="outline"
               onClick={() => {
                 if (listType === "collection") {
                   userStore.ui.setFieldValue("selectedSN", serial_no);
@@ -173,48 +186,68 @@ const CardListItem: React.FC<Props> = ({
                 }
               }}
             >
-              View {listType === "listings" && price && `◎ ${price}`}
-            </Button>
+              {!price && 'View' } 
+              {price && `◎ ${price}`}
+            </Box>
             {listType === "listings" && (
-              <Button
-                size="sm"
+              <Box
+                w="100%"
+                py="1"
+                cursor="pointer"
+                textAlign="center"
                 variant="outline"
-                onClick={() => setOpenAlert(true)}
-                disabled={cancellingNft || !MARKET_ENABLED}
+                onClick={() => {
+                  if(cancellingNft || !MARKET_ENABLED) {
+                    return;
+                  }
+                  setOpenAlert(true)}
+                }
+                // disabled={cancellingNft || !MARKET_ENABLED}
                 colorScheme={"red"}
               >
                 {cancellingNft ? <Spinner /> : "Cancel"}
-              </Button>
+              </Box>
             )}
             {listType === "marketplace" && (
-              <Button
-                size="sm"
+              <Box
+                w="100%"
+                py="1"
+                textAlign="center"
                 variant={marketplaceBtnVariant}
                 colorScheme={marketplaceBtnScheme}
-                color={marketplaceBtnColor}
-                disabled={sellData?.length === 0 || !MARKET_ENABLED}
+                textColor={marketplaceBtnColor}
+                // disabled={sellData?.length === 0 || !MARKET_ENABLED}
                 onClick={() => {
+                  if(sellData?.length === 0 || !MARKET_ENABLED){
+                    return;
+                  }
                   // find cheapest SN
                   userStore.ui.setMarketplaceBuyCard(sellData!);
                   userStore.ui.openModalWithNft(nft, "marketplace-buy");
                 }}
               >
                 {marketplaceBtnText}
-              </Button>
+              </Box>
             )}
             {listType === "collection" && (
-              <Button
-                size="sm"
-                variant="outline"
+              <Box
+                w="100%"
+                py="1"
+                textAlign="center"
+                textColor={MARKET_ENABLED ? "white" : "gray"}
+                cursor={MARKET_ENABLED ? "pointer" : "not-allowed"}
                 onClick={() => {
-                  userStore.ui.setFieldValue("selectedSN", 1);
+                  if(!MARKET_ENABLED) {
+                    return
+                  }
+                  // userStore.ui.setFieldValue("selectedSN", 0);
                   userStore.ui.setCollectionSellView(true);
                   userStore.ui.openModalWithNft(nft, listType);
                 }}
-                disabled={!MARKET_ENABLED}
+                // disabled={!MARKET_ENABLED}
               >
                 Sell
-              </Button>
+              </Box>
             )}
           </Flex>
         </>

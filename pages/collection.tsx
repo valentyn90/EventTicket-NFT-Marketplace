@@ -11,6 +11,7 @@ import {
   Avatar,
   Box,
   Container,
+  Flex,
   Spinner,
   Text,
   VStack,
@@ -45,43 +46,36 @@ const Collection = () => {
   }, [userStore.loaded]);
 
   return (
-    <Box
-      bg={bgColor}
-      minH="100vh"
-      py={{ base: "8", lg: "12" }}
-      px={{ base: "4", lg: "8" }}
-    >
-      <Container maxW="3xl">
-        <VStack spacing={4} align="center">
-          <Avatar
-            bgColor="blue.500"
-            size={avatarSize}
-            name={userStore.userDetails.user_name}
-            src={userStore.avatar_url}
-            boxShadow="xl"
-          />
-          <Text color={titleColor} fontSize={titleSize} fontWeight="bold">
-            COLLECTION
-          </Text>
-          <Text
-            color={introColor}
-            w={["100%", "80%", "70%"]}
-            fontSize={["md", "lg", "lg"]}
-          >
-            {collectionTextString}
-          </Text>
-          <br />
-          {userStore.loaded ? (
-            <>
-              <CardList listType="collection" nfts={mintedNfts} />
-            </>
-          ) : (
-            <Spinner size="xl" />
-          )}
-        </VStack>
-      </Container>
-      <AppModal />
-    </Box>
+    <Container maxW="8xl">
+      <Box align="center" py="12">
+        <Avatar
+          bgColor="blue.500"
+          size={avatarSize}
+          name={userStore.userDetails.user_name}
+          src={userStore.avatar_url}
+          boxShadow="xl"
+        />
+        <Text color={titleColor} fontSize={titleSize} fontWeight="bold">
+          COLLECTION
+        </Text>
+        <Text
+          color={introColor}
+          w={["100%", "80%", "70%"]}
+          fontSize={["md", "lg", "lg"]}
+          mt="4"
+        >
+          {collectionTextString}
+        </Text>
+
+        {userStore.loaded ? (
+          <CardList listType="collection" nfts={mintedNfts} />
+        ) : (
+          <Spinner size="xl" />
+        )}
+
+        <AppModal />
+      </Box>
+    </Container>
   );
 };
 

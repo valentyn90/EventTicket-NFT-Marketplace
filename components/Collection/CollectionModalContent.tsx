@@ -2,18 +2,13 @@ import getSolPrice from "@/hooks/nft/getSolPrice";
 import useBuyNft from "@/hooks/nft/useBuyNft";
 import useCancelNftListing from "@/hooks/nft/useCancelNftListing";
 import useListNft from "@/hooks/nft/useListNft";
+import useNftOrderBook from "@/hooks/nft/useNftOrderBook";
 import userStore from "@/mobx/UserStore";
-import {
-  getNftOwnerRows,
-  getSellerOrderBookByMint,
-} from "@/supabase/collection";
 import NftOwner from "@/types/NftOwner";
 import OrderBook from "@/types/OrderBook";
-import getFormattedDate from "@/utils/getFormattedDate";
 import { Button } from "@chakra-ui/button";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/layout";
-import { Spinner } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/select";
 import { useToast } from "@chakra-ui/toast";
 import { observer } from "mobx-react-lite";
@@ -23,6 +18,9 @@ import ShareButton from "../Components/ShareButton";
 import Card from "../NftCard/Card";
 import AlertModal from "../ui/AlertModal";
 import { CardBox } from "../ui/CardBox";
+import BuyNft from "./BuyNft";
+import CancelNft from "./CancelNft";
+import SellNft from "./SellNft";
 
 interface Props {
   flipCard: boolean;
@@ -37,107 +35,64 @@ const CollectionModalContent: React.FC<Props> = ({
   setInitFlip,
   setFlipCard,
 }) => {
+  if (!userStore.ui.selectedNft) return null;
   const toast = useToast();
 
   const { solPrice } = getSolPrice();
   const { handleBuyNft, buyingNft, publicKey, refetchOrderData } = useBuyNft();
   const { handleListNftForSale, listingNft } = useListNft();
   const { handleCancelListing, cancellingNft } = useCancelNftListing();
+  const { nftOwnerDetails, orderBooks, totalCards, mintDate } = useNftOrderBook(
+    {
+      nft: userStore.ui.selectedNft,
+    }
+  );
 
   const textColor = useColorModeValue("gray.600", "white");
-  const [nftOwnerDetails, setNftOwnerDetails] = useState<NftOwner[]>([]);
   const [numCardsOwned, setNumCardsOwned] = useState(1);
-  const [mintDate, setMintDate] = useState("");
   const [selectedSN, setSelectedSN] = useState(userStore.ui.selectedSN || 1);
-  const [totalCards, setTotalCards] = useState(1);
-  const [inputSolPrice, setInputSolPrice] = useState(true);
   const [solSellPrice, setSolSellPrice] = useState("");
-  const [orderBook, setOrderBook] = useState<OrderBook | null>(null);
   const [openAlert, setOpenAlert] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [ownedNfts, setOwnedNfts] = useState<NftOwner[]>([]);
+  const [selectedOwner, setSelectedOwner] = useState<NftOwner | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderBook | null>(null);
+  const [mintId, setMintId] = useState("");
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
   useEffect(() => {
-    if (userStore.ui.selectedNft?.id) {
-      // get all owned nft serial nos for user and their nft id.
-      getNftOwnerRows(userStore.ui.selectedNft?.id).then(({ data, error }) => {
-        if (data) {
-          const owned_nfts = data.filter(
-            (nft: NftOwner) => nft.owner_id === userStore.id
-          );
-          setNftOwnerDetails([
-            ...owned_nfts.sort((a: NftOwner, b: NftOwner) => {
-              if (a.serial_no < b.serial_no) return -1;
-              if (a.serial_no > b.serial_no) return 1;
-              return 0;
-            }),
-          ]);
-          setTotalCards(data.length);
-          setNumCardsOwned(owned_nfts.length);
-          if (owned_nfts[0]) {
-            setMintDate(getFormattedDate(owned_nfts[0].created_at));
-          }
-        } else if (error) {
-          toast({
-            position: "top",
-            description: error.message,
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      });
+    const owned_nfts = nftOwnerDetails.filter(
+      (nft) => nft.owner_id === userStore.id
+    );
+    setOwnedNfts(owned_nfts);
+    setNumCardsOwned(owned_nfts.length);
+    if (owned_nfts.length > 0) {
+      setSelectedSN(owned_nfts[0].serial_no);
     }
-
-    return () => {
-      setNftOwnerDetails([]);
-    };
-  }, [userStore.ui.selectedNft?.id]);
+  }, [nftOwnerDetails, userStore.ui.collectionSellView]);
 
   useEffect(() => {
-    // check order book
-    if (userStore.ui.collectionSellView) {
-      // need to check if mint is already for sale
-      const mint = nftOwnerDetails.find(
-        (detail) =>
-          detail.serial_no === selectedSN &&
-          detail.nft_id === userStore.ui.selectedNft?.id
-      )?.mint;
+    const owner = ownedNfts.find((nft) => nft.serial_no === selectedSN) || null;
+    setSelectedOwner(owner);
 
-      if (mint) {
-        getSellerOrderBookByMint(mint).then(({ data, error }) => {
-          if (data && data.length > 0) {
-            setOrderBook(data[0]);
-            setSolSellPrice(data[0].price.toString());
-          } else {
-            setOrderBook(null);
-            setSolSellPrice("");
-          }
-        });
-      } else {
-        // mint doesn't exists so order book doesn't exist
-        setSolSellPrice("");
-        setOrderBook(null);
+    ownedNfts.forEach((card) => {
+      if (card.serial_no == selectedSN) {
+        setMintId(card.mint);
       }
-    }
+    });
 
-    () => {
-      setSolSellPrice("");
-      setOrderBook(null);
-    };
-  }, [
-    selectedSN,
-    userStore.ui.selectedNft?.id,
-    userStore.ui.collectionSellView,
-    nftOwnerDetails,
-    userStore.ui.refetchMarketplace,
-    refetchOrderData,
-  ]);
+    if (owner) {
+      const order =
+        orderBooks.find((order) => order.mint === owner.mint) || null;
+
+      setSelectedOrder(order);
+    }
+  }, [selectedSN, ownedNfts, orderBooks, userStore.ui.collectionSellView]);
 
   useEffect(() => {
     if (confirmCancel) {
-      if (!orderBook?.onchain_success) {
+      if (!selectedOrder?.onchain_success) {
         toast({
           position: "top",
           description: "Your NFT is still processing.",
@@ -150,7 +105,7 @@ const CollectionModalContent: React.FC<Props> = ({
       }
 
       // get serial no and nft id...
-      const nft_id = nftOwnerDetails.find(
+      const nft_id = ownedNfts.find(
         (detail) =>
           detail.serial_no === selectedSN &&
           detail.nft_id === userStore.ui.selectedNft?.id
@@ -167,7 +122,7 @@ const CollectionModalContent: React.FC<Props> = ({
         setConfirmCancel(false);
         return;
       }
-      handleCancelListing(nft_id, selectedSN, setSolSellPrice, setOrderBook)
+      handleCancelListing(nft_id, selectedSN, setSolSellPrice, setSelectedOrder)
         .then(() => {
           setConfirmCancel(false);
         })
@@ -181,206 +136,62 @@ const CollectionModalContent: React.FC<Props> = ({
   let component;
   if (userStore.ui.collectionSellView) {
     if (
-      orderBook &&
-      orderBook.active &&
-      orderBook.public_key !== userStore.publicKey
+      selectedOrder &&
+      selectedOrder.active &&
+      selectedOrder.public_key !== userStore.publicKey &&
+      userStore.ui.selectedNft?.id
     ) {
       // active order and not owned by current user = buy view
       component = (
-        <VStack align={`start`} pt={6} w="100%">
-          <Button
-            colorScheme="blue"
-            color="white"
-            w="100%"
-            mb={4}
-            onClick={() => handleBuyNft(orderBook)}
-            disabled={buyingNft}
-          >
-            {buyingNft ? (
-              <Spinner />
-            ) : (
-              <>
-                {!publicKey && `Connect Wallet to `} Buy for ◎ {orderBook.price}
-                {solPrice !== 0 && (
-                  <span className="ml-8">
-                    {`($${(orderBook.price * solPrice).toFixed(2)})`}
-                  </span>
-                )}
-              </>
-            )}{" "}
-          </Button>
-          <HStack w="100%">
-            <ShareButton
-              id={userStore.ui.selectedNft?.id}
-              flex={1}
-              width="unset"
-              variant="outline"
-              color="white"
-              borderColor="#4688F1"
-            />
-            <Button flex={1} disabled variant={"outline"}>
-              Make an offer
-            </Button>
-          </HStack>
-        </VStack>
+        <BuyNft
+          handleBuyNft={handleBuyNft}
+          selectedOrder={selectedOrder}
+          buyingNft={buyingNft}
+          publicKey={publicKey}
+          solPrice={solPrice}
+          nft_id={userStore.ui.selectedNft?.id}
+        />
       );
     } else if (
-      orderBook &&
-      orderBook.active &&
-      orderBook.public_key === userStore.publicKey
+      selectedOrder &&
+      selectedOrder.active &&
+      selectedOrder.public_key === userStore.publicKey &&
+      userStore.ui.selectedNft?.id
     ) {
       // cancel view
       component = (
-        <VStack align={`start`} spacing={8} w="100%">
-          <HStack justify={`start`}>
-            <Text color={textColor} fontSize={["l", "l", "2xl"]}>
-              List Price:
-            </Text>
-            <Text color={textColor} fontSize={"2xl"}>
-              {solSellPrice} SOL
-            </Text>
-            <Text
-              color={"gray"}
-              fontSize={"2xl"}
-              onClick={() => {
-                if (inputSolPrice) {
-                  setInputSolPrice(false);
-                }
-              }}
-            >
-              {solPrice !== 0 &&
-                `($${(solPrice * Number(solSellPrice)).toFixed(2)})`}
-            </Text>
-          </HStack>
-          <VStack justify="center" spacing={[4, 4, 6]} w="100%">
-            <ShareButton
-              id={userStore.ui.selectedNft?.id}
-              serial_no={selectedSN}
-            />
-            <Button
-              px={8}
-              colorScheme="red"
-              onClick={() => setOpenAlert(true)}
-              disabled={
-                cancellingNft ||
-                process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "false"
-              }
-              w="100%"
-            >
-              {cancellingNft ? <Spinner /> : "Cancel Listing"}
-            </Button>
-          </VStack>
-        </VStack>
+        <CancelNft
+          selectedOrder={selectedOrder}
+          solPrice={solPrice}
+          nft_id={userStore.ui.selectedNft?.id}
+          selectedSN={selectedSN}
+          setOpenAlert={setOpenAlert}
+          cancellingNft={cancellingNft}
+        />
       );
-    } else {
+    } else if (
+      userStore.ui.selectedNft?.id &&
+      selectedOwner &&
+      selectedOwner.owner_id === userStore.id
+    ) {
       // sell view
       component = (
-        <VStack align={`start`} spacing={8} w="100%">
-          <HStack justify="start" w="100%">
-            <Text
-              flex="2"
-              color={textColor}
-              fontSize={["l", "l", "2xl"]}
-              onClick={() => {
-                if (inputSolPrice) {
-                  setInputSolPrice(false);
-                }
-              }}
-            >
-              List Price:
-            </Text>
-
-            <Flex flex="2" borderBottom="0.5px solid gray" align="center">
-              <input
-                type="number"
-                className="sol-sell-price-input"
-                value={solSellPrice}
-                placeholder="0.1"
-                onChange={(e) => setSolSellPrice(e.target.value)}
-              />
-            </Flex>
-            <Text
-              flex="1"
-              color={textColor}
-              fontSize={"2xl"}
-              textAlign={"start"}
-            >
-              SOL
-            </Text>
-
-            <Text
-              flex="2"
-              color={"gray"}
-              fontSize={"2xl"}
-              onClick={() => {
-                if (inputSolPrice) {
-                  setInputSolPrice(false);
-                }
-              }}
-            >
-              {solPrice !== 0 &&
-                solSellPrice != "" &&
-                `($${(solPrice * Number(solSellPrice)).toFixed(2)})`}
-            </Text>
-          </HStack>
-          <Button
-            w="100%"
-            colorScheme={"blue"}
-            color="white"
-            onClick={() => {
-              const sellSolPrice = Number(solSellPrice);
-              const nft_id = nftOwnerDetails.find(
-                (detail) =>
-                  detail.serial_no === selectedSN &&
-                  detail.nft_id === userStore.ui.selectedNft?.id
-              )?.nft_id;
-
-              if (sellSolPrice <= 0) {
-                toast({
-                  position: "top",
-                  description: "Enter a sell price.",
-                  status: "error",
-                  duration: 3000,
-                  isClosable: true,
-                });
-                return;
-              }
-
-              if (!nft_id) {
-                toast({
-                  position: "top",
-                  description: "There was an error finding your NFT.",
-                  status: "error",
-                  duration: 3000,
-                  isClosable: true,
-                });
-                return;
-              }
-
-              handleListNftForSale(
-                sellSolPrice,
-                nft_id,
-                selectedSN,
-                setOrderBook
-              );
-            }}
-            disabled={
-              listingNft ||
-              solSellPrice === "" ||
-              process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "false"
-            }
-          >
-            {listingNft ? (
-              <Spinner />
-            ) : (
-              `${
-                solSellPrice === ""
-                  ? "Waiting for List Price..."
-                  : "List for " + solSellPrice + " SOL"
-              } `
-            )}
-          </Button>
-        </VStack>
+        <SellNft
+          solSellPrice={solSellPrice}
+          setSolSellPrice={setSolSellPrice}
+          solPrice={solPrice}
+          nftOwnerDetails={ownedNfts}
+          selectedSN={selectedSN}
+          nft_id={userStore.ui.selectedNft?.id}
+          setSelectedOrder={setSelectedOrder}
+          handleListNftForSale={handleListNftForSale}
+          listingNft={listingNft}
+        />
+      );
+    } else {
+      // default view
+      component = (
+        <ShareButton id={userStore.ui.selectedNft?.id} serial_no={selectedSN} />
       );
     }
   } else {
@@ -444,14 +255,33 @@ const CollectionModalContent: React.FC<Props> = ({
         </CardBox>
       </Box>
       <VStack flex="1" spacing={6} align="start" justify="center">
-        <Box display={["none", "none", "block"]}>
+        <Box display={["none", "none", "block"]} mb={8}>
           <Text color={textColor} fontSize={["4xl", "4xl", "6xl"]}>
             {userStore.ui.selectedNft?.first_name}{" "}
             {userStore.ui.selectedNft?.last_name}
           </Text>
-          <Text color={textColor} fontSize={["l", "l", "2xl"]} mb={8}>
+          <Text color={textColor} fontSize={["l", "l", "2xl"]}>
             {totalCards} Cards Minted on {mintDate}
           </Text>
+          {mintId && (
+            <Text
+              color={"gray"}
+              cursor={"pointer"}
+              fontSize={["sm", "sm", "sm"]}
+              onClick={() => {
+                if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("ssc-dao")) {
+                  window.open(`https://solscan.io/token/${mintId}`, "_blank");
+                } else {
+                  window.open(
+                    `https://solscan.io/token/${mintId}?cluster=devnet`,
+                    "_blank"
+                  );
+                }
+              }}
+            >
+              Solana Mint: {mintId.substring(0, 8)}...
+            </Text>
+          )}
         </Box>
 
         <Text
@@ -472,7 +302,7 @@ const CollectionModalContent: React.FC<Props> = ({
             onChange={(e) => setSelectedSN(Number(e.target.value))}
             value={selectedSN}
           >
-            {nftOwnerDetails.map((detail) => (
+            {ownedNfts.map((detail) => (
               <option value={detail.serial_no} key={detail.id}>
                 {detail.serial_no}
               </option>

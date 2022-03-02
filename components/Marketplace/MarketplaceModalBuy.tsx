@@ -1,8 +1,11 @@
 import getSolPrice from "@/hooks/nft/getSolPrice";
 import useBuyNft from "@/hooks/nft/useBuyNft";
+import useNftOrderBook from "@/hooks/nft/useNftOrderBook";
 import userStore from "@/mobx/UserStore";
 import { getNftOwnerRows } from "@/supabase/collection";
 import { getSellData } from "@/supabase/marketplace";
+import NftOwner from "@/types/NftOwner";
+import OrderBook from "@/types/OrderBook";
 import getFormattedDate from "@/utils/getFormattedDate";
 import { Button } from "@chakra-ui/button";
 import { useColorModeValue } from "@chakra-ui/color-mode";
@@ -11,6 +14,7 @@ import { Select, Spinner, useToast } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import BuyNft from "../Collection/BuyNft";
 import ShareButton from "../Components/ShareButton";
 import Card from "../NftCard/Card";
 import { CardBox } from "../ui/CardBox";
@@ -28,39 +32,63 @@ const MarketplaceModalBuy: React.FC<Props> = ({
   setInitFlip,
   setFlipCard,
 }) => {
+  if (!userStore.ui.selectedNft) return null;
   const { solPrice } = getSolPrice();
   const { handleBuyNft, buyingNft, publicKey, refetchOrderData } = useBuyNft();
+  const { nftOwnerDetails, orderBooks, totalCards, mintDate } = useNftOrderBook(
+    {
+      nft: userStore.ui.selectedNft,
+    }
+  );
 
-  const [totalMintedCards, setTotalMintedCards] = useState(1);
-  const [mintDate, setMintDate] = useState("");
-  const [selectedSN, setSelectedSN] = useState(0);
+  const textColor = useColorModeValue("gray.600", "white");
+  const [selectedSN, setSelectedSN] = useState(1);
+  const [selectedOrder, setSelectedOrder] = useState<OrderBook | null>(null);
+  const [mintId, setMintId] = useState("");
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
   useEffect(() => {
-    // refetch sell data here
-    if (userStore.ui.selectedNft?.id) {
-      setSelectedSN(0);
-      getSellData(userStore.ui.selectedNft?.id).then((data: any) => {
-        userStore.ui.setMarketplaceBuyCard(data);
+    // set selected sn as the cheapest price
+    if (orderBooks.length > 0) {
+      orderBooks.sort((a, b) => {
+        if (a.price > b.price) return 1;
+        if (a.price < b.price) return -1;
+        return 0;
       });
+
+      const sn =
+        nftOwnerDetails.find((owner) => owner.mint === orderBooks[0].mint)
+          ?.serial_no || 1;
+      setSelectedSN(sn);
+    } else {
+      setSelectedSN(1);
     }
-  }, [userStore.ui.refetchMarketplace, refetchOrderData]);
+  }, [orderBooks, mintId, nftOwnerDetails]);
 
   useEffect(() => {
-    if (userStore.ui.selectedNft?.id) {
-      getNftOwnerRows(userStore.ui.selectedNft?.id).then(({ data, error }) => {
-        if (data) {
-          setTotalMintedCards(data.length);
-          if (data[0]) {
-            setMintDate(getFormattedDate(data[0].created_at));
-          }
-        }
-      });
-    }
-  }, [userStore.ui.selectedNft?.id]);
+    // set mint id
+    nftOwnerDetails.forEach((card) => {
+      if (card.serial_no == selectedSN) {
+        setMintId(card.mint);
+      }
+    });
+  }, [nftOwnerDetails]);
 
-  const textColor = useColorModeValue("gray.600", "white");
+  useEffect(() => {
+    // set selected order
+    if (mintId) {
+      const order = orderBooks.find((order) => order.mint === mintId);
+      if (order) {
+        setSelectedOrder(order);
+      } else {
+        setSelectedOrder(null);
+      }
+    } else {
+      setSelectedOrder(null);
+    }
+  }, [selectedSN, nftOwnerDetails, orderBooks, mintId]);
+
   return (
     <Flex
       direction={["column", "column", "row"]}
@@ -74,6 +102,7 @@ const MarketplaceModalBuy: React.FC<Props> = ({
             readOnly={true}
             flip={flipCard}
             initFlip={initFlip}
+            serial_no={selectedSN}
           />
           <div
             className="cardbox-refreshicon-div"
@@ -95,9 +124,29 @@ const MarketplaceModalBuy: React.FC<Props> = ({
             {userStore.ui.selectedNft?.last_name}
           </Text>
           <Text color={textColor} fontSize={["l", "l", "2xl"]} mb={6}>
-            {totalMintedCards} Cards Minted on {mintDate}
+            {totalCards} Cards Minted on {mintDate}
           </Text>
-          {userStore.ui.sellData.length > 0 && MARKET_ENABLED && (
+          {mintId && (
+            <Text
+              color={"gray"}
+              cursor={"pointer"}
+              fontSize={["sm", "sm", "sm"]}
+              mb={8}
+              onClick={() => {
+                if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("ssc-dao")) {
+                  window.open(`https://solscan.io/token/${mintId}`, "_blank");
+                } else {
+                  window.open(
+                    `https://solscan.io/token/${mintId}?cluster=devnet`,
+                    "_blank"
+                  );
+                }
+              }}
+            >
+              Solana Mint: {mintId.substring(0, 8)}...
+            </Text>
+          )}
+          {nftOwnerDetails.length > 0 && (
             <HStack>
               <Text color={textColor} fontSize={["l", "l", "2xl"]} mr={2}>
                 View SN:
@@ -108,10 +157,17 @@ const MarketplaceModalBuy: React.FC<Props> = ({
                 onChange={(e) => setSelectedSN(Number(e.target.value))}
                 value={selectedSN}
               >
-                {userStore.ui.sellData.map((sell, i) => {
+                {nftOwnerDetails.map((owner, i) => {
+                  const sell = orderBooks.find(
+                    (order) => order.mint === owner.mint
+                  );
+                  let price = "";
+                  if (sell) {
+                    price = ` - ◎ ${sell.price}`;
+                  }
                   return (
-                    <option value={i} key={i}>
-                      {`${sell.nft_owner.serial_no} - ◎ ${sell.order_book.price}`}
+                    <option value={owner.serial_no} key={i}>
+                      {`${owner.serial_no}${price}`}
                     </option>
                   );
                 })}
@@ -119,49 +175,17 @@ const MarketplaceModalBuy: React.FC<Props> = ({
             </HStack>
           )}
         </Box>
-
-        {userStore.ui.sellData.length > 0 && MARKET_ENABLED && (
-          <Button
-            colorScheme="blue"
-            color="white"
-            w="100%"
-            mb={4}
-            onClick={() =>
-              handleBuyNft(userStore.ui.sellData[selectedSN].order_book)
-            }
-            disabled={buyingNft || !MARKET_ENABLED}
-          >
-            {buyingNft ? (
-              <Spinner />
-            ) : (
-              <>
-                {!publicKey && `Connect Wallet to `} Buy for ◎{" "}
-                {userStore.ui.sellData[selectedSN].order_book.price}
-                {solPrice !== 0 && (
-                  <span style={{ marginLeft: "8px" }}>
-                    {`($${(
-                      userStore.ui.sellData[selectedSN].order_book.price *
-                      solPrice
-                    ).toFixed(2)})`}
-                  </span>
-                )}
-              </>
-            )}{" "}
-          </Button>
-        )}
-        <HStack w="100%">
-          <ShareButton
-            id={userStore.ui.selectedNft?.id}
-            flex={1}
-            width="unset"
-            variant="outline"
-            color="white"
-            borderColor="white"
+        {MARKET_ENABLED && userStore.ui.selectedNft?.id && selectedOrder && (
+          <BuyNft
+            handleBuyNft={handleBuyNft}
+            selectedOrder={selectedOrder}
+            buyingNft={buyingNft}
+            publicKey={publicKey}
+            solPrice={solPrice}
+            nft_id={userStore.ui.selectedNft?.id}
           />
-          <Button flex={1} disabled variant={"outline"}>
-            Make an offer
-          </Button>
-        </HStack>
+        )}
+        <ShareButton id={userStore.ui.selectedNft?.id} serial_no={selectedSN} />
       </VStack>
     </Flex>
   );

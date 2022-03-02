@@ -1,7 +1,12 @@
 import CardList from "@/components/NftCard/CardList";
 import AppModal from "@/components/ui/AppModal";
 import userStore from "@/mobx/UserStore";
-import { getActiveListings, getOwnedNfts, getPublicKey, getTotalSales } from "@/supabase/collection";
+import {
+  getActiveListings,
+  getOwnedNfts,
+  getPublicKey,
+  getTotalSales,
+} from "@/supabase/collection";
 import { supabase } from "@/supabase/supabase-client";
 import Nft from "@/types/Nft";
 import NftOwner from "@/types/NftOwner";
@@ -27,6 +32,16 @@ import getSolPrice from "@/hooks/nft/getSolPrice";
 const Listings = () => {
   const avatarSize = useBreakpointValue({ base: "2xl", lg: "2xl" });
   const titleSize = useBreakpointValue({ base: "3xl", lg: "4xl" });
+  const listingTextSize = useBreakpointValue({
+    base: "lg",
+    md: "xl",
+    lg: "2xl",
+  });
+  const listingLabelSize = useBreakpointValue({
+    base: "md",
+    md: "lg",
+    lg: "xl",
+  });
 
   const [activeNfts, setActiveNfts] = useState<Nft[]>([]);
   const [listingData, setListingData] = useState<ListingData[]>([]);
@@ -53,18 +68,16 @@ const Listings = () => {
         const balance_res = await getBalance(res);
         setBalance(balance_res);
 
-        const totalSales_res = await getTotalSales(res)
+        const totalSales_res = await getTotalSales(res);
         setTotalSales(totalSales_res.total);
         setInksSold(totalSales_res.count);
       }
-    })
-  }, [balance, userStore.loaded])
-
-  
+    });
+  }, [balance, userStore.loaded]);
 
   return (
     <Box minH="100vh" py={{ base: "8", lg: "12" }} px={{ base: "4", lg: "8" }}>
-      <Container maxW="3xl">
+      <Container maxW="6xl">
         <VStack align="center" spacing={[4, 4, 6]}>
           <Avatar
             bgColor="blue.500"
@@ -76,33 +89,51 @@ const Listings = () => {
           <Text color="blue.500" fontSize={titleSize} fontWeight="bold">
             Listings
           </Text>
-          <HStack spacing={8}>
+          <HStack alignItems="flex-start" w="100%" justifyContent="center">
             <VStack>
-            <HStack alignItems={"baseline"}>
-              <Text fontWeight="bold" fontSize="2xl">
-              ◎{totalSales}
-              </Text>
-              <Text color="gray">(${(totalSales * solPrice).toLocaleString('en-US',{ maximumFractionDigits: 2 })})</Text>
+              <HStack alignItems={"baseline"} textAlign={"center"}>
+                <Text fontWeight="bold" fontSize={listingTextSize}>
+                  ◎{totalSales}
+                </Text>
+                <Text color="gray" fontSize={listingTextSize}>
+                  ($
+                  {(totalSales * solPrice).toLocaleString("en-US", {
+                    maximumFractionDigits: 2,
+                  })}
+                  )
+                </Text>
               </HStack>
-              <Text colorScheme="gray">Total Sales</Text>
+              <Text colorScheme="gray" fontSize={listingLabelSize}>
+                Total Sales
+              </Text>
             </VStack>
             <VStack>
-              <Text fontWeight="bold" fontSize="2xl">
+              <Text fontWeight="bold" fontSize={listingTextSize}>
                 {inksSold}
               </Text>
-              <Text colorScheme="gray">Inks Sold</Text>
+              <Text colorScheme="gray" fontSize={listingLabelSize} whiteSpace="nowrap">
+                Inks Sold
+              </Text>
             </VStack>
             <VStack>
               <HStack alignItems={"baseline"}>
-              <Text fontWeight="bold" fontSize="2xl">
-              ◎{balance}
-              </Text>
-              <Text color="gray">(${(balance * solPrice).toLocaleString('en-US',{ maximumFractionDigits: 2 })})</Text>
+                <Text fontWeight="bold" fontSize={listingTextSize}>
+                  ◎{balance}
+                </Text>
+                <Text color="gray" fontSize={listingTextSize}>
+                  ($
+                  {(balance * solPrice).toLocaleString("en-US", {
+                    maximumFractionDigits: 2,
+                  })}
+                  )
+                </Text>
               </HStack>
-              <Text colorScheme="gray">Balance</Text>
+              <Text colorScheme="gray" fontSize={listingLabelSize}>
+                Balance
+              </Text>
             </VStack>
           </HStack>
-          <Text fontSize="2xl" colorScheme="gray">
+          <Text fontSize={["xl", "xl", "2xl"]} colorScheme="gray" maxW="3xl">
             These are your active listings. If you have no active listings, you
             can sell one of your VerifiedInks from the{" "}
             <NextLink href="/collection">
