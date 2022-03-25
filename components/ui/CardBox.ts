@@ -16,7 +16,7 @@ export const CardBox = styled.div`
     .cardbox-refreshicon-div {
       position: absolute;
       bottom: 19px;
-      right: 110px;
+      right: 70px;
     }
   }
 

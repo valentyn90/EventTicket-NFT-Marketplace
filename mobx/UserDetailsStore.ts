@@ -19,6 +19,7 @@ export class UserDetailsStore {
   user_name: string = "";
   email: string = "";
   twitter: string = "";
+  role = "";
 
   resetValues() {
     this.id = "";
@@ -29,6 +30,7 @@ export class UserDetailsStore {
     this.user_name = "";
     this.email = "";
     this.twitter = "";
+    this.role = "";
   }
 
   constructor(store: UserStore) {
@@ -45,6 +47,7 @@ export class UserDetailsStore {
     this.user_name = input.user_name || "";
     this.email = input.email || "";
     this.twitter = input.twitter || "";
+    this.role = input.role || "";
   }
 
   initSignUp = async (

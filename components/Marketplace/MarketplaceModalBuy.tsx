@@ -34,7 +34,8 @@ const MarketplaceModalBuy: React.FC<Props> = ({
 }) => {
   if (!userStore.ui.selectedNft) return null;
   const { solPrice } = getSolPrice();
-  const { handleBuyNft, buyingNft, publicKey, refetchOrderData } = useBuyNft();
+  const { handleBuyNftCrypto, buyingNft, publicKey, refetchOrderData } =
+    useBuyNft();
   const { nftOwnerDetails, orderBooks, totalCards, mintDate } = useNftOrderBook(
     {
       nft: userStore.ui.selectedNft,
@@ -177,12 +178,13 @@ const MarketplaceModalBuy: React.FC<Props> = ({
         </Box>
         {MARKET_ENABLED && userStore.ui.selectedNft?.id && selectedOrder && (
           <BuyNft
-            handleBuyNft={handleBuyNft}
+            handleBuyNftCrypto={handleBuyNftCrypto}
             selectedOrder={selectedOrder}
             buyingNft={buyingNft}
             publicKey={publicKey}
             solPrice={solPrice}
             nft_id={userStore.ui.selectedNft?.id}
+            sn={selectedSN}
           />
         )}
         <ShareButton id={userStore.ui.selectedNft?.id} serial_no={selectedSN} />

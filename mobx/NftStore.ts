@@ -122,7 +122,7 @@ export class NftStore {
 
     const { data: updateTwitterData, error: updateTwitterError } =
       await updateTwitter(
-        this.store.nftInput.twitter,
+        this.store.nftInput.twitter.replace("@",""),
         this.store.userDetails.id
       );
 

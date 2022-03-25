@@ -1,20 +1,24 @@
 import { Card } from "@/components/ui/Card";
+import { DividerWithText } from "@/components/ui/DividerWithText";
 import { signIn, supabase } from "@/supabase/supabase-client";
+import Cookies from "cookies";
 import {
   Box,
   Button,
   Heading,
+  Input,
+  Spinner,
   Text,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import { NextApiRequest } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
 
-interface Props {}
+interface Props { }
 
 const SignIn: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
@@ -23,12 +27,31 @@ const SignIn: React.FC<Props> = () => {
 
   const router = useRouter();
 
+  useEffect(() => {
+    const email_router  = router.query.email! as string;
+    console.log(email_router);
+    setEmail(email_router);
+  }, []);
+
+
   async function handleSignin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const emailSignIn = await signIn({ email });
+    // const emailSignIn = await signIn({ email });
+
+    const res = await fetch(`/api/admin/send-magic-link`, {
+      method: "POST",
+      headers: new Headers({ "Content-Type": "application/json" }),
+      credentials: "same-origin",
+      body: JSON.stringify({
+        email,
+      }),
+    });
+
+    const resj = await res.json();
+
     setLoading(false);
-    if (emailSignIn) {
+    if (resj) {
       setEmailLinkSent(true);
     }
   }
@@ -44,56 +67,22 @@ const SignIn: React.FC<Props> = () => {
         <Heading textAlign="center" size="2xl" fontWeight="extrabold">
           Sign in to your account
         </Heading>
-        <Text textAlign="center" mt={4} size="l" colorScheme="gray">
-          Don't have an account?{" "}
-          <NextLink href="/signup">
-            <a className="blue-link">Sign up</a>
-          </NextLink>
-        </Text>
-        <Card mt="12" py={8}>
-          <VStack spacing={8}>
-            <Button
-              disabled={emailLinkSent}
-              py={6}
-              w="100%"
-              colorScheme="twitter"
-              onClick={() => {
-                signIn({ provider: "twitter" });
-              }}
-            >
-              <FaTwitter />
-              <Text ml="2rem" fontWeight="normal">
-                Sign in with Twitter
-              </Text>
-            </Button>
-            <Button
-              disabled={emailLinkSent}
-              py={6}
-              w="100%"
-              color="currentColor"
-              variant="outline"
-              onClick={() => {
-                signIn({ provider: "google" });
-              }}
-            >
-              <FaGoogle />
-              <Text ml="2rem" fontWeight="normal">
-                Sign in with Google
-              </Text>
-            </Button>
-          </VStack>
-          {/* <DividerWithText mt={8} mb={8}>
-            or continue with
-          </DividerWithText>
+
+        <Box mt="12" py={8}>
           <form onSubmit={handleSignin}>
-            <Text fontWeight="bold">Email Address</Text>
-            <Input
-              value={email}
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-              mt={2}
-              mb={8}
-            />
+            {!emailLinkSent && <>
+              <Text fontWeight="bold">Email Address</Text>
+              <Input
+                value={email}
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                mt={1}
+                mb={8}
+                borderRadius={1}
+              />
+            </>
+
+            }
             {!emailLinkSent ? (
               <Button
                 py={6}
@@ -101,6 +90,7 @@ const SignIn: React.FC<Props> = () => {
                 width="100%"
                 colorScheme="blue"
                 color="white"
+                borderRadius={1}
               >
                 {loading ? <Spinner /> : "Sign in"}
               </Button>
@@ -114,19 +104,26 @@ const SignIn: React.FC<Props> = () => {
                 </Text>
               </VStack>
             )}
-          </form> */}
-        </Card>
+          </form>
+        </Box>
       </Box>
     </Box>
   );
 };
 
-export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+export async function getServerSideProps({ req, res }: { req: NextApiRequest, res: NextApiResponse }) {
+  
+  const cookies = new Cookies(req, res);
+
+  cookies.set("redirect-link", "/collection", {
+    maxAge: 1000 * 60 * 60,
+  });
+  
   const { user } = await supabase.auth.api.getUserByCookie(req);
   if (user) {
     return {
       redirect: {
-        destination: "/create",
+        destination: "/collection",
         permanent: false,
       },
     };

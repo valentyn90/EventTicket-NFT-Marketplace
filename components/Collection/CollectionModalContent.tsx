@@ -39,7 +39,8 @@ const CollectionModalContent: React.FC<Props> = ({
   const toast = useToast();
 
   const { solPrice } = getSolPrice();
-  const { handleBuyNft, buyingNft, publicKey, refetchOrderData } = useBuyNft();
+  const { handleBuyNftCrypto, buyingNft, publicKey, refetchOrderData } =
+    useBuyNft();
   const { handleListNftForSale, listingNft } = useListNft();
   const { handleCancelListing, cancellingNft } = useCancelNftListing();
   const { nftOwnerDetails, orderBooks, totalCards, mintDate } = useNftOrderBook(
@@ -144,12 +145,13 @@ const CollectionModalContent: React.FC<Props> = ({
       // active order and not owned by current user = buy view
       component = (
         <BuyNft
-          handleBuyNft={handleBuyNft}
+          handleBuyNftCrypto={handleBuyNftCrypto}
           selectedOrder={selectedOrder}
           buyingNft={buyingNft}
           publicKey={publicKey}
           solPrice={solPrice}
           nft_id={userStore.ui.selectedNft?.id}
+          sn={selectedSN}
         />
       );
     } else if (

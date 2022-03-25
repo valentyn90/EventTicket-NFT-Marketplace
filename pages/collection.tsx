@@ -10,6 +10,7 @@ import { useBreakpointValue } from "@chakra-ui/media-query";
 import {
   Avatar,
   Box,
+  Button,
   Container,
   Flex,
   Spinner,
@@ -18,12 +19,13 @@ import {
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import type { NextApiRequest } from "next";
+import router, { Router } from "next/router";
 import React, { useEffect, useState } from "react";
 
 const Collection = () => {
-  const collectionTextString = `This is your personal collection of VerifiedInk NFTs \
-  you and your referrals have minted. Soon, you’ll be able to gift or trade these to \
-  friends and sell the on the marketplace.`;
+  const collectionTextString = `This is your personal collection of VerifiedInk NFTs. \
+  Soon, you’ll be able to gift or trade these to \
+  friends and sell them on the marketplace.`;
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
@@ -64,7 +66,7 @@ const Collection = () => {
           fontSize={["md", "lg", "lg"]}
           mt="4"
         >
-          {collectionTextString}
+          {mintedNfts.length > 0 ? collectionTextString : "You have no NFTs in your collection. Check out the marketplace to get some!"}
         </Text>
 
         {userStore.loaded ? (
@@ -72,6 +74,17 @@ const Collection = () => {
         ) : (
           <Spinner size="xl" />
         )}
+
+        {mintedNfts.length === 0 &&
+          <Button
+          colorScheme="blue"
+          color="white"
+          borderRadius={1}
+          onClick={() => {router.push("/marketplace");}}
+          >
+            Marketplace
+            </Button>
+        }
 
         <AppModal />
       </Box>

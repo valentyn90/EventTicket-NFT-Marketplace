@@ -2,15 +2,13 @@ import { buyAndExecute } from "@/mint/marketplace-front-end";
 import userStore from "@/mobx/UserStore";
 import OrderBook from "@/types/OrderBook";
 import { useToast } from "@chakra-ui/react";
-import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import {
   useAnchorWallet,
   useConnection,
   useWallet,
 } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 
 const useBuyNft = () => {
   const toast = useToast();
@@ -25,7 +23,24 @@ const useBuyNft = () => {
 
   const AUCTION_HOUSE = process.env.NEXT_PUBLIC_AUCTION_HOUSE;
 
-  const handleBuyNft = useCallback(
+  const handleChoosePurchaseMethod = useCallback(async () => {
+    // setPicker(true);
+    return;
+  }, []);
+
+  const handleBuyNftWithCreditCard = useCallback(
+    async (orderBook: OrderBook) => {
+      // Send to stripe
+      // Cancel auctionhouse order
+      // Create account with stripe email (if not already created)
+      // Transfer the nft to the new account
+      // Record the sale in the order book
+      //Later - send usdc to seller and royalty accounts
+    },
+    []
+  );
+
+  const handleBuyNftCrypto = useCallback(
     async (orderBook: OrderBook) => {
       if (!publicKey) {
         // show select wallet modal
@@ -33,7 +48,6 @@ const useBuyNft = () => {
         return;
       }
       try {
-
         const auctionHouse = AUCTION_HOUSE!;
         const mint = orderBook.mint;
         const price = orderBook.price;
@@ -61,7 +75,7 @@ const useBuyNft = () => {
               transaction: res.txid,
               publicKey: publicKey.toBase58(),
               currency: "sol",
-              sellerKey: sellerKey!
+              sellerKey: sellerKey!,
             }),
           })
             .then((res) => res.json())
@@ -86,7 +100,8 @@ const useBuyNft = () => {
             if (updateRes.error) {
               toast({
                 position: "top",
-                description: updateRes.error || "Purchase was likely unsuccessful.",
+                description:
+                  updateRes.error || "Purchase was likely unsuccessful.",
                 status: "error",
                 duration: 5000,
                 isClosable: true,
@@ -119,7 +134,7 @@ const useBuyNft = () => {
   );
 
   return {
-    handleBuyNft,
+    handleBuyNftCrypto,
     buyingNft,
     publicKey,
     refetchOrderData,

@@ -18,7 +18,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .solana-wallet-multi-btn {
-    border-radius: 0.375rem;
+    border-radius: 1px;
     height: 40px;
     background-color: #2e3472;
     color: white;

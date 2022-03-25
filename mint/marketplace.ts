@@ -18,6 +18,9 @@ import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { RiContactsBookLine } from "react-icons/ri";
 import { KeySystems } from "hls.js";
 import { truncate } from "fs/promises";
+import { actions, NodeWallet, programs } from "@metaplex/js";
+import { createConnection } from "@/utils/web3/queries";
+import { PublicKey } from "@solana/web3.js";
 
 export const createOrder = async (
   mint: string,
@@ -365,3 +368,53 @@ export const cancel = async (
 
   return tx;
 };
+
+export const transferViaCreditCard = async (
+  mint: string,
+  price: number,
+  currency: string,
+  seller_private_key: web3.Keypair,
+  buyer_public_key: string,
+  svcKeypair: web3.Keypair
+): Promise<any> => {
+
+  const connection = createConnection(process.env.NEXT_PUBLIC_SOL_ENV!)
+
+  //send minimal sol to seller account to pay for the transaction
+  const transaction = new web3.Transaction().add(
+    web3.SystemProgram.transfer({
+      fromPubkey: svcKeypair.publicKey,
+      toPubkey: seller_private_key.publicKey,
+      lamports: web3.LAMPORTS_PER_SOL * 0.003,
+    }),
+  );
+
+  // Sign transaction, broadcast, and confirm
+  const signature = await web3.sendAndConfirmTransaction(
+    connection,
+    transaction,
+    [svcKeypair],
+  );
+
+  const token = new Token(
+    connection,
+    new PublicKey(mint),
+    TOKEN_PROGRAM_ID,
+    seller_private_key
+  )
+
+  const fromTokenAccount = await token.getOrCreateAssociatedAccountInfo(
+    seller_private_key.publicKey
+  );
+
+  const sendToken = await actions.sendToken({
+    connection,
+    amount: 1,
+    destination: new PublicKey(buyer_public_key),
+    source: fromTokenAccount.address,
+    wallet: new NodeWallet(seller_private_key),
+    mint: new PublicKey(mint),
+  })
+
+  return sendToken
+}

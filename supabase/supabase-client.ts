@@ -3,6 +3,7 @@ import SignInOptions from "@/types/SignInOptions";
 import SignUpOptions from "@/types/SignUpOptions";
 import { createClient } from "@supabase/supabase-js";
 import * as ga from "@/utils/ga";
+import { data } from "cheerio/lib/api/attributes";
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL as string,
@@ -171,6 +172,33 @@ export const getFileLinkFromSupabase = async (
     publicUrl: dataResponse?.publicURL,
   };
 };
+
+export const getScreenshot = async (
+  nft_id: number
+): Promise<{ error: string | null; publicUrl: string | undefined }> =>{
+
+  const { data, error } = await supabase.from("nft").select(`files!nft_screenshot_file_id_fkey(file_name)`).eq("id", nft_id).maybeSingle()
+
+  if (error) {
+    return {
+      error: error.message,
+      publicUrl: "",
+    };
+  }
+  const { data: dataResponse, error: errorFile } = await getSupabaseFileLink(
+    data.files.file_name
+  );
+  if (errorFile) {
+    return {
+      error: errorFile.message,
+      publicUrl: "",
+    };
+  }
+  return {
+    error: null,
+    publicUrl: dataResponse?.publicURL,
+  };
+}
 
 export const deleteNftById = async (
   nft_id: number,

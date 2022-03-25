@@ -28,6 +28,11 @@ const theme = extendTheme({
   },
   components: {
     Alert,
+    Button:{
+      baseStyle: {
+        borderRadius: "1px"
+      }
+    }
   },
 });
 

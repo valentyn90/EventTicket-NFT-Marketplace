@@ -26,11 +26,12 @@ export const getTotalSales = async (pubkey: string) => {
     .match({ seller_public_key: pubkey });
 
   if (data) {
-    const total = data.reduce((acc, curr) => acc + curr.price, 0);
+    const total = data.filter((val) => val.currency == "sol").reduce((acc, curr) => acc + curr.price, 0);
+    const total_usd = data.filter((val) => val.currency == "USD").reduce((acc, curr) => acc + curr.price, 0);
     const count = data.length;
-    return { total, count };
+    return { total, count, total_usd };
   }
-  return { total: 0, count: 0 };
+  return { total: 0, count: 0, total_usd: 0 };
 };
 
 export const getPublicKey = async (user_id: string) => {
@@ -178,3 +179,12 @@ export const getAllNftOwnersAndOrderBooks = async (
     nftOwners,
   };
 };
+
+export const getNftOwnerByMint = async (mint: string) =>
+  supabase
+    .from("nft_owner")
+    .select("*")
+    .match({
+      mint,
+    })
+    .maybeSingle();

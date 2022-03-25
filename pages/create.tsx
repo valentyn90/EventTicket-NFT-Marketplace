@@ -11,7 +11,6 @@ import { GetServerSideProps, NextApiRequest } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
 import React from "react";
-import Cookies from "cookies";
 
 interface Props {
   nftId?: number | null;
@@ -112,17 +111,6 @@ const Create: React.FC<Props> = ({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { user } = await supabase.auth.api.getUserByCookie(context.req);
   const { referralCode } = context.query;
-
-  const cookies = new Cookies(context.req, context.res);
-
-  let redirect_cookie_exists =
-    cookies.get("redirect-step-1") === undefined ? false : true;
-
-  if (!redirect_cookie_exists) {
-    cookies.set("redirect-step-1", true, {
-      maxAge: 1000 * 60 * 60,
-    });
-  }
 
   let nftId = null;
   let referral_code = null;

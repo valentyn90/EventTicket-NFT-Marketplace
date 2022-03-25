@@ -160,13 +160,13 @@ export class UserStore {
           // no new user, create empty nftInput and keep nft as null
           this.setNewData(user, userData);
         }
-      } else if (res.status === 400) {
+      } else if (res.status === 401) {
         this.finishLoading();
         // no user
       }
     } catch (err) {
       this.finishLoading();
-      console.log({ err });
+      // console.log({ err });
     }
   };
 
@@ -316,7 +316,7 @@ export class UserStore {
     );
 
     const { data: updateTwitterData, error: updateTwitterError } =
-      await updateTwitter(this.nftInput.twitter, this.userDetails.id);
+      await updateTwitter(this.nftInput.twitter.replace("@",""), this.userDetails.id);
 
     if (error) {
       alert(error.message);

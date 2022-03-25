@@ -76,7 +76,9 @@ const NavIndex: React.FC = () => {
         </NextLink>
       </Navbar.Brand>
       <Navbar.Links>
-        <NavTabLink>Create</NavTabLink>
+        {userStore.userDetails.role !== "marketplace" && (
+          <NavTabLink>Create</NavTabLink>
+        )}
         <NavTabLink>Marketplace</NavTabLink>
         {userStore.loggedIn && <NavTabLink>Collection</NavTabLink>}
         {userStore.loggedIn && MARKET_ENABLED && (
@@ -98,14 +100,14 @@ const NavIndex: React.FC = () => {
         <Navbar.SignIn>
           <NextLink href="/signin">
             <a>
-              <Button variant="ghost" colorScheme="blue">
+              <Button variant="ghost" colorScheme="blue" borderRadius={1}>
                 Sign In
               </Button>
             </a>
           </NextLink>
           <NextLink href={`/signup/${referralString}`}>
             <a>
-              <Button colorScheme="blue" color="white">
+              <Button colorScheme="blue" color="white" borderRadius={1}>
                 Sign Up For Free
               </Button>
             </a>
@@ -149,6 +151,7 @@ const NavIndex: React.FC = () => {
                   colorScheme="blue"
                   color="white"
                   variant="outline"
+                  borderRadius={1}
                   order={{ base: 2, lg: 1 }}
                   mr={[0, 0, 0, 2]}
                   mt={[6, 6, 6, 0]}

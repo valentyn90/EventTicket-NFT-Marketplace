@@ -183,7 +183,8 @@ export async function getServerSideProps({
   const cookies = new Cookies(req, res);
 
   if (!user) {
-    cookies.set("redirect-step-1", true, {
+
+    cookies.set("redirect-link", "/create/step-1", {
       maxAge: 1000 * 60 * 60,
     });
 
@@ -194,9 +195,11 @@ export async function getServerSideProps({
       },
     };
   } else {
-    cookies.set("redirect-step-1", "redirected", {
+
+    cookies.set("redirect-link", "/create", {
       maxAge: 1000 * 60 * 60,
     });
+
   }
 
   return {

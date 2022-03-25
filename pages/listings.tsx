@@ -69,7 +69,8 @@ const Listings = () => {
         setBalance(balance_res);
 
         const totalSales_res = await getTotalSales(res);
-        setTotalSales(totalSales_res.total);
+        const totalSales_usd = totalSales_res.total_usd / solPrice;
+        setTotalSales(totalSales_res.total + totalSales_usd);
         setInksSold(totalSales_res.count);
       }
     });
@@ -93,7 +94,9 @@ const Listings = () => {
             <VStack>
               <HStack alignItems={"baseline"} textAlign={"center"}>
                 <Text fontWeight="bold" fontSize={listingTextSize}>
-                  ◎{totalSales}
+                  ◎{totalSales.toLocaleString("en-US", {
+                    maximumFractionDigits: 3,
+                  })}
                 </Text>
                 <Text color="gray" fontSize={listingTextSize}>
                   ($
@@ -118,7 +121,9 @@ const Listings = () => {
             <VStack>
               <HStack alignItems={"baseline"}>
                 <Text fontWeight="bold" fontSize={listingTextSize}>
-                  ◎{balance}
+                  ◎{balance.toLocaleString("en-US", {
+                    maximumFractionDigits: 3,
+                  })}
                 </Text>
                 <Text color="gray" fontSize={listingTextSize}>
                   ($

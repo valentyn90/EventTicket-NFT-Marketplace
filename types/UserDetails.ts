@@ -8,6 +8,7 @@ interface UserDetails {
   user_name?: string;
   twitter?: string | null;
   email?: string | null;
+  role?: string | null;
 }
 
 export default UserDetails;

@@ -5,6 +5,59 @@ import { supabase } from "../../../supabase/supabase-admin";
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
+export async function sendLoginMail(email: string, magic_link: string) {
+  let template_id = 'd-da5928d99bf84a23b78a16c4b5b18480'
+
+  const msg = {
+    to: email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    template_id: template_id,
+    dynamic_template_data: {
+      magic_link
+    }
+  }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error)
+      return{ "success": true }
+    })
+
+    return {"success": true}
+
+}
+
+export async function sendPurchaseMail(email: string, nft_id: string, sn: string, card_preview_image: string) {
+  let template_id = 'd-e93510ea4bed4c8da540c318bcf320b2'
+
+  const msg = {
+    to: email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    template_id: template_id,
+    dynamic_template_data: {
+      nft_id,
+      sn,
+      card_preview_image
+    }
+  }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error)
+      return{ "success": true }
+    })
+
+}
 
 async function sendMail(nft_id: number = 96, template: string = 'minted') {
   let template_id = 'd-85742d2075cd45c09ba724458879bfde'

@@ -10,7 +10,8 @@ export const getMarketplaceNfts = async (): Promise<MarketplaceNft[]> => {
   const { data, error } = await supabase
     .from("nft")
     .select("*")
-    .eq("minted", true).order("id", {ascending: false});
+    .eq("minted", true)
+    .order("id", { ascending: false });
   // .filter("id", "in", "(104,96,115,108,110,112,113,114,115,116)");
 
   if (error) {
@@ -177,4 +178,80 @@ export const getNftByScreenshotId = async (id: number): Promise<Nft | null> => {
     return null;
   }
   return data;
+};
+
+export const getCheckoutData = async (nft_id: number, serial_no: number) => {
+  // get mintId and order_book data
+  const { data: mint, error: mintError } = await supabase
+    .from("nft_owner")
+    .select("mint")
+    .match({ nft_id, serial_no })
+    .single();
+
+  if (mintError) {
+    console.log(mintError);
+  }
+
+  let mintId = "";
+  if (mint) {
+    mintId = mint.mint;
+  }
+
+  let orderBook = null;
+
+  const { data: order, error: orderError } = await supabase
+    .from("order_book")
+    .select("*")
+    .match({ mint: mintId, active: true })
+    .order("id", { ascending: false });
+
+  if (orderError) {
+    console.log(orderError);
+  }
+
+  if (order && order.length > 0) {
+    orderBook = order[0];
+  }
+
+  return {
+    mintId,
+    orderBook,
+  };
+};
+
+export const getMintId = async (nft_id: number, serial_no: number) =>
+  supabase
+    .from("nft_owner")
+    .select("mint")
+    .match({ nft_id, serial_no })
+    .single();
+
+export const getCreditCardSaleByMint = async (mint: string) => {
+  const { data, error } = await supabase
+    .from("credit_card_sale")
+    .select("*")
+    .match({ mint })
+    .order("id", { ascending: false });
+
+  if (data && data.length > 0) {
+    // return most recent credit card sale entry
+    return data[0];
+  } else {
+    return null;
+  }
+};
+
+export const getCreditCardSaleBySessionId= async (stripe_tx: string) => {
+  const { data, error } = await supabase
+    .from("credit_card_sale")
+    .select("*")
+    .match({ stripe_tx })
+    .order("id", { ascending: false });
+
+  if (data && data.length > 0) {
+    // return most recent credit card sale entry
+    return data[0];
+  } else {
+    return null;
+  }
 };

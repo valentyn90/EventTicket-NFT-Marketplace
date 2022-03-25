@@ -45,7 +45,8 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
   const router = useRouter();
   const { solPrice } = getSolPrice();
 
-  const { handleBuyNft, buyingNft, publicKey, refetchOrderData } = useBuyNft();
+  const { handleBuyNftCrypto, buyingNft, publicKey, refetchOrderData } =
+    useBuyNft();
   const { handleCancelListing, cancellingNft } = useCancelNftListing();
   const { handleListNftForSale, listingNft } = useListNft();
   const { nftOwnerDetails, orderBooks, totalCards, mintDate } = useNftOrderBook(
@@ -68,6 +69,22 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
 
   const { serial_no } = router.query;
   let serial_int = serial_no === undefined ? 1 : parseInt(serial_no as string);
+
+  useEffect(() => {
+    // Check to see if this is a redirect back from Checkout
+    const query = new URLSearchParams(window.location.search);
+
+    if (query.get("canceled")) {
+      toast({
+        position: "top",
+        title: "Transaction Cancelled",
+        description: "Your card was not charged.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const { serial_no } = router.query;
@@ -104,8 +121,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
       }
 
       setSelectedSN(serial_int);
-    }
-    else{
+    } else {
       router.push(
         {
           pathname: `/card/${nft.id}`,
@@ -194,12 +210,13 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
       // buy view
       component = (
         <BuyNft
-          handleBuyNft={handleBuyNft}
+          handleBuyNftCrypto={handleBuyNftCrypto}
           selectedOrder={selectedOrder}
           buyingNft={buyingNft}
           publicKey={publicKey}
           solPrice={solPrice}
           nft_id={nft.id}
+          sn={selectedSN}
         />
       );
     } else if (
@@ -278,11 +295,11 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
               <Text fontSize={["2xl", "2xl", "4xl"]}>
                 {nft.first_name} {nft.last_name}
               </Text>
-              {mintDate && 
-              <Text fontSize={["l", "l", "2xl"]} >
-                {totalCards} Cards Minted on {mintDate}
-              </Text>
-              }
+              {mintDate && (
+                <Text fontSize={["l", "l", "2xl"]}>
+                  {totalCards} Cards Minted on {mintDate}
+                </Text>
+              )}
               {mintId && (
                 <Text
                   color={"gray"}

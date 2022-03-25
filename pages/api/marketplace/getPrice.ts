@@ -8,7 +8,7 @@ export default async function create(
     const mkt = req.query.mkt
 
     const response = await fetch(
-        "https://ftx.com/api/markets/SOL/USD"
+        `https://ftx.com/api/markets/${mkt}`
       )
 
     res.status(200).json(response.body);

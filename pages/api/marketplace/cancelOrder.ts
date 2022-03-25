@@ -57,7 +57,8 @@ export default async function create(
   const { data: orderBook, error: orderBookError } = await supabase
     .from("order_book")
     .select("*")
-    .match({ mint, buy: false, active: true });
+    .match({ mint, buy: false, active: true })
+    .order("id", { ascending: false });
 
   if (orderBookError) {
     return res.status(500).json({ error: orderBookError.message });
@@ -68,13 +69,8 @@ export default async function create(
   // 3. check if it's active
   // there are multiple order books for each mint
   let activeOrder = null;
-  for (var i = 0; i < orderBook.length; i++) {
-    const order = orderBook[i];
-    if (order.active) {
-      // found active order
-      activeOrder = order;
-      break;
-    }
+  if (orderBook && orderBook.length > 0) {
+    activeOrder = orderBook[0];
   }
 
   if (!activeOrder) {
@@ -82,8 +78,7 @@ export default async function create(
   }
 
   try {
-
-    const actual_seller_keypair = await getKeypair(user.id) as web3.Keypair;
+    const actual_seller_keypair = (await getKeypair(user.id)) as web3.Keypair;
     // now use active order mint to update blockchain data
     const sellerKeypair = await web3.Keypair.fromSecretKey(
       base58.decode(verifiedSolSvcKey)

@@ -34,6 +34,9 @@ export const createUserDetails = async (
 export const getUserDetails = (id: string) =>
   supabase.from("user_details").select("*").eq("user_id", id).maybeSingle();
 
+export const getUserDetailsByEmail = (email: string) =>
+  supabase.from("user_details").select("*").match({ email }).single();
+
 export const updateUsername = async (user_name: string, id: string) =>
   supabase
     .from("user_details")
