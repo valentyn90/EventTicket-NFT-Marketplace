@@ -10,7 +10,8 @@
     "start": "next start",
     "typecheck": "tsc",
     "lint": "eslint --ext .ts,.tsx --ignore-path .gitignore .",
-    "lint:fix": "eslint --fix --ext .ts,.tsx --ignore-path .gitignore ."
+    "lint:fix": "eslint --fix --ext .ts,.tsx --ignore-path .gitignore .",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@bundlr-network/client": "^0.4.11",
@@ -79,6 +80,7 @@
     "validator": "^13.7.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.18.1",
     "@types/bs58": "^4.0.1",
     "@types/crypto-js": "^4.1.0",
     "@types/micro": "^7.3.6",
