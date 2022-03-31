@@ -22,6 +22,7 @@
     "@fontsource/kadwa": "^4.4.5",
     "@fontsource/lato": "^4.5.0",
     "@fontsource/open-sans": "^4.4.5",
+    "@metaplex-foundation/mpl-auction-house": "^1.1.1",
     "@metaplex/js": "^4.12.0",
     "@mux/mux-node": "^3.3.1",
     "@mux/upchunk": "^2.2.2",

@@ -14,6 +14,9 @@ import { generateMetadata } from "./utils/metadata";
 import Key from "@/types/Key";
 import BigNumber from "bignumber.js";
 import { checkTokenBalance } from "./utils/accounts";
+import { Account } from "@metaplex-foundation/mpl-core"
+import { Metadata, MetadataProgram, SetAndVerifyCollectionArgs, SetAndVerifyCollectionCollection, Edition } from "@metaplex-foundation/mpl-token-metadata";
+
 
 //https://openquest.xyz/quest/create-burn-nft-solana
 
@@ -182,6 +185,61 @@ export async function uploadMetadataToArweave(
   return { arweave_id };
 }
 
+export async function updateMetadata(mint_key: web3.PublicKey) {
+  // Update metadata - 43n7Z5UwFivwyAGSonriJwKM2H8e7cQZPQuNNRaVv6Eb
+  const env = process.env.NEXT_PUBLIC_SOL_ENV!;
+
+  const keypair = await web3.Keypair.fromSecretKey(
+    base58.decode(verifiedSolSvcKey)
+  );
+  const wallet = new NodeWallet(keypair);
+  const connection = new web3.Connection(
+    env,
+    "confirmed"
+  );
+
+  const collectionMint = env.includes("dev") ? new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz")
+  : new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz"); // Replace with mainnet collection mint key
+
+  if (!env.includes("dev")) {
+    // Remove once we have a production collection mint key
+    console.log("Not on devnet");
+    return null
+  }
+
+
+  const collectionMasterEdition = await Edition.getPDA(collectionMint);
+  const collectionMetadata = await Metadata.getPDA(collectionMint);
+
+
+  const metadataAccount = await Metadata.getPDA(mint_key)
+
+  const signVerifyMetadata =
+  {
+    metadata: metadataAccount,
+    collectionAuthority: keypair.publicKey,             //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
+    collectionMint: collectionMint,                     //new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz"),
+    updateAuthority: keypair.publicKey,                 //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
+    collectionMetadata: collectionMetadata,             //new web3.PublicKey("6dq64RSnCoJHGn89VzshxkzPyGJsW51JqgxVa8AUsXbg"),
+    collectionMasterEdition: collectionMasterEdition    //new web3.PublicKey("Gkq55px9fua9CmafLdQW1Y9r1xgLT8Qei2zkVUMDBszH")
+  }
+
+  const tx = new SetAndVerifyCollectionCollection({ feePayer: keypair.publicKey }, signVerifyMetadata)
+
+  const transaction = new web3.Transaction().add(
+    tx
+  )
+
+  const signature = await web3.sendAndConfirmTransaction(
+    connection,
+    transaction,
+    [wallet.payer],
+  );
+
+  return signature;
+
+}
+
 export async function uploadToArweave(data: Buffer, tags: any) {
   const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
   const bundlr = new Bundlr(
@@ -246,7 +304,6 @@ export async function NFTMintMaster(
     }
 
     const user_id = data.owner_id;
-    //TODO: Factor out Devnet to an Env variable and add genesysGo RPC service.
     const keypair = await web3.Keypair.fromSecretKey(
       base58.decode(verifiedSolSvcKey)
     );
@@ -283,7 +340,6 @@ export async function NFTMintMaster(
       // const mint_key = new web3.PublicKey("3i6pnWCYxbF9oT1HK16TC1wqb6PKoHQFvRzRJp62EcCX");
       const mint_key = new web3.PublicKey(res.mint);
       // Need to wait for the mint key to propagate
-
       await sleep(5000);
 
       const balance = await checkTokenBalance(
@@ -309,6 +365,11 @@ export async function NFTMintMaster(
 
       console.log("Minted a new master NFT:", res);
       console.log("Sent NFT to owner:", transfer_res);
+
+
+      const sig = await updateMetadata(mint_key)
+
+      console.log("Sig:", sig);
 
       const { data, error } = await supabase
         .from("nft_owner")
