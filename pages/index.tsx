@@ -10,6 +10,13 @@ const Index: React.FC = () => {
 export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   const cookies = new Cookies(req);
 
+  return {
+    redirect: {
+      destination: "/create",
+      permanent: false,
+    },
+  }
+  
   if (cookies.get("show-banner")) {
     return {
       redirect: {
