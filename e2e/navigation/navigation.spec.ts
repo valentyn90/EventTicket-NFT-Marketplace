@@ -74,7 +74,7 @@ test("should navigate to the redirect page", async ({ page }) => {
 test("should navigate to the recruit page", async ({ page }) => {
   // Start from the index page (the baseURL is set via the webServer in the playwright.config.ts)
   await page.goto(`${url}/recruit`);
-  await expect(page).toHaveURL(`${url}/recruit`);
+  await expect(page).toHaveURL(`${url}/signin`);
   await expect(page).not.toHaveTitle("404: This page could not be found");
 });
 

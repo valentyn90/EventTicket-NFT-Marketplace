@@ -21,6 +21,7 @@ import { truncate } from "fs/promises";
 import { actions, NodeWallet, programs } from "@metaplex/js";
 import { createConnection } from "@/utils/web3/queries";
 import { PublicKey } from "@solana/web3.js";
+import {AuctionHouse} from "@metaplex-foundation/mpl-auction-house/dist/src/generated";
 
 export const createOrder = async (
   mint: string,
@@ -99,10 +100,16 @@ export const sell = async (
   const auctionHouseKeypair = seller_keypair;
   const env = process.env.NEXT_PUBLIC_SOL_ENV as string;
   let   env_name = "devnet";
-  console.log(`env is ${env}`);
+
   if(env === "https://ssc-dao.genesysgo.net/"){
     env_name = "mainnet-beta";
   }
+
+  const connection = new web3.Connection(
+    env == "devnet" ? web3.clusterApiUrl("devnet") : env,
+    "confirmed"
+  );
+
   const auctionHouseKey = new web3.PublicKey(auctionHouse);
   const walletKeyPair = seller_private_key;
 
@@ -116,6 +123,10 @@ export const sell = async (
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(
     auctionHouseKey
   );
+
+  // const auctionHouseNew = await AuctionHouse.fromAccountAddress(connection, auctionHouseKey)
+
+  
 
   try {
     const buyPriceAdjusted = new BN(
@@ -311,8 +322,6 @@ export const cancel = async (
       buyPriceAdjusted
     )
   )[0];
-
-  console.log(`tradeState: ${tradeState}`);
 
   const signers: web3.Keypair[] = [auctionHouseKeypair, walletKeyPair];
 

@@ -52,7 +52,7 @@ export const sendTransactionWithRetryWithKeypair = async (
     await wallet?.signTransaction(transaction);
   }
   catch (e: any) {
-    log.error('Error signing transaction', e);
+    // log.error('Error signing transaction', e);
     if (e.message.includes('User rejected')) {
       return{message: e.message};
     }

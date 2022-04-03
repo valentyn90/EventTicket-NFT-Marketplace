@@ -14,7 +14,7 @@ export default async function mint(
 
     // const stuff = await uploadImageToArweave(142, 3);
 
-    const stuff = await updateMetadata(new web3.PublicKey("2UtShXKkgQr9rejpPxcEuiW7m6jqc5URwgBwdKVKqqLh"));
+    const stuff = await updateMetadata(new web3.PublicKey("HiPq5Whdx1CmGJB4AEpEmaRtqHxo1WgbjG2H7M77dY6g"));
 
     // const stuff = await uploadImageToArweave(142)
 

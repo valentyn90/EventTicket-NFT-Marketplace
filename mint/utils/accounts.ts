@@ -653,7 +653,7 @@ export async function loadAuctionHouseProgram(
   env: string,
   customRpcUrl?: string,
 ) {
-  if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+  // if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
 
   // @ts-ignore
   const solConnection = new anchor.web3.Connection(
@@ -675,7 +675,7 @@ export async function loadAuctionHouseProgramAnchor(
   env: string,
   customRpcUrl?: string | null,
 ) {
-  if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+  // if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
 
   console.log(customRpcUrl)
   // @ts-ignore
@@ -761,7 +761,7 @@ export const getBalance = async (
   env: string,
   customRpcUrl?: string,
 ): Promise<number> => {
-  if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
+  // if (customRpcUrl) console.log('USING CUSTOM URL', customRpcUrl);
   const connection = new anchor.web3.Connection(
     //@ts-ignore
     customRpcUrl || getCluster(env),

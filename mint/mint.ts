@@ -212,7 +212,6 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
     mint_key,
     keypair.publicKey
   )
-  console.log(`tokenAccount: ${tokenAccount}`)
 
   const signVerifyMetadata =
   {
@@ -240,7 +239,8 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
     tx, updatePrimary
   )
 
-  const signature = await web3.sendAndConfirmTransaction(
+  const signature = await sendTxWithRetry(
+    10,
     connection,
     transaction,
     [wallet.payer],
@@ -248,6 +248,103 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
 
   return signature;
 
+}
+
+async function mintNFTwRetry(attempts: number, connection: web3.Connection, wallet: Wallet, uri: string, maxSupply: number):
+  Promise<web3.PublicKey|null | Promise<web3.PublicKey|null >> {
+
+  if(attempts === 0) {
+    return null;
+  }  
+  try {
+    const result = await actions.mintNFT({
+      connection,
+      wallet,
+      uri,
+      maxSupply,
+    });
+
+    const res = stringifyPubkeysAndBNsInObject(result);
+
+    const mint_key = new web3.PublicKey(res.mint);
+
+    let balance = null
+    let count = 0
+
+    while (balance === null) {
+      console.log(`Looping ${count}`)
+      count++
+      if (count > 10) {
+        return mintNFTwRetry(attempts - 1, connection, wallet, uri, maxSupply)
+      }
+      await sleep(3000);
+      balance = await checkTokenBalance(
+        connection,
+        wallet.publicKey,
+        mint_key
+      );
+    }
+
+    const token_account = new web3.PublicKey(balance.value[0].pubkey);
+
+    console.log("Minted a new master NFT:", res);
+    return mint_key;
+
+  } catch (e) {
+    console.log("Error minting NFT:", e);
+    return mintNFTwRetry(attempts - 1, connection, wallet, uri, maxSupply)
+  }
+}
+
+export async function sendTxWithRetry(attempts: number, connection: web3.Connection, transaction: web3.Transaction, signers: web3.Signer[]):
+  Promise<string | Promise<string>> {
+
+  if (attempts === 0) {
+    const signature = await web3.sendAndConfirmTransaction(
+      connection,
+      transaction,
+      signers,
+    );
+    return signature;
+  }
+  try {
+    const signature = await web3.sendAndConfirmTransaction(
+      connection,
+      transaction,
+      signers,
+    );
+    return signature;
+
+  } catch (error) {
+    sleep(3000)
+    return sendTxWithRetry(attempts - 1, connection, transaction, signers)
+  }
+}
+
+async function sendTokenWithRetry(attempts: number, connection: web3.Connection, wallet: Wallet, source: web3.PublicKey, destination: web3.PublicKey, mint: web3.PublicKey, amount: number):
+  Promise<string | Promise<string>> {
+
+  if (attempts === 0) {
+    return "Failure"
+  }
+  try{
+    const send_result = await actions.sendToken({
+    connection,
+    wallet,
+    source, //source_pubkey,
+    destination,
+    mint,
+    amount
+  });
+
+  const transfer_res = stringifyPubkeysAndBNsInObject(send_result);
+  return transfer_res
+}
+catch(e){
+  console.log("Error sending token:", e);
+  return sendTokenWithRetry(attempts - 1, connection, wallet, source, destination, mint, amount)
+}
+  
 }
 
 export async function uploadToArweave(data: Buffer, tags: any) {
@@ -331,18 +428,22 @@ export async function NFTMintMaster(
     if (uri) {
       const maxSupply = 0;
 
-      // This isn't reliable. It will return even if the mint is not complete
-      const result = await actions.mintNFT({
-        connection,
-        wallet,
-        uri,
-        maxSupply,
-      });
+      const mint_key = await mintNFTwRetry(5, connection, wallet, uri, maxSupply)
 
-      const res = stringifyPubkeysAndBNsInObject(result);
-      console.log("Minted a new master NFT:", res);
+      if (!mint_key) {
+        return { mint: null }
+      }
 
-      // Send NFT to owner
+      console.log(`Updating metadata`)
+
+      const sig = await updateMetadata(mint_key!)
+
+      const token_account = await Token.getAssociatedTokenAddress(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        mint_key!,
+        keypair.publicKey
+      )
 
       // Get public key of owner
       const { data: public_key, error: ownerError } = await supabase
@@ -351,52 +452,21 @@ export async function NFTMintMaster(
         .eq("user_id", user_id)
         .single();
 
-      // const mint_key = new web3.PublicKey("3i6pnWCYxbF9oT1HK16TC1wqb6PKoHQFvRzRJp62EcCX");
-      const mint_key = new web3.PublicKey(res.mint);
-      // Need to wait for the mint key to propagate
-
-      let balance = null
-
-      while (balance === null) {
-        console.log("looping")
-        await sleep(5000);
-        balance = await checkTokenBalance(
-          connection,
-          wallet.publicKey,
-          mint_key
-        );
-      }
-
-      console.log(`Updating metadata`)
-
-      const sig = await updateMetadata(mint_key)
-
-      const source_pubkey = new web3.PublicKey(balance.value[0].pubkey);
-
       const destination_pubkey = new web3.PublicKey(public_key.public_key);
 
-      const send_result = await actions.sendToken({
-        connection,
-        wallet,
-        source: source_pubkey,
-        destination: destination_pubkey,
-        mint: mint_key,
-        amount: 1,
-      });
-
-      const transfer_res = stringifyPubkeysAndBNsInObject(send_result);
+      const transfer_res = await sendTokenWithRetry(5, connection, wallet, token_account, destination_pubkey, mint_key, 1)
 
       console.log("Sent NFT to owner:", transfer_res);
 
 
       const { data, error } = await supabase
         .from("nft_owner")
-        .update({ mint: res.mint })
+        .update({ mint: mint_key.toBase58() })
         .eq("nft_id", nft_id)
         .eq("serial_no", serial_no)
         .single();
 
-      return res;
+      return { mint: mint_key!.toBase58() };
     } else return { mint: null };
   } catch (err) {
     console.log(err);

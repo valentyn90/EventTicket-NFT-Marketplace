@@ -104,19 +104,16 @@ export default async function create(
           keyData.public_key
         );
 
-        console.log({ order });
-
         if (order !== null) {
           return res.status(200).json({ success: true, order });
         }
       } else {
         // Order Failed, should send back to frontend
-        return res.status(500).json({ error: "Error creating error." });
+        return res.status(500).json({ error: "Error creating your sale order, please try again." });
       }
 
-      console.log({ ahSell });
     }
   }
 
-  return res.status(500).json({ error: "There was an error." });
+  return res.status(500).json({ error: "Error creating your sale order, please try again." });
 }

@@ -85,8 +85,6 @@ export default async function create(
     );
     const auctionHouse = AUCTION_HOUSE!;
 
-    console.log(activeOrder);
-
     const ahCancel = await cancel(
       auctionHouse,
       sellerKeypair,
@@ -94,13 +92,11 @@ export default async function create(
       activeOrder.price,
       activeOrder.currency,
       activeOrder.buy,
-      actual_seller_keypair // switch this to actual seller's keypair
+      actual_seller_keypair 
     );
 
-    console.log(`ahCancel: ${JSON.stringify(ahCancel)}`);
-
     if (ahCancel.error) {
-      return res.status(500).json({ error: "There was an error." });
+      return res.status(500).json({ error: `Error cancelling your sale. Please try again. message: ${ahCancel.error}` });
     }
 
     const stuff = await cancelOrder(
@@ -112,14 +108,13 @@ export default async function create(
       activeOrder.public_key
     );
 
-    console.log(stuff);
     if (stuff === null) {
-      return res.status(500).json({ error: "There was an error." });
+      return res.status(500).json({ error: "Error cancelling your sale. Please try again." });
     } else {
       return res.status(200).json({ success: true, orderBook: stuff[0] });
     }
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ error: "There was an error." });
+    return res.status(500).json({ error: `Error cancelling your sale. Please try again. Message: ${err}` });
   }
 }
