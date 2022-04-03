@@ -36,7 +36,7 @@ const MintingModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef(null);
 
-  const [countdown, setCountdown] = useState(30);
+  const [countdown, setCountdown] = useState(90);
 
   useEffect(() => {
     let interval: any = null;
@@ -76,7 +76,7 @@ const MintingModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           <AlertDialogBody>
             Your VerifiedInk is minting then listing on the Solana Network.
             <br/><br/>
-            Please do not navigate to another page, this can sometimes take up to 30 seconds.
+            Please do not navigate to another page, this can sometimes take up to 90 seconds.
           </AlertDialogBody>
           <AlertDialogBody>
             {countdown > 0 ? `Time to list: ${countdown}s` : <Loader>Just a little longer</Loader>}
