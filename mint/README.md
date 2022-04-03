@@ -50,4 +50,6 @@ ts-node ~/metaplex-foundation/metaplex/js/packages/cli/src/auction-house-cli.ts 
 ```
 Output `zfQkKkdNbZB6Bnqe4ynEyT7gjHSd28mjj1xqPEVMAgT`
 
+Production `Fmi98rgkH9jU4mEwp9ZEkaNMEdWpj97U9xXuRcVjCP9p`
+
 

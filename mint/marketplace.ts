@@ -98,7 +98,11 @@ export const sell = async (
   const tokenSize = 1;
   const auctionHouseKeypair = seller_keypair;
   const env = process.env.NEXT_PUBLIC_SOL_ENV as string;
-
+  let   env_name = "devnet";
+  console.log(`env is ${env}`);
+  if(env === "https://ssc-dao.genesysgo.net/"){
+    env_name = "mainnet-beta";
+  }
   const auctionHouseKey = new web3.PublicKey(auctionHouse);
   const walletKeyPair = seller_private_key;
 
@@ -107,7 +111,7 @@ export const sell = async (
   const auctionHouseKeypairLoaded = auctionHouseKeypair
   const anchorProgram = await loadAuctionHouseProgram(
     auctionHouseSigns ? auctionHouseKeypairLoaded : walletKeyPair,
-    env
+    env_name, env
   );
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(
     auctionHouseKey
@@ -257,6 +261,11 @@ export const cancel = async (
   // const auctionHouseKeypair = await web3.Keypair.fromSecretKey(base58.decode("SECRETKEY"))
   const auctionHouseKeypair = seller_keypair;
   const env = process.env.NEXT_PUBLIC_SOL_ENV as string;
+  let   env_name = "devnet";
+
+  if(env === "https://ssc-dao.genesysgo.net/"){
+    env_name = "mainnet-beta";
+  }
 
   const auctionHouseKey = new web3.PublicKey(auctionHouse);
   const walletKeyPair = seller_private_key;
@@ -266,7 +275,7 @@ export const cancel = async (
   const auctionHouseKeypairLoaded = auctionHouseKeypair
   const anchorProgram = await loadAuctionHouseProgram(
     auctionHouseSigns ? auctionHouseKeypairLoaded! : walletKeyPair,
-    env
+    env_name, env
   );
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(
     auctionHouseKey
@@ -303,19 +312,6 @@ export const cancel = async (
     )
   )[0];
 
-  console.log(
-    "EVERYTHING",
-    auctionHouseKey,
-    walletKeyPair.publicKey,
-    tokenAccountKey,
-    //@ts-ignore
-    auctionHouseObj.treasuryMint,
-    mintKey,
-    tokenSizeAdjusted,
-    buyPriceAdjusted,
-    "---------------"
-  );
-
   console.log(`tradeState: ${tradeState}`);
 
   const signers: web3.Keypair[] = [auctionHouseKeypair, walletKeyPair];
@@ -340,7 +336,7 @@ export const cancel = async (
     }
   );
 
-  console.log(`tradeState.toBase58(): ${tradeState.toBase58()}`);
+  // console.log(`tradeState.toBase58(): ${tradeState.toBase58()}`);
 
   if (auctionHouseKeypairLoaded) {
     signers.push(auctionHouseKeypairLoaded);
@@ -356,7 +352,7 @@ export const cancel = async (
       .map((k) => (k.isSigner = true));
   }
 
-  console.log(instruction.keys.map((k) => k.pubkey.toBase58()));
+  // console.log(instruction.keys.map((k) => k.pubkey.toBase58()));
 
   const tx = await sendTransactionWithRetryWithKeypair(
     anchorProgram.provider.connection,

@@ -115,6 +115,7 @@ const SellNft: React.FC<Props> = ({
             )
               .then(() => {
                 setOpenBuyModal(false);
+                setSolSellPrice("");
               })
               .catch((err) => {
                 console.log(err);

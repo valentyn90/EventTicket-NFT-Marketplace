@@ -35,7 +35,7 @@ const useNftOrderBook = ({ nft }: Props) => {
         setOrderBooks(ownerData);
       }
     });
-  }, [nft.id, userStore.ui.refetchMarketplace]);
+  }, [nft.id, userStore.ui.refetchMarketplace, userStore.ui.refetchListings]);
 
   return {
     nftOwnerDetails,

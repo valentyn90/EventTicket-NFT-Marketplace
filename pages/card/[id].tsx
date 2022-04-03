@@ -1,6 +1,7 @@
 import BuyNft from "@/components/Collection/BuyNft";
 import CancelNft from "@/components/Collection/CancelNft";
 import SellNft from "@/components/Collection/SellNft";
+import ShareButton from "@/components/Components/ShareButton";
 import Card from "@/components/NftCard/Card";
 import AlertModal from "@/components/ui/AlertModal";
 import { CardBox } from "@/components/ui/CardBox";
@@ -234,6 +235,8 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
           cancellingNft={cancellingNft}
         />
       );
+    } else {
+      component = <ShareButton id={nft.id} serial_no={selectedSN} />;
     }
   } else {
     if (selectedOwner) {
@@ -252,7 +255,11 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
             listingNft={listingNft}
           />
         );
+      } else {
+        component = <ShareButton id={nft.id} serial_no={selectedSN} />;
       }
+    } else {
+      component = <ShareButton id={nft.id} serial_no={selectedSN} />;
     }
   }
 
@@ -305,7 +312,6 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
                   color={"gray"}
                   cursor={"pointer"}
                   fontSize={["sm", "sm", "sm"]}
-                  mb={8}
                   onClick={() => {
                     if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("ssc-dao")) {
                       window.open(
@@ -324,7 +330,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
                 </Text>
               )}
               {nftOwnerDetails && nftOwnerDetails.length > 0 && (
-                <HStack>
+                <HStack mt={6}>
                   <Text fontSize={["l", "l", "2xl"]} mr={2}>
                     View SN:
                   </Text>

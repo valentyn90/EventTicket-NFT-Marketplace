@@ -126,11 +126,11 @@ const CardListItem: React.FC<Props> = ({
             onClick={() => {
               if (listType === "collection") {
                 userStore.ui.setFieldValue("selectedSN", serial_no);
-                userStore.ui.setCollectionSellView(false);
+                userStore.ui.setListView(false);
                 userStore.ui.openModalWithNft(nft, listType);
               }
               if (listType === "listings") {
-                userStore.ui.setCollectionSellView(true);
+                userStore.ui.setListView(true);
                 userStore.ui.setFieldValue("selectedSN", serial_no);
                 userStore.ui.openModalWithNft(nft, listType);
               }
@@ -139,7 +139,6 @@ const CardListItem: React.FC<Props> = ({
                 userStore.ui.openModalWithNft(nft, "marketplace-buy");
               }
             }}
-            
           >
             <Image
               position="absolute"
@@ -160,11 +159,11 @@ const CardListItem: React.FC<Props> = ({
             w="100%"
           >
             <Box
-            w="100%"
-            py="1"
-            cursor="pointer"
-            textAlign="center"
-            className="view-btn"
+              w="100%"
+              py="1"
+              cursor="pointer"
+              textAlign="center"
+              className="view-btn"
               //size="sm"
               // mb={["8px", "8px", "0"]}
               // colorScheme="blue"
@@ -172,11 +171,11 @@ const CardListItem: React.FC<Props> = ({
               onClick={() => {
                 if (listType === "collection") {
                   userStore.ui.setFieldValue("selectedSN", serial_no);
-                  userStore.ui.setCollectionSellView(false);
+                  userStore.ui.setListView(false);
                   userStore.ui.openModalWithNft(nft, listType);
                 }
                 if (listType === "listings") {
-                  userStore.ui.setCollectionSellView(true);
+                  userStore.ui.setListView(true);
                   userStore.ui.setFieldValue("selectedSN", serial_no);
                   userStore.ui.openModalWithNft(nft, listType);
                 }
@@ -186,7 +185,7 @@ const CardListItem: React.FC<Props> = ({
                 }
               }}
             >
-              {!price && 'View' } 
+              {!price && "View"}
               {price && `◎ ${price}`}
             </Box>
             {listType === "listings" && (
@@ -197,11 +196,11 @@ const CardListItem: React.FC<Props> = ({
                 textAlign="center"
                 variant="outline"
                 onClick={() => {
-                  if(cancellingNft || !MARKET_ENABLED) {
+                  if (cancellingNft || !MARKET_ENABLED) {
                     return;
                   }
-                  setOpenAlert(true)}
-                }
+                  setOpenAlert(true);
+                }}
                 // disabled={cancellingNft || !MARKET_ENABLED}
                 colorScheme={"red"}
               >
@@ -218,7 +217,7 @@ const CardListItem: React.FC<Props> = ({
                 textColor={marketplaceBtnColor}
                 // disabled={sellData?.length === 0 || !MARKET_ENABLED}
                 onClick={() => {
-                  if(sellData?.length === 0 || !MARKET_ENABLED){
+                  if (sellData?.length === 0 || !MARKET_ENABLED) {
                     return;
                   }
                   // find cheapest SN
@@ -237,11 +236,11 @@ const CardListItem: React.FC<Props> = ({
                 textColor={MARKET_ENABLED ? "white" : "gray"}
                 cursor={MARKET_ENABLED ? "pointer" : "not-allowed"}
                 onClick={() => {
-                  if(!MARKET_ENABLED) {
-                    return
+                  if (!MARKET_ENABLED) {
+                    return;
                   }
                   // userStore.ui.setFieldValue("selectedSN", 0);
-                  userStore.ui.setCollectionSellView(true);
+                  userStore.ui.setListView(true);
                   userStore.ui.openModalWithNft(nft, listType);
                 }}
                 // disabled={!MARKET_ENABLED}

@@ -62,25 +62,11 @@ const AppModal = () => {
     }
     case "listings":
     case "collection": {
-      component = (
-        <CollectionModalContent
-          flipCard={flipCard}
-          initFlip={initFlip}
-          setInitFlip={setInitFlip}
-          setFlipCard={setFlipCard}
-        />
-      );
+      component = <CollectionModalContent />;
       break;
     }
     case "marketplace-buy": {
-      component = (
-        <MarketplaceModalBuy
-          flipCard={flipCard}
-          initFlip={initFlip}
-          setInitFlip={setInitFlip}
-          setFlipCard={setFlipCard}
-        />
-      );
+      component = <MarketplaceModalBuy />;
       break;
     }
     case "marketplace": {

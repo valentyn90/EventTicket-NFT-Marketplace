@@ -39,6 +39,12 @@ export const buy = async (
   const auctionHouseKeypair = null;
   const env = process.env.NEXT_PUBLIC_SOL_ENV!;
 
+  let env_name = "devnet";
+
+  if(env === "https://ssc-dao.genesysgo.net/"){
+    env_name = "mainnet-beta";
+  }
+
   const auctionHouseKey = new web3.PublicKey(auctionHouse);
 
   const mintKey = new web3.PublicKey(mint);
@@ -46,7 +52,7 @@ export const buy = async (
   const auctionHouseKeypairLoaded = auctionHouseKeypair
     ? await web3.Keypair.fromSecretKey(base58.decode("SECRETKEY")) //loadWalletKey(auctionHouseKeypair)
     : null;
-  const anchorProgram = await loadAuctionHouseProgramAnchor(walletWrapper, env);
+  const anchorProgram = await loadAuctionHouseProgramAnchor(walletWrapper, env_name, env);
   const auctionHouseObj = await anchorProgram.account.auctionHouse.fetch(
     auctionHouseKey
   );

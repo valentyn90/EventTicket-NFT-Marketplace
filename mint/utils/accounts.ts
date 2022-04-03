@@ -741,13 +741,18 @@ export async function getTokenAmount(
 }
 
 export async function checkTokenBalance(
-	connection: Connection,
-	owner: PublicKey,
-	mint: PublicKey,
-): Promise<ReturnType<typeof connection.getTokenAccountsByOwner>> {
+  connection: Connection,
+  owner: PublicKey,
+  mint: PublicKey,
+): Promise<ReturnType<typeof connection.getTokenAccountsByOwner> | null> {
 
-	const balance = await connection.getTokenAccountsByOwner(owner, {mint}, 'processed')
-  return balance
+  try {
+    const balance = await connection.getTokenAccountsByOwner(owner, { mint }, 'processed')
+    return balance
+  }
+  catch (e) {
+    return null
+  }
 
 }
 

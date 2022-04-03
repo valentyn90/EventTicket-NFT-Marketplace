@@ -44,6 +44,7 @@ const useCancelNftListing = () => {
     } else if (res.success) {
       // success
       userStore.ui.refetchListingsData();
+      userStore.ui.refetchMarketplaceData();
       if (setSolSellPrice) {
         setSolSellPrice("");
       }

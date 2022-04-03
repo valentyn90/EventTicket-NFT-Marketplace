@@ -12,7 +12,6 @@ export const getMarketplaceNfts = async (): Promise<MarketplaceNft[]> => {
     .select("*")
     .eq("minted", true)
     .order("id", { ascending: false });
-  // .filter("id", "in", "(104,96,115,108,110,112,113,114,115,116)");
 
   if (error) {
     console.log(error);
@@ -241,7 +240,7 @@ export const getCreditCardSaleByMint = async (mint: string) => {
   }
 };
 
-export const getCreditCardSaleBySessionId= async (stripe_tx: string) => {
+export const getCreditCardSaleBySessionId = async (stripe_tx: string) => {
   const { data, error } = await supabase
     .from("credit_card_sale")
     .select("*")

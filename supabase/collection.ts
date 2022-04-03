@@ -26,8 +26,12 @@ export const getTotalSales = async (pubkey: string) => {
     .match({ seller_public_key: pubkey });
 
   if (data) {
-    const total = data.filter((val) => val.currency == "sol").reduce((acc, curr) => acc + curr.price, 0);
-    const total_usd = data.filter((val) => val.currency == "USD").reduce((acc, curr) => acc + curr.price, 0);
+    const total = data
+      .filter((val) => val.currency == "sol")
+      .reduce((acc, curr) => acc + curr.price, 0);
+    const total_usd = data
+      .filter((val) => val.currency == "USD")
+      .reduce((acc, curr) => acc + curr.price, 0);
     const count = data.length;
     return { total, count, total_usd };
   }
@@ -40,8 +44,6 @@ export const getPublicKey = async (user_id: string) => {
     .select("public_key")
     .eq("user_id", user_id)
     .single();
-
-  console.log(keyData);
 
   if (keyData) {
     return keyData.public_key;

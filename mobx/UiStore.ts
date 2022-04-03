@@ -12,7 +12,7 @@ export class UiStore {
   openModal = false;
   modalContentType: ModalContentType;
   refetchAdmin = false;
-  collectionSellView = false;
+  listView = false;
   selectedSN = 1;
   refetchListings = false;
   refetchMarketplace = false;
@@ -22,7 +22,7 @@ export class UiStore {
   resetValues() {
     this.selectedNft = null;
     this.openModal = false;
-    this.collectionSellView = false;
+    this.listView = false;
   }
 
   constructor(store: UserStore) {
@@ -44,8 +44,8 @@ export class UiStore {
     });
   };
 
-  setCollectionSellView = (sell: boolean) => {
-    this.collectionSellView = sell;
+  setListView = (list: boolean) => {
+    this.listView = list;
   };
 
   refetchMarketplaceData = () => {

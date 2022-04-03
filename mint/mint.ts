@@ -1,7 +1,7 @@
 import * as web3 from "@solana/web3.js";
 import { actions, Wallet, NodeWallet } from "@metaplex/js";
 import base58 from "bs58";
-import { Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { supabase } from "@/supabase/supabase-admin";
 import crypto from "crypto-js";
 import randCrypto from "crypto";
@@ -15,7 +15,7 @@ import Key from "@/types/Key";
 import BigNumber from "bignumber.js";
 import { checkTokenBalance } from "./utils/accounts";
 import { Account } from "@metaplex-foundation/mpl-core"
-import { Metadata, MetadataProgram, SetAndVerifyCollectionArgs, SetAndVerifyCollectionCollection, Edition } from "@metaplex-foundation/mpl-token-metadata";
+import { Metadata, UpdatePrimarySaleHappenedViaToken, SetAndVerifyCollectionCollection, Edition } from "@metaplex-foundation/mpl-token-metadata";
 
 
 //https://openquest.xyz/quest/create-burn-nft-solana
@@ -199,20 +199,20 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
   );
 
   const collectionMint = env.includes("dev") ? new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz")
-  : new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz"); // Replace with mainnet collection mint key
-
-  if (!env.includes("dev")) {
-    // Remove once we have a production collection mint key
-    console.log("Not on devnet");
-    return null
-  }
+    : new web3.PublicKey("4DJn2yqPiT9QZvM4t4RLv7XhhTs7mwKSCsBpGxyq25MV"); // Replace with mainnet collection mint key
 
 
   const collectionMasterEdition = await Edition.getPDA(collectionMint);
   const collectionMetadata = await Metadata.getPDA(collectionMint);
 
-
   const metadataAccount = await Metadata.getPDA(mint_key)
+  const tokenAccount = await Token.getAssociatedTokenAddress(
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    TOKEN_PROGRAM_ID,
+    mint_key,
+    keypair.publicKey
+  )
+  console.log(`tokenAccount: ${tokenAccount}`)
 
   const signVerifyMetadata =
   {
@@ -226,8 +226,18 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
 
   const tx = new SetAndVerifyCollectionCollection({ feePayer: keypair.publicKey }, signVerifyMetadata)
 
+
+
+  const primarySaleHappened =
+  {
+    metadata: metadataAccount,
+    owner: keypair.publicKey,
+    tokenAccount: tokenAccount
+  }
+  const updatePrimary = new UpdatePrimarySaleHappenedViaToken({ feePayer: keypair.publicKey }, primarySaleHappened)
+
   const transaction = new web3.Transaction().add(
-    tx
+    tx, updatePrimary
   )
 
   const signature = await web3.sendAndConfirmTransaction(
@@ -310,15 +320,18 @@ export async function NFTMintMaster(
     const wallet = new NodeWallet(keypair);
     const connection = new web3.Connection(
       env == "devnet" ? web3.clusterApiUrl("devnet") : env,
-      "confirmed"
+      "finalized"
     );
 
     const metadata = await uploadMetadataToArweave(nft_id, serial_no);
     const uri = metadata.arweave_id;
 
-    if (uri) {
-      const maxSupply = 1;
+    console.log(`Uploaded Metadata`)
 
+    if (uri) {
+      const maxSupply = 0;
+
+      // This isn't reliable. It will return even if the mint is not complete
       const result = await actions.mintNFT({
         connection,
         wallet,
@@ -327,6 +340,7 @@ export async function NFTMintMaster(
       });
 
       const res = stringifyPubkeysAndBNsInObject(result);
+      console.log("Minted a new master NFT:", res);
 
       // Send NFT to owner
 
@@ -340,13 +354,22 @@ export async function NFTMintMaster(
       // const mint_key = new web3.PublicKey("3i6pnWCYxbF9oT1HK16TC1wqb6PKoHQFvRzRJp62EcCX");
       const mint_key = new web3.PublicKey(res.mint);
       // Need to wait for the mint key to propagate
-      await sleep(5000);
 
-      const balance = await checkTokenBalance(
-        connection,
-        wallet.publicKey,
-        mint_key
-      );
+      let balance = null
+
+      while (balance === null) {
+        console.log("looping")
+        await sleep(5000);
+        balance = await checkTokenBalance(
+          connection,
+          wallet.publicKey,
+          mint_key
+        );
+      }
+
+      console.log(`Updating metadata`)
+
+      const sig = await updateMetadata(mint_key)
 
       const source_pubkey = new web3.PublicKey(balance.value[0].pubkey);
 
@@ -363,13 +386,8 @@ export async function NFTMintMaster(
 
       const transfer_res = stringifyPubkeysAndBNsInObject(send_result);
 
-      console.log("Minted a new master NFT:", res);
       console.log("Sent NFT to owner:", transfer_res);
 
-
-      const sig = await updateMetadata(mint_key)
-
-      console.log("Sig:", sig);
 
       const { data, error } = await supabase
         .from("nft_owner")
