@@ -29,8 +29,7 @@ export default async function assetHandler(
 
         const file_path = `twitter-preview/${id}.png`
 
-
-        const result = supabase.storage.from("private").upload(file_path, imageBuffer, {contentType:"image/png", upsert: true});
+        const result = await supabase.storage.from("private").upload(file_path, imageBuffer, {contentType:"image/png", upsert: true});
         
         res.status(200).json({ success: true });
       }

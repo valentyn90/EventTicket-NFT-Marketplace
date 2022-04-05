@@ -5,11 +5,15 @@ import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const StepSeven = () => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
+  }, []);
 
   async function handleStepSixSubmit(e: React.FormEvent) {
     e.preventDefault();

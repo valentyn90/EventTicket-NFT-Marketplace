@@ -384,7 +384,7 @@ export class NftStore {
   };
 
   async setNFTCardScreenshotTwitter(nft_id: number): Promise<boolean> {
-    const res = fetch(`/api/meta/uploadTwitterPreview/${nft_id}`);
+    const res = await fetch(`/api/meta/uploadTwitterPreview/${nft_id}`);
     return true;
   }
 
