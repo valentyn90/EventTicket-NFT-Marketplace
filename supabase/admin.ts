@@ -226,6 +226,9 @@ export const verifyUserAndRecruits = async (user_id: string) => {
 };
 
 export const mintNft = async (nft_id: number, user_id: string) => {
+
+  const verified_treasury = process.env.NEXT_PUBLIC_VFD_TREASURY_USER_ID as string
+
   const { data, error } = await supabase
     .from("nft")
     .update([
@@ -242,7 +245,6 @@ export const mintNft = async (nft_id: number, user_id: string) => {
     .select("referring_user_id")
     .eq("user_id", user_id);
 
-  const verified_treasury = "348d305f-3156-44ec-98f6-5d052bea2aa8";
   let referral_1 = user_id;
   let referral_2 = user_id;
 
