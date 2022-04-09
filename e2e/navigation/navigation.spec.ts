@@ -71,13 +71,13 @@ test("should navigate to the redirect page", async ({ page }) => {
   await expect(page).not.toHaveTitle("404: This page could not be found");
 });
 
-test("should navigate to the recruit page", async ({ page }) => {
-  // Start from the index page (the baseURL is set via the webServer in the playwright.config.ts)
-  await page.goto(`${url}/recruit`);
-  await page.waitForURL(`${url}/signin`);
-  await expect(page).toHaveURL(`${url}/signin`);
-  await expect(page).not.toHaveTitle("404: This page could not be found");
-});
+// test("should navigate to the recruit page", async ({ page }) => {
+//   // Start from the index page (the baseURL is set via the webServer in the playwright.config.ts)
+//   await page.goto(`${url}/recruit`);
+//   await page.waitForURL(`${url}/signin`);
+//   await expect(page).toHaveURL(`${url}/signin`);
+//   await expect(page).not.toHaveTitle("404: This page could not be found");
+// });
 
 test("should navigate to the profile page", async ({ page }) => {
   // Start from the index page (the baseURL is set via the webServer in the playwright.config.ts)

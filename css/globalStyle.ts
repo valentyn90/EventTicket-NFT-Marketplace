@@ -44,6 +44,12 @@ export const GlobalStyle = createGlobalStyle`
     margin-left: 8px;
   }
 
+  .tooltip-span-style {
+    > span {
+      width: 100%;
+    }
+  }
+
   @media screen and (max-width: 1100px){
     .solana-wallet-multi-btn {
       font-size: 14px;
