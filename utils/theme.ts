@@ -25,14 +25,15 @@ const theme = extendTheme({
       200: "#4688F1",
     },
     viBlue: "#4688F1",
+    viBlue2: "#0B56BF",
   },
   components: {
     Alert,
-    Button:{
+    Button: {
       baseStyle: {
-        borderRadius: "1px"
-      }
-    }
+        borderRadius: "1px",
+      },
+    },
   },
 });
 

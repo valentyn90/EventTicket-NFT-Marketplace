@@ -12,7 +12,7 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
 
   return {
     redirect: {
-      destination: "/create",
+      destination: "/home",
       permanent: false,
     },
   }
@@ -20,7 +20,7 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   if (cookies.get("show-banner")) {
     return {
       redirect: {
-        destination: "/create",
+        destination: "/home",
         permanent: false,
       },
     };

@@ -5,7 +5,7 @@ const url = process.env.TARGET_URL || "http://localhost:3000";
 test("should navigate to the index page", async ({ page }) => {
   // Start from the index page (the baseURL is set via the webServer in the playwright.config.ts)
   await page.goto(url);
-  await expect(page).toHaveURL(`${url}/create`);
+  await expect(page).toHaveURL(`${url}/home`);
   await expect(page).not.toHaveTitle("404: This page could not be found");
 });
 

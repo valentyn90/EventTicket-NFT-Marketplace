@@ -29,6 +29,7 @@ export const CookieBanner = (props: StackProps): JSX.Element | null => {
       spacing="4"
       p="4"
       bg="gray.700"
+      zIndex={100}
       sx={{
         position: "fixed",
         bottom: 0,

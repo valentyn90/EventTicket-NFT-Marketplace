@@ -9,6 +9,14 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+  .blue-text {
+    color: var(--chakra-colors-viBlue2);
+  }
+
+  .bold-text {
+    font-weight: bold;
+  }
+
   .no-background {
     background: transparent !important;
   }
