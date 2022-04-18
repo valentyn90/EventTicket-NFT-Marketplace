@@ -316,7 +316,7 @@ export async function sendTxWithRetry(attempts: number, connection: web3.Connect
     return signature;
 
   } catch (error) {
-    sleep(3000)
+    await sleep(3000)
     return sendTxWithRetry(attempts - 1, connection, transaction, signers)
   }
 }
@@ -328,6 +328,8 @@ async function sendTokenWithRetry(attempts: number, connection: web3.Connection,
     return "Failure"
   }
   try{
+    console.log("Trying to send token")
+
     const send_result = await actions.sendToken({
     connection,
     wallet,
@@ -342,6 +344,7 @@ async function sendTokenWithRetry(attempts: number, connection: web3.Connection,
 }
 catch(e){
   console.log("Error sending token:", e);
+  await sleep(5000)
   return sendTokenWithRetry(attempts - 1, connection, wallet, source, destination, mint, amount)
 }
   
@@ -454,7 +457,7 @@ export async function NFTMintMaster(
 
       const destination_pubkey = new web3.PublicKey(public_key.public_key);
 
-      const transfer_res = await sendTokenWithRetry(5, connection, wallet, token_account, destination_pubkey, mint_key, 1)
+      const transfer_res = await sendTokenWithRetry(10, connection, wallet, token_account, destination_pubkey, mint_key, 1)
 
       console.log("Sent NFT to owner:", transfer_res);
 

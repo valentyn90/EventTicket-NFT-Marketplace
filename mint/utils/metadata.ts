@@ -63,7 +63,7 @@ export async function generateMetadata(nft_id: number, serial_no: number) {
           value: (nft_details.graduation_year + 2000).toString(),
         },
         {
-          trait_type: "High School",
+          trait_type: "School",
           value: nft_details.high_school,
         },
         {
