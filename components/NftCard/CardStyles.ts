@@ -8,7 +8,7 @@ interface StyleProps {
   bottomColor: string;
   transitionColor: string;
   founders: boolean;
-  step8: boolean;
+  smallCardSize: boolean;
 }
 
 const ShinyAnimationCss = css`
@@ -38,7 +38,7 @@ export const CardWrapper = styled.div<StyleProps>`
   transform-origin: top center;
 
   ${(props) =>
-    !props.step8 &&
+    !props.smallCardSize &&
     `@media only screen and (max-width: 600px) {
       transform: scale(calc(300 / 600));
       transform-origin: top center;

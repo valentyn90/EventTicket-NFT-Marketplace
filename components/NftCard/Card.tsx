@@ -38,7 +38,7 @@ const Card: React.FunctionComponent<Props> = ({
   public_url,
   founders = false,
   recruit_share = false,
-  serial_no = 1
+  serial_no = 1,
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [nftCardData, setNftCardData] = useState({
@@ -123,16 +123,19 @@ const Card: React.FunctionComponent<Props> = ({
     if (router.pathname.includes("step-5")) {
       setLastY(180);
     }
-    if (router.pathname.includes("step-8")) {
-      setStep8CardSize(true);
+    if (
+      router.pathname.includes("step-8") ||
+      router.pathname.includes("/home")
+    ) {
+      setSmallCardSize(true);
     } else {
-      setStep8CardSize(false);
+      setSmallCardSize(false);
     }
   }, [router.pathname]);
 
   const [viewportWidth, setVieportWidth] = useState(800);
 
-  const [step8CardSize, setStep8CardSize] = useState(false);
+  const [smallCardSize, setSmallCardSize] = useState(false);
   const [lastX, setLastX] = useState(-1);
   const [lastY, setLastY] = useState(reverse ? 180 : 0);
   const [cssTransform, setCssTransform] = useState<CSSProperties>({});
@@ -347,41 +350,43 @@ const Card: React.FunctionComponent<Props> = ({
       bottomColor={bottomColor}
       transitionColor={transitionColor}
       founders={founders}
-      step8={step8CardSize}
+      smallCardSize={smallCardSize}
     >
       <Head>
         <meta
           property="og:title"
           content={
             "Check out " +
-            (db_first_name
-              ? `${db_first_name}\'s `
-              : "") +
+            (db_first_name ? `${db_first_name}\'s ` : "") +
             "VerifiedInk"
           }
           key="title"
         />
         <meta
           property="og:image"
-          content={`${typeof public_url === "string" && public_url.length > 0
+          content={`${
+            typeof public_url === "string" && public_url.length > 0
               ? public_url
               : "https://verifiedink.us/img/verified-ink-site.png"
-            }`}
+          }`}
           key="preview"
         />
         <meta
           property="twitter:image"
-          content={`${typeof public_url === "string" && public_url.length > 0
+          content={`${
+            typeof public_url === "string" && public_url.length > 0
               ? `https://verifiedink.us/api/meta/showTwitterPreview/${nft_id}`
               : "https://verifiedink.us/img/twitter-site-image.png"
-            }`}
+          }`}
           key="twitter-image"
         />
         <meta
           property="description"
-          content={`${recruit_share ?
-            "Check out this NFT I made with @VfdInk. Just for athletes. I get paid every single time it sells. Here's a referral link if you want to make your own."
-            : "Create your own custom NFT with VerifiedInk - @VfdInk"}`}
+          content={`${
+            recruit_share
+              ? "Check out this NFT I made with @VfdInk. Just for athletes. I get paid every single time it sells. Here's a referral link if you want to make your own."
+              : "Create your own custom NFT with VerifiedInk - @VfdInk"
+          }`}
         />
       </Head>
       <div className="viewer">
@@ -440,12 +445,15 @@ const Card: React.FunctionComponent<Props> = ({
                 </div>
               )}
               <div className="serial-number">
-                {founders ? (<>
-                  <div className="bold-info">1</div>/1
-                </>) :
-                  (<>
+                {founders ? (
+                  <>
+                    <div className="bold-info">1</div>/1
+                  </>
+                ) : (
+                  <>
                     <div className="bold-info">{serial_no}</div>/10
-                  </>)}
+                  </>
+                )}
               </div>
             </div>
           </div>

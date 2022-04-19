@@ -1,8 +1,10 @@
 import Card from "@/components/NftCard/Card";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { Skeleton, Stack } from "@chakra-ui/react";
+import useWindowDimensions from "@/utils/useWindowDimensions";
 
 const WordChange = keyframes`
   0% { content: "Collector" }
@@ -259,6 +261,11 @@ const Wrapper = styled.div`
       width: 200px;
       height: 325px;
       position: absolute;
+      drop-shadow: 0px 4px 4px 0px #00000040;
+      
+      :hover {
+        z-index: 10;
+      }
     }
 
     .packs-card-one {
@@ -360,7 +367,7 @@ const Wrapper = styled.div`
     }
 
     .packs-section {
-      height: 850px;
+      height: 620px;
       margin-top: 25px;
       flex-direction: column;
 
@@ -371,11 +378,11 @@ const Wrapper = styled.div`
       .packs-subtitle {
         font-size: 1rem;
       }
-  
 
       .packs-cards {
         height: 500px;
         width: 100%;
+        margin-top: 1rem;
       }
 
       .packs-card-box {
@@ -383,7 +390,7 @@ const Wrapper = styled.div`
       }
 
       .packs-card-one {
-        left: 50px;
+        left: 35px;
         top: 0;
         z-index: 2;
       }
@@ -391,27 +398,28 @@ const Wrapper = styled.div`
       .packs-card-two {
         z-index: 1;
         top: 0;
-        left: 160px;
+        left: 175px;
       }
 
       .packs-card-three {
         z-index: 3;
         top: 135px;
-        left: 110px;
+        left: 105px;
       }
     }
   }
 `;
 
 const Home = () => {
-
   const [flipMain, setFlipMain] = useState(false);
   const [initFlipMain, setInitFlipMain] = useState(false);
   const [videoPlayed, setVideoPlayed] = useState(false);
 
+  const [packCardSize, setPackCardSize] = useState(200);
+  const [cardSize, setCardSize] = useState(350);
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
-
     setTimeout(() => {
       if (!videoPlayed) {
         if (!initFlipMain) {
@@ -420,19 +428,27 @@ const Home = () => {
         setFlipMain(true);
         setVideoPlayed(true);
       }
-    },4000)
-
+    }, 4000);
   }, [flipMain]);
 
   useEffect(() => {
-
     setTimeout(() => {
       if (videoPlayed) {
         setFlipMain(false);
       }
-    }, 15000)
-
+    }, 15000);
   }, [videoPlayed]);
+
+  useEffect(() => {
+    if (width && width < 700) {
+      // mobile
+      setCardSize(300);
+      setPackCardSize(150);
+    } else if (width && width >= 700) {
+      setCardSize(350);
+      setPackCardSize(200);
+    }
+  }, [width]);
 
   return (
     <Wrapper>
@@ -446,14 +462,22 @@ const Home = () => {
               need it most, before they get big.
             </p>
             <div className="hero-card-mobile">
-            <div className="card-box card-full-opacity">
-              <Card nft_id={272} readOnly={true} nft_width={350} initFlip={initFlipMain} flip={flipMain} />
+              <div className="card-box card-full-opacity">
+                <Card
+                  nft_id={272}
+                  readOnly={true}
+                  nft_width={cardSize}
+                  initFlip={initFlipMain}
+                  flip={flipMain}
+                />
+              </div>
             </div>
-          </div>
             <div className="hero-button-row">
               <div className="hero-button-box">
                 <p className="hero-button-title">Fans</p>
-                <Link href={"/marketplace"}><button className="btn btn-blue" >Buy on Marketplace</button></Link>
+                <Link href={"/marketplace"}>
+                  <button className="btn btn-blue">Buy on Marketplace</button>
+                </Link>
               </div>
               <div className="hero-button-box">
                 <p className="hero-button-title">Athletes</p>
@@ -468,46 +492,51 @@ const Home = () => {
           <div className="hero-right">
             <div className="hero-right-cards">
               <div className="card-box">
-                <Card nft_id={301} readOnly={true} nft_width={350} />
+                <Card nft_id={301} readOnly={true} nft_width={cardSize} />
               </div>
               <div className="card-box">
-                <Card nft_id={280} readOnly={true} nft_width={350} />
+                <Card nft_id={280} readOnly={true} nft_width={cardSize} />
               </div>
               <div className="card-box card-full-opacity">
-                <Card nft_id={272} readOnly={true} nft_width={350} initFlip={initFlipMain} flip={flipMain}/>
+                <Card
+                  nft_id={272}
+                  readOnly={true}
+                  nft_width={cardSize}
+                  initFlip={initFlipMain}
+                  flip={flipMain}
+                />
               </div>
               <div className="card-box">
-                <Card nft_id={250} readOnly={true} nft_width={350} />
+                <Card nft_id={250} readOnly={true} nft_width={cardSize} />
               </div>
               <div className="card-box">
-                <Card nft_id={230} readOnly={true} nft_width={350} />
+                <Card nft_id={230} readOnly={true} nft_width={cardSize} />
               </div>
               <div className="card-box">
-                <Card nft_id={220} readOnly={true} nft_width={350} />
+                <Card nft_id={220} readOnly={true} nft_width={cardSize} />
               </div>
               <div className="card-box">
-                <Card nft_id={93} readOnly={true} nft_width={350} />
+                <Card nft_id={93} readOnly={true} nft_width={cardSize} />
               </div>
               <div className="card-box">
-                <Card nft_id={152} readOnly={true} nft_width={350} />
+                <Card nft_id={152} readOnly={true} nft_width={cardSize} />
               </div>
             </div>
             <div className="hero-left-cards">
               <div className="card-box flip">
-                <Card nft_id={167} readOnly={true} nft_width={350} />
+                <Card nft_id={167} readOnly={true} nft_width={cardSize} />
               </div>
               <div className="card-box flip">
-                <Card nft_id={174} readOnly={true} nft_width={350} />
+                <Card nft_id={174} readOnly={true} nft_width={cardSize} />
               </div>
               <div className="card-box flip">
-                <Card nft_id={142} readOnly={true} nft_width={350} />
+                <Card nft_id={142} readOnly={true} nft_width={cardSize} />
               </div>
               <div className="card-box flip">
-                <Card nft_id={200} readOnly={true} nft_width={350} />
+                <Card nft_id={200} readOnly={true} nft_width={cardSize} />
               </div>
             </div>
           </div>
-
         </div>
 
         <div className="athletes-section">
@@ -551,7 +580,7 @@ const Home = () => {
               </Link>
             </div>
             <div className="collector-card-box">
-              <Card nft_id={142} readOnly={true} />
+              <Card nft_id={142} readOnly={true} nft_width={cardSize} />
             </div>
           </div>
         </div>
@@ -575,17 +604,17 @@ const Home = () => {
           <div className="packs-cards">
             <div className="packs-cards-inner">
               <div className="packs-card-box packs-card-one">
-                <Card nft_id={285} readOnly={true} nft_width={200} />
+                <Card nft_id={285} readOnly={true} nft_width={packCardSize} />
               </div>
-              
+
               <div className="packs-card-box packs-card-two">
-                <Card nft_id={251} readOnly={true} nft_width={200} />
+                <Card nft_id={251} readOnly={true} nft_width={packCardSize} />
               </div>
               <div className="packs-card-box packs-card-three">
                 <Card
-                  nft_id={272}
+                  nft_id={316}
                   readOnly={true}
-                  nft_width={200}
+                  nft_width={packCardSize}
                   reverse={true}
                 />
               </div>
