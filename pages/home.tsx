@@ -1,5 +1,5 @@
-import Card from "@/components/NftCard/Card";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import StaticCard from "@/components/NftCard/StaticCard";
+import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -412,7 +412,6 @@ const Wrapper = styled.div`
 
 const Home = () => {
   const [flipMain, setFlipMain] = useState(false);
-  const [initFlipMain, setInitFlipMain] = useState(false);
   const [videoPlayed, setVideoPlayed] = useState(false);
 
   const [packCardSize, setPackCardSize] = useState(200);
@@ -422,13 +421,10 @@ const Home = () => {
   useEffect(() => {
     setTimeout(() => {
       if (!videoPlayed) {
-        if (!initFlipMain) {
-          setInitFlipMain(true);
-        }
         setFlipMain(true);
         setVideoPlayed(true);
       }
-    }, 4000);
+    }, 2000);
   }, [flipMain]);
 
   useEffect(() => {
@@ -436,7 +432,7 @@ const Home = () => {
       if (videoPlayed) {
         setFlipMain(false);
       }
-    }, 15000);
+    }, 12000);
   }, [videoPlayed]);
 
   useEffect(() => {
@@ -463,13 +459,7 @@ const Home = () => {
             </p>
             <div className="hero-card-mobile">
               <div className="card-box card-full-opacity">
-                <Card
-                  nft_id={272}
-                  readOnly={true}
-                  nft_width={cardSize}
-                  initFlip={initFlipMain}
-                  flip={flipMain}
-                />
+                <StaticCard nft_id={272} width={cardSize} reverse={flipMain} />
               </div>
             </div>
             <div className="hero-button-row">
@@ -492,52 +482,46 @@ const Home = () => {
           <div className="hero-right">
             <div className="hero-right-cards">
               <div className="card-box">
-                <Card nft_id={301} readOnly={true} nft_width={cardSize} />
-              </div>
+                <StaticCard nft_id={301} width={cardSize} />
+              </div >
               <div className="card-box">
-                <Card nft_id={280} readOnly={true} nft_width={cardSize} />
+                <StaticCard nft_id={280} width={cardSize} />
               </div>
               <div className="card-box card-full-opacity">
-                <Card
-                  nft_id={272}
-                  readOnly={true}
-                  nft_width={cardSize}
-                  initFlip={initFlipMain}
-                  flip={flipMain}
-                />
+                <StaticCard nft_id={272} width={cardSize} reverse={flipMain} />
               </div>
               <div className="card-box">
-                <Card nft_id={250} readOnly={true} nft_width={cardSize} />
+                <StaticCard nft_id={250} width={cardSize} />
               </div>
               <div className="card-box">
-                <Card nft_id={230} readOnly={true} nft_width={cardSize} />
+                <StaticCard nft_id={230} width={cardSize} />
               </div>
               <div className="card-box">
-                <Card nft_id={220} readOnly={true} nft_width={cardSize} />
+                <StaticCard nft_id={220} width={cardSize} />
               </div>
               <div className="card-box">
-                <Card nft_id={93} readOnly={true} nft_width={cardSize} />
+                <StaticCard nft_id={93} width={cardSize} />
               </div>
               <div className="card-box">
-                <Card nft_id={152} readOnly={true} nft_width={cardSize} />
+                <StaticCard nft_id={152} width={cardSize} />
               </div>
-            </div>
+            </div >
             <div className="hero-left-cards">
               <div className="card-box flip">
-                <Card nft_id={167} readOnly={true} nft_width={cardSize} />
+                <StaticCard nft_id={332} width={cardSize} />
+              </div >
+              <div className="card-box flip">
+                <StaticCard nft_id={174} width={cardSize} />
               </div>
               <div className="card-box flip">
-                <Card nft_id={174} readOnly={true} nft_width={cardSize} />
+                <StaticCard nft_id={142} width={cardSize} />
               </div>
               <div className="card-box flip">
-                <Card nft_id={142} readOnly={true} nft_width={cardSize} />
+                <StaticCard nft_id={200} width={cardSize} />
               </div>
-              <div className="card-box flip">
-                <Card nft_id={200} readOnly={true} nft_width={cardSize} />
-              </div>
-            </div>
-          </div>
-        </div>
+            </div >
+          </div >
+        </div >
 
         <div className="athletes-section">
           <div className="athletes-inner">
@@ -580,10 +564,10 @@ const Home = () => {
               </Link>
             </div>
             <div className="collector-card-box">
-              <Card nft_id={142} readOnly={true} nft_width={cardSize} />
-            </div>
-          </div>
-        </div>
+              <StaticCard nft_id={142} width={cardSize} />
+            </div >
+          </div >
+        </div >
 
         <div className="packs-section">
           <div className="packs-content">
@@ -604,31 +588,30 @@ const Home = () => {
           <div className="packs-cards">
             <div className="packs-cards-inner">
               <div className="packs-card-box packs-card-one">
-                <Card nft_id={285} readOnly={true} nft_width={packCardSize} />
-              </div>
+                <StaticCard nft_id={285} width={packCardSize} />
+              </div >
 
               <div className="packs-card-box packs-card-two">
-                <Card nft_id={251} readOnly={true} nft_width={packCardSize} />
-              </div>
+                <StaticCard nft_id={251} width={packCardSize} />
+              </div >
               <div className="packs-card-box packs-card-three">
-                <Card
-                  nft_id={316}
-                  readOnly={true}
-                  nft_width={packCardSize}
+                <StaticCard
+                  nft_id={332}
+                  width={packCardSize}
                   reverse={true}
                 />
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            </div >
+          </div >
+        </div >
+      </div >
       <style global jsx>{`
         html,
         body {
           overflow-x: hidden;
         }
       `}</style>
-    </Wrapper>
+    </Wrapper >
   );
 };
 

@@ -104,7 +104,9 @@ export const insertFileToSupabase = (file_name: string, nft_id: number) =>
   ]);
 
 export const uploadFileToStorage = (filePath: string, photoFile: File) =>
-  supabase.storage.from("private").upload(filePath, photoFile, {upsert: true});
+  supabase.storage
+    .from("private")
+    .upload(filePath, photoFile, { upsert: true });
 
 export const getUserNft = (user_id: string) =>
   supabase.from("nft").select("*").eq("user_id", user_id).maybeSingle();
@@ -175,9 +177,12 @@ export const getFileLinkFromSupabase = async (
 
 export const getScreenshot = async (
   nft_id: number
-): Promise<{ error: string | null; publicUrl: string | undefined }> =>{
-
-  const { data, error } = await supabase.from("nft").select(`files!nft_screenshot_file_id_fkey(file_name)`).eq("id", nft_id).maybeSingle()
+): Promise<{ error: string | null; publicUrl: string | undefined }> => {
+  const { data, error } = await supabase
+    .from("nft")
+    .select(`files!nft_screenshot_file_id_fkey(file_name)`)
+    .eq("id", nft_id)
+    .maybeSingle();
 
   if (error) {
     return {
@@ -185,20 +190,27 @@ export const getScreenshot = async (
       publicUrl: "",
     };
   }
-  const { data: dataResponse, error: errorFile } = await getSupabaseFileLink(
-    data.files.file_name
-  );
-  if (errorFile) {
+  if (data.files) {
+    const { data: dataResponse, error: errorFile } = await getSupabaseFileLink(
+      data.files.file_name
+    );
+    if (errorFile) {
+      return {
+        error: errorFile.message,
+        publicUrl: "",
+      };
+    }
     return {
-      error: errorFile.message,
+      error: null,
+      publicUrl: dataResponse?.publicURL,
+    };
+  } else {
+    return {
+      error: "No file found",
       publicUrl: "",
     };
   }
-  return {
-    error: null,
-    publicUrl: dataResponse?.publicURL,
-  };
-}
+};
 
 export const deleteNftById = async (
   nft_id: number,

@@ -285,9 +285,9 @@ export const CardWrapper = styled.div<StyleProps>`
   }
 
   .reverse-athlete-name {
-    top: 82%;
+    top: 81.5%;
     width: 200px;
-    font-size: 36px;
+    font-size: 32px;
     line-height: 38px;
   }
 

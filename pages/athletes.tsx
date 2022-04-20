@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Card from "@/components/NftCard/Card";
 import { CardBox } from "@/components/ui/CardBox";
 import Link from "next/link";
+import StaticCard from "@/components/NftCard/StaticCard";
 
 const Wrapper = styled.div`
   background: radial-gradient(
@@ -285,7 +286,7 @@ const Wrapper = styled.div`
     padding-top: 1rem;
 
     .hero-section-margin {
-      margin-bottom: 0px;
+      margin-bottom: 100px;
     }
 
     .our-mission-content {
@@ -367,9 +368,9 @@ const Wrapper = styled.div`
       display: none;
     }
 
-    .our-mission-card-box {
-      height: 510px;
-    }
+    // .our-mission-card-box {
+    //   height: 510px;
+    // }
   }
 
   @media screen and (max-width: 389px) {
@@ -448,7 +449,7 @@ const headerVariants = {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition:{
+    transition: {
       duration: .4
     }
   }
@@ -456,75 +457,54 @@ const headerVariants = {
 
 const Landing = () => {
 
-  const [flip1, setFlip1] = useState(false);
-  const [initFlip1, setInitFlip1] = useState(false);
+  const [flip1, setFlip1] = useState(true);
   const [flip2, setFlip2] = useState(false);
-  const [initFlip2, setInitFlip2] = useState(false);
-  const [flip3, setFlip3] = useState(false);
-  const [initFlip3, setInitFlip3] = useState(false);
+  const [flip3, setFlip3] = useState(true);
   const [flip4, setFlip4] = useState(false);
-  const [initFlip4, setInitFlip4] = useState(false);
   const [flipMain, setFlipMain] = useState(false);
-  const [initFlipMain, setInitFlipMain] = useState(false);
   const [videoPlayed, setVideoPlayed] = useState(false);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const randomNumber = Math.floor(Math.random() * 4);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     console.log('interval');
+  //     const randomNumber = Math.floor(Math.random() * 4);
 
-      if (randomNumber === 0) {
-        if (!initFlip1) {
-          setInitFlip1(true);
-        }
-        setFlip1(!flip1);
-      } else if (randomNumber === 1) {
-        if (!initFlip2) {
-          setInitFlip2(true);
-        }
-        setFlip2(!flip2);
-      } else if (randomNumber === 2) {
-        if (!initFlip3) {
-          setInitFlip3(true);
-        }
-        setFlip3(!flip3);
-      } else if (randomNumber === 3) {
-        if (!initFlip4) {
-          setInitFlip4(true);
-        }
-        setFlip4(!flip4);
-      }
-    }, 3000);
+  //     if (randomNumber === 0) {
+  //       setFlip1(!flip1);
+  //     } else if (randomNumber === 1) {
+  //       setFlip2(!flip2);
+  //     } else if (randomNumber === 2) {
+  //       setFlip3(!flip3);
+  //     } else if (randomNumber === 3) {
+  //       setFlip4(!flip4);
+  //     }
+  //   }, 10000);
 
-    return () => clearInterval(intervalId);
-  });
+  //   return () => clearInterval(intervalId);
+  // });
 
   useEffect(() => {
 
     setTimeout(() => {
-      if (!videoPlayed) {
-        if (!initFlipMain) {
-          setInitFlipMain(true);
-        }
-        setFlipMain(true);
-        setVideoPlayed(true);
-      }
-    },8000)
 
-  }, [flipMain]);
+      setFlipMain(true);
+      setVideoPlayed(true);
+
+    }, 5000)
+
+  }, []);
 
   useEffect(() => {
-
-    setTimeout(() => {
-      if (videoPlayed) {
+    if (videoPlayed) {
+      setTimeout(() => {
         setFlipMain(false);
-      }
-    }, 15000)
+      }, 10000)
+    }
 
   }, [videoPlayed]);
 
 
 
-  
   return (
     <Wrapper>
       <div className="inner">
@@ -589,9 +569,9 @@ const Landing = () => {
             </div>
             <motion.div className="max-w-100" variants={childVariants}>
               <div className="hero-card-box">
-                <Card nft_id={93} readOnly={true}                 
-                flip={flipMain} initFlip={initFlipMain}
-                 />
+                <StaticCard nft_id={332}
+                  reverse={flipMain}
+                />
               </div>
             </motion.div>
           </div>
@@ -623,7 +603,7 @@ const Landing = () => {
                 <p className="how-it-works-subtitle">
                   Sell your VerifiedInk on our Marketplace
                 </p>
-                </motion.div>
+              </motion.div>
               <motion.div className="icon-box" variants={childVariants}>
                 <div className="icon-svg-div">
                   <CashIcon />
@@ -633,16 +613,16 @@ const Landing = () => {
                   You make 94% from your first sale and 4% from all additional
                   sales forever
                 </p>
-                </motion.div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
 
         <motion.div className="page-section page-section-margin"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={containerVariants}>
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={containerVariants}>
           <div className="hero-row center-margin">
             <div className="flex-1">
               <motion.p className="header mobile-padding" variants={childVariants}>Athlete First</motion.p>
@@ -667,10 +647,10 @@ const Landing = () => {
         </motion.div>
 
         <motion.div className="page-section page-section-margin"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={containerVariants}>
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={containerVariants}>
           <div className="hero-row scroll-margin">
             <motion.div className="flex-1" variants={childVariants}>
               <p className="header mobile-padding">Our Mission</p>
@@ -694,45 +674,37 @@ const Landing = () => {
 
             <motion.div className="our-mission-ink-cards" variants={childVariants}>
               <div className="our-mission-card-box">
-                <Card
-                  nft_id={272}
-                  readOnly={true}
-                  nft_width={400}
-                  flip={flip1}
-                  initFlip={initFlip1}
+                <StaticCard
+                  nft_id={316}
+                  width={400}
+                  reverse={flip1}
                 />
               </div>
               <div className="our-mission-card-box">
-                <Card
+                <StaticCard
                   nft_id={142}
-                  readOnly={true}
-                  nft_width={400}
-                  flip={flip2}
-                  initFlip={initFlip2}
+                  width={400}
+                  reverse={flip2}
                 />
               </div>
               <div className="our-mission-card-box">
-                <Card
+                <StaticCard
                   nft_id={174}
-                  readOnly={true}
-                  nft_width={400}
-                  flip={flip3}
-                  initFlip={initFlip3}
+                  width={400}
+                  reverse={flip3}
                 />
               </div>
               <div className="our-mission-card-box">
-                <Card
+                <StaticCard
                   nft_id={167}
-                  readOnly={true}
-                  nft_width={400}
-                  flip={flip4}
-                  initFlip={initFlip4}
+                  width={400}
+                  reverse={flip4}
                 />
               </div>
             </motion.div>
           </div>
-       
-      </motion.div>
+
+        </motion.div>
       </div>
     </Wrapper>
   );
