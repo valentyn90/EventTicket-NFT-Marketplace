@@ -2,28 +2,35 @@ import { addEmailToWaitlist } from "@/supabase/supabase-client";
 import {
   Box,
   Button,
+  Divider,
   Flex,
+  HStack,
   Input,
   Stack,
   Text,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import cookieCutter from "cookie-cutter";
 import router from "next/router";
 import * as React from "react";
 import { useEffect, useState } from "react";
+import NextLink from "next/link";
 import validator from "validator";
 import Card from "../NftCard/Card";
 import ViLogo from "./logos/ViLogo";
+import StaticCard from "../NftCard/StaticCard";
 
-interface Props {}
+interface Props {
+  handleApproval: any
+}
 
-export const SplashModal: React.FC<Props> = (): JSX.Element | null => {
+export const SplashModal: React.FC<Props> = ({ handleApproval }): JSX.Element | null => {
   const [visible, setVisible] = useState<boolean>(true);
   const toast = useToast();
 
   const handleAcceptance = () => {
-    cookieCutter.set("show-banner", "true");
+    cookieCutter.set("SplashBypass", "true", { path: "/", expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365) });
     toast({
       position: "top",
       description: "You're in!",
@@ -32,13 +39,8 @@ export const SplashModal: React.FC<Props> = (): JSX.Element | null => {
       isClosable: true,
     });
     setVisible(false);
+    handleApproval(true);
   };
-
-  useEffect(() => {
-    if (cookieCutter.get("show-banner")) {
-      router.push("/create");
-    }
-  }, [visible]);
 
   const [showCodeEntry, setCodeEntry] = useState(false);
   const [showEmailEntry, setEmailEntry] = useState(false);
@@ -54,13 +56,13 @@ export const SplashModal: React.FC<Props> = (): JSX.Element | null => {
     code.toLowerCase() === "getverified"
       ? handleAcceptance()
       : toast({
-          position: "top",
-          description:
-            "That was not the right code. Do you want to sign up for the waitlist?",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        position: "top",
+        description:
+          "That was not the right code. Do you want to sign up for the waitlist?",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     setCodeEntry(false);
   }
 
@@ -143,10 +145,8 @@ export const SplashModal: React.FC<Props> = (): JSX.Element | null => {
               </Text>
             </Flex>
             <Text mb="4" mt="4" fontSize="xl" color="whiteAlpha.800">
-              Home of your first digital collectable. <br />
-              Completely free to make.
-              <br />
-              Earn on each and every sale.
+              We're currently in an invite only beta. <br />
+              If you have a code, enter below or Apply for Access.
             </Text>
             <Stack
               direction={{ base: "column", sm: "row" }}
@@ -179,7 +179,7 @@ export const SplashModal: React.FC<Props> = (): JSX.Element | null => {
                     px="10"
                     fontWeight="bold"
                   >
-                    Sign up for Waitlist
+                    Apply for Access
                   </Button>
                 </>
               )}
@@ -242,9 +242,51 @@ export const SplashModal: React.FC<Props> = (): JSX.Element | null => {
                 </>
               )}
             </Stack>
+            <VStack mt={12} mb={4}>
+              <Box w="85%" borderBottom="1px solid white"></Box>
+              <Text pt={8} fontSize="xl">
+                Not an Athlete?
+              </Text>
+              <Stack
+                direction={{ base: "column", sm: "row" }}
+                mt="10"
+                justify="center"
+                spacing={{ base: "3", md: "5" }}
+                maxW="md"
+                mx="auto"
+              >
+                <NextLink href="/marketplace">
+                  <a>
+                    <Button
+                      background="white"
+                      color="#2F80ED"
+                      fontSize={"xl"}
+                      mt={2}
+                      p={6}
+                    >
+                      Go to the Marketplace
+                    </Button>
+                  </a>
+                </NextLink>
+                <NextLink href="/marketplace/signin">
+                  <a>
+                    <Button
+                      background="transparent"
+                      color="#2F80ED"
+                      fontSize={"xl"}
+                      mt={2}
+                      p={6}
+                    >
+                      Collector Sign In
+                    </Button>
+                  </a>
+                </NextLink>
+
+              </Stack>
+            </VStack>
           </Box>
-          <Box flex="1" mt="4" maxH={{ md: 650, base: 550 }}>
-            <Card nft_id={93} readOnly={true} />
+          <Box flex="1" mt="4" maxH={650}>
+            <StaticCard nft_id={93} />
           </Box>
         </Flex>
       </Box>

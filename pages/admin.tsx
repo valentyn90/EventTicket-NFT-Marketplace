@@ -181,7 +181,7 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   if (!user) {
     return {
       redirect: {
-        destination: "/create",
+        destination: "/",
         permanent: false,
       },
     };
@@ -193,7 +193,7 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
     } else {
       return {
         redirect: {
-          destination: "/create",
+          destination: "/",
           permanent: false,
         },
       };

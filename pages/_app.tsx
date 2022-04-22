@@ -40,7 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         router.pathname.includes("recruit") ||
         router.pathname.includes("create/step")
       ) {
-        router.push("/signin");
+        router.push("/athletes/signin");
       }
     }
   }, [userStore.loggedIn, userStore.loaded, router.pathname]);

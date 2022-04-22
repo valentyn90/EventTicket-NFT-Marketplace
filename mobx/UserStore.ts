@@ -79,36 +79,51 @@ export class UserStore {
       if (res.status === 200) {
         // there is a user
         const { user } = await res.json();
-
-        // Check if user just signed up and needs to update the
-        // user details and referring info
-        const sign_up = localStorage.getItem("sign_up");
-        if (sign_up === "true") {
-          const referral_code = localStorage.getItem("referral_code");
-          await this.userDetails.initSignUp(
-            referral_code,
-            user.id,
-            user.email,
-            user.user_metadata.user_name
-          );
-          localStorage.removeItem("sign_up");
-          localStorage.removeItem("referral_code");
-        }
+        let userData
 
         // Get user details data from db
-        const { data: userData, error: userError } = await getUserDetails(
+        const { data: userDataCheck, error: userError } = await getUserDetails(
           user.id
         );
 
-        if (!userData) {
-          await this.userDetails.initSignUp(
-            null,
-            user.id,
-            user.email,
-            user.user_metadata.user_name
+        // Check if user just signed up and needs to update the
+        // user details and referring info
+
+        if (!userDataCheck) {
+          const sign_up = localStorage.getItem("sign_up");
+          if (sign_up === "true") {
+            const referral_code = localStorage.getItem("referral_code");
+            await this.userDetails.initSignUp(
+              referral_code,
+              user.id,
+              user.email,
+              user.user_metadata.user_name
+            );
+            localStorage.setItem("sign_up", "completed");
+            localStorage.removeItem("referral_code");
+            // Get user details data from db
+          }
+          else {
+            await this.userDetails.initSignUp(
+              null,
+              user.id,
+              user.email,
+              user.user_metadata.user_name
+            );
+            localStorage.setItem("sign_up", "completed");
+            // User signed in with no user_details db object
+          }
+
+          const { data: userData2, error: userError } = await getUserDetails(
+            user.id
           );
-          // User signed in with no user_details db object
+          userData = userData2;
+
+        } else {
+          localStorage.setItem("sign_up", "completed");
+          userData = userDataCheck;
         }
+
 
         // Get user's public key
         const keyRes = await fetch(`/api/admin/get-user-key`, {
@@ -316,7 +331,7 @@ export class UserStore {
     );
 
     const { data: updateTwitterData, error: updateTwitterError } =
-      await updateTwitter(this.nftInput.twitter.replace("@",""), this.userDetails.id);
+      await updateTwitter(this.nftInput.twitter.replace("@", ""), this.userDetails.id);
 
     if (error) {
       alert(error.message);

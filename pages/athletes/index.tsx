@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import Card from "@/components/NftCard/Card";
-import { CardBox } from "@/components/ui/CardBox";
+import Cookies from "cookies";
 import Link from "next/link";
+import { NextApiRequest, NextApiResponse } from "next";
+import { SplashModal } from "@/components/ui/SplashModal";
 import StaticCard from "@/components/NftCard/StaticCard";
 
 const Wrapper = styled.div`
@@ -24,7 +26,6 @@ const Wrapper = styled.div`
     flex-direction: column;
     gap: 50px;
     margin-bottom: 100px;
-
   }
 
   // .page-section-margin {
@@ -406,7 +407,7 @@ const containerVariants = {
     transition: {
       type: "spring",
       damping: 8,
-      staggerChildren: .5,
+      staggerChildren: 0.5,
       when: "beforeChildren",
     },
   },
@@ -455,7 +456,11 @@ const headerVariants = {
   }
 }
 
-const Landing = () => {
+// interface Props {
+//   splashBypass: boolean;
+// }
+
+const Athletes: React.FC = () => {
 
   const [flip1, setFlip1] = useState(true);
   const [flip2, setFlip2] = useState(false);
@@ -484,7 +489,6 @@ const Landing = () => {
   // });
 
   useEffect(() => {
-
     setTimeout(() => {
 
       setFlipMain(true);
@@ -503,9 +507,8 @@ const Landing = () => {
 
   }, [videoPlayed]);
 
-
-
   return (
+
     <Wrapper>
       <div className="inner">
         <motion.div
@@ -575,16 +578,19 @@ const Landing = () => {
               </div>
             </motion.div>
           </div>
-
         </motion.div>
 
-        <motion.div className="page-section page-section-margin mobile-margin-top mobile-padding"
+        <motion.div
+          className="page-section page-section-margin mobile-margin-top mobile-padding"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={containerHowVariants}>
+          variants={containerHowVariants}
+        >
           <div className="hero-column center-margin">
-            <motion.p className="header" variants={childVariants}>How It Works</motion.p>
+            <motion.p className="header" variants={childVariants}>
+              How It Works
+            </motion.p>
             <div className="hero-row mt-5">
               <motion.div className="icon-box" variants={childVariants}>
                 <div className="icon-svg-div">
@@ -618,20 +624,33 @@ const Landing = () => {
           </div>
         </motion.div>
 
-        <motion.div className="page-section page-section-margin"
+        <motion.div
+          className="page-section page-section-margin"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={containerVariants}>
+          variants={containerVariants}
+        >
           <div className="hero-row center-margin">
             <div className="flex-1">
-              <motion.p className="header mobile-padding" variants={childVariants}>Athlete First</motion.p>
-
-              <motion.p className="subtitle mobile-padding mb-2" variants={childVariants}>
-                We think athletes like you should earn the most from their collectibles.
-                Not institutions, agents, or leagues.
+              <motion.p
+                className="header mobile-padding"
+                variants={childVariants}
+              >
+                Athlete First
               </motion.p>
-              <motion.p className="subtitle mobile-padding" variants={childVariants}>
+
+              <motion.p
+                className="subtitle mobile-padding mb-2"
+                variants={childVariants}
+              >
+                We think athletes like you should earn the most from their
+                collectibles. Not institutions, agents, or leagues.
+              </motion.p>
+              <motion.p
+                className="subtitle mobile-padding"
+                variants={childVariants}
+              >
                 That's why VerifiedInk is completely free for athletes. We help
                 you create, own, and sell your digital collectibles. We take a
                 small fee, but only when you sell it - not before. And the best
@@ -640,17 +659,22 @@ const Landing = () => {
               </motion.p>
             </div>
 
-            <motion.div className="athlete-first-box mobile-padding" variants={childVariants}>
+            <motion.div
+              className="athlete-first-box mobile-padding"
+              variants={childVariants}
+            >
               <img src="/img/basketball-image.png" alt="" />
             </motion.div>
           </div>
         </motion.div>
 
-        <motion.div className="page-section page-section-margin"
+        <motion.div
+          className="page-section page-section-margin"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          variants={containerVariants}>
+          variants={containerVariants}
+        >
           <div className="hero-row scroll-margin">
             <motion.div className="flex-1" variants={childVariants}>
               <p className="header mobile-padding">Our Mission</p>
@@ -672,7 +696,10 @@ const Landing = () => {
               </div>
             </motion.div>
 
-            <motion.div className="our-mission-ink-cards" variants={childVariants}>
+            <motion.div
+              className="our-mission-ink-cards"
+              variants={childVariants}
+            >
               <div className="our-mission-card-box">
                 <StaticCard
                   nft_id={316}
@@ -703,11 +730,10 @@ const Landing = () => {
               </div>
             </motion.div>
           </div>
-
         </motion.div>
       </div>
     </Wrapper>
-  );
+  ) 
 };
 
 const StarIcon = () => (
@@ -764,42 +790,38 @@ const CashIcon = () => (
   </svg>
 );
 
-const BigPie = () => (
-  <svg
-    width="200"
-    height="200"
-    viewBox="0 0 200 200"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M100 100V0C155.228 0 200 44.7715 200 100C200 155.228 155.228 200 100 200C44.7715 200 0 155.228 0 100C0 58.9813 25.0493 22.1223 63.1875 7.02235L100 100Z"
-      fill="#2981FD"
-    />
-    <path
-      d="M100 100L63.188 7.02235C74.9066 2.38262 87.3967 0 100 0V100Z"
-      fill="#EAEBF6"
-    />
-  </svg>
-);
+// export async function getServerSideProps({
+//   req,
+//   res,
+//   query,
+// }: {
+//   req: NextApiRequest;
+//   res: NextApiResponse;
+//   query: any;
+// }) {
+//   let splashBypass = false;
+//   // Check if user has cookie
+//   const cookies = new Cookies(req, res);
 
-const SmallPie = () => (
-  <svg
-    width="70"
-    height="70"
-    viewBox="0 0 70 70"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M35 35V0C54.33 0 70 15.67 70 35C70 54.33 54.33 70 35 70C15.67 70 0 54.33 0 35C0 20.6435 8.76727 7.74282 22.1156 2.45782L35 35Z"
-      fill="#EAEBF6"
-    />
-    <path
-      d="M35.0001 35L22.1157 2.45782C26.2172 0.833916 30.5888 0 35.0001 0V35Z"
-      fill="#2981FD"
-    />
-  </svg>
-);
+//   const splashCookie = cookies.get("SplashBypass");
+//   console.log("we're here")
 
-export default Landing;
+//   // check if splashbypass cookie was set to true
+//   if (splashCookie && splashCookie === "true") {
+//     splashBypass = true;
+//   } else {
+//     // check if access code is in url
+//     if (query.referralCode && query.referralCode !== "") {
+//       splashBypass = true;
+//       cookies.set("SplashBypass", "true");
+//     }
+//   }
+
+//   return {
+//     props: {
+//       splashBypass,
+//     },
+//   };
+// }
+
+export default Athletes;

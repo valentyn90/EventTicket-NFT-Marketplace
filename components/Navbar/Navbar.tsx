@@ -39,7 +39,7 @@ export const Template: React.FC = (props) => {
     >
       {children.find((child) => child.type === Brand)?.props.children}
       <HStack display={{ base: "none", lg: "flex" }} marginStart={10}>
-        <Tabs colorScheme="blue" variant="unstyled" isFitted>
+        <Tabs colorScheme="blue" variant="unstyled" align="center" isFitted defaultIndex={4}>
           <TabList>
             {children.find((child) => child.type === Links)?.props.children}
           </TabList>

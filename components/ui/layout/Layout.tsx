@@ -14,7 +14,7 @@ const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const showNav = router.pathname === "/screenshot/[id]" ? false : true;
   const showNavForLanding =
-    router.pathname === "/" || router.pathname.includes("referralLanding")
+    router.pathname.includes("referralLanding")
       ? false
       : true;
   const { colorMode, setColorMode } = useColorMode();

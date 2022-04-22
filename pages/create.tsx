@@ -70,9 +70,7 @@ const Create: React.FC<Props> = ({
               Your career is in your hands. Your collectibles should be too.
             </Text>
             <NextLink
-              href={
-                referralString ? `/signup${referralString}` : "/create/step-1"
-              }
+              href="/create/step-1" //{referralString ? `/signup${referralString}` : "/create/step-1"}
             >
               <a>
                 <Button colorScheme="blue" color="white" mb="4">
@@ -83,7 +81,7 @@ const Create: React.FC<Props> = ({
             {!referralString && (
               <Text colorScheme="gray">
                 Don't have an account yet?{" "}
-                <NextLink href={`/signup${referralString}`}>
+                <NextLink href="/create/step-1">
                   <a className="blue-link">Sign up</a>
                 </NextLink>
               </Text>

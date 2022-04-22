@@ -22,13 +22,14 @@ import {
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 import { observer } from "mobx-react-lite";
-import NextLink from "next/link";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import ViLogo from "../ui/logos/ViLogo";
 import { Navbar } from "./Navbar";
 import { NavTabLink } from "./NavTabLink";
 import { UserProfile } from "./UserProfile";
+import cookieCutter from "cookie-cutter";
 
 const NavIndex: React.FC = () => {
   const router = useRouter();
@@ -39,15 +40,24 @@ const NavIndex: React.FC = () => {
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
   useEffect(() => {
+    const sign_up = localStorage.getItem("sign_up");
+    if (sign_up && sign_up === "completed") {
+
+    }
+    else {
+      localStorage.setItem("sign_up", "true");
+    }
     if (router.query.referralCode) {
       setReferralString(`?referralCode=${router.query.referralCode}`);
+      localStorage.setItem("referral_code", router.query.referralCode as string);
+      cookieCutter.set("SplashBypass", "true");
     }
   }, [router.query]);
 
   return (
     <Navbar>
       <Navbar.Brand>
-        <NextLink href="/">
+        <Link href="/">
           <a>
             <HStack height="100%">
               <ViLogo width="25px" height="25px" />
@@ -73,11 +83,11 @@ const NavIndex: React.FC = () => {
               </Flex>
             </HStack>
           </a>
-        </NextLink>
+        </Link>
       </Navbar.Brand>
       <Navbar.Links>
         {userStore.userDetails.role !== "marketplace" && (
-          <NavTabLink>Create</NavTabLink>
+          <NavTabLink>Athletes</NavTabLink>
         )}
         <NavTabLink>Marketplace</NavTabLink>
         {userStore.loggedIn && <NavTabLink>Collection</NavTabLink>}
@@ -85,33 +95,32 @@ const NavIndex: React.FC = () => {
           <NavTabLink>Listings</NavTabLink>
         )}
       </Navbar.Links>
-      {/* <Navbar.ColorMode>
-        <Button
-          mr={2}
-          onClick={toggleColorMode}
-          colorScheme="blue"
-          variant="ghost"
-          display={["none", "none", "block"]}
-        >
-          {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
-        </Button>
-      </Navbar.ColorMode> */}
       {!userStore.loggedIn ? (
         <Navbar.SignIn>
-          <NextLink href="/signin">
+          {(router.pathname.toLowerCase().includes("athletes") ||
+            router.pathname.toLowerCase().includes("create"))
+
+            ? (
+              <Link href="/athletes/signin" prefetch={false}>
+                <a>
+                  <Button color="white" colorScheme="blue" borderRadius={1}>
+                    Athlete Sign In
+                  </Button>
+                </a>
+              </Link>
+            ) : (
+              <Link href="/marketplace/signin">
+                <a>
+                  <Button colorScheme="blue" variant="ghost" borderRadius={1}>
+                    Sign In
+                  </Button>
+                </a>
+              </Link>
+            )}
+          {/* <Link href={`/signup/${referralString}`}>
             <a>
-              <Button variant="ghost" colorScheme="blue" borderRadius={1}>
-                Sign In
-              </Button>
             </a>
-          </NextLink>
-          <NextLink href={`/signup/${referralString}`}>
-            <a>
-              <Button colorScheme="blue" color="white" borderRadius={1}>
-                Sign Up For Free
-              </Button>
-            </a>
-          </NextLink>
+          </Link> */}
 
           <Box display={["none", "none", "none", "block"]}>
             {/* only show in desktop, mobile view set in Navbar.tsx */}
@@ -145,7 +154,7 @@ const NavIndex: React.FC = () => {
               </VStack>
             </Box>
 
-            <NextLink href="/recruit">
+            <Link href="/recruit">
               <a>
                 <Button
                   colorScheme="blue"
@@ -161,7 +170,7 @@ const NavIndex: React.FC = () => {
                   Recruit
                 </Button>
               </a>
-            </NextLink>
+            </Link>
             <Box display={["none", "none", "none", "block"]}>
               {/* only show in desktop, mobile view set in Navbar.tsx */}
               {MARKET_ENABLED && (
@@ -185,9 +194,9 @@ const NavIndex: React.FC = () => {
                 </MenuButton>
                 <MenuList>
                   <MenuItem>
-                    <NextLink href="/profile">
+                    <Link href="/profile">
                       <a style={{ width: "100%" }}>Profile</a>
-                    </NextLink>
+                    </Link>
                   </MenuItem>
                   <Box w="100%" p="0.4rem 0.8rem">
                     <Button colorScheme="blue" color="white" onClick={signOut}>
@@ -200,18 +209,6 @@ const NavIndex: React.FC = () => {
           </Flex>
         </Navbar.UserProfile>
       )}
-      {/* <Navbar.ColorModeMobile>
-        <Button
-          mr={4}
-          onClick={toggleColorMode}
-          colorScheme="blue"
-          variant="ghost"
-          display={["block", "block", "none"]}
-          alignSelf="start"
-        >
-          {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
-        </Button>
-      </Navbar.ColorModeMobile> */}
     </Navbar>
   );
 };

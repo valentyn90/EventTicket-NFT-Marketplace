@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
 
-interface Props { }
+interface Props {}
 
 const SignIn: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
@@ -28,11 +28,10 @@ const SignIn: React.FC<Props> = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const email_router  = router.query.email! as string;
+    const email_router = router.query.email! as string;
     console.log(email_router);
     setEmail(email_router);
   }, []);
-
 
   async function handleSignin(e: React.FormEvent) {
     e.preventDefault();
@@ -65,24 +64,29 @@ const SignIn: React.FC<Props> = () => {
     >
       <Box maxW="lg" mx="auto">
         <Heading textAlign="center" size="2xl" fontWeight="extrabold">
-          Sign in to your account
+          Access your Collector Account
         </Heading>
+        <Text pt={6} textAlign="center" w={["100%", "100%", "75%"]} m="0 auto">
+          VerifiedInk uses “magic links” for you to access your Collector
+          Account. Just enter your email below and we’ll send you a sign in
+          link.
+        </Text>
 
         <Box mt="12" py={8}>
           <form onSubmit={handleSignin}>
-            {!emailLinkSent && <>
-              <Text fontWeight="bold">Email Address</Text>
-              <Input
-                value={email}
-                type="email"
-                onChange={(e) => setEmail(e.target.value)}
-                mt={1}
-                mb={8}
-                borderRadius={1}
-              />
-            </>
-
-            }
+            {!emailLinkSent && (
+              <>
+                <Text fontWeight="bold">Email Address</Text>
+                <Input
+                  value={email}
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  mt={1}
+                  mb={8}
+                  borderRadius={1}
+                />
+              </>
+            )}
             {!emailLinkSent ? (
               <Button
                 py={6}
@@ -106,19 +110,35 @@ const SignIn: React.FC<Props> = () => {
             )}
           </form>
         </Box>
+        <Text pt={16} textAlign="center">
+          Are you an athlete who has created or want to create your own
+          VerifiedInk?{" "}
+          <NextLink href="/athletes/signin">
+            <a>
+              <Text color="viBlue" display="inline-block">
+                Athlete Sign Up
+              </Text>
+            </a>
+          </NextLink>
+        </Text>
       </Box>
     </Box>
   );
 };
 
-export async function getServerSideProps({ req, res }: { req: NextApiRequest, res: NextApiResponse }) {
-  
+export async function getServerSideProps({
+  req,
+  res,
+}: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}) {
   const cookies = new Cookies(req, res);
 
   cookies.set("redirect-link", "/collection", {
     maxAge: 1000 * 60 * 60,
   });
-  
+
   const { user } = await supabase.auth.api.getUserByCookie(req);
   if (user) {
     return {

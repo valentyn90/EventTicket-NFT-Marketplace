@@ -183,6 +183,7 @@ export async function getServerSideProps({
   const cookies = new Cookies(req, res);
 
   if (!user) {
+    console.log("No user found, redirecting to login");
 
     cookies.set("redirect-link", "/create/step-1", {
       maxAge: 1000 * 60 * 60,
@@ -190,7 +191,7 @@ export async function getServerSideProps({
 
     return {
       redirect: {
-        destination: "/signup",
+        destination: "/athletes/signin",
         permanent: false,
       },
     };

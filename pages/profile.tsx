@@ -52,7 +52,7 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
   if (!user) {
     return {
       redirect: {
-        destination: "/signin",
+        destination: "/",
         permanent: false,
       },
     };

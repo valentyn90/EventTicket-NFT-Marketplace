@@ -35,7 +35,7 @@ const Redirect: React.FC<Props> = ({ redirect }) => {
               router.push("/create");
             }
           } else {
-            router.push("/signin");
+            router.push("/athletes/signin");
           }
         }, 500);
       }
