@@ -190,7 +190,7 @@ export const getScreenshot = async (
       publicUrl: "",
     };
   }
-  if (data.files) {
+  if (data && data.files) {
     const { data: dataResponse, error: errorFile } = await getSupabaseFileLink(
       data.files.file_name
     );

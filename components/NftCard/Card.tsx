@@ -7,6 +7,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { CSSProperties, useEffect, useState } from "react";
 import { RiFullscreenLine } from "react-icons/ri";
+import { motion } from "framer-motion";
 import VideoPlayer from "../Components/VideoPlayer";
 import { goFullscreen, handleTouchEvent } from "./CardMethods";
 import { CardWrapper } from "./CardStyles";
@@ -25,6 +26,20 @@ interface Props {
   recruit_share?: boolean;
   serial_no?: number | undefined;
 }
+
+const variants = {
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 0.8,
+    scale: 0.98,
+    transition: {
+      yoyo: Infinity,
+      duration: 2,
+    },
+  },
+};
 
 const Card: React.FunctionComponent<Props> = ({
   nft_id = 93,
@@ -59,6 +74,7 @@ const Card: React.FunctionComponent<Props> = ({
     crop_values: [],
     slow_video: false,
   });
+  const [screenshot, setScreenshot] = useState("/img/card-placeholder.png");
 
   async function getCardData() {
     setNftCardData({
@@ -127,7 +143,7 @@ const Card: React.FunctionComponent<Props> = ({
       // This logic is here to trip logic for automatically adjusting the card
       // size when the screen is small. The logic is in CardStyles.ts 41-45
       router.pathname.includes("step-8") ||
-      router.pathname ==="/"
+      router.pathname === "/"
     ) {
       setSmallCardSize(true);
     } else {
@@ -403,62 +419,66 @@ const Card: React.FunctionComponent<Props> = ({
           onClick={flipCard}
           style={cssTransform}
         >
-          <div className="card front">
-            <div className="background">
-              <div className="background-gradient">
-                <div className="background-stripes"></div>
-                {loaded && (
-                  <div className="background-name">
-                    {first_name}
-                    <br />
-                    {last_name}
-                  </div>
-                )}
-              </div>
-              <img className="verified-logo" src="/img/card-logo.svg" />
-              {loaded ? (
-                <>
-                  <div className="crop-background-img">
-                    <img className="background-img" src={photo} />
-                  </div>
-                  <div className="background-gradient overlay-gradient"></div>
-
-                  <div className="athlete-name">{fullName}</div>
-                  <div className="athlete-school">{location}</div>
-                  <div className="basic-info">
-                    <div className="info-group">
-                      <div className="info-heading">Year</div>
-                      <div className="bold-info">{graduation_year}</div>
+          {loaded ? (
+            <div className="card front">
+              <div className="background">
+                <div className="background-gradient">
+                  <div className="background-stripes"></div>
+                  {loaded && (
+                    <div className="background-name">
+                      {first_name}
+                      <br />
+                      {last_name}
                     </div>
-                    <div className="info-group">
-                      <div className="info-heading">Position</div>
-                      <div className="bold-info">{sport_position}</div>
-                    </div>
-                    <div className="info-group">
-                      <div className="info-heading">Sport</div>
-                      <div className="bold-info">{sport}</div>
-                    </div>
-                  </div>
-                  <div className="signature"></div>
-                </>
-              ) : (
-                <div className="loading-spinner">
-                  <Spinner color="white" w="150px" h="150px" />
+                  )}
                 </div>
-              )}
-              <div className="serial-number">
-                {founders ? (
-                  <>
-                    <div className="bold-info">1</div>/1
-                  </>
-                ) : (
-                  <>
-                    <div className="bold-info">{serial_no}</div>/10
-                  </>
-                )}
+                <img className="verified-logo" src="/img/card-logo.svg" />
+
+                <div className="crop-background-img">
+                  <img className="background-img" src={photo} />
+                </div>
+                <div className="background-gradient overlay-gradient"></div>
+
+                <div className="athlete-name">{fullName}</div>
+                <div className="athlete-school">{location}</div>
+                <div className="basic-info">
+                  <div className="info-group">
+                    <div className="info-heading">Year</div>
+                    <div className="bold-info">{graduation_year}</div>
+                  </div>
+                  <div className="info-group">
+                    <div className="info-heading">Position</div>
+                    <div className="bold-info">{sport_position}</div>
+                  </div>
+                  <div className="info-group">
+                    <div className="info-heading">Sport</div>
+                    <div className="bold-info">{sport}</div>
+                  </div>
+                </div>
+                <div className="signature"></div>
+                <div className="serial-number">
+                  {founders ? (
+                    <>
+                      <div className="bold-info">1</div>/1
+                    </>
+                  ) : (
+                    <>
+                      <div className="bold-info">{serial_no}</div>/10
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <motion.div
+              className="card front"
+              variants={variants}
+              initial="initial"
+              animate="animate"
+            >
+              <img src={screenshot} alt="" />
+            </motion.div>
+          )}
           <div className="card reverse">
             <div className="background">
               <div className="background-gradient">

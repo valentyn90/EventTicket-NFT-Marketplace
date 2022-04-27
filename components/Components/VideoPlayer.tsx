@@ -1,4 +1,5 @@
 import CropValue from "@/types/CropValue";
+import { Spinner } from "@chakra-ui/react";
 import Hls from "hls.js";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -49,6 +50,7 @@ function VideoPlayer({
   const [videoLength, setVideoLength] = useState(50.827);
   const [videoWidth, setVideoWidth] = useState(500);
   const [loaded, setLoaded] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const [cropKeyframes, setCropKeyframes] = useState("");
   const router = useRouter();
 
@@ -109,7 +111,7 @@ function VideoPlayer({
       // hls = new Hls();
       // hls.loadSource(videoSrc);
       // hls.attachMedia(video);
-      video.src = safariSrc
+      video.src = safariSrc;
     } else if (videoSrc != "https://stream.mux.com/.m3u8") {
       // video.src = videoSrc;
       console.error(
@@ -146,6 +148,7 @@ function VideoPlayer({
             video_length={videoLength}
           >
             <video
+              onPlay={() => setVideoPlaying(true)}
               onLoadedMetadata={handleVideoMetadataLoaded}
               className="background-video"
               id="player-video"
@@ -162,6 +165,7 @@ function VideoPlayer({
   } else {
     videoComponent = (
       <video
+        onPlay={() => setVideoPlaying(true)}
         className="background-video-centered"
         id="player-video"
         ref={videoRef}
@@ -173,7 +177,16 @@ function VideoPlayer({
     );
   }
 
-  return videoComponent;
+  return (
+    <>
+      {!videoPlaying && !previewOnly && (
+        <div className="loading-spinner">
+          <Spinner color="white" w="150px" h="150px" />
+        </div>
+      )}
+      {videoComponent}
+    </>
+  );
 }
 
 export default VideoPlayer;
