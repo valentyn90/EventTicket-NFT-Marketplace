@@ -38,6 +38,13 @@ export default async function handler(
 
       const images = imageLink ? [imageLink] : ["https://ebve3gxspgpu25wgfvoettab56j3kurcsbjfenbjiux2jgxx.arweave.net/IGpNmvJ-5n012xi1_cScwB75O1UiKQUlI0KUUvpJr3k?ext=png"]
 
+      // Look up price directly from the order book - TODO: Eventually confirm with on chain (AH) price.
+
+      const { mintId, orderBook } = await getCheckoutData(nft_id, sn)
+
+      const usdPrice = solPrice.result.price * orderBook.price
+      const stripePrice = (+usdPrice * 100).toFixed(0);
+
       const description = metadata.description
       const product = await stripe.products.create({
         name,
@@ -46,13 +53,8 @@ export default async function handler(
       });
 
 
-      // Look up price directly from the order book - TODO: Eventually confirm with on chain (AH) price.
 
-      const {mintId, orderBook} = await getCheckoutData(nft_id, sn)
 
-      const usdPrice = solPrice.result.price * orderBook.price;
-      const stripePrice = (+usdPrice * 100).toFixed(0);
-      
       // Create Checkout Sessions from body params.
       const session = await stripe.checkout.sessions.create({
         line_items: [
@@ -70,7 +72,7 @@ export default async function handler(
         mode: "payment",
         success_url: `${req.headers.origin}/checkout?nft_id=${nft_id}&serial_no=${sn}&session_id={CHECKOUT_SESSION_ID}&success=true`,
         cancel_url: `${req.headers.origin}/card/${nft_id}?serial_no=${sn}&session_id={CHECKOUT_SESSION_ID}&canceled=true`,
-        metadata:{
+        metadata: {
           nft_id: nft_id,
           sn: sn,
           card_preview_image: imageLink
@@ -90,10 +92,10 @@ export default async function handler(
         },
       ]);
 
-      if (data){
+      if (data) {
         return res.status(200).json({ sessionUrl: session.url });
       }
-      else if (error){
+      else if (error) {
         res.status(500).json(error.message);
       }
     } catch (err: any) {

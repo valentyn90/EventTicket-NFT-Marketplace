@@ -16,12 +16,47 @@ import BigNumber from "bignumber.js";
 import { checkTokenBalance } from "./utils/accounts";
 import { Account } from "@metaplex-foundation/mpl-core"
 import { Metadata, UpdatePrimarySaleHappenedViaToken, SetAndVerifyCollectionCollection, Edition } from "@metaplex-foundation/mpl-token-metadata";
-
+import { Metaplex, keypairIdentity, bundlrStorage } from "@metaplex-foundation/js-next";
+// import { Connection, clusterApiUrl } from "@solana/web3.js";
 
 //https://openquest.xyz/quest/create-burn-nft-solana
 
 const encryptionKey = process.env.PRIVATE_KEY_ENCRYPTION_KEY!;
 const verifiedSolSvcKey = process.env.VERIFIED_INK_SOL_SERVICE_KEY!;
+
+
+
+export async function removeCollection() {
+  const connection = new web3.Connection(web3.clusterApiUrl("mainnet-beta"));
+
+  const keypair = await web3.Keypair.fromSecretKey(
+    base58.decode(verifiedSolSvcKey)
+  );
+
+
+  const metaplex = Metaplex.make(connection)
+    .use(keypairIdentity(keypair))
+    .use(bundlrStorage());
+
+  const mint = new web3.PublicKey("7wh23HUPrpYMMKgrQm38ZnpzER2AkDuABcTakeu2gTVv");
+
+
+  const nft = await metaplex.nfts().findNftByMint(mint)
+
+  console.log(nft)
+
+  const { nft: updatedNft } = await metaplex.nfts().updateNft(nft, {
+    name: "Test Update",
+  });
+
+
+  console.log(updatedNft);
+
+  return (updatedNft)
+
+}
+
+
 
 // Function to create a keypair for each user and store in supabase
 export async function generateKeypair(
@@ -251,11 +286,11 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
 }
 
 async function mintNFTwRetry(attempts: number, connection: web3.Connection, wallet: Wallet, uri: string, maxSupply: number):
-  Promise<web3.PublicKey|null | Promise<web3.PublicKey|null >> {
+  Promise<web3.PublicKey | null | Promise<web3.PublicKey | null>> {
 
-  if(attempts === 0) {
+  if (attempts === 0) {
     return null;
-  }  
+  }
   try {
     const result = await actions.mintNFT({
       connection,
@@ -327,27 +362,27 @@ async function sendTokenWithRetry(attempts: number, connection: web3.Connection,
   if (attempts === 0) {
     return "Failure"
   }
-  try{
+  try {
     console.log("Trying to send token")
 
     const send_result = await actions.sendToken({
-    connection,
-    wallet,
-    source, //source_pubkey,
-    destination,
-    mint,
-    amount
-  });
+      connection,
+      wallet,
+      source, //source_pubkey,
+      destination,
+      mint,
+      amount
+    });
 
-  const transfer_res = stringifyPubkeysAndBNsInObject(send_result);
-  return transfer_res
-}
-catch(e){
-  console.log("Error sending token:", e);
-  await sleep(5000)
-  return sendTokenWithRetry(attempts - 1, connection, wallet, source, destination, mint, amount)
-}
-  
+    const transfer_res = stringifyPubkeysAndBNsInObject(send_result);
+    return transfer_res
+  }
+  catch (e) {
+    console.log("Error sending token:", e);
+    await sleep(5000)
+    return sendTokenWithRetry(attempts - 1, connection, wallet, source, destination, mint, amount)
+  }
+
 }
 
 export async function uploadToArweave(data: Buffer, tags: any) {

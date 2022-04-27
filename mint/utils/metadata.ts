@@ -40,6 +40,7 @@ export async function generateMetadata(nft_id: number, serial_no: number) {
   const verified_treasury_public_key =
     "DBfQBErRFtsuQZkae8tEFaoruRANyiVM6aPs2zuzsx3C";
   //TODO: Move to env variable
+  //TODO: Update mint size to be variable
 
   if (nft_details) {
     let metadata = {
@@ -47,9 +48,16 @@ export async function generateMetadata(nft_id: number, serial_no: number) {
         name: "VerifiedInk '22",
         family: "VerifiedInk",
       },
-      name: `VerifiedInk #${nft_details.id}`,
+      name: `${nft_details.first_name} ${nft_details.last_name} #${serial_no}/10`,
       symbol: "VFDINK",
-      description: `${nft_details.first_name} ${nft_details.last_name}'s VerifiedInk.`,
+      description: `VerifiedInk is a self-issued NFT platform for amateur athletes to easily
+       capitalize on their Name, Image, and Likeness.
+       This NFT was created personally by ${nft_details.first_name} ${nft_details.last_name}.
+       Proceeds from the initial purchase of their mint go directly to them, and they earn a
+       royalty on all subsequent sales. Support ${nft_details.first_name}'s career by purchasing it, 
+       and support amateur athletics.
+       [https://verifiedink.us/card/${nft_details.id}?serial_no=${serial_no.toString()}](https://verifiedink.us/card/${nft_details.id}?serial_no=${serial_no.toString()})
+       `,
       seller_fee_basis_points: 1000,
       image: image_url,
       external_url: `https://verifiedink.us/card/${nft_details.id}?serial_no=${serial_no.toString()}`,
@@ -83,8 +91,12 @@ export async function generateMetadata(nft_id: number, serial_no: number) {
           value: serial_no.toString(),
         },
         {
+          trait_type: "Id",
+          value: nft_details.id,
+        },
+        {
           trait_type: "Edition",
-          value: "1st Ink"
+          value: "Launch"
         },
         {
           trait_type: "Mint Size",

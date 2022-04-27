@@ -3,11 +3,12 @@ import Nft from "@/types/Nft";
 import NftOwner from "@/types/NftOwner";
 import OrderBook from "@/types/OrderBook";
 import SellData from "@/types/SellData";
+import { arrayExtensions } from "mobx/dist/internal";
 import { supabase } from "./supabase-client";
 
 export const getMarketplaceNfts = async (): Promise<MarketplaceNft[]> => {
   // get all minted nfts
-  const { data, error } = await supabase
+  const { data: nfts, error } = await supabase
     .from("nft")
     .select("*")
     .eq("minted", true)
@@ -19,11 +20,13 @@ export const getMarketplaceNfts = async (): Promise<MarketplaceNft[]> => {
   }
 
   // now get all nft owners
-  const nftIds = data?.map((d) => d.id) || [];
+  const nftIds = nfts?.map((d) => d.id) || [];
 
+  // This isn't paginating
   const { data: nftOwners, error: nftOwnersError } = await supabase
     .from("nft_owner")
     .select("*")
+    .neq("mint", null)
     .in("nft_id", nftIds);
 
   if (nftOwnersError) {
@@ -31,76 +34,70 @@ export const getMarketplaceNfts = async (): Promise<MarketplaceNft[]> => {
     return [];
   }
 
-  // get all mints from nft owners
-  const mints =
-    nftOwners
-      ?.filter((owner) => {
-        if (owner.mint !== null) return true;
-        else return false;
-      })
-      .map((owner) => owner.mint) || [];
-
-  // now i need to get the order book data for the serial nos
-  const { data: orderBook, error: orderBookError } = await supabase
+  const { data: orderNew, error: orderNewError } = await supabase
     .from("order_book")
-    .select("*")
-    .in("mint", mints)
-    .match({ active: true, buy: false });
+    .select(`*, nft_owner!inner(nft_id)`)
+    .eq("active", true)
+    .eq("buy", false)
+    .order("price")
 
-  if (orderBookError) {
-    console.log(orderBookError);
-    return [];
+
+
+  const flattenObject = (obj: any) => {
+    const flattened: any = {}
+
+    Object.keys(obj).forEach((key) => {
+      const value = obj[key]
+
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        Object.assign(flattened, flattenObject(value))
+      } else {
+        flattened[key] = value
+      }
+    })
+    return flattened
   }
 
-  const activeMints = (orderBook as OrderBook[])?.map((order) => order.mint);
+  const groupBy = function (xs: Array<any>, key: any) {
+    return xs.reduce(function (rv, x) {
+      (rv[x[key]] = rv[x[key]] || []).push(x);
+      return rv;
+    }, {});
+  };
 
-  const ownerData = (nftOwners as NftOwner[])
-    ?.filter((owner) => {
-      if (activeMints?.includes(owner.mint)) return true;
-      return false;
-    })
-    .map((owner) => {
-      return {
-        nft_owner: owner,
-        order_book: (orderBook as OrderBook[])?.find(
-          (order) => order.mint === owner.mint
-        )!,
-      };
-    });
+  const objectMap = (obj: any, fn: any) =>
+  Object.fromEntries(
+    Object.entries(obj).map(
+      ([k, v], i) => [k, fn(v, k, i)]
+    )
+  )
 
-  const marketplaceNfts = (data as Nft[])
-    ?.map((nft) => {
-      return {
-        nft: nft,
-        sellData: ownerData?.filter(
-          (owner) => owner.nft_owner.nft_id === nft.id
-        ),
-      };
-    })
-    // sort marketplace nfts by highest sol price
-    .sort((a, b) => {
-      if (a.sellData.length === 0 && b.sellData.length > 0) return 1;
-      if (a.sellData.length > 0 && b.sellData.length === 0) return -1;
-      if (a.sellData.length > 0 && b.sellData.length > 0) {
-        const aHighPrice = a.sellData.sort((c, d) => {
-          if (c.order_book.price < d.order_book.price) return 1;
-          if (c.order_book.price > d.order_book.price) return -1;
-          return 0;
-        })[0].order_book.price;
-        const bHighPrice = b.sellData.sort((c, d) => {
-          if (c.order_book.price < d.order_book.price) return 1;
-          if (c.order_book.price > d.order_book.price) return -1;
-          return 0;
-        })[0].order_book.price;
-        if (aHighPrice < bHighPrice) return 1;
-        if (aHighPrice > bHighPrice) return -1;
-        return 0;
-      } else {
-        return 0;
-      }
-    });
+  const ordersFlat = orderNew?.map((order) => { return flattenObject(order) })
+  const groupedOrders = groupBy(ordersFlat!, 'nft_id')
 
-  return marketplaceNfts;
+  const nftValues = objectMap(groupedOrders, (group: any) => {
+    return {
+      min: Math.min.apply(Math, group.map(function (o: any) { return o.price })),
+      mint: group[0].mint,
+    }
+  })
+
+
+  const mktplaceNfts = (nfts as Nft[])?.map((nft) => {
+    return {
+      nft: nft,
+      price: nftValues[nft.id] ? nftValues[nft.id].min : 0,
+      sellData: nftValues[nft.id] ? [{
+        nft_owner:  nftOwners?.find((owner) => owner.mint === nftValues[nft.id].mint )!,
+        order_book:
+          ordersFlat?.find((order) => order.nft_id === nft.id && order.price === nftValues[nft.id]?.min)
+      }] : [],
+    }
+  }).sort((a, b) => {
+    return b.price - a.price
+  })
+
+  return mktplaceNfts;
 };
 
 export const getSellData = async (nft_id: number): Promise<SellData[]> => {

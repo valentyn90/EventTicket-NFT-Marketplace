@@ -211,6 +211,7 @@ const CardListItem: React.FC<Props> = ({
               <Box
                 w="100%"
                 py="1"
+                cursor="pointer"
                 textAlign="center"
                 variant={marketplaceBtnVariant}
                 colorScheme={marketplaceBtnScheme}
