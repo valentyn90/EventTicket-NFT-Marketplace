@@ -37,16 +37,16 @@ const NavIndex: React.FC = () => {
   const logoColor = useColorModeValue("blue", "white");
   const { colorMode, toggleColorMode } = useColorMode();
   const [referralString, setReferralString] = useState("");
-  const { boot } = useIntercom();
+  const { boot, update } = useIntercom();
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
   const bootWithProps = useCallback(
     () => {
-
+      boot()
       if (userStore.loggedIn) {
         console.log(userStore)
-        boot({
+        update({
           name: userStore.userDetails.user_name,
           email: userStore.email,
           userId: userStore.userDetails.id,
@@ -58,9 +58,6 @@ const NavIndex: React.FC = () => {
             twitter: userStore.userDetails.twitter,
           }
         })
-      }
-      else {
-        boot()
       }
     }, [boot, userStore.loggedIn, userStore.loaded]
   )
