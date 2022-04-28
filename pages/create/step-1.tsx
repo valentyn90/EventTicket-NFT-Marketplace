@@ -17,7 +17,7 @@ import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { NextApiRequest, NextApiResponse } from "next";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const StepOne = () => {
   const router = useRouter();
@@ -196,6 +196,16 @@ export async function getServerSideProps({
       },
     };
   } else {
+
+    const nft = await supabase.from("nft").select("minted").eq("user_id", user.id).single();
+    if (nft.data && nft.data.minted) {
+      return {
+        redirect: {
+          destination: "/create/step-8",
+          permanent: false,
+        }
+      }
+    }
 
     cookies.set("redirect-link", "/create", {
       maxAge: 1000 * 60 * 60,

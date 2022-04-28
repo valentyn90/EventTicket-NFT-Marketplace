@@ -2,9 +2,12 @@ import ActionPhotoUpload from "@/components/Create/ActionPhotoUpload";
 import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import userStore from "@/mobx/UserStore";
+import { supabase } from "@/supabase/supabase-client";
+import forwardMinted from "@/utils/forwardMinted";
 import { checkImageSize, resizeImageFile } from "@/utils/imageFileResizer";
 import { Button, Divider, Flex, Spinner } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
+import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -110,5 +113,9 @@ const StepTwo = () => {
     </CreateLayout>
   );
 };
+
+export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+  return await forwardMinted(req);
+}
 
 export default observer(StepTwo);

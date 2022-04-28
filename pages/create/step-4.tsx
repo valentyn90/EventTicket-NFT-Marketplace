@@ -4,6 +4,7 @@ import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import Card from "@/components/NftCard/Card";
 import { CardBox } from "@/components/ui/CardBox";
 import userStore from "@/mobx/UserStore";
+import forwardMinted from "@/utils/forwardMinted";
 import {
   Button,
   Divider,
@@ -13,6 +14,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
+import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -98,5 +100,9 @@ const StepFour = () => {
     </CreateLayout>
   );
 };
+
+export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+  return await forwardMinted(req);
+}
 
 export default observer(StepFour);

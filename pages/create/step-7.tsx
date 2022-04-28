@@ -1,8 +1,10 @@
 import CreateLayout from "@/components/Create/CreateLayout";
 import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
+import forwardMinted from "@/utils/forwardMinted";
 import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
+import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -110,5 +112,9 @@ const StepSeven = () => {
     </CreateLayout>
   );
 };
+
+export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+  return await forwardMinted(req);
+}
 
 export default observer(StepSeven);

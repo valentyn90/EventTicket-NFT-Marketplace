@@ -2,6 +2,7 @@ import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
+import forwardMinted from "@/utils/forwardMinted";
 import {
   Box,
   Button,
@@ -14,6 +15,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
+import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -55,7 +57,7 @@ const StepThree = () => {
             <Flex flex="1" direction="column" mt={["4", "4", 0]}>
               <Stack>
                 <FormControl id="highSchool">
-                  <FormLabel>High School</FormLabel>
+                  <FormLabel>School</FormLabel>
                   <Input
                     type="text"
                     id="highSchool"
@@ -145,5 +147,9 @@ const StepThree = () => {
     </CreateLayout>
   );
 };
+
+export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+  return await forwardMinted(req);
+}
 
 export default observer(StepThree);
