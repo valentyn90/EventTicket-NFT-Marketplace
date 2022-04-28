@@ -24,20 +24,46 @@ import {
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ViLogo from "../ui/logos/ViLogo";
 import { Navbar } from "./Navbar";
 import { NavTabLink } from "./NavTabLink";
 import { UserProfile } from "./UserProfile";
 import cookieCutter from "cookie-cutter";
+import { useIntercom } from 'react-use-intercom';
 
 const NavIndex: React.FC = () => {
   const router = useRouter();
   const logoColor = useColorModeValue("blue", "white");
   const { colorMode, toggleColorMode } = useColorMode();
   const [referralString, setReferralString] = useState("");
+  const { boot } = useIntercom();
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
+
+  const bootWithProps = useCallback(
+    () => {
+
+      if (userStore.loggedIn) {
+        console.log(userStore)
+        boot({
+          name: userStore.userDetails.user_name,
+          email: userStore.email,
+          userId: userStore.userDetails.id,
+          avatar: {
+            "type": "avatar",
+            "imageUrl": userStore.avatar_url,
+          },
+          customAttributes: {
+            twitter: userStore.userDetails.twitter,
+          }
+        })
+      }
+      else {
+        boot()
+      }
+    }, [boot, userStore.loggedIn, userStore.loaded]
+  )
 
   useEffect(() => {
     const sign_up = localStorage.getItem("sign_up");
@@ -52,7 +78,16 @@ const NavIndex: React.FC = () => {
       localStorage.setItem("referral_code", router.query.referralCode as string);
       cookieCutter.set("SplashBypass", "true");
     }
+
   }, [router.query]);
+
+  useEffect(() => {
+    bootWithProps()
+  }, [router.query, userStore.loaded]);
+
+
+
+
 
   return (
     <Navbar>

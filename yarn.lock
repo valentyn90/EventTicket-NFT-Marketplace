@@ -6070,11 +6070,6 @@ core-js@^3.10.1:
   resolved "https://registry.npmjs.org/core-js/-/core-js-3.19.2.tgz"
   integrity sha512-ciYCResnLIATSsXuXnIOH4CbdfgV+H1Ltg16hJFN7/v6OxqnFr/IFGeLacaZ+fHLAm0TBbXwNK9/DNBzBUrO/g==
 
-core-js@^3.22.2:
-  version "3.22.2"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.22.2.tgz#3ea0a245b0895fa39d1faa15fe75d91ade504a01"
-  integrity sha512-Z5I2vzDnEIqO2YhELVMFcL1An2CIsFe9Q7byZhs8c/QxummxZlAHw33TUHbIte987LkisOgL0LwQ1P9D6VISnA==
-
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz"
@@ -10222,6 +10217,11 @@ react-transition-group@^4.3.0, react-transition-group@^4.4.2:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-use-intercom@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/react-use-intercom/-/react-use-intercom-1.5.1.tgz#94567a80ce3b56692962d712a54489c55fb4c54e"
+  integrity sha512-rsSiW3j6yv0bBWCaX+VOCK/ndh/VzntlYjxHLHhV++iQtFurFhcRD249rF07ZaLH8ZP5SR6FzP3Alqdi3usBQg==
 
 react-virtualized@^9.22.3:
   version "9.22.3"

@@ -13,6 +13,7 @@ import { observer } from "mobx-react-lite";
 import userStore from "@/mobx/UserStore";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import {IntercomProvider} from 'react-use-intercom';
 
 // import "../css/rsuite.css";
 
@@ -49,6 +50,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ChakraProvider theme={theme}>
       <WalletConnectionProvider>
         <WalletModalProvider>
+          <IntercomProvider appId={"b3ms6uff"} >
           <Head>
             <title>Verified Ink</title>
             <meta
@@ -78,6 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Layout>
             <Component {...pageProps} />
           </Layout>
+          </IntercomProvider>
         </WalletModalProvider>
       </WalletConnectionProvider>
     </ChakraProvider>
