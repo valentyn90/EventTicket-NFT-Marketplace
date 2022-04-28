@@ -83,7 +83,7 @@ export const getMarketplaceNfts = async (): Promise<MarketplaceNft[]> => {
   })
 
 
-  const mktplaceNfts = (nfts as Nft[])?.map((nft) => {
+  const allMktplaceNfts = (nfts as Nft[])?.map((nft) => {
     return {
       nft: nft,
       price: nftValues[nft.id] ? nftValues[nft.id].min : 0,
@@ -93,9 +93,13 @@ export const getMarketplaceNfts = async (): Promise<MarketplaceNft[]> => {
           ordersFlat?.find((order) => order.nft_id === nft.id && order.price === nftValues[nft.id]?.min)
       }] : [],
     }
-  }).sort((a, b) => {
-    return b.price - a.price
   })
+
+  const mktplaceNfts = allMktplaceNfts?.filter((nft) => {
+    return nft.price > 0
+  }).sort((a, b) => {
+    return a.price - b.price
+  }).concat(allMktplaceNfts?.filter((nft) => {return nft.price == 0}))
 
   return mktplaceNfts;
 };

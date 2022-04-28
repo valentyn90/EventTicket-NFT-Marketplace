@@ -116,8 +116,9 @@ async function sendMintedDM(twitter_handle: string, nft_id: string, referral_cod
     const message = `
 Congratulations!
 
-Your VerifiedInk has been verified and minted! The Marketplace will open in early 2022. \
-Grow your collection by sharing VerifiedInk with your friends and teammates.
+Your VerifiedInk has been verified and minted! The Marketplace is now in preview. \
+If you are a class of 22 grad, you can list your VerifiedInk for sale here:
+https://verifiedink.us/collection
 
 Your referral link is: https://verifiedink.us/create?referralCode=${referral_code}
 Your referral code is: ${referral_code}
