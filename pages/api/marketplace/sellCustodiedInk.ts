@@ -34,7 +34,6 @@ export default async function create(
   // currency
   // buy (or sell)
 
-  // Check if NFT is minted and mint if not
 
   const { data: nftOwnerData, error: nftOwnerError } = await supabase
     .from("nft_owner")
@@ -109,11 +108,11 @@ export default async function create(
         }
       } else {
         // Order Failed, should send back to frontend
-        return res.status(500).json({ error: "Error creating your sale order, please try again." });
+        return res.status(500).json({ error: "Error creating your sale order, please try again. If you are stuck, click the Message Button in the bottom right corner." });
       }
 
     }
   }
 
-  return res.status(500).json({ error: "Error creating your sale order, please try again." });
+  return res.status(500).json({ error: "Error creating your sale order, please try again. If you are stuck, click the Message Button in the bottom right corner." });
 }

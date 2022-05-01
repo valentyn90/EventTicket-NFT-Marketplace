@@ -472,6 +472,13 @@ export async function NFTMintMaster(
         return { mint: null }
       }
 
+      const { data, error } = await supabase
+      .from("nft_owner")
+      .update({ mint: mint_key.toBase58() })
+      .eq("nft_id", nft_id)
+      .eq("serial_no", serial_no)
+      .single();
+
       console.log(`Updating metadata`)
 
       const sig = await updateMetadata(mint_key!)
@@ -492,17 +499,10 @@ export async function NFTMintMaster(
 
       const destination_pubkey = new web3.PublicKey(public_key.public_key);
 
-      const transfer_res = await sendTokenWithRetry(10, connection, wallet, token_account, destination_pubkey, mint_key, 1)
+      const transfer_res = await sendTokenWithRetry(20, connection, wallet, token_account, destination_pubkey, mint_key, 1)
 
       console.log("Sent NFT to owner:", transfer_res);
 
-
-      const { data, error } = await supabase
-        .from("nft_owner")
-        .update({ mint: mint_key.toBase58() })
-        .eq("nft_id", nft_id)
-        .eq("serial_no", serial_no)
-        .single();
 
       return { mint: mint_key!.toBase58() };
     } else return { mint: null };

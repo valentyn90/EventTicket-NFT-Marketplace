@@ -245,8 +245,8 @@ export const mintNft = async (nft_id: number, user_id: string) => {
     .select("referring_user_id")
     .eq("user_id", user_id);
 
-  let referral_1 = user_id;
-  let referral_2 = user_id;
+  let referral_1 = verified_treasury;
+  let referral_2 = verified_treasury;
 
   if (user) {
     if (user[0].referring_user_id) {

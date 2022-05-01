@@ -99,10 +99,10 @@ export const sell = async (
   const tokenSize = 1;
   const auctionHouseKeypair = seller_keypair;
   const env = process.env.NEXT_PUBLIC_SOL_ENV as string;
-  let   env_name = "devnet";
+  let   env_name = "mainnet-beta";
 
-  if(env === "https://ssc-dao.genesysgo.net/"){
-    env_name = "mainnet-beta";
+  if(env.includes("dev")){
+    env_name = "devnet";
   }
 
   const connection = new web3.Connection(
@@ -228,14 +228,15 @@ export const sell = async (
       auctionHouseKeypair,
       [instruction],
       signers,
-      "max"
+      "confirmed"
     );
 
     return tx;
   } catch (e: any) {
-    if (e.message.includes("Failed to find") && retry_count < 3) {
+    // if (e.message.includes("Failed to find") && retry_count < 3) {
+    if (e.message.includes("Failed to find") && retry_count <= 3) {
       console.log("Failed to find mint, trying in 5 seconds");
-      // Wait 20 seconds and retry
+      // Wait 5 seconds and retry
       await new Promise((resolve) => setTimeout(resolve, 5000));
       return sell(
         auctionHouse,
@@ -272,10 +273,10 @@ export const cancel = async (
   // const auctionHouseKeypair = await web3.Keypair.fromSecretKey(base58.decode("SECRETKEY"))
   const auctionHouseKeypair = seller_keypair;
   const env = process.env.NEXT_PUBLIC_SOL_ENV as string;
-  let   env_name = "devnet";
+  let   env_name = "mainnet-beta";
 
-  if(env === "https://ssc-dao.genesysgo.net/"){
-    env_name = "mainnet-beta";
+  if(env.includes("dev")){
+    env_name = "devnet";
   }
 
   const auctionHouseKey = new web3.PublicKey(auctionHouse);
@@ -368,7 +369,7 @@ export const cancel = async (
     auctionHouseKeypair,
     [instruction],
     signers,
-    "max"
+    "confirmed"
   );
 
   return tx;
