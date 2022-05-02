@@ -215,7 +215,7 @@ const CardListItem: React.FC<Props> = ({
                   setOpenAlert(true);
                 }}
                 // disabled={cancellingNft || !MARKET_ENABLED}
-                colorScheme={"red"}
+                // colorScheme={"red"}
               >
                 {cancellingNft ? <Spinner /> : "Cancel"}
               </Box>
@@ -227,7 +227,7 @@ const CardListItem: React.FC<Props> = ({
                 cursor="pointer"
                 textAlign="center"
                 variant={marketplaceBtnVariant}
-                colorScheme={marketplaceBtnScheme}
+                // colorScheme={marketplaceBtnScheme}
                 textColor={marketplaceBtnColor}
                 // disabled={sellData?.length === 0 || !MARKET_ENABLED}
                 onClick={() => {

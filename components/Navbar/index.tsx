@@ -45,7 +45,6 @@ const NavIndex: React.FC = () => {
     () => {
       boot()
       if (userStore.loggedIn) {
-        console.log(userStore)
         update({
           name: userStore.userDetails.user_name,
           email: userStore.email,
@@ -56,6 +55,9 @@ const NavIndex: React.FC = () => {
           },
           customAttributes: {
             twitter: userStore.userDetails.twitter,
+            grad_year: userStore.nft?.graduation_year,
+            state: userStore.nft?.usa_state,
+            minted: userStore.nft?.minted,
           }
         })
       }

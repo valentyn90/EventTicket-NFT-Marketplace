@@ -14,16 +14,40 @@ import {
   useColorModeValue as mode,
   useDisclosure,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import React, { isValidElement, ReactElement } from "react";
+import React, {
+  isValidElement,
+  ReactElement,
+  useEffect,
+  useState,
+} from "react";
 import { MobileNavContent } from "./MobileNavContent";
 
 export const Template: React.FC = (props) => {
+  const router = useRouter();
+  const [tabIndex, setTabIndex] = useState(0);
   const children = React.Children.toArray(props.children).filter<ReactElement>(
     isValidElement
   );
   const mobileNav = useDisclosure();
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
+
+  useEffect(() => {
+    if (router.pathname.toLowerCase().includes("athletes")) {
+      setTabIndex(0);
+    } else if (router.pathname.toLowerCase().includes("marketplace")) {
+      setTabIndex(1);
+    } else if (router.pathname.toLowerCase().includes("collection")) {
+      setTabIndex(2);
+    } else if (router.pathname.toLowerCase().includes("listings")) {
+      setTabIndex(3);
+    } else {
+      setTabIndex(4);
+    }
+    
+  });
+
   return (
     <Flex
       top={0}
@@ -39,11 +63,20 @@ export const Template: React.FC = (props) => {
     >
       {children.find((child) => child.type === Brand)?.props.children}
       <HStack display={{ base: "none", lg: "flex" }} marginStart={10}>
-        <Tabs colorScheme="blue" variant="unstyled" align="center" isFitted defaultIndex={4}>
+        <Tabs
+          index={tabIndex}
+          onChange={(index) => setTabIndex(index)}
+          colorScheme="blue"
+          variant="unstyled"
+          align="center"
+          isFitted
+          defaultIndex={4}
+        >
           <TabList>
             {children.find((child) => child.type === Links)?.props.children}
           </TabList>
           <TabIndicator
+            key={tabIndex}
             position="absolute"
             mt="6px"
             height={1}
@@ -83,6 +116,8 @@ export const Template: React.FC = (props) => {
             {children.find((child) => child.type === Brand)?.props.children}
           </Flex>
           <Tabs
+            index={tabIndex}
+            onChange={(index) => setTabIndex(index)}
             onClick={mobileNav.onClose}
             orientation="vertical"
             variant="unstyled"

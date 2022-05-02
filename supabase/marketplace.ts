@@ -39,67 +39,91 @@ export const getMarketplaceNfts = async (): Promise<MarketplaceNft[]> => {
     .select(`*, nft_owner!inner(nft_id)`)
     .eq("active", true)
     .eq("buy", false)
-    .order("price")
-
-
+    .order("price");
 
   const flattenObject = (obj: any) => {
-    const flattened: any = {}
+    const flattened: any = {};
 
     Object.keys(obj).forEach((key) => {
-      const value = obj[key]
+      const value = obj[key];
 
-      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-        Object.assign(flattened, flattenObject(value))
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        Object.assign(flattened, flattenObject(value));
       } else {
-        flattened[key] = value
+        flattened[key] = value;
       }
-    })
-    return flattened
-  }
+    });
+    return flattened;
+  };
 
   const groupBy = function (xs: Array<any>, key: any) {
-    return xs.reduce(function (rv, x) {
-      (rv[x[key]] = rv[x[key]] || []).push(x);
-      return rv;
-    }, {});
+    return (
+      xs?.reduce(function (rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+      }, {}) || []
+    );
   };
 
   const objectMap = (obj: any, fn: any) =>
-  Object.fromEntries(
-    Object.entries(obj).map(
-      ([k, v], i) => [k, fn(v, k, i)]
-    )
-  )
+    Object.fromEntries(
+      Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)])
+    );
 
-  const ordersFlat = orderNew?.map((order) => { return flattenObject(order) })
-  const groupedOrders = groupBy(ordersFlat!, 'nft_id')
+  const ordersFlat = orderNew?.map((order) => {
+    return flattenObject(order);
+  });
+  const groupedOrders = groupBy(ordersFlat!, "nft_id");
 
   const nftValues = objectMap(groupedOrders, (group: any) => {
     return {
-      min: Math.min.apply(Math, group.map(function (o: any) { return o.price })),
+      min: Math.min.apply(
+        Math,
+        group.map(function (o: any) {
+          return o.price;
+        })
+      ),
       mint: group[0].mint,
-    }
-  })
-
+    };
+  });
 
   const allMktplaceNfts = (nfts as Nft[])?.map((nft) => {
     return {
       nft: nft,
       price: nftValues[nft.id] ? nftValues[nft.id].min : 0,
-      sellData: nftValues[nft.id] ? [{
-        nft_owner:  nftOwners?.find((owner) => owner.mint === nftValues[nft.id].mint )!,
-        order_book:
-          ordersFlat?.find((order) => order.nft_id === nft.id && order.price === nftValues[nft.id]?.min)
-      }] : [],
-    }
-  })
+      sellData: nftValues[nft.id]
+        ? [
+            {
+              nft_owner: nftOwners?.find(
+                (owner) => owner.mint === nftValues[nft.id].mint
+              )!,
+              order_book: ordersFlat?.find(
+                (order) =>
+                  order.nft_id === nft.id &&
+                  order.price === nftValues[nft.id]?.min
+              ),
+            },
+          ]
+        : [],
+    };
+  });
 
-  const mktplaceNfts = allMktplaceNfts?.filter((nft) => {
-    return nft.price > 0
-  }).sort((a, b) => {
-    return a.price - b.price
-  }).concat(allMktplaceNfts?.filter((nft) => {return nft.price == 0}))
+  const mktplaceNfts = allMktplaceNfts
+    ?.filter((nft) => {
+      return nft.price > 0;
+    })
+    .sort((a, b) => {
+      return a.price - b.price;
+    })
+    .concat(
+      allMktplaceNfts?.filter((nft) => {
+        return nft.price == 0;
+      })
+    );
 
   return mktplaceNfts;
 };

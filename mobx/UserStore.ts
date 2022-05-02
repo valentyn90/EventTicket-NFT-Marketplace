@@ -126,19 +126,21 @@ export class UserStore {
 
 
         // Get user's public key
-        const keyRes = await fetch(`/api/admin/get-user-key`, {
-          method: "POST",
-          headers: new Headers({ "Content-Type": "application/json" }),
-          credentials: "same-origin",
-          body: JSON.stringify({
-            user_id: user.id,
-          }),
-        })
-          .then((response) => response.json())
-          .catch((err) => console.log(err));
+        if (user.id) {
+          const keyRes = await fetch(`/api/admin/get-user-key`, {
+            method: "POST",
+            headers: new Headers({ "Content-Type": "application/json" }),
+            credentials: "same-origin",
+            body: JSON.stringify({
+              user_id: user.id,
+            }),
+          })
+            .then((response) => response.json())
+            .catch((err) => console.log(err));
 
-        if (keyRes.key) {
-          this.publicKey = keyRes.key;
+          if (keyRes.key) {
+            this.publicKey = keyRes.key;
+          }
         }
 
         // set user and fetch their NFT data.

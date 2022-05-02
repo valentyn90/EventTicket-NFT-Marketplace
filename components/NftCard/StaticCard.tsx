@@ -16,20 +16,6 @@ interface Props {
   recruit_share?: boolean;
 }
 
-const variants = {
-  initial: {
-    opacity: 0,
-  },
-  animate: {
-    opacity: .8,
-    scale: .98,
-    transition: {
-      yoyo: Infinity,
-      duration: 2,
-    }
-  }
-}
-
 const StaticCard: React.FC<Props> = ({
   nft_id,
   width = 400,
@@ -147,24 +133,24 @@ const StaticCard: React.FC<Props> = ({
         <meta
           property="og:image"
           content={`${typeof public_url === "string" && public_url.length > 0
-              ? public_url
-              : "https://verifiedink.us/img/verified-ink-site.png"
+            ? public_url
+            : "https://verifiedink.us/img/verified-ink-site.png"
             }`}
           key="preview"
         />
         <meta
           property="twitter:image"
           content={`${typeof public_url === "string" && public_url.length > 0
-              ? `https://verifiedink.us/api/meta/showTwitterPreview/${nft_id}`
-              : "https://verifiedink.us/img/twitter-site-image.png"
+            ? `https://verifiedink.us/api/meta/showTwitterPreview/${nft_id}`
+            : "https://verifiedink.us/img/twitter-site-image.png"
             }`}
           key="twitter-image"
         />
         <meta
           property="description"
           content={`${recruit_share
-              ? "Check out this NFT I made with @VfdInk. Just for athletes. I get paid every single time it sells. Here's a referral link if you want to make your own."
-              : "Create your own custom NFT with VerifiedInk - @VfdInk"
+            ? "Check out this NFT I made with @VfdInk. Just for athletes. I get paid every single time it sells. Here's a referral link if you want to make your own."
+            : "Create your own custom NFT with VerifiedInk - @VfdInk"
             }`}
         />
       </Head>
@@ -182,9 +168,18 @@ const StaticCard: React.FC<Props> = ({
         >
           {(screenshot === "/img/card-placeholder.png") ?
             <motion.div className="card front"
-              variants={variants}
-              initial="initial"
-              animate="animate"
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: .8,
+                scale: .98
+              }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "reverse",
+                duration: 2,
+              }}
             >
               <img src={screenshot} alt="" />
             </motion.div>
