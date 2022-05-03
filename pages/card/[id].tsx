@@ -11,6 +11,7 @@ import useCancelNftListing from "@/hooks/nft/useCancelNftListing";
 import useListNft from "@/hooks/nft/useListNft";
 import useNftOrderBook from "@/hooks/nft/useNftOrderBook";
 import userStore from "@/mobx/UserStore";
+import { getSellData } from "@/supabase/marketplace";
 import {
   getFileLinkFromSupabase,
   getNftById,
@@ -38,9 +39,10 @@ import { FiRefreshCw } from "react-icons/fi";
 interface Props {
   nft: Nft | null;
   publicUrl: string | undefined;
+  salePrice: number | undefined;
 }
 
-const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
+const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
   if (!nft) return null;
   const toast = useToast();
   const router = useRouter();
@@ -283,6 +285,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
                 serial_no={serial_int}
                 flip={flipCard}
                 initFlip={initFlip}
+                sale_price={salePrice}
               />
               <div
                 className="cardbox-refreshicon-div"
@@ -381,6 +384,18 @@ const CardId: React.FC<Props> = ({ nft, publicUrl }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  let price = 100
+  await fetch("https://verifiedink.us/api/marketplace/getPrice?mkt=SOL/USD")
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.result.price) {
+          price = result.result.price;
+        } 
+      })
+      .catch((err) => {
+        
+      });
+      
   const { id } = context.params as any;
 
   let int_id = parseInt(id as string);
@@ -406,6 +421,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (publicUrl) {
     props.publicUrl = publicUrl;
   }
+
+  const openOrders = await getSellData(int_id);
+
+  if (openOrders && openOrders.length > 0) {
+    const prices =
+      openOrders.map((order) => {
+        return order.order_book.price * price
+      });
+
+    props.salePrice = parseInt(Math.min(...prices).toFixed(0));
+
+  }
+
+  
 
   return {
     props,

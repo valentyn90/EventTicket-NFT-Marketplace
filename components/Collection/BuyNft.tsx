@@ -42,8 +42,7 @@ const BuyNft: React.FC<Props> = ({
             <Spinner />
           ) : (
             <>
-              Buy for ◎{" "}
-              {selectedOrder.price}
+              Buy for ◎ {selectedOrder.price}
               {solPrice !== 0 && (
                 <span className="ml-8">
                   {`($${(selectedOrder.price * solPrice).toFixed(2)})`}
@@ -56,6 +55,7 @@ const BuyNft: React.FC<Props> = ({
           <ShareButton
             id={nft_id}
             flex={1}
+            serial_no={sn}
             width="unset"
             variant="outline"
             color="white"

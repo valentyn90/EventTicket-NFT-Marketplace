@@ -14,6 +14,7 @@ interface Props {
   db_first_name?: string;
   public_url?: string;
   recruit_share?: boolean;
+  sale_price?: number | undefined;
 }
 
 const StaticCard: React.FC<Props> = ({
@@ -23,6 +24,7 @@ const StaticCard: React.FC<Props> = ({
   db_first_name,
   public_url,
   recruit_share = false,
+  sale_price = undefined,
 }) => {
   const [screenshot, setScreenshot] = useState("/img/card-placeholder.png");
   const [lastX, setLastX] = useState(-1);
@@ -123,7 +125,11 @@ const StaticCard: React.FC<Props> = ({
       <Head>
         <meta
           property="og:title"
-          content={
+          content={sale_price ?  
+            "Buy " +
+            (db_first_name ? `${db_first_name}\'s ` : "") +
+            "VerifiedInk from $" + sale_price
+            :
             "Check out " +
             (db_first_name ? `${db_first_name}\'s ` : "") +
             "VerifiedInk"

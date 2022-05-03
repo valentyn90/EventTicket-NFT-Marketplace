@@ -25,6 +25,7 @@ interface Props {
   founders?: boolean;
   recruit_share?: boolean;
   serial_no?: number | undefined;
+  sale_price?: number | undefined;
 }
 
 const Card: React.FunctionComponent<Props> = ({
@@ -40,6 +41,7 @@ const Card: React.FunctionComponent<Props> = ({
   founders = false,
   recruit_share = false,
   serial_no = 1,
+  sale_price = undefined
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [nftCardData, setNftCardData] = useState({
@@ -359,7 +361,11 @@ const Card: React.FunctionComponent<Props> = ({
       <Head>
         <meta
           property="og:title"
-          content={
+          content={sale_price ?  
+            "Buy " +
+            (db_first_name ? `${db_first_name}\'s ` : "") +
+            "VerifiedInk from $" + sale_price
+            :
             "Check out " +
             (db_first_name ? `${db_first_name}\'s ` : "") +
             "VerifiedInk"
