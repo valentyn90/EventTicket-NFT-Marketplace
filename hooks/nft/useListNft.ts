@@ -37,7 +37,7 @@ const useListNft = () => {
         position: "top",
         description: res.error || "There was an error selling your ink.",
         status: "error",
-        duration: 3000,
+        duration: null,
         isClosable: true,
       });
     } else if (res.success) {
@@ -48,7 +48,7 @@ const useListNft = () => {
           position: "top",
           description: `Successfully listed your NFT for ${solSellPrice} SOL!`,
           status: "success",
-          duration: 3000,
+          duration: 8000,
           isClosable: true,
         });
         if (res.order) {

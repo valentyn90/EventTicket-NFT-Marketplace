@@ -1,7 +1,7 @@
 import { createOrder, sell } from "@/mint/marketplace";
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/supabase/supabase-admin";
-import { getKeypair, NFTMintMaster } from "@/mint/mint";
+import { getKeypair, NFTMintMaster, retryMintTransfer } from "@/mint/mint";
 import { web3 } from "@project-serum/anchor";
 import base58 from "bs58";
 import NftOwner from "@/types/NftOwner";
@@ -65,6 +65,19 @@ export default async function create(
       mint = mintCall.mint;
     }
   }
+
+  // Ensure transfer succeeded and if it didn't try again
+  const { data: mintData, error: mintDataError } = await supabase
+    .from("nft_owner")
+    .select("*")
+    .eq("mint", mint)
+    .maybeSingle();
+
+  if (mintData && mintData.state === "minted") {
+    const transfer = await retryMintTransfer(mint)
+  }
+
+
 
   if (mint !== "" && mint !== null) {
     // get user's public key

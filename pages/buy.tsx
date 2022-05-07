@@ -73,7 +73,7 @@ const Buy: React.FC = () => {
         position: "top",
         description: res.message,
         status: "error",
-        duration: 3000,
+        duration: null,
         isClosable: true,
       });
     }
@@ -126,7 +126,7 @@ const Buy: React.FC = () => {
         position: "top",
         description: res.message,
         status: "error",
-        duration: 3000,
+        duration: null,
         isClosable: true,
       });
     }

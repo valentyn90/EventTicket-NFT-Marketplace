@@ -103,7 +103,7 @@ const useBuyNft = () => {
                 description:
                   updateRes.error || "Purchase was likely unsuccessful.",
                 status: "error",
-                duration: 5000,
+                duration: null,
                 isClosable: true,
               });
             }
@@ -114,7 +114,7 @@ const useBuyNft = () => {
             position: "top",
             description: res.message,
             status: "error",
-            duration: 3000,
+            duration: null,
             isClosable: true,
           });
         }
@@ -124,7 +124,7 @@ const useBuyNft = () => {
           position: "top",
           description: "Purchase was likely unsuccessful.",
           status: "error",
-          duration: 5000,
+          duration: null,
           isClosable: true,
         });
         setBuyingNft(false);

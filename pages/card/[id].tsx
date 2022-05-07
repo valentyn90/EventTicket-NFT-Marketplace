@@ -83,7 +83,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
         title: "Transaction Cancelled",
         description: "Your card was not charged.",
         status: "success",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     }
@@ -168,7 +168,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
           position: "top",
           description: "Your NFT is still processing.",
           status: "error",
-          duration: 3000,
+          duration: 5000,
           isClosable: true,
         });
         setConfirmCancel(false);
@@ -185,7 +185,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
           position: "top",
           description: "There was an error finding your NFT.",
           status: "error",
-          duration: 3000,
+          duration: 5000,
           isClosable: true,
         });
         setConfirmCancel(false);

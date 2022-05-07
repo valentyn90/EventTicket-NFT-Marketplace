@@ -473,11 +473,11 @@ export async function NFTMintMaster(
       }
 
       const { data, error } = await supabase
-      .from("nft_owner")
-      .update({ mint: mint_key.toBase58() })
-      .eq("nft_id", nft_id)
-      .eq("serial_no", serial_no)
-      .single();
+        .from("nft_owner")
+        .update({ mint: mint_key.toBase58(), state: "minted" })
+        .eq("nft_id", nft_id)
+        .eq("serial_no", serial_no)
+        .single();
 
       console.log(`Updating metadata`)
 
@@ -499,9 +499,18 @@ export async function NFTMintMaster(
 
       const destination_pubkey = new web3.PublicKey(public_key.public_key);
 
-      const transfer_res = await sendTokenWithRetry(20, connection, wallet, token_account, destination_pubkey, mint_key, 1)
+      const transfer_res = await sendTokenWithRetry(10, connection, wallet, token_account, destination_pubkey, mint_key, 1)
 
       console.log("Sent NFT to owner:", transfer_res);
+
+      if (transfer_res != "Failure") {
+        const { data, error } = await supabase
+          .from("nft_owner")
+          .update({ state: "transferred" })
+          .eq("nft_id", nft_id)
+          .eq("serial_no", serial_no)
+          .single();
+      }
 
 
       return { mint: mint_key!.toBase58() };
@@ -510,4 +519,73 @@ export async function NFTMintMaster(
     console.log(err);
     return { mint: null };
   }
+}
+
+export async function retryMintTransfer(mint: string) {
+  const env = process.env.NEXT_PUBLIC_SOL_ENV!;
+
+  try {
+    // check if the NFT is in mint state
+    const { data, error } = await supabase
+      .from("nft_owner")
+      .select("*")
+      .eq("mint", mint)
+      .eq("state", "minted").maybeSingle()
+
+    if (data && data.length == 0) {
+      return
+    } else {
+      const { data: public_key, error: ownerError } = await supabase
+        .from("keys")
+        .select("public_key")
+        .eq("user_id", data.owner_id)
+        .single();
+
+      const destination_pubkey = new web3.PublicKey(public_key.public_key);
+      const mint_key = new web3.PublicKey(mint)
+
+      const keypair = await web3.Keypair.fromSecretKey(
+        base58.decode(verifiedSolSvcKey)
+      );
+      const wallet = new NodeWallet(keypair);
+      const connection = new web3.Connection(
+        env == "devnet" ? web3.clusterApiUrl("devnet") : env,
+        "finalized"
+      );
+
+      const token_account = await Token.getAssociatedTokenAddress(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        mint_key!,
+        keypair.publicKey
+      )
+
+      const transfer_res = await sendTokenWithRetry(10, connection, wallet, token_account, destination_pubkey, mint_key, 1)
+
+      if (transfer_res != "Failure") {
+        const { data, error } = await supabase
+          .from("nft_owner")
+          .update({ state: "transferred" })
+          .eq("mint", mint)
+          .single();
+
+        return { mint: mint }
+      }
+      else return { mint: null }
+
+
+
+    }
+  }
+
+  catch (err) {
+    console.log(err);
+    return { mint: null };
+  }
+
+
+
+
+  // transfer the NFT to owner
+
 }
