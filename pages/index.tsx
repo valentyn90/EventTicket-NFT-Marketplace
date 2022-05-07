@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Skeleton, Stack } from "@chakra-ui/react";
 import useWindowDimensions from "@/utils/useWindowDimensions";
+import mixpanel from 'mixpanel-browser';
 
 const WordChange = keyframes`
   0% { content: "Collector" }
@@ -422,6 +423,8 @@ const Home = () => {
   const [packCardSize, setPackCardSize] = useState(200);
   const [cardSize, setCardSize] = useState(350);
   const { width } = useWindowDimensions();
+  mixpanel.init('b78dc989c036b821147f68e00c354313')
+  mixpanel.track("Home Page Viewed");
 
   useEffect(() => {
     setTimeout(() => {

@@ -182,7 +182,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
         position: "top",
         description: "Invalid email.",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
       return;
@@ -231,7 +231,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
           position: "top",
           description: "There was a server error.",
           status: "error",
-          duration: 3000,
+          duration: 5000,
           isClosable: true,
         });
         setSubmitting(false);
@@ -288,7 +288,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
         position: "top",
         description: "Invalid email.",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
       return;
@@ -316,7 +316,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
         position: "top",
         description: "There was an error sending your magic link.",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     }

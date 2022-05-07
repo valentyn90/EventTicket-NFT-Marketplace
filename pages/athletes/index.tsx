@@ -7,6 +7,7 @@ import Link from "next/link";
 import { NextApiRequest, NextApiResponse } from "next";
 import { SplashModal } from "@/components/ui/SplashModal";
 import StaticCard from "@/components/NftCard/StaticCard";
+import mixpanel from 'mixpanel-browser';
 
 const Wrapper = styled.div`
   background: radial-gradient(
@@ -462,12 +463,15 @@ const headerVariants = {
 
 const Athletes: React.FC = () => {
 
+  mixpanel.init('b78dc989c036b821147f68e00c354313')
   const [flip1, setFlip1] = useState(true);
   const [flip2, setFlip2] = useState(false);
   const [flip3, setFlip3] = useState(true);
   const [flip4, setFlip4] = useState(false);
   const [flipMain, setFlipMain] = useState(false);
   const [videoPlayed, setVideoPlayed] = useState(false);
+
+  mixpanel.track("Athletes Page Viewed");
 
   // useEffect(() => {
   //   const intervalId = setInterval(() => {

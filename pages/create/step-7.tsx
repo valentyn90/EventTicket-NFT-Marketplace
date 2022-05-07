@@ -8,16 +8,21 @@ import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useMixpanel } from 'react-mixpanel-browser';
+
 
 const StepSeven = () => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+  const mixpanel = useMixpanel();
+
 
   useEffect(() => {
     userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
   }, []);
 
   async function handleStepSixSubmit(e: React.FormEvent) {
+    mixpanel.track("NFT - User Approved")
     e.preventDefault();
     setSubmitting(true);
     userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);

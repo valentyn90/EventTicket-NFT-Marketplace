@@ -31,6 +31,7 @@ import { NavTabLink } from "./NavTabLink";
 import { UserProfile } from "./UserProfile";
 import cookieCutter from "cookie-cutter";
 import { useIntercom } from 'react-use-intercom';
+import { useMixpanel } from 'react-mixpanel-browser';
 
 const NavIndex: React.FC = () => {
   const router = useRouter();
@@ -38,6 +39,8 @@ const NavIndex: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [referralString, setReferralString] = useState("");
   const { boot, update } = useIntercom();
+  const mixpanel = useMixpanel();
+
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
@@ -45,6 +48,15 @@ const NavIndex: React.FC = () => {
     () => {
       boot()
       if (userStore.loggedIn) {
+        mixpanel.identify(userStore.userDetails.id);
+        mixpanel.people.set({
+          $email: userStore.email,
+          name: userStore.userDetails.user_name,
+          twitter: userStore.userDetails.twitter,
+          grad_year: userStore.nft?.graduation_year,
+          state: userStore.nft?.usa_state,
+          minted: userStore.nft?.minted,
+        });
         update({
           name: userStore.userDetails.user_name,
           email: userStore.email,

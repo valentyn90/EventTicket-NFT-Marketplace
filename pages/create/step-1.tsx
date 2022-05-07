@@ -18,14 +18,19 @@ import { observer } from "mobx-react-lite";
 import { NextApiRequest, NextApiResponse } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useMixpanel } from 'react-mixpanel-browser';
 
 const StepOne = () => {
   const router = useRouter();
+  const mixpanel = useMixpanel();
 
   const [submitting, setSubmitting] = useState(false);
 
   async function handleStepOneSubmit(e: React.FormEvent) {
     e.preventDefault();
+    mixpanel.track(
+      "NFT - Started"
+    )
 
     if (userStore.nft) {
       // nft exists, update values

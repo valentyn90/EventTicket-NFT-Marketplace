@@ -2,10 +2,12 @@ import userStore from "@/mobx/UserStore";
 import OrderBook from "@/types/OrderBook";
 import { useToast } from "@chakra-ui/react";
 import React, { useState } from "react";
+import mixpanel from 'mixpanel-browser';
 
 const useListNft = () => {
   const toast = useToast();
   const [listingNft, setListingNft] = useState(false);
+  mixpanel.init('b78dc989c036b821147f68e00c354313')
 
   async function handleListNftForSale(
     solSellPrice: number,
@@ -44,6 +46,7 @@ const useListNft = () => {
       // Show success view
       if (res.success === true) {
         userStore.ui.refetchListingsData();
+        mixpanel.track("List NFT for Sale",{price_sol: solSellPrice});
         toast({
           position: "top",
           description: `Successfully listed your NFT for ${solSellPrice} SOL!`,

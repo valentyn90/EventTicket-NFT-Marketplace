@@ -4,6 +4,7 @@ import Cookies from "cookies";
 import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useMixpanel } from 'react-mixpanel-browser';
 
 interface Props {
   redirect: string;
@@ -12,6 +13,7 @@ interface Props {
 const Redirect: React.FC<Props> = ({ redirect }) => {
   const router = useRouter();
   const [notFound, setNotFound] = useState("");
+  const mixpanel = useMixpanel();
 
   // TODO: Handle the following error: /redirect?error=server_error&error_description=Error+getting+user+email+from+external+provider
 
@@ -27,6 +29,7 @@ const Redirect: React.FC<Props> = ({ redirect }) => {
       (event, session) => {
         setTimeout(() => {
           if (event === "SIGNED_IN") {
+            mixpanel.track("Signed In");
             if (redirect) {
               router.push(redirect);
             }

@@ -9,12 +9,17 @@ import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { useMixpanel } from 'react-mixpanel-browser';
+
 
 const StepFive = () => {
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
+  const mixpanel = useMixpanel();
+
 
   async function handleStepFiveSubmit(e: React.FormEvent) {
+    mixpanel.track("NFT - Uploaded Video")
     e.preventDefault();
     if (userStore.videoExists) {
       router.push("/create/step-6");

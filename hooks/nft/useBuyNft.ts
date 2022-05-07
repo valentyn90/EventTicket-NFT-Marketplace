@@ -9,9 +9,12 @@ import {
 } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useCallback, useState } from "react";
+import mixpanel from 'mixpanel-browser';
+
 
 const useBuyNft = () => {
   const toast = useToast();
+  mixpanel.init('b78dc989c036b821147f68e00c354313')
 
   const [buyingNft, setBuyingNft] = useState(false);
   const [refetchOrderData, setRefetchOrderData] = useState(false);
@@ -86,6 +89,8 @@ const useBuyNft = () => {
 
           if (updateRes.success) {
             if (updateRes.success === true) {
+              // Record successful purchase
+              mixpanel.track("Bought NFT with Crypto", {price_sol: price});
               setRefetchOrderData(!refetchOrderData);
               userStore.ui.refetchMarketplaceData();
               toast({
@@ -98,6 +103,7 @@ const useBuyNft = () => {
             }
           } else {
             if (updateRes.error) {
+              mixpanel.track("Error Buying NFT with Crypto");
               toast({
                 position: "top",
                 description:

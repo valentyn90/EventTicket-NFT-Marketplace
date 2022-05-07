@@ -13,10 +13,12 @@ import { FaGoogle, FaTwitter } from "react-icons/fa";
 import { NextApiRequest, NextApiResponse } from "next";
 import { SplashModal } from "@/components/ui/SplashModal";
 import cookieCutter from "cookie-cutter";
-
+import mixpanel from 'mixpanel-browser';
 
 const AthleteSignin: React.FC = () => {
 
+  mixpanel.init('b78dc989c036b821147f68e00c354313')
+  mixpanel.track('Athlete Signin Page')
   const [bypass, setBypass] = useState(false)
   
   useEffect(() => {

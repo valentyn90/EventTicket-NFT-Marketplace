@@ -13,7 +13,9 @@ import { observer } from "mobx-react-lite";
 import userStore from "@/mobx/UserStore";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import {IntercomProvider} from 'react-use-intercom';
+import { IntercomProvider } from 'react-use-intercom';
+import mixpanel from 'mixpanel-browser';
+import { MixpanelProvider } from 'react-mixpanel-browser';
 
 // import "../css/rsuite.css";
 
@@ -46,25 +48,27 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [userStore.loggedIn, userStore.loaded, router.pathname]);
 
+
   return (
     <ChakraProvider theme={theme}>
       <WalletConnectionProvider>
         <WalletModalProvider>
-          <IntercomProvider appId={"b3ms6uff"} >
-          <Head>
-            <title>Verified Ink</title>
-            <meta
-              property="og:image"
-              content="https://verifiedink.us/img/verified-ink-site.png"
-              key="preview"
-            />
-            <script
-              async
-              src="https://www.googletagmanager.com/gtag/js?id=G-68N30YNDQ1"
-            ></script>
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
+          <MixpanelProvider token={"b78dc989c036b821147f68e00c354313"} >
+            <IntercomProvider appId={"b3ms6uff"} >
+              <Head>
+                <title>Verified Ink</title>
+                <meta
+                  property="og:image"
+                  content="https://verifiedink.us/img/verified-ink-site.png"
+                  key="preview"
+                />
+                <script
+                  async
+                  src="https://www.googletagmanager.com/gtag/js?id=G-68N30YNDQ1"
+                ></script>
+                <script
+                  dangerouslySetInnerHTML={{
+                    __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -73,14 +77,15 @@ function MyApp({ Component, pageProps }: AppProps) {
             cookie_flags: 'secure;samesite=none'
           });
           `,
-              }}
-            />
-          </Head>
-          <GlobalStyle />
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-          </IntercomProvider>
+                  }}
+                />
+              </Head>
+              <GlobalStyle />
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </IntercomProvider>
+          </MixpanelProvider>
         </WalletModalProvider>
       </WalletConnectionProvider>
     </ChakraProvider>

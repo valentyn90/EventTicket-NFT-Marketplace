@@ -11,12 +11,16 @@ import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { useMixpanel } from 'react-mixpanel-browser';
+
 
 const StepTwo = () => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+  const mixpanel = useMixpanel();
 
   async function handleStepTwoSubmit(e: React.FormEvent) {
+    mixpanel.track("NFT - Uploaded Photo")
     e.preventDefault();
     if (userStore.stepTwoSkip) {
       router.push("/create/step-3");
