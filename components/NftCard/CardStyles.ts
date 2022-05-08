@@ -94,6 +94,7 @@ export const CardWrapper = styled.div<StyleProps>`
     width: 740px;
     left: 0px;
     top: 0px;
+    mask-image: linear-gradient(to bottom,rgba(0,0,0,1) 85%, rgba(0,0,0,0) 98%); 
   }
 
   .crop-background-img {
