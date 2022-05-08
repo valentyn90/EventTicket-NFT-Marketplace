@@ -5,6 +5,7 @@ import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useMixpanel } from 'react-mixpanel-browser';
+import { useIntercom } from "react-use-intercom";
 
 interface Props {
   redirect: string;
@@ -14,6 +15,7 @@ const Redirect: React.FC<Props> = ({ redirect }) => {
   const router = useRouter();
   const [notFound, setNotFound] = useState("");
   const mixpanel = useMixpanel();
+  const { update } = useIntercom();
 
   // TODO: Handle the following error: /redirect?error=server_error&error_description=Error+getting+user+email+from+external+provider
 
@@ -30,6 +32,11 @@ const Redirect: React.FC<Props> = ({ redirect }) => {
         setTimeout(() => {
           if (event === "SIGNED_IN") {
             mixpanel.track("Signed In");
+            update({
+              customAttributes: {
+                created_account: true,
+              }
+            })
             if (redirect) {
               router.push(redirect);
             }
