@@ -38,13 +38,6 @@ export const CookieBanner = (props: StackProps): JSX.Element | null => {
       }}
       {...props}
     >
-      <Text color="white" fontSize={{ base: "sm", md: "md" }}>
-        By using our website, you agree to the use of cookies as described in
-        our{" "}
-        <Link href="/privacy" textDecoration="underline">
-          cookie policy
-        </Link>
-      </Text>
       <Button
         onClick={handleAcceptance}
         bg="white"
@@ -55,6 +48,13 @@ export const CookieBanner = (props: StackProps): JSX.Element | null => {
       >
         Accept
       </Button>
+      <Text color="white" fontSize={{ base: "sm", md: "md" }}>
+        By using our website, you agree to the use of cookies as described in
+        our{" "}
+        <Link href="/privacy" textDecoration="underline">
+          cookie policy
+        </Link>
+      </Text>
     </HStack>
     
   );
