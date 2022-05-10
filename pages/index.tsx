@@ -59,6 +59,14 @@ const Wrapper = styled.div`
   .card-full-opacity {
     opacity: 1;
   }
+  
+  .tap {
+    top: -56px;
+    left: 840px;
+    position: absolute;
+    height: 80px;
+    opacity: 0.5;
+  }
 
   .btn {
     text-align: center;
@@ -93,16 +101,17 @@ const Wrapper = styled.div`
     .hero-left {
       z-index: 5;
       // flex: 1;
-      margin-right: 50%;
+      margin-right: 45%;
+      backdrop-filter: blur(5px);
     }
 
     .hero-button-row {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-evenly;
     }
 
     .hero-button-box {
-      margin-top: 2rem;
+      margin-top: 5rem;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -112,16 +121,31 @@ const Wrapper = styled.div`
       font-size: 3rem;
       font-weight: bold;
       margin-bottom: 1rem;
-      width: 70%;
+      width: 100%;
+      text-align: center;
+    }
+
+    .hero-gradient {
+      text-shadow:
+          0 0 14px rgb(239 239 240),
+          0 0 21px rgb(239 239 240),
+          0 0 42px #3f7bfb,
+          0 0 82px #3f7bfb,
+          0 0 92px #3f7bfb,
+          0 0 102px #3f7bfb;
     }
 
     .hero-subtitle {
       font-size: 1.5rem;
+      width: 80%;
+      text-align: center;
+      margin: auto;
+      margin-top: 2rem;
     }
 
     .hero-button-title {
-      font-weight: bold;
-      font-size: 1.25rem;
+      font-weight: 800;
+      font-size: 1.75rem;
       margin-bottom: 1rem;
     }
 
@@ -193,9 +217,8 @@ const Wrapper = styled.div`
 
     .collector-animate-text {
       font-size: 3.5rem;
-
       ::before {
-        animation: ${WordChange} 15s linear infinite;
+        animation: ${WordChange} 8s linear infinite;
         content: "Collector";
       }
     }
@@ -204,6 +227,8 @@ const Wrapper = styled.div`
       font-size: 3rem;
       font-weight: bold;
       margin-bottom: 1rem;
+      overflow: hidden;
+      white-space: nowrap;
     }
 
     .collector-subtitle {
@@ -297,9 +322,9 @@ const Wrapper = styled.div`
       align-items: center;
 
       .hero-subtitle {
-        font-size: 1rem;
+        font-size: 1.35rem;
         text-align: center;
-        width: 80%;
+        width: 90%;
         margin-inline: auto;
       }
 
@@ -312,8 +337,21 @@ const Wrapper = styled.div`
       }
 
       .hero-button-row {
-        flex-direction: column;
+        flex-direction: column-reverse;
         justify-content: space-around;
+      }
+
+      .tap {
+        top: 50px;
+        left: 75%;
+        height: 55px;
+        opacity: 0.5;
+        position: relative;
+        margin-top: -55px;
+      }
+
+      .hero-button-box {
+        margin-top: 2rem;
       }
 
       .hero-right-cards {
@@ -332,6 +370,7 @@ const Wrapper = styled.div`
         display: flex;
         justify-content: center;
         margin-top: 1rem;
+        margin-bottom: 140px;
       }
     }
 
@@ -459,28 +498,29 @@ const Home = () => {
       <div className="inner">
         <div className="hero">
           <div className="hero-left">
-            <p className="hero-title">The Ultimate Rookie Card</p>
+            <p className="hero-title">The <text className="hero-gradient">Ultimate</text> Rookie Card</p>
 
             <p className="hero-subtitle">
-              Show your support for future NCAA, NBA and NFL stars when they
-              need it most, before they get big.
+              Athlete created. Athlete owned. <br />
+              Directly invest in the next generation of stars and put money in their hands.
             </p>
             <div className="hero-card-mobile">
               <div className="card-box card-full-opacity">
-                <StaticCard nft_id={272} width={cardSize} reverse={flipMain} />
+                <img src="/img/tap.svg" className="tap" alt="tap" />
+                <StaticCard nft_id={272} width={400} reverse={flipMain} />
               </div>
             </div>
             <div className="hero-button-row">
               <div className="hero-button-box">
                 <p className="hero-button-title">Fans</p>
                 <Link href={"/marketplace"}>
-                  <button className="btn btn-blue">Buy on Marketplace</button>
+                  <button className="btn btn-white">Buy on Marketplace</button>
                 </Link>
               </div>
               <div className="hero-button-box">
                 <p className="hero-button-title">Athletes</p>
                 <Link href={"/athletes"}>
-                  <button className="btn btn-white">
+                  <button className="btn btn-blue">
                     Create Your <span className="bold-txt">VERIFIED</span>INK
                   </button>
                 </Link>
@@ -496,6 +536,7 @@ const Home = () => {
                 <StaticCard nft_id={280} width={cardSize} />
               </div>
               <div className="card-box card-full-opacity">
+                <img src="/img/tap.svg" className="tap" alt="tap" />
                 <StaticCard nft_id={272} width={cardSize} reverse={flipMain} />
               </div>
               <div className="card-box">
@@ -537,8 +578,9 @@ const Home = () => {
 
             <div className="athletes-content">
               <p className="athletes-subtitle">
-                VerifiedInk empowers amateur athletes like you to create, mint
-                and sell limited edition NFTs showcasing your talent.
+                VerifiedInk empowers athletes to make money by designing and selling
+                their own limited edition NFT showcasing their talent
+
               </p>
               <Link href={"/athletes"}>
                 <button className="btn btn-white">

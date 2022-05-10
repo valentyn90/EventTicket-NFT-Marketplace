@@ -31,7 +31,7 @@ import { NavTabLink } from "./NavTabLink";
 import { UserProfile } from "./UserProfile";
 import cookieCutter from "cookie-cutter";
 import { useIntercom } from 'react-use-intercom';
-import { useMixpanel } from 'react-mixpanel-browser';
+import mixpanel from 'mixpanel-browser';
 
 const NavIndex: React.FC = () => {
   const router = useRouter();
@@ -39,10 +39,12 @@ const NavIndex: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [referralString, setReferralString] = useState("");
   const { boot, update } = useIntercom();
-  const mixpanel = useMixpanel();
+  mixpanel.init('b78dc989c036b821147f68e00c354313')
 
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
+
+  mixpanel.track("Page View", {path: router.asPath, page_id: router.query.id, query: router.query});
 
   const bootWithProps = useCallback(
     () => {

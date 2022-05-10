@@ -45,8 +45,17 @@ const Wrapper = styled.div`
 
   .header {
     font-size: 3rem;
-    margin-bottom: 2rem;
     font-weight: bold;
+  }
+
+  .gradient {
+    text-shadow:
+        0 0 14px rgb(239 239 240),
+        0 0 21px rgb(239 239 240),
+        0 0 42px #3f7bfb,
+        0 0 82px #3f7bfb,
+        0 0 92px #3f7bfb,
+        0 0 102px #3f7bfb;
   }
 
   .subtitle {
@@ -71,9 +80,10 @@ const Wrapper = styled.div`
 
   .title-grid {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    // align-items: left;
+    // gap: 10px;
+    margin-bottom: 20px;
   }
 
   .hero-column {
@@ -137,6 +147,15 @@ const Wrapper = styled.div`
     align-items: center;
     flex: 1;
     justify-content: center;
+  }
+
+  .tap {
+    top: 55px;
+    left: 75%;
+    height: 55px;
+    opacity: 0.5;
+    position: relative;
+    margin-top: -55px;
   }
 
   .text-section {
@@ -314,7 +333,7 @@ const Wrapper = styled.div`
     }
 
     .mt-5 {
-      margin-top: 1rem;
+      margin-top: 3rem;
     }
 
     .icon-box {
@@ -343,10 +362,12 @@ const Wrapper = styled.div`
 
     .title-grid {
       grid-gap: 10px;
+      flex-direction: column;
     }
 
     .header {
-      font-size: 2rem;
+      font-size: 2.5rem;
+      font-weight: bold;
     }
 
     .subtitle {
@@ -377,7 +398,7 @@ const Wrapper = styled.div`
 
   @media screen and (max-width: 389px) {
     .mobile-margin-top {
-      margin-top: 200px;
+      margin-top: 100px;
     }
   }
 
@@ -526,25 +547,26 @@ const Athletes: React.FC = () => {
             <div>
               <div className="title-grid">
                 <motion.div variants={headerVariants} className="header">
-                  Own
+                  Your Career
                 </motion.div>
                 <motion.div
                   variants={headerVariants}
-                  className="header blue-text"
+                  className="header"
                 >
-                  Your
+                  Your Collectible
                 </motion.div>
-                <motion.div variants={headerVariants} className="header">
-                  Image
+                <motion.div variants={headerVariants} className="header gradient">
+                  You Get Paid
                 </motion.div>
               </div>
               <motion.div variants={childVariants} className="sub-box">
                 <p className="subtitle">
-                  VerifiedInk empowers amateur athletes like you to create, mint
-                  and sell limited edition NFTs showcasing your talent.
+                  VerifiedInk is the first place for athletes like you to design, own,
+                  and sell their own limited edition NFTs.
+                  {/* Design, own, and sell your limited edition NFTs. */}
                 </p>
                 <p className="subtitle">
-                  Your career is in your hands. Your collectibles should be too.
+                Completely free to make. Earn on every single sale.
                 </p>
                 <div className="buttons margin-button">
                   <Link href="/create/step-1">
@@ -556,26 +578,26 @@ const Athletes: React.FC = () => {
                 <div className="hero-section">
                   <div className="hero-section-block">
                     <div className="line-section"></div>
-                    <p className="hero-section-title">Quick & Simple</p>
+                    <p className="hero-section-title">2 Minute Drill</p>
                     <p className="hero-section-subtitle">
                       We make creating your first NFT as easy as posting to your
-                      favorite social media app.
+                      favorite social media app - you'll be done in 2 minutes.
                     </p>
                   </div>
                   <div className="hero-section-block">
                     <div className="line-section"></div>
-                    <p className="hero-section-title">Athlete First</p>
+                    <p className="hero-section-title">Earn the Most</p>
                     <p className="hero-section-subtitle">
-                      VerifiedInk succeeds when our athletes succeed. As former
-                      college athletes and coaches we treat our athletes how
-                      we’d want to be treated.
+                      Free to create, and yours to sell. You earn not just on the first
+                      sale, but on every sale.
                     </p>
                   </div>
                 </div>
               </motion.div>
             </div>
             <motion.div className="max-w-100" variants={childVariants}>
-              <div className="hero-card-box">
+              <div className="hero-card-box mb-2">
+              <img src="/img/tap.svg" className="tap" alt="tap" />
                 <StaticCard nft_id={332}
                   reverse={flipMain}
                 />
@@ -602,7 +624,7 @@ const Athletes: React.FC = () => {
                 </div>
                 <p className="how-it-works-title">Create</p>
                 <p className="how-it-works-subtitle">
-                  Take 3 minutes to create your VerifiedInk
+                  Take 2 minutes to create your VerifiedInk
                 </p>
               </motion.div>
               <motion.div className="icon-box" variants={childVariants}>
@@ -644,22 +666,17 @@ const Athletes: React.FC = () => {
                 Athlete First
               </motion.p>
 
-              <motion.p
-                className="subtitle mobile-padding mb-2"
-                variants={childVariants}
-              >
-                We think athletes like you should earn the most from their
-                collectibles. Not institutions, agents, or leagues.
-              </motion.p>
+
               <motion.p
                 className="subtitle mobile-padding"
                 variants={childVariants}
               >
-                That's why VerifiedInk is completely free for athletes. We help
-                you create, own, and sell your digital collectibles. We take a
-                small fee, but only when you sell it - not before. And the best
-                part? Your collectibles come with forever royalties - so you get
-                a cut of every single sale other people make too.
+                We want you to own your image, and earn the most you can from it.
+                We take a small fee, but only when you sell it - not before.
+                And the best part? Your collectibles come with forever royalties -
+                so you get a cut of every single sale other people make too.
+                Your career is in your hands. Your collectibles should be too.
+
               </motion.p>
             </div>
 
@@ -684,7 +701,7 @@ const Athletes: React.FC = () => {
               <p className="header mobile-padding">Our Mission</p>
               <div className="sub-box flex-1 mobile-padding">
                 <p className="subtitle">
-                  Our mission is to empower all amateur athletes by making it
+                  Our mission is to empower all athletes by making it
                   easy for you to capitalize on your years of hard work and
                   talent. Our goal is to bring millions of athletes just like
                   you into Web3 as creators. Like you, we’re just getting
@@ -737,7 +754,7 @@ const Athletes: React.FC = () => {
         </motion.div>
       </div>
     </Wrapper>
-  ) 
+  )
 };
 
 const StarIcon = () => (
