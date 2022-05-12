@@ -16,8 +16,8 @@ import dynamic from "next/dynamic";
 import { IntercomProvider } from 'react-use-intercom';
 import mixpanel from 'mixpanel-browser';
 import { MixpanelProvider } from 'react-mixpanel-browser';
+import TagManager from 'react-gtm-module';
 
-// import "../css/rsuite.css";
 
 require("../css/rsuite.css");
 
@@ -47,6 +47,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       }
     }
   }, [userStore.loggedIn, userStore.loaded, router.pathname]);
+
+  useEffect(() => {
+    TagManager.initialize({ gtmId: 'GTM-KP825Q5' });
+  }, []);
 
 
   return (
