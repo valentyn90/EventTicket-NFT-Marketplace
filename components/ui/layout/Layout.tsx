@@ -14,7 +14,7 @@ const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const showNav = router.pathname === "/screenshot/[id]" ? false : true;
   const showNavForLanding =
-    router.pathname.includes("referralLanding")
+    ( router.pathname === "/ar" || router.pathname === "/screenshot/qr")
       ? false
       : true;
   const { colorMode, setColorMode } = useColorMode();
@@ -54,7 +54,8 @@ const Layout: React.FC<Props> = ({ children }) => {
         </Box>
       ) : (
         <Box
-          minH="100vh"
+          // minH="100vh"
+          minH="100%"
           // mt="56px"
           bg={useColorModeValue("gray.50", "inherit")}
         >

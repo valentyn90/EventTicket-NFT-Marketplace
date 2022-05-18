@@ -12,6 +12,7 @@ export async function handleRecruitClick(referralCode: string) {
     const ta = document.createElement("textarea");
     ta.innerText = share_link;
     document.body.appendChild(ta);
+    //@ts-ignore
     ta.select();
     document.execCommand("copy");
     ta.remove();
