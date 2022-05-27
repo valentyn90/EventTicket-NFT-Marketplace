@@ -13,8 +13,8 @@ const Wrapper = styled.div`
 
   #react-qrcode-logo {
     position: absolute;
-    top: 420px;
-    left: 200px;
+    top: 377px;
+    left: 168px;
     opacity: 0.75;
   }
 
@@ -25,9 +25,9 @@ const Wrapper = styled.div`
 
   .text{
     position: absolute;
-    top: 546px;
+    top: 590px;
     left: 240px;
-    opacity: 0.5;
+    opacity: 0;
   }
   .id{
     position: absolute;
@@ -55,7 +55,7 @@ const Screenshot: React.FC = () => {
 
     <Wrapper id="card">
       <img className="target" src="/ar/source/target-front.png"></img>
-      <QRCode size={120} bgColor="transparent" fgColor="white" value={`https://verifiedink.us/ar?ar_id=${id}`} qrStyle="dots"/>
+      <QRCode size={200} bgColor="transparent" fgColor="white" value={`https://verifiedink.us/ar?ar_id=${id}`} qrStyle="dots"/>
       <text className="text">Scan Me</text>
       <text className="id">No. {id}</text>
     </Wrapper>

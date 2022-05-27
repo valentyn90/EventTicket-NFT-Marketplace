@@ -2,9 +2,6 @@ import ARViewer from "@/components/Components/arviewer"
 import { getNftById, getScreenshot, supabase } from "@/supabase/supabase-client"
 import Head from "next/head"
 import sizeOf from "image-size"
-import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
-import { fetchNFTMetadata } from "@/utils/web3/queries"
 
 interface Props {
   nft_id: number;
@@ -60,19 +57,6 @@ export async function getServerSideProps(context: any) {
   const thumbnail = `https://image.mux.com/${mux}/thumbnail.jpg`
 
   let width = 1
-
-  // var request = require('request').defaults({ encoding: null });
-  // const res = await request.get(thumbnail, async function (err: any, res: any, body: any) {
-  //   //process exif here
-  //   const dimensions = await sizeOf(body)
-  //   if (dimensions.width && dimensions.height) {
-  //     width = dimensions.width / dimensions.height
-  //     console.log(width)
-  //     return width
-  //   }
-  // });
-
-  console.log(width)
 
   const f = await fetch(thumbnail)
   const blob = await f.blob()

@@ -59,7 +59,8 @@ const SellNft: React.FC<Props> = ({
       getNftById(nft_id).then(({ data, error }) => {
         if (data) {
           const gradYearNum = Number(data.graduation_year);
-          if (gradYearNum > 22) {
+          const NILState = ["CA","NJ","NY","LA","CO","NE","UT","AK","KS"].includes(data.usa_state) ;
+          if (gradYearNum > 22 && !NILState) {
             setGradYearDisable(true);
           }
         }
