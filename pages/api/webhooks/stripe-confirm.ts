@@ -60,156 +60,189 @@ const handler = async (req: any, res: any) => {
 
           // console.log("Checkout session completed");
 
-          // payment successful, update credit_card_sale to success
-          const { data, error } = await supabase
-            .from("credit_card_sale")
-            .update({
-              status: "completed",
-            })
-            .match({ stripe_tx: eventObject.id })
-            .single();
+          // payment successful, update credit_card_sale to payment_completed
+          // const { data, error } = await supabase
+          //   .from("credit_card_sale")
+          //   .update({
+          //     status: "2_payment_completed",
+          //   })
+          //   .match({ stripe_tx: eventObject.id })
+          //   .single();
 
-          console.log(data)
+          // console.log(data)
 
 
           if (eventObject.payment_status === "paid") {
-            // cancel listing on chain
-            // find active order
-            const { data: orderData, error: orderError } = await supabase
-              .from("order_book")
-              .select("*")
-              .match({ mint: data.mint, active: true })
-              .order("id", { ascending: false });
-
-            let activeOrder = null;
-            if (orderData && orderData.length > 0) {
-              activeOrder = orderData[0];
-            }
-            // console.log({ activeOrder });
-
-            const actual_seller_keypair = (await getKeypair(
-              activeOrder.user_id
-            )) as web3.Keypair;
-            const auctionHouse = AUCTION_HOUSE!;
-            const sellerKeypair = await web3.Keypair.fromSecretKey(
-              base58.decode(verifiedSolSvcKey)
-            );
-            const svcKeypair = sellerKeypair
-
-            const ahCancel = await cancel(
-              auctionHouse,
-              svcKeypair,
-              activeOrder.mint,
-              activeOrder.price,
-              activeOrder.currency,
-              activeOrder.buy,
-              actual_seller_keypair 
-            );
-
-            console.log("Cancelling on chain listing")
-
-            if (ahCancel.error) {
-              console.log({ error: "Error with onchain cancel", message: ahCancel.error });
-            }
-
-            const canceledOrder = await cancelOrder(
-              activeOrder.mint,
-              activeOrder.price,
-              activeOrder.currency,
-              activeOrder.buy,
-              activeOrder.user_id,
-              activeOrder.public_key
-            );
-
-            if (canceledOrder.error) {
-              console.log({ error: "Error with storing cancel record in db", message: canceledOrder.error });
-            }
-
-
-            const userId = data.user_id;
-
-            let userIdKey = "";
-
-            // Check if user already has a key
-            const { data: keyData, error: keyError } = await supabase
-              .from("keys")
-              .select("*")
-              .eq("user_id", userId)
+            const { data, error } = await supabase
+              .from("credit_card_sale")
+              .update({
+                status: "2_payment_completed",
+              })
+              .match({ stripe_tx: eventObject.id })
               .single();
 
-            if (!keyData) {
-              // no key for userid, create one
-              const { data } = await generateKeypair(userId);
-              console.log({ data });
-              if (data) {
-                userIdKey = data.public_key;
-              }
-            } else {
-              userIdKey = keyData.public_key;
-            }
-
             
-            // Actually transfer the nft to the new owner
-            console.log("Transferring nft to new owner");
-            const sendToken = await transferViaCreditCard(
-              data.mint,
-              activeOrder.price,
-              activeOrder.currency,
-              actual_seller_keypair,
-              userIdKey,
-              svcKeypair
-            )
+            // Send success email to seller and buyer
+            await sendPurchaseMail(
+              eventObject.customer_email,
+              eventObject.metadata.nft_id,
+              eventObject.metadata.sn,
+              eventObject.metadata.card_preview_image)
 
-            // update nft_owner table with new owner
-            const { data: nftOwnerData, error: nftOwnerError } = await supabase
-              .from("nft_owner")
-              .update([
-                {
-                  owner_id: userId,
-                },
-              ])
-              .match({ mint: data.mint });
-
-            if (sendToken.txId) {
-              const { data, error } = await supabase
-                .from("credit_card_sale")
-                .update({
-                  status: "transferred",
-                })
-                .match({ stripe_tx: eventObject.id })
-                .single();
+            // Call out to stripeTransfer to transfer the nft to the new owner
+            const requestOptions = {
+              method: "POST",
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({user_id: data.user_id})
             }
-            else {
-              // Error with Transfer - Let user know
-            }
+            const attempt_transfer = await fetch(`/api/marketplace/stripeTransfer`, requestOptions);
 
-            // Todo: Send money to correct addresses
+            // cancel listing on chain
+            // find active order
+            // const { data: orderData, error: orderError } = await supabase
+            //   .from("order_book")
+            //   .select("*")
+            //   .match({ id: data.order_book_id })
+
+            // let activeOrder = null;
+            // if (orderData && orderData.length > 0) {
+            //   activeOrder = orderData[0];
+            // }
+            // // console.log({ activeOrder });
+
+            // const actual_seller_keypair = (await getKeypair(
+            //   activeOrder.user_id
+            // )) as web3.Keypair;
+            // const auctionHouse = AUCTION_HOUSE!;
+            // const sellerKeypair = await web3.Keypair.fromSecretKey(
+            //   base58.decode(verifiedSolSvcKey)
+            // );
+            // const svcKeypair = sellerKeypair
+
+            // // Delist in DB
+            // const canceledOrder = await cancelOrder(
+            //   activeOrder.mint,
+            //   activeOrder.price,
+            //   activeOrder.currency,
+            //   activeOrder.buy,
+            //   activeOrder.user_id,
+            //   activeOrder.public_key
+            // );
+
+            // if (canceledOrder.error) {
+            //   console.log({ error: "Error with storing cancel record in db", message: canceledOrder.error });
+            // }
+
+            // // Delist on chain
+            // const ahCancel = await cancel(
+            //   auctionHouse,
+            //   svcKeypair,
+            //   activeOrder.mint,
+            //   activeOrder.price,
+            //   activeOrder.currency,
+            //   activeOrder.buy,
+            //   actual_seller_keypair
+            // );
+
+            // console.log("Cancelling on chain listing")
+
+            // if (ahCancel.error) {
+            //   console.log({ error: "Error with onchain cancel", message: ahCancel.error });
+            // }
+            // else {
+            //   // order cancelled on chain
+            //   await supabase
+            //     .from("credit_card_sale")
+            //     .update({
+            //       status: "3_onchain_listing_cancelled",
+            //     })
+            //     .match({ stripe_tx: eventObject.id })
+            // }
 
 
 
-            // record sale in completed sale table
-            const { data: sale, error: saleError } = await supabase
-              .from("completed_sale")
-              .insert([
-                {
-                  price: eventObject.amount_total / 100,
-                  transaction: eventObject.id,
-                  mint: data.mint,
-                  currency: "USD",
-                  buyer_public_key: userIdKey,
-                  seller_public_key: activeOrder.public_key,
-                },
-              ]);
-              if (saleError) {
-                console.log({ error: "Error with storing sale record in db", message: saleError });
-              }
 
-           // Send success email to seller and buyer
-           await sendPurchaseMail(
-            eventObject.customer_email,
-            eventObject.metadata.nft_id,
-            eventObject.metadata.sn,
-            eventObject.metadata.card_preview_image)
+            // const userId = data.user_id;
+
+            // let userIdKey = "";
+
+            // // Check if user already has a key
+            // const { data: keyData, error: keyError } = await supabase
+            //   .from("keys")
+            //   .select("*")
+            //   .eq("user_id", userId)
+            //   .single();
+
+            // if (!keyData) {
+            //   // no key for userid, create one
+            //   const { data } = await generateKeypair(userId);
+            //   console.log({ data });
+            //   if (data) {
+            //     userIdKey = data.public_key;
+            //   }
+            // } else {
+            //   userIdKey = keyData.public_key;
+            // }
+
+
+            // // Actually transfer the nft to the new owner
+            // console.log("Transferring nft to new owner");
+            // const sendToken = await transferViaCreditCard(
+            //   data.mint,
+            //   activeOrder.price,
+            //   activeOrder.currency,
+            //   actual_seller_keypair,
+            //   userIdKey,
+            //   svcKeypair
+            // )
+
+
+
+            // if (sendToken.txId) {
+            //   // update nft_owner table with new owner
+            //   await supabase
+            //     .from("nft_owner")
+            //     .update([
+            //       {
+            //         owner_id: userId,
+            //       },
+            //     ])
+            //     .match({ mint: data.mint });
+
+            //   await supabase
+            //     .from("credit_card_sale")
+            //     .update({
+            //       status: "transferred",
+            //     })
+            //     .match({ stripe_tx: eventObject.id })
+            //     .single();
+            // }
+            // else {
+            //   // Error with Transfer - Let user know
+            // }
+
+            // // Todo: Send money to correct addresses
+
+
+
+            // // record sale in completed sale table
+            // const { data: sale, error: saleError } = await supabase
+            //   .from("completed_sale")
+            //   .insert([
+            //     {
+            //       price: eventObject.amount_total / 100,
+            //       transaction: eventObject.id,
+            //       mint: data.mint,
+            //       currency: "USD",
+            //       buyer_public_key: userIdKey,
+            //       seller_public_key: activeOrder.public_key,
+            //     },
+            //   ]);
+            // if (saleError) {
+            //   console.log({ error: "Error with storing sale record in db", message: saleError });
+            // }
+
+
 
 
 
@@ -217,7 +250,7 @@ const handler = async (req: any, res: any) => {
             const { data, error } = await supabase
               .from("credit_card_sale")
               .update({
-                status: "rejected",
+                status: "2b_payment_rejected",
               })
               .match({ stripe_tx: eventObject.id });
           }

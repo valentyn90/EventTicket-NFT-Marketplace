@@ -7,7 +7,7 @@ export function createConnection(url = web3.clusterApiUrl('devnet')) {
     if (url === 'devnet') {
         url = web3.clusterApiUrl('devnet');
     }
-    return new web3.Connection(url);
+    return new web3.Connection(url, "confirmed");
 }
 
 

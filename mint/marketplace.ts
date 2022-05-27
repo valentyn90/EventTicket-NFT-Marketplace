@@ -1,5 +1,6 @@
 import { supabase } from "@/supabase/supabase-admin";
-import { BN, web3, Wallet } from "@project-serum/anchor";
+import * as web3 from "@solana/web3.js";
+import { BN, } from "@project-serum/anchor";
 import base58 from "bs58";
 import log from "loglevel";
 import {
@@ -20,8 +21,8 @@ import { KeySystems } from "hls.js";
 import { truncate } from "fs/promises";
 import { actions, NodeWallet, programs } from "@metaplex/js";
 import { createConnection } from "@/utils/web3/queries";
-import { PublicKey } from "@solana/web3.js";
-import {AuctionHouse} from "@metaplex-foundation/mpl-auction-house/dist/src/generated";
+import { Account, PublicKey, Transaction } from "@solana/web3.js";
+import { AuctionHouse } from "@metaplex-foundation/mpl-auction-house/dist/src/generated";
 
 export const createOrder = async (
   mint: string,
@@ -78,7 +79,7 @@ export const cancelOrder = async (
 
   if (error) {
     console.log(error.message);
-    return null;
+    return error;
   }
   return data;
 };
@@ -99,9 +100,9 @@ export const sell = async (
   const tokenSize = 1;
   const auctionHouseKeypair = seller_keypair;
   const env = process.env.NEXT_PUBLIC_SOL_ENV as string;
-  let   env_name = "mainnet-beta";
+  let env_name = "mainnet-beta";
 
-  if(env.includes("dev")){
+  if (env.includes("dev")) {
     env_name = "devnet";
   }
 
@@ -126,7 +127,7 @@ export const sell = async (
 
   // const auctionHouseNew = await AuctionHouse.fromAccountAddress(connection, auctionHouseKey)
 
-  
+
 
   try {
     const buyPriceAdjusted = new BN(
@@ -221,7 +222,7 @@ export const sell = async (
         .map((k) => (k.isSigner = true));
     }
 
-      // console.log(`signers: ${signers.map((k) => k.publicKey.toBase58())}`)
+    // console.log(`signers: ${signers.map((k) => k.publicKey.toBase58())}`)
 
     const tx = await sendTransactionWithRetryWithKeypair(
       anchorProgram.provider.connection,
@@ -273,9 +274,9 @@ export const cancel = async (
   // const auctionHouseKeypair = await web3.Keypair.fromSecretKey(base58.decode("SECRETKEY"))
   const auctionHouseKeypair = seller_keypair;
   const env = process.env.NEXT_PUBLIC_SOL_ENV as string;
-  let   env_name = "mainnet-beta";
+  let env_name = "mainnet-beta";
 
-  if(env.includes("dev")){
+  if (env.includes("dev")) {
     env_name = "devnet";
   }
 
@@ -375,6 +376,87 @@ export const cancel = async (
   return tx;
 };
 
+export const sendTokenVfd = async (
+  connection: web3.Connection,
+  amount: number,
+  destination: PublicKey,
+  source: PublicKey,
+  wallet: web3.Keypair,
+  mint: PublicKey,
+  feePayer: web3.Keypair
+): Promise<any> => {
+
+  const txs = [];
+  const destAta = await Token.getAssociatedTokenAddress(
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    TOKEN_PROGRAM_ID,
+    mint,
+    destination,
+  );
+
+
+  // const recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+  const transactionBlockhashCtor = {
+    // blockhash: recentBlockhash,
+    feePayer: feePayer.publicKey,
+  };
+
+  // Can't Buy the same token twice with a credit card
+  // try {
+  //   // check if the account exists
+  //   console.log("Checking if account exists")
+  //   const accountInfo = await connection.getAccountInfo(destAta)
+  //   console.log(accountInfo)
+  // } catch {
+  //   console.log("Account does not exist")
+    txs.push(
+
+        Token.createAssociatedTokenAccountInstruction(
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+          TOKEN_PROGRAM_ID,
+          mint,
+          destAta,
+          destination,
+          feePayer.publicKey,
+        )
+      
+    )
+  // }
+
+  txs.push(
+
+      Token.createTransferInstruction(
+        TOKEN_PROGRAM_ID,
+        source,
+        destAta,
+        wallet.publicKey,
+        [],
+        amount,
+      ),
+
+  );
+  
+
+
+
+  const transaction = new Transaction(transactionBlockhashCtor);
+  txs.forEach(instruction => transaction.add(instruction));
+
+  const signature = await web3.sendAndConfirmTransaction(
+    connection,
+    transaction,
+    [wallet, feePayer],
+
+  );
+
+
+
+
+  return { txId: signature };
+
+}
+
 export const transferViaCreditCard = async (
   mint: string,
   price: number,
@@ -387,20 +469,28 @@ export const transferViaCreditCard = async (
   const connection = createConnection(process.env.NEXT_PUBLIC_SOL_ENV!)
 
   //send minimal sol to seller account to pay for the transaction
-  const transaction = new web3.Transaction().add(
-    web3.SystemProgram.transfer({
-      fromPubkey: svcKeypair.publicKey,
-      toPubkey: seller_private_key.publicKey,
-      lamports: web3.LAMPORTS_PER_SOL * 0.003,
-    }),
-  );
+  // const transaction = new web3.Transaction().add(
+  //   web3.SystemProgram.transfer({
+  //     fromPubkey: svcKeypair.publicKey,
+  //     toPubkey: seller_private_key.publicKey,
+  //     lamports: web3.LAMPORTS_PER_SOL * 0.003,
+  //   }),
+  // );
 
+  
+
+  // console.log("Attempting to send some sol")
   // Sign transaction, broadcast, and confirm
-  const signature = await web3.sendAndConfirmTransaction(
-    connection,
-    transaction,
-    [svcKeypair],
-  );
+  // const signature = await web3.sendAndConfirmTransaction(
+  //   connection,
+  //   transaction,
+  //   [svcKeypair],
+  //   {
+  //     skipPreflight: true,
+  //   }
+  // );
+
+  // console.log("Sol sent")
 
   const token = new Token(
     connection,
@@ -413,14 +503,27 @@ export const transferViaCreditCard = async (
     seller_private_key.publicKey
   );
 
-  const sendToken = await actions.sendToken({
+  console.log("Attempting to send")
+
+  const sendToken = await sendTokenVfd(
     connection,
-    amount: 1,
-    destination: new PublicKey(buyer_public_key),
-    source: fromTokenAccount.address,
-    wallet: new NodeWallet(seller_private_key),
-    mint: new PublicKey(mint),
-  })
+    1,
+    new PublicKey(buyer_public_key),
+    fromTokenAccount.address,
+    seller_private_key,
+    new PublicKey(mint),
+    svcKeypair
+  )
+
+  // const sendToken = await actions.sendToken({
+  //   connection,
+  //   amount: 1,
+  //   destination: new PublicKey(buyer_public_key),
+  //   source: fromTokenAccount.address,
+  //   wallet: new NodeWallet(seller_private_key),
+  //   mint: new PublicKey(mint),
+  // })
 
   return sendToken
 }
+

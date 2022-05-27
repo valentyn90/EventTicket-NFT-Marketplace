@@ -360,6 +360,7 @@ async function sendTokenWithRetry(attempts: number, connection: web3.Connection,
   Promise<string | Promise<string>> {
 
   if (attempts === 0) {
+    console.log("failure sending token")
     return "Failure"
   }
   try {
@@ -562,7 +563,9 @@ export async function retryMintTransfer(mint: string) {
 
       const transfer_res = await sendTokenWithRetry(10, connection, wallet, token_account, destination_pubkey, mint_key, 1)
 
+      
       if (transfer_res != "Failure") {
+        console.log("Sent NFT to owner:", transfer_res);
         const { data, error } = await supabase
           .from("nft_owner")
           .update({ state: "transferred" })
