@@ -52,11 +52,6 @@ export async function getServerSideProps(context: any) {
   })
 
   const mux = nft.data.mux_playback_id
-  let width = 1
-  let dimensions = null
-  let videoLink = null
-
-  if(mux){
   const resolution = nft.data.mux_max_resolution
   const videoLink = `https://stream.mux.com/${mux}/${resolution}.mp4`
 
@@ -67,13 +62,11 @@ export async function getServerSideProps(context: any) {
   const f = await fetch(thumbnail)
   const blob = await f.blob()
   const buff = Buffer.from(await blob.arrayBuffer())
-  dimensions = await sizeOf(buff)
+  const dimensions = await sizeOf(buff)
   if (dimensions.width && dimensions.height) {
     width = dimensions.width / dimensions.height
     console.log(width)
   }
-  }
-
 
   return {
     props: {
