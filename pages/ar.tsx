@@ -62,11 +62,15 @@ export async function getServerSideProps(context: any) {
   const f = await fetch(thumbnail)
   const blob = await f.blob()
   const buff = Buffer.from(await blob.arrayBuffer())
-  const dimensions = await sizeOf(buff)
-  if (dimensions.width && dimensions.height) {
-    width = dimensions.width / dimensions.height
-    console.log(width)
-  }
+
+  if(f.size > 0) {
+    const dimensions = await sizeOf(buff)
+    if (dimensions.width && dimensions.height) {
+      width = dimensions.width / dimensions.height
+      console.log(width)
+    }
+}
+  
 
   return {
     props: {
