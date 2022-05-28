@@ -95,7 +95,8 @@ const handler = async (req: any, res: any) => {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({user_id: data.user_id})
             }
-            const attempt_transfer = await fetch(`/api/marketplace/stripeTransfer`, requestOptions);
+
+            const attempt_transfer = await fetch(`https://verifiedink.us/api/marketplace/stripeTransfer`, requestOptions);
 
             // cancel listing on chain
             // find active order

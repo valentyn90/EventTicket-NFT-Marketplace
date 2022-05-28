@@ -47,6 +47,7 @@ const Collection = () => {
     }
   }, [userStore.loaded]);
 
+
   return (
     <Container maxW="8xl">
       <Box align="center" py="12">
@@ -77,13 +78,13 @@ const Collection = () => {
 
         {mintedNfts.length === 0 &&
           <Button
-          colorScheme="blue"
-          color="white"
-          borderRadius={1}
-          onClick={() => {router.push("/marketplace");}}
+            colorScheme="blue"
+            color="white"
+            borderRadius={1}
+            onClick={() => { router.push("/marketplace"); }}
           >
             Marketplace
-            </Button>
+          </Button>
         }
 
         <AppModal />
@@ -102,6 +103,16 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
       },
     };
   }
+  else {
+    const site = req.headers.referer?.replace("/collection", "")
+    const requestOptions = {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: user.id })
+    }
+    const attempt_transfer = fetch(`${site}/api/marketplace/stripeTransfer`, requestOptions);
+  }
+
   return { props: {} };
 }
 

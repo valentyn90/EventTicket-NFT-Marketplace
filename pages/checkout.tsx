@@ -111,9 +111,9 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
       .from(`credit_card_sale:stripe_tx=eq.${stripeSessionId}`)
       .on("UPDATE", (payload) => {
         setPaymentStatus(payload.new.status);
-        if (payload.new.status === "completed") {
+        if (payload.new.status === "2_payment_completed") {
           setCheckoutView("completed");
-        } else if (payload.new.status === "rejected") {
+        } else if (payload.new.status === "2b_payment_rejected") {
           setCheckoutView("rejected");
         } else if (payload.new.status === "transferred") {
           setCheckoutView("transferred");
@@ -122,9 +122,13 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
       .subscribe();
 
     if (creditCardSale) {
-      if (creditCardSale.status === "completed") {
+      if (creditCardSale.status === "2_payment_completed") {
         setCheckoutView("completed");
-      } else if (creditCardSale.status === "rejected") {
+      } else if (creditCardSale.status === "3_onchain_listing_cancelled") {
+        setCheckoutView("completed");
+      } else if (creditCardSale.status === "4_transferred_no_mail") {
+        setCheckoutView("completed");
+      } else if (creditCardSale.status === "2b_payment_rejected") {
         setCheckoutView("rejected");
       } else if (creditCardSale.status === "transferred") {
         setCheckoutView("transferred");
@@ -146,6 +150,11 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
           setNftOwner(data);
         }
       });
+
+      setTimeout(() => {
+        retryTransfer();
+      }, 10000)
+
     }
   }, [checkoutView, mintId]);
 
@@ -279,6 +288,19 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
     setSubmitting(false);
   }
 
+  async function retryTransfer() {
+
+    const { data: confirmedUserData, error: confirmedError } =
+      await getUserDetailsByEmail(email);
+
+    const requestOptions = {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({user_id: confirmedUserData.user_id})
+    }
+    const attempt_transfer = fetch(`/api/marketplace/stripeTransfer`, requestOptions);
+  }
+
   async function handleLoginSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -403,6 +425,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
         <Text w="75%" textAlign={"center"} color="gray.300" mt={[8, 8, 12]}>
           Transferring your NFT to your VerifiedInk Collection
         </Text>
+
       </Flex>
     );
   } else if (checkoutView === "rejected") {

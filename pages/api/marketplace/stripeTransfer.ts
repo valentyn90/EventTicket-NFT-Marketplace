@@ -19,9 +19,7 @@ export default async function handler(
 
     let { user_id } = req.body;
 
-    if (!user_id) {
-        user_id = "e9e6deb9-b873-4c14-a521-de382afe0267"
-    }
+    console.log("user_id", user_id);
 
     // find any order that are not in "transferred", "pending", or "2b_payment_rejected" state
     const { data, error } = await supabase
@@ -90,6 +88,9 @@ export default async function handler(
             }
 
             // Delist on chain
+
+            try{
+
             const ahCancel = await cancel(
                 auctionHouse,
                 svcKeypair,
@@ -100,10 +101,13 @@ export default async function handler(
                 actual_seller_keypair
             );
 
-            if (ahCancel.error) {
-                console.log({ error: "Error with onchain cancel", message: ahCancel.error });
             }
-            else {
+            catch (err: any) {
+                console.log({ error: "Error with delisting on chain", message: err });
+            }
+
+            finally {
+
                 creditCardSale.status = "3_onchain_listing_cancelled";
                 console.log(creditCardSale.status + " Updated")
                 // order cancelled on chain

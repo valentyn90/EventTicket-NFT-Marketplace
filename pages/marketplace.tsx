@@ -11,7 +11,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 
 const Marketplace: React.FC = () => {
-  const marketplaceText = `VerifiedInk empowers amateur athletes to create, mint and sell limited edition NFTs showcasing their talent.`;
+  const marketplaceText = `VerifiedInk empowers athletes to create, mint and sell limited edition NFTs showcasing their talent.`;
   const logoColor = useColorModeValue("blue.500", "white");
 
   const [marketplaceNfts, setMarketplaceNfts] = useState<MarketplaceNft[]>([]);
