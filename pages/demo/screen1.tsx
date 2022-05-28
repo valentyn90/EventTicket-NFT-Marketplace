@@ -30,26 +30,37 @@ const Screen: React.FC = () => {
             .then((res: any) => {
                 if (res.data) {
                     console.log(res.data.map((nft: any) => nft.id))
-                    setNfts(res.data.map((nft: any) => nft.id))
+                    const nftIds = res.data.map((nft: any) => nft.id)
+                    const random = Math.floor(Math.random() * nftIds.length)
+                    setNfts([nftIds[random]])
+                    // setNfts(res.data.map((nft: any) => nft.id))
                 }
             })
         }
     , [])
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setActiveNft((activeNft + 1) % nfts.length)
-            setTimeout(() => {
-                setFlip(true)
-            }, 2000)
-            setTimeout(() => {
-                setFlip(false)
-            }, 8000)
-        },
-        10000)
+        setTimeout(() => {
+            setFlip(!flip)
+        }, 5000)
+
+    },[flip])
+
+    useEffect(() => {
+        setTimeout(() => {
+            window.location.reload();
+        }, 10000)
+
+    }, [])
+
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setActiveNft((activeNft + 1) % nfts.length)
+    //     },
+    //     10000)
         
-        return () => {clearInterval(interval)}
-    })
+    //     return () => {clearInterval(interval)}
+    // })
 
     return (
         <Wrapper>
