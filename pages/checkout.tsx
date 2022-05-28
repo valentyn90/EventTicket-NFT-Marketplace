@@ -150,12 +150,11 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
           setNftOwner(data);
         }
       });
-
-      setTimeout(() => {
-        retryTransfer();
-      }, 10000)
-
     }
+    setTimeout(() => {
+      retryTransfer();
+    }, 10000)
+
   }, [checkoutView, mintId]);
 
   useEffect(() => {
@@ -293,12 +292,14 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
     const { data: confirmedUserData, error: confirmedError } =
       await getUserDetailsByEmail(email);
 
-    const requestOptions = {
-      method: "POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({user_id: confirmedUserData.user_id})
+    if (confirmedUserData && confirmedUserData.user_id) {
+      const requestOptions = {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: confirmedUserData.user_id })
+      }
+      const attempt_transfer = fetch(`/api/marketplace/stripeTransfer`, requestOptions);
     }
-    const attempt_transfer = fetch(`/api/marketplace/stripeTransfer`, requestOptions);
   }
 
   async function handleLoginSubmit(e: React.FormEvent) {
