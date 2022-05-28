@@ -26,7 +26,7 @@ const Screen: React.FC = () => {
 
     // on an interval show nft for 10 seconds, flip for 10 seconds
     useEffect(() => {
-        supabase.from('nft').select('id').eq('sport', 'Basketball').eq('minted', true).order('id', {ascending:false})
+        supabase.from('nft').select('id').eq('sport', 'Basketball').gt('id', 420).order('id', {ascending:false})
             .then((res: any) => {
                 if (res.data) {
                     console.log(res.data.map((nft: any) => nft.id))
