@@ -2,6 +2,9 @@ import ARViewer from "@/components/Components/arviewer"
 import { getNftById, getScreenshot, supabase } from "@/supabase/supabase-client"
 import Head from "next/head"
 import sizeOf from "image-size"
+import { Button } from "@chakra-ui/react";
+import router from "next/router";
+import Link from "next/link";
 
 interface Props {
   nft_id: number;
@@ -31,6 +34,15 @@ const Ar: React.FC<Props> = ({
             }
           `}</style>
       <ARViewer nft_id={nft_id} image_link={imageLink} video_link={videoLink} width={width} />
+      <Button
+        onClick={() => {
+          window.location.assign("/athletes?referralCode=agmfpKV");
+        }
+        }
+        colorScheme={"gray"}
+        variant={"solid"}
+        style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px" }}
+      ><div style={{marginBottom: "5px"}}><img width="150px" src="/img/wordmark.svg"/></div></Button>
     </>
   )
 }
@@ -62,15 +74,15 @@ export async function getServerSideProps(context: any) {
   const f = await fetch(thumbnail)
   const blob = await f.blob()
   const buff = Buffer.from(await blob.arrayBuffer())
-
-  if(f.size > 0) {
+  //@ts-ignore
+  if (f.size > 0) {
     const dimensions = await sizeOf(buff)
     if (dimensions.width && dimensions.height) {
       width = dimensions.width / dimensions.height
       console.log(width)
     }
-}
-  
+  }
+
 
   return {
     props: {

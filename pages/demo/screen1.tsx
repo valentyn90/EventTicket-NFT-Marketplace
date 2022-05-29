@@ -15,6 +15,13 @@ height: 1600px;
     opacity: 0.75;
   }
 
+.attention  {
+    position: absolute;
+    bottom: 0px;
+    left: 350px;
+    font-size: 30px;
+}
+
 `
 
 const Screen: React.FC = () => {
@@ -44,12 +51,12 @@ const Screen: React.FC = () => {
             setFlip(!flip)
         }, 5000)
 
-    },[flip])
+    },[])
 
     useEffect(() => {
         setTimeout(() => {
             window.location.reload();
-        }, 10000)
+        }, 15000)
 
     }, [])
 
@@ -75,6 +82,9 @@ const Screen: React.FC = () => {
                     logoWidth={30}
 
                     />
+                    <div className="attention">
+                        <p>Scan to make your FREE VerifiedInk</p>
+                    </div>
         </Wrapper>
     )
 
