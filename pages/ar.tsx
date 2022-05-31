@@ -2,9 +2,12 @@ import ARViewer from "@/components/Components/arviewer"
 import { getNftById, getScreenshot, supabase } from "@/supabase/supabase-client"
 import Head from "next/head"
 import sizeOf from "image-size"
-import { Button } from "@chakra-ui/react";
-import router from "next/router";
+import { Button, VStack } from "@chakra-ui/react";
+import userStore from "@/mobx/UserStore";
+import router, { useRouter } from "next/router";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+
 
 interface Props {
   nft_id: number;
@@ -17,8 +20,43 @@ const Ar: React.FC<Props> = ({
   nft_id,
   imageLink,
   videoLink,
-  width
+  width,
 }) => {
+
+  const [nftId, setNftId] = useState<number | undefined>(undefined)
+  const [publicUrl, setPublicUrl] = useState<string>("")
+  const router = useRouter()
+
+  const fetchScreenshot = useCallback(async () => {
+    const publicUrlResult = await getScreenshot(nftId!)
+    setPublicUrl(publicUrlResult.publicUrl!)
+    console.log(publicUrlResult)
+  }, [nftId])
+
+  useEffect(() => {
+    setNftId(userStore.nft?.id)
+
+    fetchScreenshot()
+
+  }, [userStore.loaded])
+
+  useEffect(() => {
+    fetchScreenshot()
+  }, [nftId])
+
+  async function associateNFT() {
+    const arId = router.query.ar_id
+    if (arId && nftId) {
+      console.log(userStore.nft?.id)
+      console.log(router.query.ar_id)
+      const res = await fetch('/api/ar/associate?ar_id=' + arId + '&nft_id=' + nftId)
+      console.log(res)
+      if (res.ok) {
+        window.location.assign('/ar?ar_id=' + arId)
+      }
+    }
+
+  }
 
   return (
     <>
@@ -34,15 +72,41 @@ const Ar: React.FC<Props> = ({
             }
           `}</style>
       <ARViewer nft_id={nft_id} image_link={imageLink} video_link={videoLink} width={width} />
-      <Button
-        onClick={() => {
-          window.location.assign("/athletes?referralCode=agmfpKV");
-        }
-        }
-        colorScheme={"gray"}
-        variant={"solid"}
-        style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px" }}
-      ><div style={{marginBottom: "5px"}}><img width="150px" src="/img/wordmark.svg"/></div></Button>
+
+      {
+        (nftId && nftId != nft_id && nft_id === 332) ?
+          (
+            <Button onClick={associateNFT}
+
+              variant="solid"
+              height="110px"
+              style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px" }}
+            >
+              <VStack spacing={2}>
+                <div>Switch NFT</div>
+                <img src={publicUrl} width='40px' />
+              </VStack>
+            </Button>
+          ) :
+          (
+            <Button
+              onClick={() => {
+                window.location.assign("/athletes?referralCode=agmfpKV&utm_source=physical_card");
+              }
+              }
+              variant={"solid"}
+              borderRadius={"3px"}
+              height="60px"
+              style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px" }}
+            >
+              <VStack spacing={0}>
+                {!nftId && <div style={{fontSize:"18px", fontFamily:"Lato"}}>Make your</div>}
+                <div style={{ marginBottom: "5px" }}><img width="120px" src="/img/wordmark.svg" /></div>
+              </VStack>
+            </Button>
+          )
+      }
+
     </>
   )
 }
@@ -74,8 +138,8 @@ export async function getServerSideProps(context: any) {
   const f = await fetch(thumbnail)
   const blob = await f.blob()
   const buff = Buffer.from(await blob.arrayBuffer())
-  //@ts-ignore
-  if (f.size > 0) {
+
+  if (mux) {
     const dimensions = await sizeOf(buff)
     if (dimensions.width && dimensions.height) {
       width = dimensions.width / dimensions.height

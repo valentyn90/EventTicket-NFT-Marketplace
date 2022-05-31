@@ -8,6 +8,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { SplashModal } from "@/components/ui/SplashModal";
 import StaticCard from "@/components/NftCard/StaticCard";
 import mixpanel from 'mixpanel-browser';
+import { Button } from "@chakra-ui/react";
 
 const Wrapper = styled.div`
   background: radial-gradient(
@@ -491,6 +492,7 @@ const Athletes: React.FC = () => {
   const [flip4, setFlip4] = useState(false);
   const [flipMain, setFlipMain] = useState(false);
   const [videoPlayed, setVideoPlayed] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   mixpanel.track("Athletes Page Viewed");
 
@@ -570,9 +572,12 @@ const Athletes: React.FC = () => {
                 </p>
                 <div className="buttons margin-button">
                   <Link href="/create/step-1">
-                    <button className="button">
-                      Create your <span className="bold-text">VERIFIED</span>INK
-                    </button>
+                    <Button className="button"
+                      isLoading={loading}
+                      onClick={() =>{setLoading(true)}}
+                    >
+                      Create your&nbsp;<span className="bold-text">VERIFIED</span>INK
+                    </Button>
                   </Link>
                 </div>
                 <div className="hero-section">
@@ -709,9 +714,12 @@ const Athletes: React.FC = () => {
                 </p>
                 <div className="buttons margin-button">
                   <Link href="/create/step-1">
-                    <button className="button">
+                  <Button className="button"
+                      isLoading={loading}
+                      onClick={() =>{setLoading(true)}}
+                    >
                       Create your <span className="bold-text">VERIFIED</span>INK
-                    </button>
+                    </Button>
                   </Link>
                 </div>
               </div>

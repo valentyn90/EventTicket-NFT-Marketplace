@@ -20,6 +20,7 @@ const AthleteSignin: React.FC = () => {
   mixpanel.init('b78dc989c036b821147f68e00c354313')
   mixpanel.track('Athlete Signin Page')
   const [bypass, setBypass] = useState(false)
+  const [loading, setLoading] = useState(false)
   
   useEffect(() => {
     if(cookieCutter.get("SplashBypass") === "true") {
@@ -65,11 +66,9 @@ const AthleteSignin: React.FC = () => {
               w="100%"
               background="#1DA1F2"
               color="white"
+              isLoading={loading}
               onClick={() => {
-                // let refer_code =
-                //   typeof referralCode === "string" ? referralCode : "";
-                // setReferralInfo(refer_code);
-
+                setLoading(true);
                 signIn({ provider: "twitter" });
               }}
             >
@@ -83,7 +82,9 @@ const AthleteSignin: React.FC = () => {
               w="100%"
               color="currentColor"
               variant="outline"
+              isLoading={loading}
               onClick={() => {
+                setLoading(true);
                 signIn({ provider: "google" });
               }}
             >

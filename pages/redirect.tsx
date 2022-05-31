@@ -42,12 +42,12 @@ const Redirect: React.FC<Props> = ({ redirect }) => {
             }
             else {
               // NOTE: Need to wait for the cookie to be written
-              router.push("/create");
+              router.push("/create/step-1");
             }
           } else {
             router.push("/athletes/signin");
           }
-        }, 500);
+        }, 750);
       }
     );
 

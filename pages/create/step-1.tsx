@@ -148,7 +148,7 @@ const StepOne = () => {
                   />
                 </FormControl>
                 <FormControl id="twitter">
-                  <FormLabel>Twitter</FormLabel>
+                  <FormLabel>Twitter  (Optional)</FormLabel>
                   <Input
                     type="text"
                     placeholder="jack"
@@ -212,9 +212,9 @@ export async function getServerSideProps({
       }
     }
 
-    cookies.set("redirect-link", "/create", {
-      maxAge: 1000 * 60 * 60,
-    });
+    // cookies.set("redirect-link", "/create", {
+    //   maxAge: 1000 * 60 * 60,
+    // });
 
   }
 
