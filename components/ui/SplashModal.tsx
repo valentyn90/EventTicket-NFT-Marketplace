@@ -53,7 +53,7 @@ export const SplashModal: React.FC<Props> = ({ handleApproval }): JSX.Element | 
   }
 
   function verifyCode() {
-    code.toLowerCase() === "getverified"
+    code.trim().toLowerCase() === "getverified"
       ? handleAcceptance()
       : toast({
         position: "top",

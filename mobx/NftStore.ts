@@ -109,12 +109,12 @@ export class NftStore {
   updateStepOne = async (): Promise<boolean> => {
     const { data, error } = await updateNft({
       nft_id: this.id,
-      firstName: this.store.nftInput?.first_name,
-      lastName: this.store.nftInput?.last_name,
+      firstName: this.store.nftInput?.first_name.trim(),
+      lastName: this.store.nftInput?.last_name.trim(),
       gradYear: this.store.nftInput?.graduation_year,
     });
 
-    const user_name = `${this.store.nftInput?.first_name} ${this.store.nftInput?.last_name}`;
+    const user_name = `${this.store.nftInput?.first_name.trim()} ${this.store.nftInput?.last_name.trim()}`;
     const { data: data2, error: error2 } = await updateUsername(
       user_name,
       this.store.userDetails.id
@@ -122,7 +122,7 @@ export class NftStore {
 
     const { data: updateTwitterData, error: updateTwitterError } =
       await updateTwitter(
-        this.store.nftInput.twitter.replace("@",""),
+        this.store.nftInput.twitter.replace("@","").trim(),
         this.store.userDetails.id
       );
 
@@ -219,10 +219,10 @@ export class NftStore {
   stepThreeSubmit = async (): Promise<boolean> => {
     const { data, error } = await stepThreeSubmit({
       nft_id: this.id,
-      highSchool: this.store.nftInput.high_school,
-      usaState: this.store.nftInput.usa_state,
-      sport: this.store.nftInput.sport,
-      sportPosition: this.store.nftInput.sport_position,
+      highSchool: this.store.nftInput.high_school.trim(),
+      usaState: this.store.nftInput.usa_state.trim(),
+      sport: this.store.nftInput.sport.trim(),
+      sportPosition: this.store.nftInput.sport_position.trim(),
     });
 
     if (error) {

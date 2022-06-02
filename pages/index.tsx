@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Skeleton, Stack } from "@chakra-ui/react";
+import { Button, Skeleton, Stack } from "@chakra-ui/react";
 import useWindowDimensions from "@/utils/useWindowDimensions";
 import mixpanel from 'mixpanel-browser';
 
@@ -30,6 +30,7 @@ const Wrapper = styled.div`
 
   .bold-txt {
     font-weight: bold;
+    margin-left: 6px;
   }
 
   .blue-txt {
@@ -38,13 +39,7 @@ const Wrapper = styled.div`
 
   .card-box {
     width: 325px;
-    height: 500px;
-    opacity: 0.1;
-  }
-
-  .card-box {
-    width: 325px;
-    height: 500px;
+    // height: 500px;
     opacity: 0.1;
   }
 
@@ -243,14 +238,14 @@ const Wrapper = styled.div`
     }
 
     .collector-card-box {
-      height: 600px;
-      width: 400px;
+      // height: 600px;
+      // width: 400px;
     }
   }
 
   .packs-section {
     margin-bottom: 150px;
-    margin-top: 150px;
+    // margin-top: 150px;
     padding: 1rem;
     max-width: 1200px;
     margin-left: auto;
@@ -312,7 +307,11 @@ const Wrapper = styled.div`
 
   @media screen and (max-width: 700px) {
     .btn {
-      width: 100%;
+      width: 95%;
+    }
+
+    .card-box {
+      width: unset;
     }
 
     .hero {
@@ -370,7 +369,6 @@ const Wrapper = styled.div`
         display: flex;
         justify-content: center;
         margin-top: 1rem;
-        margin-bottom: 140px;
       }
     }
 
@@ -405,15 +403,16 @@ const Wrapper = styled.div`
 
       .collector-card-box {
         margin-top: 2rem;
-        height: 500px;
-        width: 250px;
+        // height: 500px;
+        // width: 250px;
         align-self: center;
+        align-items: center;
       }
     }
 
     .packs-section {
       height: 620px;
-      margin-top: 25px;
+      // margin-top: 25px;
       flex-direction: column;
 
       .packs-content {
@@ -458,7 +457,7 @@ const Wrapper = styled.div`
 const Home = () => {
   const [flipMain, setFlipMain] = useState(false);
   const [videoPlayed, setVideoPlayed] = useState(false);
-
+  const [submitting, setSubmitting] = useState(false);
   const [packCardSize, setPackCardSize] = useState(200);
   const [cardSize, setCardSize] = useState(350);
   const { width } = useWindowDimensions();
@@ -514,15 +513,23 @@ const Home = () => {
               <div className="hero-button-box">
                 <p className="hero-button-title">Fans</p>
                 <Link href={"/marketplace"}>
-                  <button className="btn btn-white">Buy on Marketplace</button>
+                  <Button className="btn btn-white"
+                    isLoading={submitting}
+                    h={['55px','55px','unset']}
+                    onClick={() => {setSubmitting(true)}}
+                  >Buy on Marketplace</Button>
                 </Link>
               </div>
               <div className="hero-button-box">
                 <p className="hero-button-title">Athletes</p>
                 <Link href={"/athletes"}>
-                  <button className="btn btn-blue">
+                  <Button className="btn btn-blue"
+                  h={['55px','55px','unset']}
+                  isLoading={submitting}
+                  onClick={() => {setSubmitting(true)}}
+                >
                     Create Your <span className="bold-txt">VERIFIED</span>INK
-                  </button>
+                  </Button>
                 </Link>
               </div>
             </div>
@@ -583,9 +590,12 @@ const Home = () => {
 
               </p>
               <Link href={"/athletes"}>
-                <button className="btn btn-white">
+                <Button className="btn btn-white"
+                 h={['55px','55px','unset']}
+                 isLoading={submitting}
+                 onClick={() => {setSubmitting(true)}}>
                   Create Your <span className="bold-txt">VERIFIED</span>INK
-                </button>
+                </Button>
               </Link>
             </div>
           </div>
@@ -610,7 +620,11 @@ const Home = () => {
                 when our Athletes succeed you do too!
               </p>
               <Link href={"/marketplace"}>
-                <button className="btn btn-blue">Buy on Marketplace</button>
+                <Button className="btn btn-blue"
+                                 h={['55px','55px','unset']}
+                                 isLoading={submitting}
+                                 onClick={() => {setSubmitting(true)}}
+                >Buy on Marketplace</Button>
               </Link>
             </div>
             <div className="collector-card-box">

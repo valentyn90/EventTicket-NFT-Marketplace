@@ -36,25 +36,30 @@ const StepOne = () => {
       // nft exists, update values
       if (userStore.stepOneSkip) {
         // no changes, push to step 2
+        setSubmitting(true);
         router.push("/create/step-2");
       } else {
         // update NFT in db
         setSubmitting(true);
         const res = await userStore.nft.updateStepOne();
-        setSubmitting(false);
         if (res) {
           // successfully updated
           router.push("/create/step-2");
+        }
+        else{
+          setSubmitting(false);
         }
       }
     } else {
       // Create new NFT
       setSubmitting(true);
       const res = await userStore.createNft();
-      setSubmitting(false);
       if (res) {
         // success
         router.push("/create/step-2");
+      }
+      else{
+        setSubmitting(false);
       }
     }
   }
@@ -166,9 +171,9 @@ const StepOne = () => {
           </Flex>
           <Divider mt="6" mb="6" />
           {/* Button row */}
-          <Flex justify="space-between">
-            <Button colorScheme="blue" color="white" type="submit">
-              {submitting ? <Spinner /> : "Next step"}
+          <Flex justify="end" >
+            <Button isLoading={submitting} colorScheme="blue" color="white" type="submit" w={["100%","fit-content"]}>
+               Next Step
             </Button>
           </Flex>
         </Flex>

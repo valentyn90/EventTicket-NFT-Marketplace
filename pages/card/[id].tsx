@@ -272,9 +272,9 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
           direction={["column", "column", "row"]}
           maxH={["100%", "100%", "700px"]}
           pb={["0px", "0px", "unset"]}
-          justify={"center"}
+          // justify={"center"}
         >
-          <Box flex="1">
+          <Box flex="1" alignItems="center">
             <CardBox>
               <Card
                 nft_id={nft.id}
@@ -300,7 +300,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
               </div>
             </CardBox>
           </Box>
-          <VStack flex="1" mt={10} w="100%" p={[4, 4, 0]}>
+          <VStack flex="1" mt={2} w="100%" p={[4, 4, 0]}>
             <Box mb={8} w="100%">
               <Text fontSize={["2xl", "2xl", "4xl"]}>
                 {nft.first_name} {nft.last_name}

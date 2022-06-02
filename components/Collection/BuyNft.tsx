@@ -27,7 +27,7 @@ const BuyNft: React.FC<Props> = ({
   const [openBuyModal, setOpenBuyModal] = useState(false);
   return (
     <>
-      <VStack align={`start`} pt={6} w="100%">
+      <VStack align={`start`} pt={0} w="100%">
         <Button
           colorScheme="blue"
           color="white"

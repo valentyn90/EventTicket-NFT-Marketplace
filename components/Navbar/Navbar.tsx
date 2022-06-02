@@ -23,6 +23,7 @@ import React, {
   useState,
 } from "react";
 import { MobileNavContent } from "./MobileNavContent";
+import { route } from "next/dist/next-server/server/router";
 
 export const Template: React.FC = (props) => {
   const router = useRouter();
@@ -95,7 +96,7 @@ export const Template: React.FC = (props) => {
       </HStack>
 
       <Box display={["block", "block", "block", "none"]} mr={4}>
-        {MARKET_ENABLED && (
+        {MARKET_ENABLED && router.pathname.includes("marketplace") && (
           <WalletMultiButton className="solana-wallet-multi-btn" />
         )}
       </Box>

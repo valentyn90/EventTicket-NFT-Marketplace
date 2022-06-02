@@ -76,7 +76,9 @@ const Wrapper = styled.div`
   }
 
   .hero-card-box {
-    height: 600px;
+    // height: 600px;
+    flex-direction: column;
+    align-items: center;
   }
 
   .title-grid {
@@ -306,6 +308,12 @@ const Wrapper = styled.div`
 
   @media screen and (max-width: 800px) {
     padding-top: 1rem;
+
+    .hero-card-mobile {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
 
     .hero-section-margin {
       margin-bottom: 100px;
@@ -601,11 +609,14 @@ const Athletes: React.FC = () => {
               </motion.div>
             </div>
             <motion.div className="max-w-100" variants={childVariants}>
+              <div className="hero-card-mobile">
               <div className="hero-card-box mb-2">
               <img src="/img/tap.svg" className="tap" alt="tap" />
                 <StaticCard nft_id={332}
                   reverse={flipMain}
+                  width={400}
                 />
+              </div>
               </div>
             </motion.div>
           </div>
@@ -718,7 +729,7 @@ const Athletes: React.FC = () => {
                       isLoading={loading}
                       onClick={() =>{setLoading(true)}}
                     >
-                      Create your <span className="bold-text">VERIFIED</span>INK
+                      Create your &nbsp; <span className="bold-text">VERIFIED</span>INK
                     </Button>
                   </Link>
                 </div>

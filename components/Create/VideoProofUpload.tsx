@@ -303,7 +303,7 @@ function VideoProofUpload() {
   }
 
   return (
-    <Box w="100%">
+    <Box w="100%" mt={["1rem","1rem","0"]}>
       <>{uploadComponent}</>
       <div {...getRootProps({ style: style as any })}>
         <input {...getInputProps()} />
@@ -328,14 +328,6 @@ function VideoProofUpload() {
           </Button>
         </HStack>
       </form>
-      <Box mt="4" w="100%" display={["block", "block", "none"]} h="500px">
-        <Card
-          nft_id={userStore.loadedNft?.id}
-          nft_width={400}
-          reverse={true}
-          nft={userStore.loadedNft}
-        />
-      </Box>
     </Box>
   );
 }

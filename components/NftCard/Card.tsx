@@ -131,7 +131,10 @@ const Card: React.FunctionComponent<Props> = ({
       // This logic is here to trip logic for automatically adjusting the card
       // size when the screen is small. The logic is in CardStyles.ts 41-45
       router.pathname.includes("step-8") ||
-      router.pathname === "/"
+      router.pathname === "/" ||
+      router.pathname.includes("/create/") ||
+      router.pathname.includes("/card/") 
+      // router.pathname.includes("/marketplace") 
     ) {
       setSmallCardSize(true);
     } else {

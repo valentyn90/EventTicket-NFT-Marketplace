@@ -1,31 +1,16 @@
 import styled from "styled-components";
 
 export const CardBox = styled.div`
-  max-height: 500px;
-  overflow: hidden;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  align-items: center;
 
   .cardbox-refreshicon-div {
     cursor: pointer;
-    position: absolute;
-    bottom: 15px;
-    right: 37px;
+    position: relative;
+    left: 150px;
+    bottom: 40px;
   }
 
-  @media screen and (min-width: 30em) {
-    .cardbox-refreshicon-div {
-      position: absolute;
-      bottom: 19px;
-      right: 70px;
-    }
-  }
-
-  @media screen and (min-width: 48em) {
-    max-height: unset;
-    .cardbox-refreshicon-div {
-      position: absolute;
-      bottom: 350px;
-      right: 102px;
-    }
-  }
 `;

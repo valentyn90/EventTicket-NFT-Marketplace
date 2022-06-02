@@ -172,7 +172,7 @@ const NavIndex: React.FC = () => {
 
           <Box display={["none", "none", "none", "block"]}>
             {/* only show in desktop, mobile view set in Navbar.tsx */}
-            {MARKET_ENABLED && (
+            {MARKET_ENABLED && router.pathname.includes("marketplace") && (
               <WalletMultiButton className="solana-wallet-multi-btn" />
             )}
           </Box>
@@ -221,7 +221,7 @@ const NavIndex: React.FC = () => {
             </Link>
             <Box display={["none", "none", "none", "block"]}>
               {/* only show in desktop, mobile view set in Navbar.tsx */}
-              {MARKET_ENABLED && (
+              {MARKET_ENABLED && router.pathname.includes("marketplace") && (
                 <WalletMultiButton className="solana-wallet-multi-btn" />
               )}
             </Box>

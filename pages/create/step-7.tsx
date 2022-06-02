@@ -28,10 +28,12 @@ const StepSeven = () => {
     userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
     const res = await userStore.nft?.stepSevenSubmit();
     const res2 = await fetch(`/api/outreach/${userStore.nft?.id}?message_type=created`);
-    setSubmitting(false);
     if (res2 && res) {
-      
+
       router.push("/create/step-8");
+    }
+    else{
+      setSubmitting(false);
     }
   }
 
@@ -63,18 +65,30 @@ const StepSeven = () => {
                 If you found an issue, just go back and fix it, then come back
                 to this proof page at any time.
               </Text>
+              <Button
+                display={["block", "block", "none"]}
+                mt="1.5rem"
+                colorScheme="blue"
+                color="white"
+                type="submit"
+                w={["100%", "fit-content"]}
+                isLoading={submitting}>
+                Approved!
+              </Button>
             </Flex>
             <Flex
               m={["1rem", "1rem", "5rem"]}
               direction={["column", "column", "row"]}
-              justifyContent="center"
+              gridGap={["2rem", "1rem", "none"]}
+              justifyContent="space-around"
             >
               <Box
-                flex={["none", "none", "1"]}
-                h={["570px","650px","650px"]}
-                w={["none", "none", "380px"]}
+                // flex={["none", "none", "1"]}
+                // h={["none", "none", "650px"]}
+                // w={["none", "none", "380px"]}
+                alignSelf="center"
               >
-                <Text textAlign="center" mb="2" fontSize="2xl">
+                <Text  textAlign="center" mb="1" fontSize="2xl">
                   Front
                 </Text>
                 <Card
@@ -85,11 +99,12 @@ const StepSeven = () => {
                 />
               </Box>
               <Box
-                flex={["none", "none", "1"]}
-                h={["570px","650px","650px"]}
-                w={["none", "none", "380px"]}
+                // flex={["none", "none", "1"]}
+                // h={["none", "none", "650px"]}
+                // w={["none", "none", "380px"]}
+                alignSelf="center"
               >
-                <Text textAlign="center" mb="2" fontSize="2xl">
+                <Text textAlign="center" mb="1" fontSize="2xl">
                   Back
                 </Text>
                 <Card
@@ -101,6 +116,14 @@ const StepSeven = () => {
               </Box>
             </Flex>
           </Flex>
+          <Button
+            colorScheme="blue"
+            color="white"
+            type="submit"
+            w={["100%", "fit-content"]}
+            isLoading={submitting}>
+            Approved!
+          </Button>
           <Divider mt="6" mb="6" />
           <Flex justify="space-between">
             <NextLink href="/create/step-6">
@@ -108,9 +131,7 @@ const StepSeven = () => {
                 <Button>Back</Button>
               </a>
             </NextLink>
-            <Button colorScheme="blue" color="white" type="submit">
-              {submitting ? <Spinner /> : "Approved!"}
-            </Button>
+
           </Flex>
         </Flex>
       </form>

@@ -22,6 +22,7 @@ const ColorPicker = () => {
     "#3182CE",
     "#2C5282",
     "#6B46C1",
+    "#de32ab",
     "#744210",
     "#718096",
     "#000000",
@@ -67,7 +68,7 @@ const ColorPicker = () => {
   }
 
   return (
-    <Box mt={["1rem", "1rem", "0"]}>
+    <Box >
       <Box mb={4}>
         <Text mb={2}>Top Color</Text>
         <BorderWrapper>

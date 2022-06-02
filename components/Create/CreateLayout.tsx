@@ -9,9 +9,9 @@ import { Card } from "../ui/Card";
 const CreateLayout: React.FC = (props: StackProps) => {
   return (
     <Box
-      bg={useColorModeValue("gray.50", "inherit")}
+      // bg={useColorModeValue("gray.50", "inherit")}
       minH="100vh"
-      py="12"
+      py="4"
       px={{ base: "4", lg: "8" }}
     >
       <Box maxWidth="1200px" mx="auto">

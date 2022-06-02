@@ -26,7 +26,7 @@ const PhotoPreviewSide = ({
         {nft ? (
           <Card nft_id={nft_id} nft_width={400} reverse={false} nft={nft} />
         ) : (
-          "Loading..."
+          ""
         )}
       </Box>
     </Flex>

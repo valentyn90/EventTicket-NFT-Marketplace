@@ -27,20 +27,24 @@ const StepSix = () => {
 
   async function handleStepSixSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitting(true);
     if (userStore.stepSixSkip) {
       router.push("/create/step-7");
     } else {
-      setSubmitting(true);
+      
       const newSigFile = await dataUrlToFile(
         signatureRef.current.toDataURL(),
         "signaturePic.png"
       );
       const res = await userStore.nft?.uploadSignatureToSupabase(newSigFile);
-      setSubmitting(false);
+      
       if (res) {
         // success
         userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
         router.push("/create/step-7");
+      }
+      else{
+        setSubmitting(false);
       }
     }
   }
@@ -64,9 +68,9 @@ const StepSix = () => {
                   <Box
                     style={{
                       position: "absolute",
-                      top: "45px",
+                      top: "35px",
                       left: "10px",
-                      fontSize: "20px",
+                      fontSize: "40px",
                       transform: "rotate(45deg)",
                       cursor: "pointer",
                       zIndex: 12,
@@ -118,11 +122,20 @@ const StepSix = () => {
                   </Flex>
                 </>
               )}
+              <Button
+                colorScheme="blue"
+                color="white"
+                type="submit"
+                alignSelf="flex-end"
+                isLoading={submitting}
+                w={["100%", "fit-content"]}
+                mt="2"
+              >
+                Last Step
+              </Button>
               <Box
-                mt={["2rem !important", "2rem !important", 0]}
-                mb={["2rem !important", "2rem !important", 0]}
                 display={["block", "block", "none"]}
-                h={["500px", "500px", "450px"]}
+                alignSelf="center"
               >
                 <Card
                   nft_id={userStore.nft?.id}
@@ -131,14 +144,7 @@ const StepSix = () => {
                   reverse={false}
                 />
               </Box>
-              <Button
-                colorScheme="blue"
-                color="white"
-                type="submit"
-                alignSelf="flex-end"
-              >
-                {submitting ? <Spinner /> : "Proof Time"}
-              </Button>
+
             </Flex>
           </Flex>
           <Divider mt="6" mb="6" />

@@ -32,16 +32,23 @@ export const CardWrapper = styled.div<StyleProps>`
   font: Lato;
   display: flex;
   justify-content: center;
+  align-self: center;
 
-  ${(props: StyleProps) => `transform: scale(calc(${props.nftWidth} / 600));`}
+  ${(props: StyleProps) => 
+    `transform: scale(calc(${props.nftWidth} / 600));
+      height: ${props.nftWidth * 1.65}px;
+      width: ${props.nftWidth}px;
+    `}
 
   transform-origin: top center;
 
   ${(props) =>
     !props.smallCardSize &&
     `@media only screen and (max-width: 600px) {
-      transform: scale(calc(300 / 600));
+      transform: scale(calc(350 / 600));
       transform-origin: top center;
+      height: ${350 * 1.65}px;
+      width: ${350}px;
     }`}
 
   .card {

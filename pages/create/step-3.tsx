@@ -28,6 +28,7 @@ const StepThree = () => {
   async function handleStepThreeSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (userStore.stepThreeSkip) {
+      setSubmitting(true);
       router.push("/create/step-4");
     } else {
       // update nft
@@ -44,17 +45,17 @@ const StepThree = () => {
       <form onSubmit={handleStepThreeSubmit}>
         <Flex direction="column">
           {/* Top Row */}
-          <Flex direction={["column", "column", "row"]}>
+          <Flex direction={["column", "column", "row"]} gridGap="2">
             <PhotoPreviewSide
-              title="The Important Details"
-              subtitle="We’re almost there. Now, tell the world where you compete."
+              title="A Few More Details"
+              subtitle=""
               flex="1"
               nft_id={userStore.nft?.id}
               nft={userStore.loadedNft}
             />
 
             {/* Right side */}
-            <Flex flex="1" direction="column" mt={["4", "4", 0]}>
+            <Flex flex="1" direction="column" >
               <Stack>
                 <FormControl id="highSchool">
                   <FormLabel>School</FormLabel>
@@ -113,25 +114,26 @@ const StepThree = () => {
                     }
                   />
                 </FormControl>
-                {userStore.nft?.photo && (
-                  <Box
-                    mt={["2rem !important", "2rem !important", 0]}
-                    mb={["2rem !important", "2rem !important", 0]}
-                    display={["block", "block", "none"]}
-                    h={["500px","650px","650px"]}
-                  >
-                    <Card
-                      nft_id={userStore.nft?.id}
-                      nft_width={400}
-                      reverse={false}
-                    />
-                  </Box>
-                )}
-                <Button mt="2rem !important" colorScheme="blue" color="white" type="submit">
-                  {submitting ? <Spinner /> : "Looking Good"}
-                </Button>
+
+
+
               </Stack>
+              <Button mt="2rem" colorScheme="blue" color="white" type="submit" isLoading={submitting}>
+                Next Step
+              </Button>
             </Flex>
+
+            <Box
+              display={["block", "block", "none"]}
+              alignSelf="center">
+
+              <Card
+                nft_id={userStore.loadedNft?.id}
+                nft_width={375}
+                reverse={false}
+
+              />
+            </Box>
           </Flex>
           <Divider mt="6" mb="6" />
           {/* Bottom row */}

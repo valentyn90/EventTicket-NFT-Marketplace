@@ -58,6 +58,10 @@ function VideoPlayer({
   var safariSrc = `https://stream.mux.com/${src}/${max_resolution}.mp4`;
   const imagePreview = `https://image.mux.com/${src}/thumbnail.png?width=400&height=400&fit_mode=preserve&time=1`;
 
+  if(!src || src==''){
+    safariSrc = `https://stream.mux.com/DuYBRIASUsk37QD8BpCWXv8i00ucJW9pAEau02cRXhPQQ/high.mp4`
+  }
+
   function handleVideoMetadataLoaded() {
     if (videoRef.current) {
       setVideoLength(videoRef.current.duration);

@@ -29,7 +29,6 @@ const StepFour = () => {
 
     setSubmitting(true);
     const res = await userStore.nft?.saveTeamColors();
-    setSubmitting(false);
     if (res) {
       router.push("/create/step-5");
     } else {
@@ -40,6 +39,7 @@ const StepFour = () => {
         duration: 3500,
         isClosable: true,
       });
+      setSubmitting(false);
     }
 
   }
@@ -50,8 +50,8 @@ const StepFour = () => {
         <Flex direction="column">
           <Flex direction={["column", "column", "row"]}>
             <PhotoPreviewSide
-              title="Customize the Look"
-              subtitle="Make your card unique by choosing its colors."
+              title="Choose Your Colors"
+              subtitle=""
               flex="1"
               nft_id={userStore.nft?.id}
               nft={userStore.loadedNft}
@@ -59,16 +59,17 @@ const StepFour = () => {
             <Flex flex="1" direction="column">
               <ColorPicker />
               <Box
-                mt={["2rem !important", "2rem !important", 0]}
+                // mt={["2rem !important", "2rem !important", 0]}
                 mb={["2rem !important", "2rem !important", 0]}
                 display={["block", "block", "none"]}
                 h={["500x", "500x", "450px"]}
+                alignSelf="center"
               >
                 <CardBox>
                   <Card
                     nft_id={userStore.nft?.id}
                     nft={userStore.loadedNft}
-                    nft_width={400}
+                    nft_width={300}
                     reverse={false}
                   />
                 </CardBox>
@@ -76,14 +77,15 @@ const StepFour = () => {
               <Button
                 display="block"
                 ml="auto"
-                mt="2rem"
                 align="end"
+                w={["100%", "fit-content"]}
                 colorScheme="blue"
                 color="white"
                 type="submit"
                 disabled={submitting}
+                isLoading={submitting}
               >
-                {submitting ? <Spinner /> : "Looking Good"}
+                Next Step
               </Button>
             </Flex>
           </Flex>

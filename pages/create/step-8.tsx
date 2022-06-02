@@ -15,7 +15,8 @@ import {
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import NextLink from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -27,7 +28,7 @@ const Wrapper = styled.div`
     z-index: 15;
     position: absolute;
     top: 120px;
-    left: -25px;
+    left: 75px;
   }
 
   .minted-card-img-1 {
@@ -71,7 +72,7 @@ const Wrapper = styled.div`
       z-index: 15;
       position: absolute;
       top: 120px;
-      left: -35px;
+      left: 65px;
     }
 
     .minted-card {
@@ -111,6 +112,8 @@ const Wrapper = styled.div`
 
 const StepEight = () => {
   const toast = useToast();
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleClick() {
     const result = await handleRecruitClick(
@@ -189,8 +192,10 @@ const StepEight = () => {
           <Box
             className="minted-card-card"
             flex={["none", "none", "2"]}
-            h={["380px", "380px", "380px"]}
-            w={["380px", "380px", "380px"]}
+            // display={["block", "block", "none"]}
+            // alignSelf="center"
+            // h={["380px", "380px", "380px"]}
+            // w={["380px", "380px", "380px"]}
           >
             <Card
               nft_id={userStore.nft?.id}
@@ -227,7 +232,8 @@ const StepEight = () => {
           />
         </Wrapper>
       </Flex>
-      <HStack justify="space-between" px={4}>
+
+      <VStack px={4} alignItems="flex-start">
         <Button
           zIndex={50}
           onClick={handleClick}
@@ -241,7 +247,16 @@ const StepEight = () => {
           <ShareIcon marginRight={"10px"} />
           <p>Recruit</p>
         </Button>
-      </HStack>
+        <Button
+          onClick={() => {
+            setSubmitting(true)
+            router.push(`/card/${userStore.nft?.id}`);
+          }}
+          isLoading={submitting}
+        >
+          View Your VerifiedInk
+        </Button>
+      </VStack>
     </CreateLayout>
   );
 };

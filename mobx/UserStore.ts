@@ -296,7 +296,7 @@ export class UserStore {
   }
 
   get videoExists() {
-    return this.nft?.mux_playback_id !== "";
+    return (this.nft?.mux_playback_id !== "" && this.nft?.mux_playback_id);
   }
 
   get loadedNft() {

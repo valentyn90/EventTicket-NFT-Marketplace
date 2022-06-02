@@ -1,11 +1,12 @@
 import ActionPhotoUpload from "@/components/Create/ActionPhotoUpload";
 import CreateLayout from "@/components/Create/CreateLayout";
 import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
+import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
 import { supabase } from "@/supabase/supabase-client";
 import forwardMinted from "@/utils/forwardMinted";
 import { checkImageSize, resizeImageFile } from "@/utils/imageFileResizer";
-import { Button, Divider, Flex, Spinner } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Spinner } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
@@ -23,6 +24,7 @@ const StepTwo = () => {
     mixpanel.track("NFT - Uploaded Photo")
     e.preventDefault();
     if (userStore.stepTwoSkip) {
+      setSubmitting(true);
       router.push("/create/step-3");
     } else {
       setSubmitting(true);
@@ -74,12 +76,11 @@ const StepTwo = () => {
       <form onSubmit={handleStepTwoSubmit}>
         <Flex direction="column">
           {/* Top Row */}
-          <Flex direction={["column", "column", "row"]}>
+          <Flex direction={["column", "column", "row"]} gridGap="2">
             {/* Left side */}
             <PhotoPreviewSide
               title="In the Action"
-              subtitle="Your collectible needs the perfect action shot.
-              Choose a high quality photo of just you, and we’ll take care of the rest.
+              subtitle="Choose a high quality photo of just you, and we’ll take care of the rest.
               If the cropping is off, we’ll fix it during our review."
               flex="1"
               nft_id={userStore.loadedNft?.id}
@@ -98,10 +99,24 @@ const StepTwo = () => {
                 color="white"
                 type="submit"
                 disabled={userStore.nftInput?.photoUploading}
+                isLoading={submitting}
+                w={["100%", "fit-content"]}
               >
-                {submitting ? <Spinner /> : "Looks Good"}
+                Next Step
               </Button>
             </Flex>
+
+            <Box
+              display={["block", "block", "none"]}
+              alignSelf="center">
+              
+              <Card
+                nft_id={userStore.loadedNft?.id}
+                nft_width={375}
+                reverse={false}
+
+              />
+            </Box>
           </Flex>
           <Divider mt="6" mb="6" />
           {/* Bottom row */}
