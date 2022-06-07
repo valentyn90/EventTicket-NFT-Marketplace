@@ -27,32 +27,32 @@ const verifiedSolSvcKey = process.env.VERIFIED_INK_SOL_SERVICE_KEY!;
 
 
 export async function removeCollection() {
-  const connection = new web3.Connection(web3.clusterApiUrl("mainnet-beta"));
+  // const connection = new web3.Connection(web3.clusterApiUrl("mainnet-beta"));
 
-  const keypair = await web3.Keypair.fromSecretKey(
-    base58.decode(verifiedSolSvcKey)
-  );
-
-
-  const metaplex = Metaplex.make(connection)
-    .use(keypairIdentity(keypair))
-    .use(bundlrStorage());
-
-  const mint = new web3.PublicKey("7wh23HUPrpYMMKgrQm38ZnpzER2AkDuABcTakeu2gTVv");
+  // const keypair = await web3.Keypair.fromSecretKey(
+  //   base58.decode(verifiedSolSvcKey)
+  // );
 
 
-  const nft = await metaplex.nfts().findNftByMint(mint)
+  // const metaplex = Metaplex.make(connection)
+  //   .use(keypairIdentity(keypair))
+  //   .use(bundlrStorage());
 
-  console.log(nft)
-
-  const { nft: updatedNft } = await metaplex.nfts().updateNft(nft, {
-    name: "Test Update",
-  });
+  // const mint = new web3.PublicKey("7wh23HUPrpYMMKgrQm38ZnpzER2AkDuABcTakeu2gTVv");
 
 
-  console.log(updatedNft);
+  // const nft = await metaplex.nfts().findNftByMint(mint)
 
-  return (updatedNft)
+  // console.log(nft)
+
+  // const { nft: updatedNft } = await metaplex.nfts().updateNft(nft, {
+  //   name: "Test Update",
+  // });
+
+
+  // console.log(updatedNft);
+
+  // return (updatedNft)
 
 }
 

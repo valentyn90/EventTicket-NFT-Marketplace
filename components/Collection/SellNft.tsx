@@ -1,4 +1,4 @@
-import { getNftById } from "@/supabase/supabase-client";
+import { getNftById, getScreenshot, supabase } from "@/supabase/supabase-client";
 import NftOwner from "@/types/NftOwner";
 import OrderBook from "@/types/OrderBook";
 import {
@@ -30,6 +30,7 @@ interface Props {
     setOrderBook: React.Dispatch<React.SetStateAction<OrderBook | null>>
   ) => Promise<void>;
   listingNft: boolean;
+  listingStatus: string;
 }
 
 const SellNft: React.FC<Props> = ({
@@ -42,13 +43,16 @@ const SellNft: React.FC<Props> = ({
   setSelectedOrder,
   handleListNftForSale,
   listingNft,
+  listingStatus,
 }) => {
   const toast = useToast();
 
   const [openBuyModal, setOpenBuyModal] = useState(false);
 
   const [gradYearDisable, setGradYearDisable] = useState(false);
+  const [screenshotUrl, setScreenshotUrl] = useState("");
 
+ 
   // temporary list of allowed nft ids
   const allowedNftIds: number[] = [251];
 
@@ -59,7 +63,7 @@ const SellNft: React.FC<Props> = ({
       getNftById(nft_id).then(({ data, error }) => {
         if (data) {
           const gradYearNum = Number(data.graduation_year);
-          const NILState = ["CA","NJ","NY","LA","CO","NE","UT","AK","KS"].includes(data.usa_state) ;
+          const NILState = ["CA","CT","NJ","NY","LA","CO","NE","UT","AK","KS"].includes(data.usa_state) ;
           if (gradYearNum > 22 && !NILState) {
             setGradYearDisable(true);
           }
@@ -70,6 +74,14 @@ const SellNft: React.FC<Props> = ({
         setGradYearDisable(false);
       }
     }
+
+    const getNftScreenshot = async () => {
+      const {publicUrl} = await getScreenshot(nft_id)
+      setScreenshotUrl(publicUrl!)
+    }
+
+    getNftScreenshot()
+    
   }, [nft_id, allowedNftIds]);
 
   return (
@@ -180,7 +192,7 @@ const SellNft: React.FC<Props> = ({
           </Button>
         </Tooltip>
       </VStack>
-      <MintingModal isOpen={openBuyModal} setIsOpen={setOpenBuyModal} />
+      <MintingModal isOpen={openBuyModal} setIsOpen={setOpenBuyModal} listingStatus={listingStatus} screenshotUrl={screenshotUrl} />
     </>
   );
 };

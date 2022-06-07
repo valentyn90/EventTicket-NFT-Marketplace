@@ -43,16 +43,17 @@ const AlertModal: React.FC<Props> = ({
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose}>
+            <Button ref={cancelRef} onClick={onClose} isDisabled={confirmCancel}>
               Nevermind
             </Button>
             <Button
               colorScheme="red"
               onClick={() => {
                 setConfirmCancel(true);
-                onClose();
+                // onClose();
               }}
               ml={3}
+              isLoading={confirmCancel}
             >
               Cancel listing
             </Button>

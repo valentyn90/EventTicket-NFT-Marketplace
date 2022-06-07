@@ -103,6 +103,8 @@ const NavIndex: React.FC = () => {
 
 
   return (
+    <>
+    <Box zIndex="10000" position="absolute" left="50%"><span id="confettiReward" /></Box>
     <Navbar>
       <Navbar.Brand>
         <Link href="/">
@@ -258,6 +260,7 @@ const NavIndex: React.FC = () => {
         </Navbar.UserProfile>
       )}
     </Navbar>
+    </>
   );
 };
 

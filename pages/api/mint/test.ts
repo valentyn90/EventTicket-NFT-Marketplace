@@ -1,5 +1,6 @@
 import { transferViaCreditCard } from "@/mint/marketplace";
 import createKeypair, { generateKeypair, getKeypair, NFTMintMaster, removeCollection, updateMetadata, uploadImageToArweave, uploadMetadataToArweave } from "@/mint/mint";
+import { topUpBundlr } from "@/mint/mintNew";
 import { generateMetadata } from "@/mint/utils/metadata";
 import { web3 } from "@project-serum/anchor";
 import { Keypair } from "@solana/web3.js";
@@ -15,11 +16,11 @@ export default async function mint(
     // const stuff = (await getKeypair('2654c2d2-ebad-4fd4-8ff0-d9545b83ee37') as web3.Keypair).secretKey.toString()
 
     // const stuff = await generateKeypair('2654c2d2-ebad-4fd4-8ff0-d9545b83ee37');
-    const stuff = (await getKeypair('e9e6deb9-b873-4c14-a521-de382afe0267') as Keypair).secretKey.toString();
+    // const stuff = (await getKeypair('e9e6deb9-b873-4c14-a521-de382afe0267') as Keypair).secretKey.toString();
 
     // const stuff = await uploadImageToArweave(142, 3);
 
-    // const stuff = await updateMetadata(new web3.PublicKey("HiPq5Whdx1CmGJB4AEpEmaRtqHxo1WgbjG2H7M77dY6g"));
+    // const stuff = await updateMetadata(new web3.PublicKey("7N9ykqfRCfD8oX5d8BBTLWzBX5AXzmZ7n681pf2HkLs6"));
 
     // const stuff = await removeCollection();
 
@@ -44,8 +45,9 @@ export default async function mint(
     //     "DBfQBErRFtsuQZkae8tEFaoruRANyiVM6aPs2zuzsx3C", // VFD Treasury
     //     svc_keypair
     // )
+    const j = await  topUpBundlr()
 
-    // // const stuff = {nothing: "here"};
+    const stuff = {nothing: "here"};
     // const end_time = Date.now();
     // console.log(`End: ${end_time}`)
     // console.log(`Total: ${(end_time - start_time)/1000}`)

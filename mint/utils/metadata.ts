@@ -50,12 +50,11 @@ export async function generateMetadata(nft_id: number, serial_no: number) {
       },
       name: `${nft_details.first_name} ${nft_details.last_name} #${serial_no}/10`,
       symbol: "VFDINK",
-      description: `VerifiedInk is a self-issued NFT platform for amateur athletes to easily
+      description: `VerifiedInk is a self-issued NFT platform for athletes to easily
        capitalize on their Name, Image, and Likeness.
        This NFT was created personally by ${nft_details.first_name} ${nft_details.last_name}.
        Proceeds from the initial purchase of their mint go directly to them, and they earn a
-       royalty on all subsequent sales. Support ${nft_details.first_name}'s career by purchasing it, 
-       and support amateur athletics.
+       royalty on all subsequent sales.
        [https://verifiedink.us/card/${nft_details.id}?serial_no=${serial_no.toString()}](https://verifiedink.us/card/${nft_details.id}?serial_no=${serial_no.toString()})
        `,
       seller_fee_basis_points: 1000,

@@ -9,6 +9,7 @@ import getSolPrice from "@/hooks/nft/getSolPrice";
 import useBuyNft from "@/hooks/nft/useBuyNft";
 import useCancelNftListing from "@/hooks/nft/useCancelNftListing";
 import useListNft from "@/hooks/nft/useListNft";
+import useListNftNew from "@/hooks/nft/useListNftNew";
 import useNftOrderBook from "@/hooks/nft/useNftOrderBook";
 import userStore from "@/mobx/UserStore";
 import { getSellData } from "@/supabase/marketplace";
@@ -23,6 +24,7 @@ import {
   Box,
   Container,
   Flex,
+  Heading,
   HStack,
   Select,
   Text,
@@ -51,7 +53,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
   const { handleBuyNftCrypto, buyingNft, publicKey, refetchOrderData } =
     useBuyNft();
   const { handleCancelListing, cancellingNft } = useCancelNftListing();
-  const { handleListNftForSale, listingNft } = useListNft();
+  const { handleListNftForSale, listingNft, listingStatus, setListingStatus } = useListNftNew();
   const { nftOwnerDetails, orderBooks, totalCards, mintDate } = useNftOrderBook(
     {
       nft,
@@ -172,6 +174,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
           isClosable: true,
         });
         setConfirmCancel(false);
+        setOpenAlert(false)
         return;
       }
 
@@ -189,19 +192,39 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
           isClosable: true,
         });
         setConfirmCancel(false);
+        setOpenAlert(false)
         return;
       }
 
       handleCancelListing(nft_id, selectedSN, setSolSellPrice, setSelectedOrder)
         .then(() => {
           setConfirmCancel(false);
+          setOpenAlert(false)
         })
         .catch((err) => {
           console.log(err);
           setConfirmCancel(false);
+          setOpenAlert(false)
         });
     }
   }, [confirmCancel]);
+
+  useEffect(() => {
+    setListingStatus("");
+  }, [selectedSN, confirmCancel])
+
+  useEffect(() => {
+    if (listingStatus === "Error"){
+      toast({
+        position: "top",
+        description: "There was an error listing your NFT.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      setListingStatus("");
+    }
+  }, [listingStatus])
 
   let component;
 
@@ -255,6 +278,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
             setSelectedOrder={setSelectedOrder}
             handleListNftForSale={handleListNftForSale}
             listingNft={listingNft}
+            listingStatus={listingStatus}
           />
         );
       } else {
@@ -268,6 +292,18 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
   return (
     <Container maxW={"5xl"} pt={6}>
       {nft && (
+            <>
+            {listingStatus === "Listed"
+              &&
+              <Box mb="4">
+              <Box textAlign="center" mb="2">
+                <Heading>Let's get this Sold!</Heading><Text> Share this link👇</Text>
+              </Box>
+              <Box display="flex" justifyContent="center">
+                <ShareButton sale={true} id={nft.id} serial_no={selectedSN} width={["100%","25%"]} />
+              </Box>
+              </Box>
+              }
         <Flex
           direction={["column", "column", "row"]}
           maxH={["100%", "100%", "700px"]}
@@ -275,6 +311,12 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
           // justify={"center"}
         >
           <Box flex="1" alignItems="center">
+            {listingStatus === "Listed"
+            &&
+            <Box>
+              Share this link to your fans and friends!
+            </Box>
+            }
             <CardBox>
               <Card
                 nft_id={nft.id}
@@ -372,6 +414,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
             {component}
           </VStack>
         </Flex>
+        </>
       )}
       <AlertModal
         isOpen={openAlert}

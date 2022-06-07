@@ -21,7 +21,7 @@ export const WalletConnectionProvider: FC<{ children: ReactNode }> = ({
   if (typeof window === "undefined") return <>{children}</>;
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
   const network =
-    process.env.NEXT_PUBLIC_SOL_ENV !== "devnet"
+    process.env.NEXT_PUBLIC_SOL_ENV?.includes("devnet")
       ? WalletAdapterNetwork.Devnet
       : WalletAdapterNetwork.Mainnet;
 
@@ -50,10 +50,10 @@ export const WalletConnectionProvider: FC<{ children: ReactNode }> = ({
   );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider endpoint={endpoint}> 
       <WalletProvider wallets={wallets} autoConnect>
         {children}
-      </WalletProvider>
-    </ConnectionProvider>
+       </WalletProvider>
+     </ConnectionProvider>
   );
 };

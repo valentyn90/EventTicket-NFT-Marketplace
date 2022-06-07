@@ -232,6 +232,7 @@ export const sell = async (
       "confirmed"
     );
 
+    console.log(`Listing tx: ${JSON.stringify(tx)}`);
     return tx;
   } catch (e: any) {
     // if (e.message.includes("Failed to find") && retry_count < 3) {
@@ -347,7 +348,7 @@ export const cancel = async (
     }
   );
 
-  // console.log(`tradeState.toBase58(): ${tradeState.toBase58()}`);
+  console.log(`tradeState.toBase58(): ${tradeState.toBase58()}`);
 
   if (auctionHouseKeypairLoaded) {
     signers.push(auctionHouseKeypairLoaded);
@@ -363,7 +364,7 @@ export const cancel = async (
       .map((k) => (k.isSigner = true));
   }
 
-  // console.log(instruction.keys.map((k) => k.pubkey.toBase58()));
+  console.log(instruction.keys.map((k) => k.pubkey.toBase58()));
 
   const tx = await sendTransactionWithRetryWithKeypair(
     anchorProgram.provider.connection,
@@ -373,6 +374,7 @@ export const cancel = async (
     "confirmed"
   );
 
+  console.log(`Cancel tx: ${JSON.stringify(tx)}`);
   return tx;
 };
 
@@ -449,9 +451,6 @@ export const sendTokenVfd = async (
     [wallet, feePayer],
 
   );
-
-
-
 
   return { txId: signature };
 

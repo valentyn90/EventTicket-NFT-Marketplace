@@ -2,6 +2,7 @@ import getSolPrice from "@/hooks/nft/getSolPrice";
 import useBuyNft from "@/hooks/nft/useBuyNft";
 import useCancelNftListing from "@/hooks/nft/useCancelNftListing";
 import useListNft from "@/hooks/nft/useListNft";
+import useListNftNew from "@/hooks/nft/useListNftNew";
 import useNftOrderBook from "@/hooks/nft/useNftOrderBook";
 import userStore from "@/mobx/UserStore";
 import Nft from "@/types/Nft";
@@ -11,6 +12,7 @@ import {
   Box,
   Button,
   Flex,
+  Heading,
   HStack,
   Select,
   Text,
@@ -46,7 +48,7 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
       nft,
     }
   );
-  const { handleListNftForSale, listingNft } = useListNft();
+  const { handleListNftForSale, listingNft, listingStatus, setListingStatus } = useListNftNew();
   const { handleCancelListing, cancellingNft } = useCancelNftListing();
 
   const [flipCard, setFlipCard] = useState(false);
@@ -157,6 +159,7 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
           isClosable: true,
         });
         setConfirmCancel(false);
+        setOpenAlert(false)
         return;
       }
 
@@ -174,19 +177,39 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
           isClosable: true,
         });
         setConfirmCancel(false);
+        setOpenAlert(false)
         return;
       }
 
       handleCancelListing(nft_id, selectedSN, setSolSellPrice, setSelectedOrder)
         .then(() => {
           setConfirmCancel(false);
+          setOpenAlert(false)
         })
         .catch((err) => {
           console.log(err);
           setConfirmCancel(false);
+          setOpenAlert(false)
         });
     }
   }, [confirmCancel]);
+
+  useEffect(() => {
+    setListingStatus("");
+  }, [selectedSN, confirmCancel])
+
+  useEffect(() => {
+    if (listingStatus === "Error"){
+      toast({
+        position: "top",
+        description: "There was an error listing your NFT.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      setListingStatus("");
+    }
+  }, [listingStatus])
 
   let component;
 
@@ -218,6 +241,7 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
         </HStack>
 
         <ShareButton id={userStore.ui.selectedNft?.id} serial_no={selectedSN} />
+        <Box></Box>
       </>
     );
   } else {
@@ -272,6 +296,7 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
                 setSelectedOrder={setSelectedOrder}
                 handleListNftForSale={handleListNftForSale}
                 listingNft={listingNft}
+                listingStatus={listingStatus}
               />
             );
           } else {
@@ -287,6 +312,18 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
   }
 
   return (
+    <>
+          {listingStatus === "Listed"
+            &&
+            <Box mb="4">
+            <Box textAlign="center" mb="2">
+              <Heading>Let's get this Sold!</Heading><Text> Share this link👇</Text>
+            </Box>
+            <Box display="flex" justifyContent="center">
+              <ShareButton sale={true} id={nft.id} serial_no={selectedSN} width={["100%","25%"]} />
+            </Box>
+            </Box>
+            }
     <Flex
       direction={["column", "column", "row"]}
       maxH={["100%", "100%", "700px"]}
@@ -315,7 +352,7 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
         </CardBox>
       </Box>
       <VStack flex="1" spacing={6} align="start" justify="center">
-        <Box mb={8} w="100%">
+        <Box mb={[2,2,8]} w="100%">
           <Text fontSize={["4xl", "4xl", "6xl"]}>
             {nft.first_name} {nft.last_name}
           </Text>
@@ -407,6 +444,7 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
         setConfirmCancel={setConfirmCancel}
       />
     </Flex>
+    </>
   );
 };
 

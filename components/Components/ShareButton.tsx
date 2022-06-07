@@ -9,7 +9,7 @@ interface Props {
   id?: number;
   buttonText?: string;
   serial_no?: number;
-  width?: string;
+  width?: string | string[];
   flex?: number;
   color?: string;
   variant?: string;
@@ -17,6 +17,7 @@ interface Props {
   background?: string;
   fill?: string;
   borderColor?: string;
+  sale?: boolean;
 }
 
 const ShareButton: React.FC<Props> = ({
@@ -31,11 +32,12 @@ const ShareButton: React.FC<Props> = ({
   background,
   fill = "white",
   borderColor,
+  sale = false,
 }) => {
   const toast = useToast();
 
   async function handleClick(id: number | undefined) {
-    const result = await handleRecruitClick(id, serial_no);
+    const result = await handleRecruitClick(id, serial_no, sale);
     if (result === "Clipboard") {
       toast({
         position: "top",
