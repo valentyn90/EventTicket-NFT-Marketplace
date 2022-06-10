@@ -126,8 +126,10 @@ function ActionPhotoUpload() {
     isDragReject,
   } = useDropzone({
     onDrop,
-    accept: "image/jpeg, image/png, image/jpg, image/gif",
-    maxFiles: 1,
+    accept: {
+      "image/*":[]
+    }, 
+    multiple: false
   });
 
   const style = useMemo(

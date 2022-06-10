@@ -191,8 +191,10 @@ function VideoProofUpload() {
     isDragReject,
   } = useDropzone({
     onDrop,
-    accept: "video/*",
-    maxFiles: 1,
+    accept: {
+      "video/*":[]
+    }, 
+    multiple: false
   });
 
   const style = useMemo(
