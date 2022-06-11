@@ -8,6 +8,7 @@ import SellData from "@/types/SellData";
 import { Grid } from "@chakra-ui/layout";
 import React from "react";
 import CardListItem from "./CardListItem";
+import { extendTheme } from "@chakra-ui/react";
 
 interface Props {
   listType: ModalContentType;
@@ -22,6 +23,7 @@ const CardList: React.FC<Props> = ({
   listingData,
   marketplaceNfts,
 }) => {
+
   let cardList;
   if (listingData && nfts) {
     cardList = listingData.map((listing, i) => {
@@ -59,12 +61,14 @@ const CardList: React.FC<Props> = ({
     <Grid
       w="100%"
       mt={8}
-      templateColumns={[
-        "repeat(auto-fit, 170px)",
-        "repeat(auto-fit, 225px)",
-        "repeat(auto-fit, 250px)",
-      ]}
+      templateColumns={{
+        base: "repeat(auto-fit, 166px)",
+        sm: "repeat(auto-fit, 170px)",
+        md: "repeat(auto-fit, 230px)",
+        lg: "repeat(auto-fit, 250px)",
+      }}
       justifyContent={["space-around", "space-around", "center"]}
+      justifyItems="center"
       gap={[2, 4, 6]}
     >
       {cardList}
