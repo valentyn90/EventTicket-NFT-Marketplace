@@ -175,6 +175,28 @@ export const getFileLinkFromSupabase = async (
   };
 };
 
+export const getScreenshots = async (
+  nft_ids: number[]
+): Promise<{ nft_id: number, public_url: string }[]> => {
+
+  let screenshots: any = [];
+  const { data, error } = await supabase
+    .from("nft")
+    .select(`id, files!nft_screenshot_file_id_fkey(file_name)`)
+    .in("id", nft_ids)
+
+  if (data) {
+    data.map(async res => {
+      const public_url = await supabase.storage.from("private").getPublicUrl(res.files.file_name)
+      screenshots.push({
+        nft_id: res.id,
+        public_url: public_url.publicURL
+      })
+    })
+  }
+  return screenshots;
+}
+
 export const getScreenshot = async (
   nft_id: number
 ): Promise<{ error: string | null; publicUrl: string | undefined }> => {

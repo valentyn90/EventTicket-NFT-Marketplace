@@ -21,7 +21,7 @@ NFTMintMaster calls a few other functions to both generate metadata and upload i
 This is done using the Auciton House program on Solana: [docs](https://docs.metaplex.com/auction-house/definition). 
 
 I'd like the interface to be a bit cleaner than it is today, but there are basically 3 functions:
-1. Sell (`mint/marketplace.ts`) - can only be called by the owner of the NFT from Verified Ink
+1. Sell (`mint/marketplace.ts`) - can only be called by the owner of the NFT from VerifiedInk
 2. BuyAndExecute (`mint/marketplace-front-end.ts`) - can only be called by an external wallet holder
 3. Cancel Sale (`mint/marketplace.ts`) -can only be called by the owner of the NFT
 

@@ -255,7 +255,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
     const usdPrice = solPrice * orderBook!.price;
     const stripePrice = (+usdPrice * 100).toFixed(0);
 
-    const productName = `Verified Ink #${nft?.id} SN: ${serial_no}`;
+    const productName = `VerifiedInk #${nft?.id} SN: ${serial_no}`;
     const stripeRes = await fetch(`/api/marketplace/stripeCheckout`, {
       method: "POST",
       headers: new Headers({ "Content-Type": "application/json" }),

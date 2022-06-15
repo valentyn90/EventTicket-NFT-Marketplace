@@ -19,9 +19,9 @@ const MintingProgress = () => {
       <br />
       <div>
         <Steps current={userStore.nftMintingProgress} vertical style={styles}>
-          <Steps.Item title="Started creating your Verified Ink" />
-          <Steps.Item title="Self-approve Verified Ink Proof" />
-          <Steps.Item title="Verified Ink Minted" />
+          <Steps.Item title="Started creating your VerifiedInk" />
+          <Steps.Item title="Self-approve VerifiedInk Proof" />
+          <Steps.Item title="VerifiedInk Minted" />
         </Steps>
       </div>
     </VStack>

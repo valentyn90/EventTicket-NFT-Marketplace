@@ -2,58 +2,92 @@ import CardList from "@/components/NftCard/CardList";
 import AppModal from "@/components/ui/AppModal";
 import ViLogo from "@/components/ui/logos/ViLogo";
 import userStore from "@/mobx/UserStore";
-import { getMarketplaceNfts, getMintedNfts } from "@/supabase/marketplace";
+import { getNftItems, getMintedNfts } from "@/supabase/marketplace";
+import ListingData from "@/types/ListingData";
 import MarketplaceNft from "@/types/MarketplaceNft";
 import Nft from "@/types/Nft";
+import NftItem from "@/types/NftItem";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Box, Container, Flex, Text } from "@chakra-ui/layout";
+import { Input } from "@chakra-ui/react";
+import { pick } from "lodash";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 
 const Marketplace: React.FC = () => {
-  const marketplaceText = `VerifiedInk empowers athletes to create, mint and sell limited edition NFTs showcasing their talent.`;
   const logoColor = useColorModeValue("blue.500", "white");
+  const [marketplaceNfts, setMarketplaceNfts] = useState<NftItem[]>([]);
+  const [filteredNfts, setFilteredNfts] = useState<NftItem[]>([]);
 
-  const [marketplaceNfts, setMarketplaceNfts] = useState<MarketplaceNft[]>([]);
+  const [value, setValue] = useState('')
+  const handleChange = (event: any) => setValue(event.target.value)
+
   useEffect(() => {
-    getMarketplaceNfts().then((res) => setMarketplaceNfts([...res]));
+    getNftItems().then((res) => {
+      setMarketplaceNfts([...res])
+      setFilteredNfts([...res])
+    })
+
   }, [userStore.ui.refetchMarketplace]);
+
+  useEffect(() => {
+
+    function activateFilter() {if (marketplaceNfts.length > 0) {
+      if (value === "") {
+        setFilteredNfts(marketplaceNfts)
+        return
+      }
+      const filtered = marketplaceNfts.filter(nft => {
+        const subset = pick(nft.nft, ['first_name', 'last_name', 'graduation_year', 'high_school', 'usa_state', 'sport', 'sport_position']);
+        if (
+          JSON.stringify(subset).toLowerCase().includes(value.toLowerCase())
+        ) {
+          return nft
+        }
+      })
+      setFilteredNfts(filtered)
+    }
+  }
+
+    const timeOutId = setTimeout(() => activateFilter(), 500);
+    return () => clearTimeout(timeOutId);
+  }, [value])
 
   return (
     <Container maxW="8xl" mb={8}>
-      <Box align="center" py="12">
-        <ViLogo width="150px" height="150px" />
+      <Box align="center" py="4">
         <Flex mt={2} align="center" justify="center">
           <Text
             color={logoColor}
             textTransform="uppercase"
             fontWeight="semibold"
-            fontSize="4xl"
+            fontSize="3xl"
             mr={1}
           >
-            Verified
-          </Text>
-          <Text
-            fontWeight="light"
-            alignSelf="flex-start"
-            textTransform="uppercase"
-            fontSize="4xl"
-          >
-            Ink
+            Marketplace
           </Text>
         </Flex>
         <Text
           mt={2}
           mb={4}
-          maxW={"3xl"}
-          textAlign="start"
+          width={["100%","100%","xl"]}
+          textAlign="center"
           colorScheme="gray"
           fontSize={["l", "l", "xl"]}
         >
-          {marketplaceText}
+          94% of Sales go directly to our Athletes <br></br> Purchase with Credit Card or Crypto in seconds
         </Text>
 
-        <CardList listType="marketplace" marketplaceNfts={marketplaceNfts} />
+        <Box w={["100%", "50%"]}>
+          <Input
+            value={value}
+            onChange={handleChange}
+            placeholder="Search"
+            variant="outline"
+          />
+        </Box>
+
+        <CardList listType="marketplace" marketplaceNfts={filteredNfts} />
         <AppModal />
       </Box>
     </Container>

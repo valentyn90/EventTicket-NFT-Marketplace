@@ -8,7 +8,7 @@ export async function handleRecruitClick(
     share_link += `?serial_no=${serial_no}`;
   }
 
-  let share_text = "Checkout this Verified Ink"
+  let share_text = "👀  Checkout this VerifiedInk"
   if(sale) {
     share_text = '👀 Checkout my VerifiedInk. I\'ve partnered with @VfdInk to design and release my own limited edition NFT. Pick one up before I\'m sold out!'
   }

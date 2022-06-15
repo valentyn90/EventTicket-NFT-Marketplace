@@ -38,7 +38,7 @@ const data = {
     },
     {
       title: "Can I make more than 10 VerifiedInks?",
-      content: "Once our <a style='font-weight:bold' href='/marketplace'>marketplace</a> opens, if you sell one or more of your existing Verified Inks we \
+      content: "Once our <a style='font-weight:bold' href='/marketplace'>marketplace</a> opens, if you sell one or more of your existing VerifiedInks we \
       will produce a second edition batch of 50 more VerifiedInks."
     },
     {

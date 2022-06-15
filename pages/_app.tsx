@@ -60,7 +60,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <MixpanelProvider token={"b78dc989c036b821147f68e00c354313"} >
             <IntercomProvider appId={"b3ms6uff"} >
               <Head>
-                <title>Verified Ink</title>
+                <title>VerifiedInk</title>
                 <meta
                   property="og:image"
                   content="https://verifiedink.us/img/verified-ink-site.png"

@@ -48,7 +48,7 @@ const Recruit: React.FC = () => {
         />
         <meta
           property="og:title"
-          content="Create your own custom NFT with Verified Ink"
+          content="Create your own custom NFT with VerifiedInk"
         />
       </Head>
       <Box maxWidth="1200px" mx="auto">

@@ -68,7 +68,7 @@ const VerifiedStatus = () => {
               For our initial beta period, we are limiting minting to only
               Verified athletes. You will become a Verified Athlete when you’ve
               been referred by another Verified Athlete, and our team has
-              approved your Verified Ink Proof.
+              approved your VerifiedInk Proof.
             </PopoverBody>
           </PopoverContent>
         </Popover>

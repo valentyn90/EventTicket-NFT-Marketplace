@@ -1,132 +1,53 @@
+import ListingData from "@/types/ListingData";
 import MarketplaceNft from "@/types/MarketplaceNft";
 import Nft from "@/types/Nft";
+import NftItem from "@/types/NftItem";
 import NftOwner from "@/types/NftOwner";
 import OrderBook from "@/types/OrderBook";
 import SellData from "@/types/SellData";
 import { arrayExtensions } from "mobx/dist/internal";
-import { supabase } from "./supabase-client";
+import { getScreenshot, getScreenshots, supabase } from "./supabase-client";
 
-export const getMarketplaceNfts = async (): Promise<MarketplaceNft[]> => {
-  // get all minted nfts
-  const { data: nfts, error } = await supabase
-    .from("nft")
-    .select("*")
-    .eq("minted", true)
-    .order("id", { ascending: false });
 
-  if (error) {
-    console.log(error);
-    return [];
+export const getNftItems = async (
+  sport?: string,
+  graduation_year?: string,
+  name?: string,
+): Promise<NftItem[]> => {
+
+  let items: NftItem[] = [];
+
+  const { data, error } = await supabase.rpc('nft_list')
+    .select('*')
+    .lt('graduation_year', '27')
+
+  if (data) {
+    const nft_arr = data.map((nft) => nft.nft_id);
+
+    const { data: nftData, error: nftError } = await supabase.from("nft").select("*").in("id", nft_arr);
+
+    if (nftData) {
+
+      const nft_ids = nftData.map((nft) => nft.id);
+      // const screenshots = await getScreenshots(nft_ids);
+
+      data?.map(
+         (d) => {
+          const nft = nftData.find((n) => n.id === d.nft_id);
+          // const screenshot = screenshots.find((s) => s.nft_id === d.nft_id);
+          items.push({
+            nft_id: d.nft_id as number,
+            nft: nft as Nft,
+            price: d.price as number,
+            // screenshot_url: screenshot?.public_url,
+          });
+        }
+      )
+    }
   }
 
-  // now get all nft owners
-  const nftIds = nfts?.map((d) => d.id) || [];
-
-  // This isn't paginating
-  const { data: nftOwners, error: nftOwnersError } = await supabase
-    .from("nft_owner")
-    .select("*")
-    .neq("mint", null)
-    .in("nft_id", nftIds);
-
-  if (nftOwnersError) {
-    console.log(nftOwnersError);
-    return [];
-  }
-
-  const { data: orderNew, error: orderNewError } = await supabase
-    .from("order_book")
-    .select(`*, nft_owner!inner(nft_id)`)
-    .eq("active", true)
-    .eq("buy", false)
-    .order("price");
-
-  const flattenObject = (obj: any) => {
-    const flattened: any = {};
-
-    Object.keys(obj).forEach((key) => {
-      const value = obj[key];
-
-      if (
-        typeof value === "object" &&
-        value !== null &&
-        !Array.isArray(value)
-      ) {
-        Object.assign(flattened, flattenObject(value));
-      } else {
-        flattened[key] = value;
-      }
-    });
-    return flattened;
-  };
-
-  const groupBy = function (xs: Array<any>, key: any) {
-    return (
-      xs?.reduce(function (rv, x) {
-        (rv[x[key]] = rv[x[key]] || []).push(x);
-        return rv;
-      }, {}) || []
-    );
-  };
-
-  const objectMap = (obj: any, fn: any) =>
-    Object.fromEntries(
-      Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)])
-    );
-
-  const ordersFlat = orderNew?.map((order) => {
-    return flattenObject(order);
-  });
-  const groupedOrders = groupBy(ordersFlat!, "nft_id");
-
-  const nftValues = objectMap(groupedOrders, (group: any) => {
-    return {
-      min: Math.min.apply(
-        Math,
-        group.map(function (o: any) {
-          return o.price;
-        })
-      ),
-      mint: group[0].mint,
-    };
-  });
-
-  const allMktplaceNfts = (nfts as Nft[])?.map((nft) => {
-    return {
-      nft: nft,
-      price: nftValues[nft.id] ? nftValues[nft.id].min : 0,
-      sellData: nftValues[nft.id]
-        ? [
-            {
-              nft_owner: nftOwners?.find(
-                (owner) => owner.mint === nftValues[nft.id].mint
-              )!,
-              order_book: ordersFlat?.find(
-                (order) =>
-                  order.nft_id === nft.id &&
-                  order.price === nftValues[nft.id]?.min
-              ),
-            },
-          ]
-        : [],
-    };
-  });
-
-  const mktplaceNfts = allMktplaceNfts
-    ?.filter((nft) => {
-      return nft.price > 0;
-    })
-    .sort((a, b) => {
-      return a.price - b.price;
-    })
-    .concat(
-      allMktplaceNfts?.filter((nft) => {
-        return nft.price == 0;
-      })
-    );
-
-  return mktplaceNfts;
-};
+  return items
+}
 
 export const getSellData = async (nft_id: number): Promise<SellData[]> => {
   const { data: nftOwners, error: nftOwnerError } = await supabase

@@ -42,7 +42,7 @@ const Create: React.FC<Props> = ({
         />
         <meta
           property="og:title"
-          content="Create your own custom NFT with Verified Ink"
+          content="Create your own custom NFT with VerifiedInk"
           key="title"
         />
       </Head>

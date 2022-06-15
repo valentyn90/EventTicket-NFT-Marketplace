@@ -52,7 +52,7 @@ export const Footer: React.FC = (props) => {
                 alignItems="center"
             >
                 <Text fontSize="xs">
-                    &copy; {new Date().getFullYear()} Verified Ink, LLC. All rights reserved.
+                    &copy; {new Date().getFullYear()} VerifiedInk, Inc. All rights reserved.
                 </Text>
             </Stack>
         </Stack>

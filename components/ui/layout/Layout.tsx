@@ -28,7 +28,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       <Head>
         <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta property="og:title" content="Verified Ink" key="title" />
+        <meta property="og:title" content="VerifiedInk" key="title" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:image"
