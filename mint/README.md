@@ -13,7 +13,7 @@ Accounts and Wallets are synonymous on Solana. VerifiedInk has four main account
 
 We also create a wallet for every user who creates NFTs (Custodied Wallet). In the future we might also create wallets for users who buy with fiat, but to start the only way to buy will be through Solana. We store the private keys in supabase encrypted with a salt and a common key. When we want to take actions on behalf of the users we decrypt the keys (but never on the client side).
 
-## Minting NFTs
+## Minting NFTs - UPDATING
 Currently an NFT is minted by calling `NFTMintMaster(nft_id, serial_no)`. This first checks to ensure the NFT hasn't already been minted, and  if not, constructs the NFT. 
 NFTMintMaster calls a few other functions to both generate metadata and upload it to arweave which is a distributed storage system (like s3).
 
