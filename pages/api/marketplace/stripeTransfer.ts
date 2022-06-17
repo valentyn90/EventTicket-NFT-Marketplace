@@ -21,7 +21,7 @@ export default async function handler(
 
     console.log("user_id", user_id);
 
-    // find any order that are not in "transferred", "pending", or "2b_payment_rejected" state
+    //  find any order that are not in "transferred", "pending", or "2b_payment_rejected" state
     const { data, error } = await supabase
         .from("credit_card_sale")
         .select("*")
