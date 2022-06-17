@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { supabase } from "@/supabase/supabase-admin";
-import { Metaplex, keypairIdentity, bundlrStorage } from "@metaplex-foundation/js-next";
-import { Connection, clusterApiUrl } from "@solana/web3.js";
 import { mintAndTransferNFT } from "@/mint/mintNew";
 
 export default async function mintInk(
@@ -30,7 +28,11 @@ export default async function mintInk(
 
     const mint = await mintAndTransferNFT(nft_id, serial_no)
 
-
-
-    return res.status(200).json({"mint": mint});
+    if(mint && mint.success){
+        return res.status(200).json({"mint": mint});
+    }
+    else {
+        return res.status(500).json({mint})
+    }
+    
 }

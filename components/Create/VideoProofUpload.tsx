@@ -305,7 +305,7 @@ function VideoProofUpload() {
   }
 
   return (
-    <Box w="100%" mt={["1rem","1rem","0"]}>
+    <Box w="100%" mt={["1rem", "1rem", "0"]}>
       <>{uploadComponent}</>
       <div {...getRootProps({ style: style as any })}>
         <input {...getInputProps()} />

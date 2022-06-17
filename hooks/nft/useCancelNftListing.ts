@@ -8,6 +8,22 @@ const useCancelNftListing = () => {
 
   const [cancellingNft, setCancellingNft] = useState(false);
 
+  const fetch_retry = async (url: RequestInfo, options: RequestInit | undefined, n : number) => {
+    let error;
+    for (let i = 0; i < n; i++) {
+        try {
+            const res = await fetch(url, options);
+            if (res.ok) return res;
+            console.log("___________FETCH RETRY___________");
+        } catch (err: any) {
+            console.log("Trying again")
+            error = err;
+        }
+    }
+    const res_final = await fetch(url, options);
+    return res_final
+  };
+
   async function handleCancelListing(
     nft_id: number,
     selectedSN: number,
@@ -15,7 +31,7 @@ const useCancelNftListing = () => {
     setOrderBook?: React.Dispatch<React.SetStateAction<OrderBook | null>>
   ) {
     setCancellingNft(true);
-    const res = await fetch(`/api/marketplace/cancelOrder`, {
+    const res = await fetch_retry(`/api/marketplace/cancelOrder`, {
       method: "POST",
       headers: new Headers({ "Content-Type": "application/json" }),
       credentials: "same-origin",
@@ -25,7 +41,7 @@ const useCancelNftListing = () => {
         currency: "sol",
         buy: false,
       }),
-    })
+    },4)
       .then((res) => res.json())
       .catch((err) => {
         console.log(err);
@@ -36,9 +52,9 @@ const useCancelNftListing = () => {
       // error
       toast({
         position: "top",
-        description: res.error || "There was an error.",
+        description: res.error || "There was an error cancelling your listing. Please try again.",
         status: "error",
-        duration: 3000,
+        duration: 8000,
         isClosable: true,
       });
     } else if (res.success) {

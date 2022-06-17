@@ -202,7 +202,7 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
     if (listingStatus === "Error"){
       toast({
         position: "top",
-        description: "There was an error listing your NFT.",
+        description: "There was an error listing your NFT. Please try again or click the blue chat button to contact us.",
         status: "error",
         duration: 5000,
         isClosable: true,

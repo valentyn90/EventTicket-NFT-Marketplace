@@ -1,5 +1,4 @@
 import * as web3 from "@solana/web3.js";
-import { actions, Wallet, NodeWallet } from "@metaplex/js";
 import base58 from "bs58";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { supabase } from "@/supabase/supabase-admin";
@@ -15,8 +14,9 @@ import Key from "@/types/Key";
 import BigNumber from "bignumber.js";
 import { checkTokenBalance } from "./utils/accounts";
 import { Account } from "@metaplex-foundation/mpl-core"
-import { Metadata, UpdatePrimarySaleHappenedViaToken, SetAndVerifyCollectionCollection, Edition } from "@metaplex-foundation/mpl-token-metadata";
-import { Metaplex, keypairIdentity, bundlrStorage, MetaplexFile, createNftOperation } from "@metaplex-foundation/js-next";
+// import { Metadata, UpdatePrimarySaleHappenedViaToken, SetAndVerifyCollectionCollection, Edition } from "@metaplex-foundation/mpl-token-metadata";
+import {createSetAndVerifyCollectionInstruction, createUpdatePrimarySaleHappenedViaTokenInstruction} from "@metaplex-foundation/mpl-token-metadata";
+import { Metaplex, keypairIdentity, bundlrStorage, findMasterEditionV2Pda, findMetadataPda, createNftOperation, BundlrStorageDriver, useMetaplexFile } from "@metaplex-foundation/js";
 import generateKeypair, { getKeypair } from "./mint";
 import { createOrder, sell } from "./marketplace";
 // import { Connection, clusterApiUrl } from "@solana/web3.js";
@@ -41,7 +41,7 @@ export async function mintAndTransferNFT(nft_id: number, serial_no: number) {
 
     if (data.mint) {
       console.log("Already minted:", data.mint);
-      return { mint: data.mint };
+      return { mint: data.mint , success:true };
     }
 
     const { data: nft_details, error: nft_details_error } = await supabase
@@ -78,7 +78,7 @@ export async function mintAndTransferNFT(nft_id: number, serial_no: number) {
         user_public_key = data.public_key;
       } else {
         console.log(message);
-        return null;
+        return {success:false, error:message };
       }
     }
     /////
@@ -89,7 +89,10 @@ export async function mintAndTransferNFT(nft_id: number, serial_no: number) {
             address: 'https://devnet.bundlr.network',
             providerUrl: 'https://api.devnet.solana.com',
             timeout: 60000,
-          } : undefined
+            withdrawAfterUploading: false,
+          } : {
+            withdrawAfterUploading: false,
+          }
       ));
 
     let metadata_uri = ""
@@ -120,7 +123,7 @@ export async function mintAndTransferNFT(nft_id: number, serial_no: number) {
        royalty on all subsequent sales.
        [https://verifiedink.us/card/${nft_details.id}?serial_no=${serial_no.toString()}](https://verifiedink.us/card/${nft_details.id}?serial_no=${serial_no.toString()})
        `,
-        image: await new MetaplexFile(buffer, `${nft_id}_${serial_no}.png`, { "tags": tags }),
+        image: await useMetaplexFile(buffer, `${nft_id}_${serial_no}.png`, { "tags": tags }),
         seller_fee_basis_points: 1000,
         external_url: `https://verifiedink.us/card/${nft_details.id}?serial_no=${serial_no.toString()}`,
         attributes: [
@@ -195,37 +198,14 @@ export async function mintAndTransferNFT(nft_id: number, serial_no: number) {
           state: metadata_uri
         }
       ).eq("nft_id", nft_id)
-       .eq("serial_no", serial_no)
-       .single();
+        .eq("serial_no", serial_no)
+        .single();
 
     }
-
-    const collectionMint = env.includes("dev") ? new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz")
-      : new web3.PublicKey("4DJn2yqPiT9QZvM4t4RLv7XhhTs7mwKSCsBpGxyq25MV");
-
-    // const metadata_uri = "https://arweave.net/skYSocT_qy5332jckAjOY0ixcKpCCxRvlaOSAHa0sok"
-    // const { nft } = await metaplex.nfts().create(
-    //   {
-    //     uri: metadata_uri,
-    //     collection: {
-    //       verified: false,
-    //       key: collectionMint
-    //     },
-
-    //     isMutable: true,
-    //     owner: new web3.PublicKey(user_public_key),
-    //     maxSupply: 0,
-    //   }
-    // )
 
     const input =
     {
       uri: metadata_uri,
-      collection: {
-        verified: false,
-        key: collectionMint
-      },
-
       isMutable: true,
       owner: new web3.PublicKey(user_public_key),
       maxSupply: 0,
@@ -245,15 +225,15 @@ export async function mintAndTransferNFT(nft_id: number, serial_no: number) {
       .eq("serial_no", serial_no)
       .single();
 
-    return { mint: createNftOutput.mint.publicKey.toBase58() }
+    return { mint: createNftOutput.mint.publicKey.toBase58() , success:true }
 
   }
   catch (err) {
-    console.log(err)
-    return { mint: null }
+    console.log("Caught an Error: ", err)
+    // console.error(err)
+    return {success:false, error: err}
   }
 
-  return { mint: null }
 }
 
 
@@ -292,42 +272,26 @@ export async function updateMetadata(mint: string) {
     const collectionMint = env.includes("dev") ? new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz")
       : new web3.PublicKey("4DJn2yqPiT9QZvM4t4RLv7XhhTs7mwKSCsBpGxyq25MV");
 
-    const collectionMasterEdition = await Edition.getPDA(collectionMint);
-    const collectionMetadata = await Metadata.getPDA(collectionMint);
+    const collectionMasterEdition = await findMasterEditionV2Pda(collectionMint);
+    const collectionMetadata = await findMetadataPda(collectionMint);
 
-    const metadataAccount = await Metadata.getPDA(nft.mint)
-    // const tokenAccount = await Token.getAssociatedTokenAddress(
-    //   ASSOCIATED_TOKEN_PROGRAM_ID,
-    //   TOKEN_PROGRAM_ID,
-    //   nft.mint,
-    //   new web3.PublicKey(user_public_key)
-    // )
+    const metadataAccount = await findMetadataPda(collectionMint);
 
     const signVerifyMetadata =
     {
       metadata: metadataAccount,
-      collectionAuthority: keypair.publicKey,             //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
+      collectionAuthority: keypair.publicKey, 
+      payer: keypair.publicKey,            //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
+      updateAuthority: keypair.publicKey,    //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
       collectionMint: collectionMint,                     //new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz"),
-      updateAuthority: keypair.publicKey,                 //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
-      collectionMetadata: collectionMetadata,             //new web3.PublicKey("6dq64RSnCoJHGn89VzshxkzPyGJsW51JqgxVa8AUsXbg"),
-      collectionMasterEdition: collectionMasterEdition    //new web3.PublicKey("Gkq55px9fua9CmafLdQW1Y9r1xgLT8Qei2zkVUMDBszH")
+      collection: collectionMetadata,
+      collectionMasterEditionAccount: collectionMasterEdition
     }
 
-    const tx = new SetAndVerifyCollectionCollection({ feePayer: keypair.publicKey }, signVerifyMetadata)
-
-    // const primarySaleHappened =
-    // {
-    //   metadata: metadataAccount,
-    //   owner: new web3.PublicKey(user_public_key),
-    //   tokenAccount: tokenAccount
-    // }
-
-    // const updatePrimary = new UpdatePrimarySaleHappenedViaToken({ feePayer: keypair.publicKey, signatures:[sigVfdPair, sigPubkeyPair] }, primarySaleHappened)
-
+    const tx = createSetAndVerifyCollectionInstruction(signVerifyMetadata)
 
     const transaction = new web3.Transaction().add(
       tx,
-      // updatePrimary
     )
 
     const { signature } = await metaplex.rpc().sendAndConfirmTransaction(transaction)
@@ -341,10 +305,11 @@ export async function updateMetadata(mint: string) {
     ).eq("mint", mint)
       .single();
 
-    return { signature: signature }
+    return { signature: signature, success: true }
   }
   catch (err) {
-    console.log(err)
+    console.log('Caught a metadata Error:',err)
+    return { success:false, error:err}
   }
 }
 
@@ -352,8 +317,6 @@ export async function listNft(user_id: string, mint: string, price: number, curr
   const serviceKeypair = await web3.Keypair.fromSecretKey(
     base58.decode(verifiedSolSvcKey)
   );
-
-  console.log(user_id)
 
   const seller_private_key = (await getKeypair(user_id)) as web3.Keypair;
 
@@ -403,7 +366,6 @@ export async function topUpBundlr() {
     await bundlr.fund(new BigNumber(1e9))
     // 1 SOL
   }
-
 
   console.log(`Balance = ${balance}`)
   console.log(`Price = ${price}`)

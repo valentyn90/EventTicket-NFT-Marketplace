@@ -110,7 +110,9 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: user.id })
     }
-    const attempt_transfer = fetch(`${site}/api/marketplace/stripeTransfer`, requestOptions);
+    if(site) {
+      const attempt_transfer = fetch(`${site}/api/marketplace/stripeTransfer`, requestOptions);
+    }
   }
 
   return { props: {} };

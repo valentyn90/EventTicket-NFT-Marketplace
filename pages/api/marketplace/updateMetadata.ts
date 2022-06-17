@@ -30,7 +30,7 @@ export default async function mintInk(
 
         const signature = await updateMetadata(mint)
 
-        if (signature) {
+        if (signature && signature.success) {
             return res.status(200).json({ "mint": mint });
         }
         else {

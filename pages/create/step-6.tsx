@@ -8,7 +8,7 @@ import { observer } from "mobx-react-lite";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SignaturePad from "react-signature-pad-wrapper";
 
 const StepSix = () => {
@@ -17,6 +17,17 @@ const StepSix = () => {
   const router = useRouter();
 
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    // ensure the video finished processing;
+    async function finish_video() {
+      console.log(new Date());
+      await userStore.nft?.getMuxAsset();
+      console.log(new Date());
+    }
+    finish_video();
+
+  }, [userStore]);
 
   function handleClear() {
     if (signatureRef) {

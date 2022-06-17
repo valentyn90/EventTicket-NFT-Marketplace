@@ -7,7 +7,6 @@ import { observer } from "mobx-react-lite";
 import React, { SyntheticEvent, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import { AiOutlineRotateRight } from "react-icons/ai";
-import Card from "../NftCard/Card";
 
 const baseStyle = {
   flex: 1,
@@ -94,7 +93,6 @@ function ActionPhotoUpload() {
   ): Promise<{ photo: File; photoName: string }> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-
       reader.readAsDataURL(file);
 
       reader.onload = async function (reader) {

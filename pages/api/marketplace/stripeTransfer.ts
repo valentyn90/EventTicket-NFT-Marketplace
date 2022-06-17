@@ -89,17 +89,17 @@ export default async function handler(
 
             // Delist on chain
 
-            try{
+            try {
 
-            const ahCancel = await cancel(
-                auctionHouse,
-                svcKeypair,
-                activeOrder.mint,
-                activeOrder.price,
-                activeOrder.currency,
-                activeOrder.buy,
-                actual_seller_keypair
-            );
+                const ahCancel = await cancel(
+                    auctionHouse,
+                    svcKeypair,
+                    activeOrder.mint,
+                    activeOrder.price,
+                    activeOrder.currency,
+                    activeOrder.buy,
+                    actual_seller_keypair
+                );
 
             }
             catch (err: any) {

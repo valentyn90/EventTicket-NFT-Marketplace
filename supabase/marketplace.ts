@@ -147,7 +147,7 @@ export const getCheckoutData = async (nft_id: number, serial_no: number) => {
   const { data: order, error: orderError } = await supabase
     .from("order_book")
     .select("*")
-    .match({ mint: mintId, active: true })
+    .match({ mint: mintId, active: true, buy:false })
     .order("id", { ascending: false });
 
   if (orderError) {

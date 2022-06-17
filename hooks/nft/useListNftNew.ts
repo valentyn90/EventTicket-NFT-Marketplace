@@ -1,7 +1,7 @@
 import userStore from "@/mobx/UserStore";
 import OrderBook from "@/types/OrderBook";
 import { useToast } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import mixpanel from 'mixpanel-browser';
 import { useIntercom } from "react-use-intercom";
 import { useReward } from 'react-rewards';
@@ -23,6 +23,27 @@ const useListNftNew = () => {
     });
 
 
+  const fetch_retry = async (url: RequestInfo, options: RequestInit | undefined, n : number) => {
+    let error;
+    
+    // Testing Error Propagation
+    // let res_error: Response = new Response(null, {"status":500, "statusText":"EROROROR"})
+    // return res_error
+    
+    for (let i = 0; i < n; i++) {
+        try {
+            const res = await fetch(url, options);
+            if (res.ok) return res;
+            console.log("___________FETCH RETRY___________");
+        } catch (err: any) {
+            console.log("Trying again")
+            error = err;
+        }
+    }
+    const res_final = await fetch(url, options);
+    return res_final
+};
+
   async function handleListNftForSale(
     solSellPrice: number,
     nft_id: number,
@@ -32,16 +53,13 @@ const useListNftNew = () => {
     setListingNft(true);
     setListingStatus("Minting");
     console.log(listingStatus)
-    // Check Mint Status
-
-    // Call Mint if not minted
 
     const start = Date.now();
 
     // await sleep(10000)
 
 
-    const res = await fetch(`/api/marketplace/mintInk`, {
+    const res = await fetch_retry(`/api/marketplace/mintInk`, {
       method: "POST",
       headers: new Headers({ "Content-Type": "application/json" }),
       credentials: "same-origin",
@@ -49,7 +67,7 @@ const useListNftNew = () => {
         serial_no: selectedSN,
         nft_id,
       }),
-    })
+    },3)
 
 
     if (!res.ok) {
@@ -66,14 +84,14 @@ const useListNftNew = () => {
 
     setListingStatus("Updating Metadata")
 
-    const res2 = await fetch(`/api/marketplace/updateMetadata`, {
+    const res2 = await fetch_retry(`/api/marketplace/updateMetadata`, {
       method: "POST",
       headers: new Headers({ "Content-Type": "application/json" }),
       credentials: "same-origin",
       body: JSON.stringify({
         mint: mint
       }),
-    })
+    },3)
 
     if (!res2.ok) {
       setListingNft(false);
@@ -85,7 +103,7 @@ const useListNftNew = () => {
     setListingStatus("Listing NFT")
     console.log("Listing NFT")
 
-    const res3 = await fetch(`/api/marketplace/listNft`, {
+    const res3 = await fetch_retry(`/api/marketplace/listNft`, {
       method: "POST",
       headers: new Headers({ "Content-Type": "application/json" }),
       credentials: "same-origin",
@@ -95,7 +113,7 @@ const useListNftNew = () => {
         currency: "sol",
         buy: false,
       }),
-    }).then((res) => res.json())
+    },3).then((res) => res.json())
       .catch((err) => {
         console.log(err);
       });

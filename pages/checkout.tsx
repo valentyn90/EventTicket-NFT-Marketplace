@@ -84,18 +84,19 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
       setCheckoutView("confirming");
 
       const session_id = query.get("session_id");
-      if (session_id) {
+      if (session_id ) {
         setStripeSessionId(session_id);
       }
 
       // Get the credit card sale table row by finding the mint of the serial no and nft
-      if (mintId) {
+      if (mintId || session_id || stripeSessionId!=="") {
         getCreditCardSaleBySessionId(session_id!).then((data) => {
           if (data) {
             setCreditCardSale(data);
             getUserDetails(data.user_id).then((user) => {
               if (user.data) {
                 setEmail(user.data.email);
+                console.log(`email is: ${user.data.email}`)
               }
             })
           }

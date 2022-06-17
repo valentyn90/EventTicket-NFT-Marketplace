@@ -1,11 +1,8 @@
-import getSolPrice from "@/hooks/nft/getSolPrice";
 import { getCheckoutData } from "@/supabase/marketplace";
 import { supabase } from "@/supabase/supabase-admin";
-import { getScreenshot } from "@/supabase/supabase-client";
-import * as web3 from "@solana/web3.js";
 import { fetchNFTMetadata } from "@/utils/web3/queries";
 import { NextApiRequest, NextApiResponse } from "next";
-import { compareDocumentPosition } from "domutils";
+
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY!);
 
@@ -52,9 +49,6 @@ export default async function handler(
         images
       });
 
-
-
-
       // Create Checkout Sessions from body params.
       const session = await stripe.checkout.sessions.create({
         line_items: [
@@ -75,7 +69,8 @@ export default async function handler(
         metadata: {
           nft_id: nft_id,
           sn: sn,
-          card_preview_image: imageLink
+          card_preview_image: imageLink,
+          seller_id: orderBook.user_id
         }
       });
 

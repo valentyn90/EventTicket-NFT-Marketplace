@@ -15,8 +15,9 @@ import Key from "@/types/Key";
 import BigNumber from "bignumber.js";
 import { checkTokenBalance } from "./utils/accounts";
 import { Account } from "@metaplex-foundation/mpl-core"
-import { Metadata, UpdatePrimarySaleHappenedViaToken, SetAndVerifyCollectionCollection, Edition } from "@metaplex-foundation/mpl-token-metadata";
-import { Metaplex, keypairIdentity, bundlrStorage } from "@metaplex-foundation/js-next";
+// import { Metadata, UpdatePrimarySaleHappenedViaToken, SetAndVerifyCollectionCollection, Edition, deprecated } from "@metaplex-foundation/mpl-token-metadata";
+import {createSetAndVerifyCollectionInstruction, createUpdatePrimarySaleHappenedViaTokenInstruction} from "@metaplex-foundation/mpl-token-metadata";
+import {findMasterEditionV2Pda, findMetadataPda, Metaplex, keypairIdentity, bundlrStorage } from "@metaplex-foundation/js";
 // import { Connection, clusterApiUrl } from "@solana/web3.js";
 
 //https://openquest.xyz/quest/create-burn-nft-solana
@@ -237,10 +238,11 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
     : new web3.PublicKey("4DJn2yqPiT9QZvM4t4RLv7XhhTs7mwKSCsBpGxyq25MV"); // Replace with mainnet collection mint key
 
 
-  const collectionMasterEdition = await Edition.getPDA(collectionMint);
-  const collectionMetadata = await Metadata.getPDA(collectionMint);
+  // const collectionMasterEdition = await deprecated.Edition.getPDA(collectionMint);
+  const collectionMasterEdition = await findMasterEditionV2Pda(collectionMint);
+  const collectionMetadata = await findMetadataPda(collectionMint);
 
-  const metadataAccount = await Metadata.getPDA(mint_key)
+  const metadataAccount = await findMetadataPda(collectionMint);
   const tokenAccount = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
@@ -251,14 +253,15 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
   const signVerifyMetadata =
   {
     metadata: metadataAccount,
-    collectionAuthority: keypair.publicKey,             //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
+    collectionAuthority: keypair.publicKey, 
+    payer: keypair.publicKey,            //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
+    updateAuthority: keypair.publicKey,    //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
     collectionMint: collectionMint,                     //new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz"),
-    updateAuthority: keypair.publicKey,                 //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
-    collectionMetadata: collectionMetadata,             //new web3.PublicKey("6dq64RSnCoJHGn89VzshxkzPyGJsW51JqgxVa8AUsXbg"),
-    collectionMasterEdition: collectionMasterEdition    //new web3.PublicKey("Gkq55px9fua9CmafLdQW1Y9r1xgLT8Qei2zkVUMDBszH")
+    collection: collectionMetadata,
+    collectionMasterEditionAccount: collectionMasterEdition    //new web3.PublicKey("Gkq55px9fua9CmafLdQW1Y9r1xgLT8Qei2zkVUMDBszH")
   }
 
-  const tx = new SetAndVerifyCollectionCollection({ feePayer: keypair.publicKey }, signVerifyMetadata)
+  const tx = createSetAndVerifyCollectionInstruction( signVerifyMetadata)
 
 
 
@@ -266,9 +269,9 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
   {
     metadata: metadataAccount,
     owner: keypair.publicKey,
-    tokenAccount: tokenAccount
+    token: tokenAccount
   }
-  const updatePrimary = new UpdatePrimarySaleHappenedViaToken({ feePayer: keypair.publicKey }, primarySaleHappened)
+  const updatePrimary = createUpdatePrimarySaleHappenedViaTokenInstruction( primarySaleHappened)
 
   const transaction = new web3.Transaction().add(
     tx, updatePrimary

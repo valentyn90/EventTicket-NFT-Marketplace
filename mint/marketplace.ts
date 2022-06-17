@@ -19,7 +19,6 @@ import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { RiContactsBookLine } from "react-icons/ri";
 import { KeySystems } from "hls.js";
 import { truncate } from "fs/promises";
-import { actions, NodeWallet, programs } from "@metaplex/js";
 import { createConnection } from "@/utils/web3/queries";
 import { Account, PublicKey, Transaction } from "@solana/web3.js";
 import { AuctionHouse } from "@metaplex-foundation/mpl-auction-house/dist/src/generated";
@@ -412,33 +411,33 @@ export const sendTokenVfd = async (
   //   console.log(accountInfo)
   // } catch {
   //   console.log("Account does not exist")
-    txs.push(
+  txs.push(
 
-        Token.createAssociatedTokenAccountInstruction(
-          ASSOCIATED_TOKEN_PROGRAM_ID,
-          TOKEN_PROGRAM_ID,
-          mint,
-          destAta,
-          destination,
-          feePayer.publicKey,
-        )
-      
+    Token.createAssociatedTokenAccountInstruction(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      mint,
+      destAta,
+      destination,
+      feePayer.publicKey,
     )
+
+  )
   // }
 
   txs.push(
 
-      Token.createTransferInstruction(
-        TOKEN_PROGRAM_ID,
-        source,
-        destAta,
-        wallet.publicKey,
-        [],
-        amount,
-      ),
+    Token.createTransferInstruction(
+      TOKEN_PROGRAM_ID,
+      source,
+      destAta,
+      wallet.publicKey,
+      [],
+      amount,
+    ),
 
   );
-  
+
 
 
 
@@ -476,7 +475,7 @@ export const transferViaCreditCard = async (
   //   }),
   // );
 
-  
+
 
   // console.log("Attempting to send some sol")
   // Sign transaction, broadcast, and confirm
@@ -503,16 +502,31 @@ export const transferViaCreditCard = async (
   );
 
   console.log("Attempting to send")
+  //Loop and attempt to send 3 times
+  for (let i = 0; i < 3; i++) {
 
-  const sendToken = await sendTokenVfd(
-    connection,
-    1,
-    new PublicKey(buyer_public_key),
-    fromTokenAccount.address,
-    seller_private_key,
-    new PublicKey(mint),
-    svcKeypair
-  )
+    try {
+      const sendToken = await sendTokenVfd(
+        connection,
+        1,
+        new PublicKey(buyer_public_key),
+        fromTokenAccount.address,
+        seller_private_key,
+        new PublicKey(mint),
+        svcKeypair
+      )
+      return sendToken
+    }
+    catch (e) {
+      console.log(e)
+    }
+
+    
+  }
+
+  return { error: "Failed to send token" }
+
+
 
   // const sendToken = await actions.sendToken({
   //   connection,
@@ -523,6 +537,6 @@ export const transferViaCreditCard = async (
   //   mint: new PublicKey(mint),
   // })
 
-  return sendToken
+
 }
 

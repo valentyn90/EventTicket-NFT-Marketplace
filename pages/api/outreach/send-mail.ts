@@ -43,7 +43,42 @@ export async function sendPurchaseMail(email: string, nft_id: string, sn: string
     dynamic_template_data: {
       nft_id,
       sn,
-      card_preview_image
+      card_preview_image,
+      email
+    }
+  }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error)
+      return{ "success": true }
+    })
+
+}
+
+export async function sendSaleMail(user_id: string, nft_id: string, sn: string, card_preview_image: string, price: string) {
+  let template_id = 'd-97a66a1035544e4faefa2e0b4a0c6505'
+
+  const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
+
+  const email = user_details.data.email;
+
+  const msg = {
+    to: email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    bcc: 'MarketplaceSales@verifiedink.us',
+    template_id: template_id,
+    dynamic_template_data: {
+      nft_id,
+      sn,
+      card_preview_image,
+      email,
+      price
     }
   }
 
