@@ -275,7 +275,7 @@ export async function updateMetadata(mint: string) {
     const collectionMasterEdition = await findMasterEditionV2Pda(collectionMint);
     const collectionMetadata = await findMetadataPda(collectionMint);
 
-    const metadataAccount = await findMetadataPda(collectionMint);
+    const metadataAccount = await findMetadataPda(new web3.PublicKey(mint));
 
     const signVerifyMetadata =
     {

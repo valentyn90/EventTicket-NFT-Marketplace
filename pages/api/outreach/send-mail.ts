@@ -63,9 +63,11 @@ export async function sendPurchaseMail(email: string, nft_id: string, sn: string
 export async function sendSaleMail(user_id: string, nft_id: string, sn: string, card_preview_image: string, price: string) {
   let template_id = 'd-97a66a1035544e4faefa2e0b4a0c6505'
 
+  console.log(`user_id: ${user_id}`)
   const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
 
   const email = user_details.data.email;
+  console.log(`Seller: ${email}`)
 
   const msg = {
     to: email,

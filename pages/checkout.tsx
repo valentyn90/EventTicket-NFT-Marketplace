@@ -152,8 +152,8 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
         }
       });
     }
-    setTimeout(() => {
-      retryTransfer();
+    setTimeout(async () => {
+      await retryTransfer();
     }, 10000)
 
   }, [checkoutView, mintId]);
@@ -289,17 +289,21 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
   }
 
   async function retryTransfer() {
+    if(email){
+      const { data: confirmedUserData, error: confirmedError } =
+        await getUserDetailsByEmail(email);
 
-    const { data: confirmedUserData, error: confirmedError } =
-      await getUserDetailsByEmail(email);
+      console.log(`Retrying transfer for ${confirmedUserData.user_id}`);
+      console.log(`With Email ${email}`);
 
-    if (confirmedUserData && confirmedUserData.user_id) {
-      const requestOptions = {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: confirmedUserData.user_id })
+      if (confirmedUserData && confirmedUserData.user_id) {
+        const requestOptions = {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: confirmedUserData.user_id })
+        }
+        const attempt_transfer = fetch(`/api/marketplace/stripeTransfer`, requestOptions);
       }
-      const attempt_transfer = fetch(`/api/marketplace/stripeTransfer`, requestOptions);
     }
   }
 

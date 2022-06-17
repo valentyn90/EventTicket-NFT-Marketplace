@@ -20,7 +20,8 @@ export default async function mint(
 
     // const stuff = await uploadImageToArweave(142, 3);
 
-    // const stuff = await updateMetadata(new web3.PublicKey("7N9ykqfRCfD8oX5d8BBTLWzBX5AXzmZ7n681pf2HkLs6"));
+    // OLD METADATA FUNCTION
+    // const stuff = await updateMetadata(new web3.PublicKey("6aQ3eGp9hxrXzhgpRBFNYFD8PNBRBsacWRk32pVrCssx"));
 
     // const stuff = await removeCollection();
 
@@ -45,7 +46,7 @@ export default async function mint(
     //     "DBfQBErRFtsuQZkae8tEFaoruRANyiVM6aPs2zuzsx3C", // VFD Treasury
     //     svc_keypair
     // )
-    const j = await  topUpBundlr()
+    // const j = await  topUpBundlr()
 
     const stuff = {nothing: "here"};
     // const end_time = Date.now();

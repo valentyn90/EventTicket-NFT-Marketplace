@@ -222,6 +222,12 @@ export async function uploadMetadataToArweave(
 }
 
 export async function updateMetadata(mint_key: web3.PublicKey) {
+
+  // THIS SHOULD BE DEPRECATED
+  //
+  //
+  //
+  //
   // Update metadata - 43n7Z5UwFivwyAGSonriJwKM2H8e7cQZPQuNNRaVv6Eb
   const env = process.env.NEXT_PUBLIC_SOL_ENV!;
 
@@ -242,7 +248,7 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
   const collectionMasterEdition = await findMasterEditionV2Pda(collectionMint);
   const collectionMetadata = await findMetadataPda(collectionMint);
 
-  const metadataAccount = await findMetadataPda(collectionMint);
+  const metadataAccount = await findMetadataPda(mint_key);
   const tokenAccount = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
@@ -252,18 +258,16 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
 
   const signVerifyMetadata =
   {
-    metadata: metadataAccount,
+    metadata: new web3.PublicKey(metadataAccount.toBase58()),
     collectionAuthority: keypair.publicKey, 
     payer: keypair.publicKey,            //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
     updateAuthority: keypair.publicKey,    //new web3.PublicKey("CuJMiRLgcG35UwyM1a5ZGWHRYn1Q6vatHHqZFLsxVEVH"),
     collectionMint: collectionMint,                     //new web3.PublicKey("4qjeoA4TVBBWuQzUsfaCxn2vryQyixFyJ5jXqhFT9pjz"),
-    collection: collectionMetadata,
-    collectionMasterEditionAccount: collectionMasterEdition    //new web3.PublicKey("Gkq55px9fua9CmafLdQW1Y9r1xgLT8Qei2zkVUMDBszH")
+    collection: new web3.PublicKey(collectionMetadata.toBase58()),
+    collectionMasterEditionAccount: new web3.PublicKey(collectionMasterEdition.toBase58())    //new web3.PublicKey("Gkq55px9fua9CmafLdQW1Y9r1xgLT8Qei2zkVUMDBszH")
   }
 
   const tx = createSetAndVerifyCollectionInstruction( signVerifyMetadata)
-
-
 
   const primarySaleHappened =
   {
@@ -274,7 +278,7 @@ export async function updateMetadata(mint_key: web3.PublicKey) {
   const updatePrimary = createUpdatePrimarySaleHappenedViaTokenInstruction( primarySaleHappened)
 
   const transaction = new web3.Transaction().add(
-    tx, updatePrimary
+    tx //, updatePrimary
   )
 
   const signature = await sendTxWithRetry(

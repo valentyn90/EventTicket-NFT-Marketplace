@@ -93,7 +93,7 @@ const handler = async (req: any, res: any) => {
 
             
             await sendSaleMail(
-              eventObject.metadata.user_id,
+              eventObject.metadata.seller_id,
               eventObject.metadata.nft_id,
               eventObject.metadata.sn,
               eventObject.metadata.card_preview_image,
