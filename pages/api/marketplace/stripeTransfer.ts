@@ -36,6 +36,7 @@ export default async function handler(
     // For each order
 
     data?.forEach(async (creditCardSale: CreditCardSale) => {
+        console.log("Attempting to transfer nft to new owner");
 
         let local_status = creditCardSale.status;
 

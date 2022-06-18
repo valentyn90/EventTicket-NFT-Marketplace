@@ -158,15 +158,17 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
     // once credit card sale = completed
     // check for nft owner table and see if its transferred to new owner
     console.log("Checkout View: ", checkoutView);
-    if (checkoutView === "completed") {
-      setTimeout(async () => {
+    if (checkoutView === "completed" && email !== "") {
+      const interval = setInterval(async () => {
+        console.log("Retrying now...");
         if (checkoutView === "completed") {
           await retryTransfer();
         }
       }, 10000)
+      return () => clearInterval(interval);
     }
 
-  }, [checkoutView]);
+  }, [checkoutView, email]);
 
   // Redundant 
   // useEffect(() => {
@@ -291,6 +293,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
   }
 
   async function retryTransfer() {
+    console.log("Retrying Transfer to: ", email);
     if (email) {
       const { data: confirmedUserData, error: confirmedError } =
         await getUserDetailsByEmail(email);
