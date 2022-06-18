@@ -1,5 +1,6 @@
 import { cancel, cancelOrder, transferViaCreditCard } from "@/mint/marketplace";
 import generateKeypair, { getKeypair } from "@/mint/mint";
+import { sleep } from "@/mint/utils/various";
 import { supabase } from "@/supabase/supabase-admin";
 import CreditCardSale from "@/types/CreditCardSale";
 import * as web3 from "@solana/web3.js";
@@ -20,6 +21,8 @@ export default async function handler(
     let { user_id } = req.body;
 
     console.log("user_id", user_id);
+
+    sleep(3000);
 
     //  find any order that are not in "transferred", "pending", or "2b_payment_rejected" state
     const { data, error } = await supabase

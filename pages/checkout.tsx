@@ -157,14 +157,8 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
   useEffect(() => {
     // once credit card sale = completed
     // check for nft owner table and see if its transferred to new owner
-    if (checkoutView === "completed" && mintId) {
-      // get nft owner by mint and user id
-      //   getNftOwnerByMint(mintId).then(({ data, error }) => {
-      //     if (data) {
-      //       setNftOwner(data);
-      //     }
-      //   });
-      // }
+    console.log("Checkout View: ", checkoutView);
+    if (checkoutView === "completed") {
       setTimeout(async () => {
         if (checkoutView === "completed") {
           await retryTransfer();
