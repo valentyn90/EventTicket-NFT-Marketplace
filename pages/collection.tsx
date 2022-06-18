@@ -104,15 +104,15 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
     };
   }
   else {
-    const site = req.headers.referer?.replace("/collection", "")
+
     const requestOptions = {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: user.id })
     }
-    if(site) {
-      const attempt_transfer = fetch(`${site}/api/marketplace/stripeTransfer`, requestOptions);
-    }
+
+    const attempt_transfer = fetch(`https://verifiedink.us/api/marketplace/stripeTransfer`, requestOptions);
+
   }
 
   return { props: {} };

@@ -109,7 +109,6 @@ const handler = async (req: any, res: any) => {
 
             const attempt_transfer = await fetch(`https://verifiedink.us/api/marketplace/stripeTransfer`, requestOptions);
 
-
           } else { // payment_status != "paid"
             const { data, error } = await supabase
               .from("credit_card_sale")

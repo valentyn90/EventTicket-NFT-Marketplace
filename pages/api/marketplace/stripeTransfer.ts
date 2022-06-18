@@ -33,6 +33,9 @@ export default async function handler(
     // For each order
 
     data?.forEach(async (creditCardSale: CreditCardSale) => {
+
+        let local_status = creditCardSale.status;
+
         const { data: orderData, error: orderError } = await supabase
             .from("order_book")
             .select("*")
@@ -72,7 +75,7 @@ export default async function handler(
             userIdKey = keyData.public_key;
         }
 
-        if (creditCardSale.status === "2_payment_completed") {
+        if (creditCardSale.status === "2_payment_completed" || local_status === "2_payment_completed") {
             // Delist in DB
             const canceledOrder = await cancelOrder(
                 activeOrder.mint,
@@ -109,6 +112,7 @@ export default async function handler(
             finally {
 
                 creditCardSale.status = "3_onchain_listing_cancelled";
+                local_status = "3_onchain_listing_cancelled";
                 console.log(creditCardSale.status + " Updated")
                 // order cancelled on chain
                 await supabase
@@ -121,7 +125,7 @@ export default async function handler(
         }
 
 
-        if (creditCardSale.status === "3_onchain_listing_cancelled") {
+        if (creditCardSale.status === "3_onchain_listing_cancelled" || local_status === "3_onchain_listing_cancelled") {
 
             // Actually transfer the nft to the new owner
             console.log("Transferring nft to new owner");
@@ -136,6 +140,7 @@ export default async function handler(
 
             if (sendToken.txId) {
                 creditCardSale.status = "4_transferred_no_mail";
+                local_status = "4_transferred_no_mail";
                 // update nft_owner table with new owner
                 await supabase
                     .from("nft_owner")
@@ -156,7 +161,7 @@ export default async function handler(
             }
         }
 
-        if (creditCardSale.status === "4_transferred_no_mail") {
+        if (creditCardSale.status === "4_transferred_no_mail" || local_status === "4_transferred_no_mail") {
             // record sale in completed sale table
             const { data: sale, error: saleError } = await supabase
                 .from("completed_sale")

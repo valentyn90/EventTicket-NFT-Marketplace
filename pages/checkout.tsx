@@ -84,33 +84,35 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
         setOrderBook(orderBook);
       });
     }
-  }, [nft, serial_no]);
+  }, [nft]);
 
   useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
-    const query = new URLSearchParams(window.location.search);
-    if (query.get("success")) {
-      console.log("Order placed! You will receive an email confirmation.");
-      setCheckoutView("confirming");
+    if (mintId) {
+      // Check to see if this is a redirect back from Checkout
+      const query = new URLSearchParams(window.location.search);
+      if (query.get("success")) {
+        console.log("Order placed! You will receive an email confirmation.");
+        setCheckoutView("confirming");
 
-      const session_id = query.get("session_id");
-      if (session_id ) {
-        setStripeSessionId(session_id);
-      }
+        const session_id = query.get("session_id");
+        if (session_id) {
+          setStripeSessionId(session_id);
+        }
 
-      // Get the credit card sale table row by finding the mint of the serial no and nft
-      if (mintId || session_id || stripeSessionId!=="") {
-        getCreditCardSaleBySessionId(session_id!).then((data) => {
-          if (data) {
-            setCreditCardSale(data);
-            getUserDetails(data.user_id).then((user) => {
-              if (user.data) {
-                setEmail(user.data.email);
-                console.log(`buyer email is: ${user.data.email}`)
-              }
-            })
-          }
-        });
+        // Get the credit card sale table row by finding the mint of the serial no and nft
+        if (mintId || session_id || stripeSessionId !== "") {
+          getCreditCardSaleBySessionId(session_id!).then((data) => {
+            if (data) {
+              setCreditCardSale(data);
+              getUserDetails(data.user_id).then((user) => {
+                if (user.data) {
+                  setEmail(user.data.email);
+                  console.log(`buyer email is: ${user.data.email}`)
+                }
+              })
+            }
+          });
+        }
       }
     }
   }, [mintId]);
@@ -121,7 +123,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
     supabase
       .from(`credit_card_sale:stripe_tx=eq.${stripeSessionId}`)
       .on("UPDATE", (payload) => {
-        if(payload.new.status !== "") setPaymentStatus(payload.new.status);
+        if (payload.new.status !== "") setPaymentStatus(payload.new.status);
 
         if (payload.new.status === "2_payment_completed") {
           setCheckoutView("completed");
@@ -157,18 +159,20 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
     // check for nft owner table and see if its transferred to new owner
     if (checkoutView === "completed" && mintId) {
       // get nft owner by mint and user id
-    //   getNftOwnerByMint(mintId).then(({ data, error }) => {
-    //     if (data) {
-    //       setNftOwner(data);
-    //     }
-    //   });
-    // }
-    setTimeout(async () => {
-      await retryTransfer();
-    }, 10000)
+      //   getNftOwnerByMint(mintId).then(({ data, error }) => {
+      //     if (data) {
+      //       setNftOwner(data);
+      //     }
+      //   });
+      // }
+      setTimeout(async () => {
+        if (checkoutView === "completed") {
+          await retryTransfer();
+        }
+      }, 10000)
     }
 
-  }, [checkoutView, mintId]);
+  }, [checkoutView]);
 
   // Redundant 
   // useEffect(() => {
@@ -293,7 +297,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
   }
 
   async function retryTransfer() {
-    if(email){
+    if (email) {
       const { data: confirmedUserData, error: confirmedError } =
         await getUserDetailsByEmail(email);
 
