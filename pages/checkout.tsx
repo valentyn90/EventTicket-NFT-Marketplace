@@ -170,22 +170,6 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
 
   }, [checkoutView, email]);
 
-  // Redundant 
-  // useEffect(() => {
-  //   if (nftOwner && creditCardSale) {
-  //     if (creditCardSale.status === "transferred") {
-  //       setCheckoutView("transferred");
-  //     } else if(mintId){
-  //       // create listener
-  //       supabase.from(`nft_owner:mint=eq.${mintId}`).on("UPDATE", (payload) => {
-  //         if (payload.new.owner_id === creditCardSale.user_id) {
-  //           setCheckoutView("transferred");
-  //         }
-  //       });
-  //     }
-  //   }
-  // }, [nftOwner, creditCardSale, mintId]);
-
   async function handleBuySubmit(e: React.FormEvent) {
     e.preventDefault();
 
