@@ -7,7 +7,7 @@ import randCrypto from "crypto";
 import crypto from "crypto-js";
 import { cancel, cancelOrder, transferViaCreditCard } from "@/mint/marketplace";
 import generateKeypair, { getKeypair } from "@/mint/mint";
-import { sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
+import { sendAuctionLoserMail, sendAuctionMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2020-08-27",
@@ -80,7 +80,7 @@ const handler = async (req: any, res: any) => {
               .match({ stripe_tx: eventObject.id })
               .single();
 
-            
+
             // Send success email to seller and buyer
             await sendPurchaseMail(
               eventObject.customer_email,
@@ -91,7 +91,7 @@ const handler = async (req: any, res: any) => {
             const price = eventObject.amount_total / 100;
             const price_str = price.toFixed(0);
 
-            
+
             await sendSaleMail(
               eventObject.metadata.seller_id,
               eventObject.metadata.nft_id,
@@ -104,12 +104,43 @@ const handler = async (req: any, res: any) => {
             const requestOptions = {
               method: "POST",
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({user_id: data.user_id})
+              body: JSON.stringify({ user_id: data.user_id })
             }
 
             const attempt_transfer = await fetch(`https://verifiedink.us/api/marketplace/stripeTransfer`, requestOptions);
 
-          } else { // payment_status != "paid"
+          }
+          else if (eventObject.mode === "setup") {
+            // Handles Auction Setup
+
+            console.log("Checkout session setup");
+            // Mark bid as "confirmed"
+            const { data, error } = await supabase
+              .from("auction_bids")
+              .update({
+                status: "confirmed",
+              })
+              .match({
+                user_id: eventObject.metadata.user_id,
+                auction_id: eventObject.metadata.auction_id,
+                bid_amount: eventObject.metadata.bid_amount,
+              })
+              .single();
+
+            // Send Success email
+
+            await sendAuctionMail(eventObject.metadata.user_id,
+              eventObject.metadata.auction_id,
+              eventObject.metadata.bid_amount,
+              eventObject.metadata.bid_team_id)
+
+            if(eventObject.metadata.loser_id){
+              await sendAuctionLoserMail(eventObject.metadata.loser_id,
+                eventObject.metadata.auction_id,
+              )
+            }
+          }
+          else { // payment_status != "paid"
             const { data, error } = await supabase
               .from("credit_card_sale")
               .update({

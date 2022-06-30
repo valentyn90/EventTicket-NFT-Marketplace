@@ -104,7 +104,7 @@ const SignIn: React.FC<Props> = () => {
                   Check your email
                 </Text>
                 <Text textAlign="center">
-                  A sign in link has been sent to your email.
+                  A sign in link has been sent to your email. <br/>Please check your SPAM or Updates folders if you don’t see it in your Inbox.
                 </Text>
               </VStack>
             )}
@@ -135,9 +135,12 @@ export async function getServerSideProps({
 }) {
   const cookies = new Cookies(req, res);
 
-  cookies.set("redirect-link", "/collection", {
-    maxAge: 1000 * 60 * 60,
-  });
+  if(!cookies.get("redirect-link")){
+
+    cookies.set("redirect-link", "/collection", {
+      maxAge: 1000 * 60 * 60,
+    });
+  }
 
   const { user } = await supabase.auth.api.getUserByCookie(req);
   if (user) {

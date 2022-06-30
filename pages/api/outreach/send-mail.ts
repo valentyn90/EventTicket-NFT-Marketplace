@@ -1,5 +1,5 @@
 import { Template } from "@/components/Navbar/Navbar";
-import { getFileLinkFromSupabase, getNftById } from "@/supabase/supabase-client";
+import { getFileLinkFromSupabase, getNftById, getScreenshot } from "@/supabase/supabase-client";
 import { supabase } from "../../../supabase/supabase-admin";
 
 const sgMail = require('@sendgrid/mail')
@@ -81,6 +81,96 @@ export async function sendSaleMail(user_id: string, nft_id: string, sn: string, 
       card_preview_image,
       email,
       price
+    }
+  }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error)
+      return{ "success": true }
+    })
+
+}
+
+export async function sendAuctionLoserMail(loser_id: string, auction_id: string){
+  let template_id = 'd-e4a1305bcdc54dfc92d1aeb550468164'
+
+  const user_details = await supabase.from("user_details").select("*").eq("user_id", loser_id).maybeSingle();
+  const email = user_details.data.email;
+
+  const auction_data = await supabase.from("auction").select("*").eq("id", auction_id).maybeSingle();
+
+  const nft_owner_id = auction_data.data.items[0];
+
+  const nft_id = await supabase.from("nft_owner").select("*").eq("id", nft_owner_id).maybeSingle();
+
+  const preview_url = await getScreenshot(nft_id.data.nft_id);
+
+  const msg = {
+    to: email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    bcc: 'Auctions@verifiedink.us',
+    template_id: template_id,
+    dynamic_template_data: {
+      auction_id,
+      headline: auction_data.data.headline,
+      preview_url: preview_url.publicUrl,
+      email,
+    }
+  }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error)
+      return{ "success": true }
+    })
+
+
+
+
+}
+
+
+export async function sendAuctionMail(user_id: string, auction_id: string, bid_amount: string, bid_team_id:string){
+  let template_id = 'd-dd0432ef5ceb42a59d60fd669bb03925'
+
+  const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
+  const email = user_details.data.email;
+
+  const auction_data = await supabase.from("auction").select("*").eq("id", auction_id).maybeSingle();
+
+  const nft_owner_id = auction_data.data.items[0];
+
+  const nft_id = await supabase.from("nft_owner").select("*").eq("id", nft_owner_id).maybeSingle();
+
+  const preview_url = await getScreenshot(nft_id.data.nft_id);
+
+  const school = await supabase.from("school").select("*").eq("id", bid_team_id).maybeSingle();
+
+
+  const msg = {
+    to: email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    bcc: 'Auctions@verifiedink.us',
+    template_id: template_id,
+    dynamic_template_data: {
+      auction_id,
+      headline: auction_data.data.headline,
+      team_id: bid_team_id,
+      preview_url: preview_url.publicUrl,
+      email,
+      school: school.data.school,
+      bid_amount
     }
   }
 
