@@ -557,7 +557,7 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
                         >
                             <Heading as="h3" pt="2" size="md">Step 1 - Choose Your Team</Heading>
                             <HStack justifyContent="space-evenly" paddingBlock={4} gridGap={3} >
-                                <Text ml="3">Which School do YOU want Jayden to sign with?</Text>
+                                <Text ml="3">Jayden is down to 5 schools. <br></br> Which one do YOU want Jayden to sign with?</Text>
                                 {auctionData && <Popover closeOnBlur={true}>
 
                                     <PopoverTrigger>
@@ -593,7 +593,7 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
                                     </Slider>
 
                                 </Stack>
-                                <Button disabled={invalidInput || !bidAmount || showEmail} onClick={() => setShowEmail(true)}>Bid</Button>
+                                <Button backgroundColor={"#0067ff"} disabled={invalidInput || !bidAmount || showEmail} onClick={() => setShowEmail(true)}>Bid</Button>
                             </HStack>
                         </Form>
                         {showEmail ?
@@ -654,7 +654,7 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
                             <br/><br/>
                             Should you win the auction with one of the top 7 bids, VerifiedInk will either transfer the NFT to the wallet of your choice (non-custodial) or hold the NFT in your name custodially based on your decision. The serial numbers will be issued sequentially with number 1/10 going to the highest bidder, 2/10 going to the next highest bidder, and so on.
                             <br/><br/>
-                            You are free to sell, transfer, or hold the NFT however you like and on any platform that supports the Solana blockchain.
+                            The card will appear in your personal collection on the VerifiedInk website and you are free to sell, transfer, or hold the NFT however you like and on any platform that supports the Solana blockchain.
                         </Text>
                         <Text fontSize={"xs"}>
                         VerifiedInk is not affiliated with the University of Alabama, University of Miami, The Ohio State University, Michigan State University, or Pennsylvania State University. 
