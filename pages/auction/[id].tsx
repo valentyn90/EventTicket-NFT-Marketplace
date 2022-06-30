@@ -89,10 +89,10 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
                 setReverse(!reverse);
             }, 3000)
         }
-        if(flipCount === 2) {
+        if (flipCount === 2) {
             setFlipCount(flipCount + 1);
-            if(scrollY.get() < 72 && window.innerWidth < 768) {
-                window.scrollTo({top: 72, behavior: 'smooth'});
+            if (scrollY.get() < 72 && window.innerWidth < 768) {
+                window.scrollTo({ top: 72, behavior: 'smooth' });
             }
         }
     }, [reverse])
@@ -329,7 +329,7 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
     }
 
     useEffect(() => {
-        if(email.trim().length != email.length){
+        if (email.trim().length != email.length) {
             setEmail(email.trim())
             return
         }
@@ -348,7 +348,7 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
             const interval = setInterval(() => {
                 // @ts-ignore
                 const diff = moment.preciseDiff(moment(auctionData.end_time), moment(new Date()), true);
-                if(diff.seconds){
+                if (diff.seconds) {
                     setTimeRemaining(`${diff.days} days ${diff.hours}:${diff.minutes.toString().padStart(2, '0')}:${diff.seconds.toString().padStart(2, '0')}`)
                 }
             }, 1000);
@@ -432,7 +432,7 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
         const { data: confirmedUserData, error: confirmedError } =
             await getUserDetailsByEmail(email.toLowerCase());
 
-        if(!confirmedUserData){
+        if (!confirmedUserData) {
             toast({
                 position: "top",
                 description: "Error accessing your account - please contact support@verifiedink.us",
@@ -538,7 +538,7 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
             <> {meta}
                 <Stack pt={["2,", "3", "8"]} direction={['column-reverse', 'column-reverse', 'row']} alignItems={["center", "center", "flex-start"]} align={"center"} justifyContent={"center"}>
                     <Box display={["none", "none", "block"]} align="center">
-                    <StaticCard public_url={publicUrl!} reverse={reverse} nft_id={auctionData.items[0].nft_id} width={375}/>
+                        <StaticCard public_url={publicUrl!} reverse={reverse} nft_id={auctionData.items[0].nft_id} width={375} />
                     </Box>
                     <Stack paddingInline={["4", "4", "4"]} maxW={600} pb={[8, 8, 0]}>
                         <Box display={["block", "block", "none"]} align="center">
@@ -580,6 +580,16 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
 
                             <Heading as="h3" pt="4" size="md">Step 2 - Place Your Bid</Heading>
                             <Text mt="2" pb="2"> Jayden has listed 7 of his 10 Launch Edition NFTs up for Auction. <br /><br />The top 7 bids will win one of them!</Text>
+                            {(userStore.loggedIn && existingBid && !outbid) ?
+                                <Box p={3} background={"green.700"} borderRadius={3}>
+                                    <Heading fontSize="xl">Your Bid</Heading>
+                                    <Text>You have succesfully placed a bid of ${existingBid.bid_amount} as a supporter of {
+                                        auctionData.auction_teams.find((team: any) => team.id == existingBid.bid_team_id).school
+                                    }</Text>
+                                </Box> :
+                                null
+                            }
+
                             <HStack justifyContent={"center"} gridGap="2">
                                 <Stack maxW="600px" >
                                     <Text pt="2" style={{ position: "absolute" }} fontSize="2xl">$</Text>
@@ -621,18 +631,7 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
                             null
 
                         }
-                        {(userStore.loggedIn && existingBid && !outbid) ?
-                            <>
-                                <Heading pt={3} fontSize="xl">Your Bid</Heading>
-                                <Text>You have succesfully placed a bid of ${existingBid.bid_amount} supporting {
-                                    auctionData.auction_teams.find((team: any) => team.id == existingBid.bid_team_id).school
-                                }</Text>
 
-
-
-                            </> :
-                            null
-                        }
 
                         {newAuctionBars ?
                             <><Heading pt={3} fontSize="xl">Leaderboard with Your Bid</Heading>
@@ -644,24 +643,24 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
                             </>
                         }
 
-                        <Spacer p="5"/>
+                        <Spacer p="5" />
 
                         <Heading fontSize={"sm"}>The Details</Heading>
                         <Text fontSize={"sm"}>
                             This NFT was created by Jayden Bonsu, and all proceeds (minus a 6% platform transaction fee) go directly to Jayden.
-                            <br/><br/>
+                            <br /><br />
                             An NFT is a non-fungible token, meaning the winning bidder will own the only version of these made available. Each is designated with a different serial number of 10.
-                            <br/><br/>
+                            <br /><br />
                             Should you win the auction with one of the top 7 bids, VerifiedInk will either transfer the NFT to the wallet of your choice (non-custodial) or hold the NFT in your name custodially based on your decision. The serial numbers will be issued sequentially with number 1/10 going to the highest bidder, 2/10 going to the next highest bidder, and so on.
-                            <br/><br/>
+                            <br /><br />
                             The card will appear in your personal collection on the VerifiedInk website and you are free to sell, transfer, or hold the NFT however you like and on any platform that supports the Solana blockchain.
                         </Text>
                         <Text fontSize={"xs"}>
-                        VerifiedInk is not affiliated with the University of Alabama, University of Miami, The Ohio State University, Michigan State University, or Pennsylvania State University. 
-                        <br/><br/>
-                        All logos, product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them, and are used for informational purposes only.
-                        <br/><br/>
-                        This auction was setup to support Jayden on his journey, and help him earn from his name, image and likeness. It is for entertainment purposes only. It in no way constitutes an inducement from each university's respective fans and does not constitute an explicit or implied pay for play agreement.
+                            VerifiedInk is not affiliated with the University of Alabama, University of Miami, The Ohio State University, Michigan State University, or Pennsylvania State University.
+                            <br /><br />
+                            All logos, product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them, and are used for informational purposes only.
+                            <br /><br />
+                            This auction was setup to support Jayden on his journey, and help him earn from his name, image and likeness. It is for entertainment purposes only. It in no way constitutes an inducement from each university's respective fans and does not constitute an explicit or implied pay for play agreement.
                         </Text>
 
 
