@@ -34,6 +34,7 @@ export default async function getAuctionData(
         .eq('auction_id', data_auction.id)
         .eq('status', 'confirmed')
         .order('bid_amount', {ascending: false})
+        .order('bid_id', {ascending: true})
         .limit(data_auction.items.length || 1)
     
     const data = {

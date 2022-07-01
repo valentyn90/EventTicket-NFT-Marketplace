@@ -549,8 +549,16 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
                         <Heading mt="4" textAlign={["center", "center", "unset"]}>Bid on My Limited Edition&nbsp;NFT</Heading>
                         <Text mt="2" dangerouslySetInnerHTML={{ __html: auctionData.description as string }}></Text>
 
-                        <Text pt="4" fontWeight="900" color="gray.300">Auction Ends In</Text>
-                        <Heading size="lg" pb="2">{timeRemaining}</Heading>
+                        <HStack>
+                            <Box>
+                                <Text pt="4" fontWeight="900" color="gray.300">Auction Ends In</Text>
+                                <Heading size="lg" pb="2">{timeRemaining}</Heading>
+                            </Box>
+                            {/* <Box>
+                                <Text pt="4" fontWeight="900" color="gray.300">Jayden's First Check</Text>
+                                <Heading size="lg" pb="2">${existingBid}</Heading>
+                            </Box> */}
+                        </HStack>
                         <Divider orientation='horizontal' />
 
                         <Form

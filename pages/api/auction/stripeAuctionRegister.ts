@@ -114,7 +114,7 @@ export default async function handler(
       }
 
 
-      await supabase.from('auction_bids').insert({
+      const {data, error} = await supabase.from('auction_bids').insert({
         user_id,
         auction_id,
         bid_amount,
@@ -122,8 +122,11 @@ export default async function handler(
         status: 'pending'
       })
 
+      let bid_id = ""
 
-
+      if(data){
+        bid_id = data[0].bid_id
+      }
 
       // Lookup user to see if we have a stripe cusotmer for them already
       const { data: user_details, error: user_details_error } = await supabase.from('user_details')
@@ -158,7 +161,8 @@ export default async function handler(
           auction_id: auction_id,
           bid_amount: bid_amount,
           bid_team_id: bid_team_id,
-          loser_id: loser_id
+          loser_id: loser_id,
+          bid_id: bid_id
         }
       });
 

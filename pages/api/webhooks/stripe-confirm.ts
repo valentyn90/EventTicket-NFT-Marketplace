@@ -124,8 +124,8 @@ const handler = async (req: any, res: any) => {
                 user_id: eventObject.metadata.user_id,
                 auction_id: eventObject.metadata.auction_id,
                 bid_amount: eventObject.metadata.bid_amount,
+                bid_id: eventObject.metadata.bid_id,
               })
-              .single();
 
             // Send Success email
 
