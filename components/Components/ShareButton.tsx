@@ -1,4 +1,4 @@
-import { handleAuctionClick, handleRecruitClick } from "@/utils/shareCard";
+import { handleAuctionClick, handleGenericShareClick, handleRecruitClick } from "@/utils/shareCard";
 import ShareIcon from "@/utils/svg/ShareIcon";
 import { Button } from "@chakra-ui/react";
 import { Text } from "@chakra-ui/layout";
@@ -21,6 +21,9 @@ interface Props {
   sale?: boolean;
   auction_id?: number;
   team_id?: number;
+  url?: string;
+  share_text?: string;
+  title?: string;
 }
 
 const ShareButton: React.FC<Props> = ({
@@ -38,14 +41,19 @@ const ShareButton: React.FC<Props> = ({
   sale = false,
   auction_id,
   team_id,
+  url,
+  share_text,
+  title,
 }) => {
   const toast = useToast();
 
   async function handleClick(id: number | undefined) {
-    
-    const result = auction_id ? 
-     await handleAuctionClick(auction_id, team_id) :
-     await handleRecruitClick(id, serial_no, sale)
+
+    const result = auction_id ?
+      await handleAuctionClick(auction_id, team_id) :
+      url ?
+        await handleGenericShareClick(url, share_text!, title!) :
+        await handleRecruitClick(id, serial_no, sale)
 
     if (result === "Clipboard") {
       toast({

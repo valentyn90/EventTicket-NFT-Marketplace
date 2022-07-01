@@ -47,6 +47,47 @@ export async function handleRecruitClick(
   }
 }
 
+export async function handleGenericShareClick(
+  url: string,
+  share_text: string,
+  title: string
+
+){
+
+  const shareData = {
+    title: title,
+    text: share_text,
+    url: url,
+  };
+
+  if (navigator.share === undefined) {
+    const ta = document.createElement("textarea");
+    ta.textContent = share_text + '\n' + url;
+    document.body.appendChild(ta);
+    var selection = document.getSelection();
+    var range = document.createRange();
+    range.selectNode(ta);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    // ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    return "Clipboard";
+  } else {
+    try {
+      return new Promise((resolve) => {
+        navigator
+          .share(shareData)
+          .then((res) => resolve("Link copied to clipboard."))
+          .catch((err) => resolve(err));
+      });
+    } catch (err) {}
+  }
+
+
+
+}
+
 export async function handleAuctionClick(
   auction_id: number | undefined,
   team_id?: number,
@@ -63,7 +104,7 @@ export async function handleAuctionClick(
 
   if(data && team_id) {
     console.log(data || error)
-    share_text = `👀 Checkout this auction for one of our top recruit's Rookie NFT. Let's get ${data.school} to the top of his list!`
+    share_text = `👀 I just bid in this auction for one of our top recruit's Rookie NFT. Let's get ${data.school} to the top of his list!`
   }
 
 
