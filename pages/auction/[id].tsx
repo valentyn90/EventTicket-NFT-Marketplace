@@ -349,8 +349,10 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
                 // @ts-ignore
                 const diff = moment.preciseDiff(moment(auctionData.end_time), moment(new Date()), true);
                 if (diff.seconds) {
-                    setTimeRemaining(`${diff.days} days ${diff.hours}:${diff.minutes.toString().padStart(2, '0')}:${diff.seconds.toString().padStart(2, '0')}`)
+                    setTimeRemaining(`${diff.days} day${diff.days == 1 ? '' : 's'} ${diff.hours}:${diff.minutes.toString().padStart(2, '0')}:${diff.seconds.toString().padStart(2, '0')}`)
                 }
+                // console.log(moment(new Date()) > moment(auctionData.end_time) )
+
             }, 1000);
 
             return () => clearInterval(interval);
@@ -549,71 +551,84 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
                         <Heading mt="4" textAlign={["center", "center", "unset"]}>Bid on My Limited Edition&nbsp;NFT</Heading>
                         <Text mt="2" dangerouslySetInnerHTML={{ __html: auctionData.description as string }}></Text>
 
-                        <HStack>
-                            <Box>
-                                <Text pt="4" fontWeight="900" color="gray.300">Auction Ends In</Text>
-                                <Heading size="lg" pb="2">{timeRemaining}</Heading>
-                            </Box>
-                            {/* <Box>
-                                <Text pt="4" fontWeight="900" color="gray.300">Jayden's First Check</Text>
-                                <Heading size="lg" pb="2">${existingBid}</Heading>
-                            </Box> */}
-                        </HStack>
-                        <Divider orientation='horizontal' />
 
-                        <Form
-                        >
-                            <Heading as="h3" pt="2" size="md">Step 1 - Choose Your Team</Heading>
-                            <HStack justifyContent="space-evenly" paddingBlock={4} gridGap={3} >
-                                <Text ml="3">Jayden is down to 5 schools. <br></br> Which one do YOU want Jayden to sign with?</Text>
-                                {auctionData && <Popover closeOnBlur={true}>
 
-                                    <PopoverTrigger>
-                                        <VStack background={"whiteAlpha.400"} p="2" borderRadius="10px" justifySelf="center" justifyContent="center" >
-                                            <Image w="50px" src={selectedTeam}></Image>
-                                            <Text textAlign="center">Choose Your Team ▾</Text>
-                                        </VStack>
-                                    </PopoverTrigger>
-                                    <PopoverContent w="80px" p={2}>
-                                        <PopoverArrow /><VStack justifyContent="center" gridGap={1}>
-                                            {auctionData.auction_teams.map((team: any) => {
-                                                return <Image key={team.id} width="80px" src={team.logo_link} onClick={() => { selectTeam(team.logo_link, team.id) }} />
-                                            }
-                                            )}
-                                        </VStack>
-                                    </PopoverContent>
-                                </Popover>}
-                            </HStack>
-                            <Divider orientation='horizontal' />
 
-                            <Heading as="h3" pt="4" size="md">Step 2 - Place Your Bid</Heading>
-                            <Text mt="2" pb="2"> Jayden has listed 7 of his 10 Launch Edition NFTs up for Auction. <br /><br />The top 7 bids will win one of them!</Text>
-                            {(userStore.loggedIn && existingBid && !outbid) ?
-                                <Box p={3} background={"green.700"} borderRadius={3}>
-                                    <Heading fontSize="xl">Your Bid</Heading>
-                                    <Text>You have succesfully placed a bid of ${existingBid.bid_amount} as a supporter of {
-                                        auctionData.auction_teams.find((team: any) => team.id == existingBid.bid_team_id).school
-                                    }</Text>
-                                </Box> :
-                                null
-                            }
+                        {moment(new Date()) > moment(auctionData.end_time) ?
+                            <>
+                                <Heading as="h3" pt="2" size="md">Bidding is Closed</Heading>
+                                <Text bg="green" p="3" borderRadius={3}>Thank you for participating in Jayden's Launch Edition NFT Auction. Winners will be notified shortly.
+                                    NFTs will be transferred and credit cards on file will be charged within 24 hours.
+                                </Text>
+                            </>
+                            :
+                            <>
+                                <HStack>
+                                    <Box>
+                                        <Text pt="4" fontWeight="900" color="gray.300">Auction Ends In</Text>
+                                        <Heading size="lg" pb="2">{timeRemaining}</Heading>
+                                    </Box>
+                                    {/* <Box>
+                            <Text pt="4" fontWeight="900" color="gray.300">Jayden's First Check</Text>
+                            <Heading size="lg" pb="2">${existingBid}</Heading>
+                        </Box> */}
+                                </HStack>
+                                <Divider orientation='horizontal' />
+                                <Form>
+                                    <Heading as="h3" pt="2" size="md">Step 1 - Choose Your Team</Heading>
+                                    <HStack justifyContent="space-evenly" paddingBlock={4} gridGap={3} >
+                                        <Text ml="3">Jayden is down to 5 schools. <br></br> Which one do YOU want Jayden to sign with?</Text>
+                                        {auctionData && <Popover closeOnBlur={true}>
 
-                            <HStack justifyContent={"center"} gridGap="2">
-                                <Stack maxW="600px" >
-                                    <Text pt="2" style={{ position: "absolute" }} fontSize="2xl">$</Text>
-                                    <Input variant='flushed' textAlign="center" placeholder={`Min Bid: ${minBidAmount}`} color={inputColor} fontSize={["xl", "2xl"]} isInvalid={invalidInput} value={bidAmount} onChange={handleBidChange} />
-                                    <Text mt="0" fontSize="sm" textAlign="center">{invalidBidMessage}</Text>
-                                    <Slider aria-label='slider-ex-1' defaultValue={0} onChange={(val) => sliderChange(val)}>
-                                        <SliderTrack>
-                                            <SliderFilledTrack />
-                                        </SliderTrack>
-                                        <SliderThumb ref={ref} boxSize={10} />
-                                    </Slider>
+                                            <PopoverTrigger>
+                                                <VStack background={"whiteAlpha.400"} p="2" borderRadius="10px" justifySelf="center" justifyContent="center" >
+                                                    <Image w="50px" src={selectedTeam}></Image>
+                                                    <Text textAlign="center">Choose Your Team ▾</Text>
+                                                </VStack>
+                                            </PopoverTrigger>
+                                            <PopoverContent w="80px" p={2}>
+                                                <PopoverArrow /><VStack justifyContent="center" gridGap={1}>
+                                                    {auctionData.auction_teams.map((team: any) => {
+                                                        return <Image key={team.id} width="80px" src={team.logo_link} onClick={() => { selectTeam(team.logo_link, team.id) }} />
+                                                    }
+                                                    )}
+                                                </VStack>
+                                            </PopoverContent>
+                                        </Popover>}
+                                    </HStack>
+                                    <Divider orientation='horizontal' />
 
-                                </Stack>
-                                <Button backgroundColor={"#0067ff"} disabled={invalidInput || !bidAmount || showEmail} onClick={() => setShowEmail(true)}>Bid</Button>
-                            </HStack>
-                        </Form>
+                                    <Heading as="h3" pt="4" size="md">Step 2 - Place Your Bid</Heading>
+                                    <Text mt="2" pb="2"> Jayden has listed 7 of his 10 Launch Edition NFTs up for Auction. <br /><br />The top 7 bids will win one of them!</Text>
+                                    {(userStore.loggedIn && existingBid && !outbid) ?
+                                        <Box p={3} background={"green.700"} borderRadius={3}>
+                                            <Heading fontSize="xl">Your Bid</Heading>
+                                            <Text>You have succesfully placed a bid of ${existingBid.bid_amount} as a supporter of {
+                                                auctionData.auction_teams.find((team: any) => team.id == existingBid.bid_team_id).school
+                                            }</Text>
+                                        </Box> :
+                                        null
+                                    }
+
+                                    <HStack justifyContent={"center"} gridGap="2">
+                                        <Stack maxW="600px" >
+                                            <Text pt="2" style={{ position: "absolute" }} fontSize="2xl">$</Text>
+                                            <Input variant='flushed' textAlign="center" placeholder={`Min Bid: ${minBidAmount}`} color={inputColor} fontSize={["xl", "2xl"]} isInvalid={invalidInput} value={bidAmount} onChange={handleBidChange} />
+                                            <Text mt="0" fontSize="sm" textAlign="center">{invalidBidMessage}</Text>
+                                            <Slider aria-label='slider-ex-1' defaultValue={0} onChange={(val) => sliderChange(val)}>
+                                                <SliderTrack>
+                                                    <SliderFilledTrack />
+                                                </SliderTrack>
+                                                <SliderThumb ref={ref} boxSize={10} />
+                                            </Slider>
+
+                                        </Stack>
+                                        <Button backgroundColor={"#0067ff"} disabled={invalidInput || !bidAmount || showEmail} onClick={() => setShowEmail(true)}>Bid</Button>
+                                    </HStack>
+                                </Form>
+                            </>
+                        }
+
                         {showEmail ?
                             <>
                                 <Input placeholder="Email@gmail.com" value={email} disabled={existingBid}
