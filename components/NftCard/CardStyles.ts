@@ -103,6 +103,15 @@ export const CardWrapper = styled.div<StyleProps>`
     top: 0px;
     mask-image: linear-gradient(to bottom,rgba(0,0,0,1) 85%, rgba(0,0,0,0) 98%); 
   }
+  .name-gradient {
+    text-shadow:
+        0 0 14px rgb(239 239 240),
+        0 0 21px rgb(239 239 240),
+        0 0 42px #3f7bfb,
+        0 0 82px #3f7bfb,
+        0 0 92px #3f7bfb,
+        0 0 102px #3f7bfb;
+  }
 
   .crop-background-img {
     position: absolute;

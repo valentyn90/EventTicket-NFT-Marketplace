@@ -655,15 +655,16 @@ const Auction: React.FC<Props> = ({ publicUrl, headline, nft_id }) => {
 
                         }
 
-
-                        {newAuctionBars ?
-                            <><Heading pt={3} fontSize="xl">Leaderboard with Your Bid</Heading>
-                                {newAuctionBars}
-                            </>
-                            :
-                            <><Heading pt={3} fontSize="xl">Leaderboard</Heading>
-                                {auctionBars}
-                            </>
+                        {moment(new Date()) < moment(auctionData.end_time) &&
+                            (newAuctionBars ?
+                                <><Heading pt={3} fontSize="xl">Leaderboard with Your Bid</Heading>
+                                    {newAuctionBars}
+                                </>
+                                :
+                                <><Heading pt={3} fontSize="xl">Leaderboard</Heading>
+                                    {auctionBars}
+                                </>
+                            )
                         }
 
                         <Spacer p="5" />

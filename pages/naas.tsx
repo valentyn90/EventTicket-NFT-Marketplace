@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import validateEmail from "@/utils/validateEmail";
 import ShareButton from "@/components/Components/ShareButton";
 import Head from "next/head";
+import Card from "@/components/NftCard/Card";
 
 interface Props {
     publicUrl?: string
@@ -106,14 +107,19 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
         <>
             
             <Box bgPos="bottom"
-                bgImage="linear-gradient(#1a202d,#1a202d,rgba(0, 0, 0, 0.75)), url('img/basketball-court.png')"
+                bgImage="linear-gradient(#1a202d,#1a202d,rgba(0, 0, 0, 0.1)), url('img/basketball-court.jpg')"
                 bgSize="cover"
                 minH={["unset", "unset", "75vh"]}
                 pt={["unset", "unset", "30px"]}
 
             >
                 <HStack margin="auto" align="center" justifyContent="center" gridGap={6}>
-                    <Box  align="center" display={["none", "none", "block"]} pb="5">
+                    <Box  align="center" display={["none", "none", "block"]} pb="5"
+                        // bg="radial-gradient(ellipse at top, #e66465, transparent),
+                        // radial-gradient(ellipse at bottom, #4d9f0c, transparent);"
+                        // bgSize="cover"
+                        >
+                        {/* <Card readOnly={true} nft_id={96}/> */}
                         <StaticCard nft_id={763} reverse={reverse}></StaticCard>
                     </Box>
                     <VStack mt={2} p={4} margin="auto" maxW="488px" align="center">
@@ -121,7 +127,7 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                         <Box ml="1" mt={2} w="fit-content" boxShadow="0 0 100px red" paddingInline={3} paddingBlock={1} bg="red" transform={"auto"} skewX={"-5"} skewY={"-5"}><Heading fontWeight={"bold"} fontSize={"md"}>#1 IS COMING</Heading></Box>
                         <Heading zIndex={2}>Naas Cunningham</Heading>
                         <Text textAlign={"center"} pb="5">
-                            Starting July 19th you can participate in consensus #1 class of '24 recruit Nassir Cunningham's first NFT drop.
+                            Starting July 19th you can participate in consensus #1 class of '24 recruit Naasir Cunningham's first NFT drop.
                         </Text>
                         <Box align="center" display={["block", "block", "none"]} pb="5"
                             
@@ -129,13 +135,12 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                             <StaticCard nft_id={763} width={350} reverse={reverse}></StaticCard>
                         </Box>
                         {/* <Box h={["50px","50px","100px"]}></Box> */}
-                        <VStack backdropFilter="blur(5px)" border="1px" borderRadius="md" borderColor="#71c3ff73" p="3">
+                        <VStack  as="fieldset" backdropFilter="blur(5px)" border="1px" borderRadius="md" borderColor="#71c3ff73" p="3">
+                        <Text as="legend" fontWeight="black" color="#71c3ff"  align={"center"} >SIGN UP</Text>
                             {!registered ?
                                 <>
-                                    <Text fontWeight="black" color="#71c3ff"  backgroundColor="#1a202d" pos="relative" top="-25px" align={"center"} paddingInline="2">SIGN UP</Text>
                                     <Heading textAlign={"center"}>Be the first to know</Heading>
                                     <Text textAlign={"center"} color="GrayText">Sign up for alerts for when the sale goes live, and don't miss out on a chance to win alongside the next basketball superstar.</Text>
-
                                     <Input border="0" value={email} onChange={validateEmailForm} backgroundColor="#0d162b" placeholder="Your email address" _placeholder={{ color: "gray" }} />
                                     <Button onClick={handleEmail} disabled={!validEmail} isLoading={loading} p="5" backgroundColor={"#0067ff"}>SUBMIT</Button>
                                 </>
