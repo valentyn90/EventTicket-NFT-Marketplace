@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Button, Skeleton, Stack } from "@chakra-ui/react";
+import { Button, HStack, Text, Skeleton, Stack, Heading, Box, VStack } from "@chakra-ui/react";
 import useWindowDimensions from "@/utils/useWindowDimensions";
 import mixpanel from 'mixpanel-browser';
 
@@ -495,6 +495,18 @@ const Home = () => {
   return (
     <Wrapper>
       <div className="inner">
+        <Box>
+          <HStack p="6" bgPos="bottom"
+            bgImage="linear-gradient(#1a202d,#1a202d,rgba(0, 0, 0, 0.1)), url('img/basketball-court.jpg')"
+            bgSize="cover" alignItems={"center"} justifyContent="center">
+            <VStack pr={["unset","4","6"]}>
+              <Box ml="1" mb={3} w="fit-content" boxShadow="0 0 100px red" paddingInline={3} paddingBlock={1} bg="red" transform={"auto"} skewX={"-5"} skewY={"-5"}><Heading fontWeight={"bold"} fontSize={"md"}>#1 IS COMING</Heading></Box>
+              <Heading fontSize="xl" pb={2} textAlign={"center"}>Naas Cunningham NFTs dropping July 19th</Heading>
+              <Button isLoading={submitting} onClick={()=>{setSubmitting(true); window.location.assign("/naas")}}>Tap to Learn More</Button>
+            </VStack>
+            <StaticCard nft_id={763} width={100}></StaticCard>
+          </HStack>
+        </Box>
         <div className="hero">
           <div className="hero-left">
             <p className="hero-title">The <text className="hero-gradient">Ultimate</text> Rookie Card</p>
@@ -515,8 +527,8 @@ const Home = () => {
                 <Link href={"/marketplace"}>
                   <Button className="btn btn-white"
                     isLoading={submitting}
-                    h={['55px','55px','unset']}
-                    onClick={() => {setSubmitting(true)}}
+                    h={['55px', '55px', 'unset']}
+                    onClick={() => { setSubmitting(true) }}
                   >Buy on Marketplace</Button>
                 </Link>
               </div>
@@ -524,10 +536,10 @@ const Home = () => {
                 <p className="hero-button-title">Athletes</p>
                 <Link href={"/athletes"}>
                   <Button className="btn btn-blue"
-                  h={['55px','55px','unset']}
-                  isLoading={submitting}
-                  onClick={() => {setSubmitting(true)}}
-                >
+                    h={['55px', '55px', 'unset']}
+                    isLoading={submitting}
+                    onClick={() => { setSubmitting(true) }}
+                  >
                     Create Your <span className="bold-txt">VERIFIED</span>INK
                   </Button>
                 </Link>
@@ -591,9 +603,9 @@ const Home = () => {
               </p>
               <Link href={"/athletes"}>
                 <Button className="btn btn-white"
-                 h={['55px','55px','unset']}
-                 isLoading={submitting}
-                 onClick={() => {setSubmitting(true)}}>
+                  h={['55px', '55px', 'unset']}
+                  isLoading={submitting}
+                  onClick={() => { setSubmitting(true) }}>
                   Create Your <span className="bold-txt">VERIFIED</span>INK
                 </Button>
               </Link>
@@ -621,9 +633,9 @@ const Home = () => {
               </p>
               <Link href={"/marketplace"}>
                 <Button className="btn btn-blue"
-                                 h={['55px','55px','unset']}
-                                 isLoading={submitting}
-                                 onClick={() => {setSubmitting(true)}}
+                  h={['55px', '55px', 'unset']}
+                  isLoading={submitting}
+                  onClick={() => { setSubmitting(true) }}
                 >Buy on Marketplace</Button>
               </Link>
             </div>
