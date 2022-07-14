@@ -5,17 +5,19 @@ import { QRCode } from 'react-qrcode-logo';
 
 const Wrapper = styled.div`
   // background: white !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  background: #c0c0c0 !important;
+  margin: 0px !important;
+  padding: 40px !important;
   position: relative;
-  width: 545.81px;
-  height: 900px;
+  width: 626px;
+  height: 980px;
 
   #react-qrcode-logo {
-    position: absolute;
+    position: relative;
     top: 377px;
     left: 168px;
     opacity: 0.75;
+    backdrop-filter: blur(12px) brightness(0.85);
   }
 
   .target {
@@ -24,19 +26,22 @@ const Wrapper = styled.div`
   }
 
   .text{
-    position: absolute;
+    position: relative;
     top: 590px;
     left: 240px;
     opacity: 0;
   }
   .id{
     position: absolute;
-    top: 770px;
-    left: 380px;
+    top: 813px;
+    left: 416px;
     opacity: 0.7;
     transform-origin: top left;
     transform: rotate(-40deg);
+    // backdrop-filter: blur(12px);
+    
   }
+
 
 `;
 
@@ -49,15 +54,20 @@ const Screenshot: React.FC = () => {
     };
   }, []);
   const router = useRouter();
-  const { id } = router.query;
-  
+  const { id, back } = router.query;
+
+
+
   return (
 
     <Wrapper id="card">
-      <img className="target" src="/ar/source/target-front.png"></img>
-      <QRCode size={200} bgColor="transparent" fgColor="white" value={`https://verifiedink.us/ar?ar_id=${id}`} qrStyle="dots"/>
+      <img className="target" src={back ? '/ar/source/target-back.png' : '/ar/source/target-front.png'}></img>
+      {back ? null :
+        <QRCode size={200} bgColor="transparent" fgColor="white" value={`https://verifiedink.us/ar?ar_id=${id}`} qrStyle="dots" />
+      }
       <text className="text">Scan Me</text>
-      <text className="id">No. {id}</text>
+      {back ? null : <text className="id">No. {id}</text>}
+            
     </Wrapper>
   );
 };
