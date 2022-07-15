@@ -68,7 +68,7 @@ const Team: React.FC = () => {
         },
         {
             name: "Matt Brandabur",
-            role: "Community Manager",
+            role: "Business Development",
             image: "img/team/matt.jpeg",
             description: "John Doe is the CEO of VerifiedInk. He is a softwar",
             twitter: "",
