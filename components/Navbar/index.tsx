@@ -141,7 +141,7 @@ const NavIndex: React.FC = () => {
         )}
         <NavTabLink>Marketplace</NavTabLink>
         <NavTabLink>Drops</NavTabLink>
-        <NavTabLink>Auction</NavTabLink>
+        <NavTabLink>Blog</NavTabLink>
         {userStore.loggedIn && <NavTabLink>Collection</NavTabLink>}
         {userStore.loggedIn && MARKET_ENABLED && (
           <NavTabLink>Listings</NavTabLink>

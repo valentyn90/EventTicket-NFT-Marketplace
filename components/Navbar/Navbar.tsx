@@ -23,7 +23,6 @@ import React, {
   useState,
 } from "react";
 import { MobileNavContent } from "./MobileNavContent";
-import { route } from "next/dist/next-server/server/router";
 
 export const Template: React.FC = (props) => {
   const router = useRouter();
@@ -39,12 +38,18 @@ export const Template: React.FC = (props) => {
       setTabIndex(0);
     } else if (router.pathname.toLowerCase().includes("marketplace")) {
       setTabIndex(1);
-    } else if (router.pathname.toLowerCase().includes("collection")) {
+    } else if (router.pathname.toLowerCase().includes("naas")) {
       setTabIndex(2);
-    } else if (router.pathname.toLowerCase().includes("listings")) {
+    } else if (router.pathname.toLowerCase().includes("drops")) {
+      setTabIndex(2);
+    } else if (router.pathname.toLowerCase().includes("blog")) {
       setTabIndex(3);
-    } else {
+    } else if (router.pathname.toLowerCase().includes("collection")) {
       setTabIndex(4);
+    } else if (router.pathname.toLowerCase().includes("listings")) {
+      setTabIndex(5);
+    } else {
+      setTabIndex(6);
     }
     
   });

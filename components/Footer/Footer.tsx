@@ -1,10 +1,11 @@
-import { Box, Stack, StackDivider, useColorMode } from '@chakra-ui/react'
+import { Box, Icon, Stack, StackDivider, useColorMode } from '@chakra-ui/react'
 import { Flex, HStack, Text, TextProps } from '@chakra-ui/layout'
 
 import React from 'react'
 import ViLogo from '../ui/logos/ViLogo'
 import { LinkGrid }  from './LinkGrid'
 import Link from 'next/link'
+import { FaInstagram, FaLinkedin, FaTwitter } from 'react-icons/fa'
 
 export const Footer: React.FC = (props) => {
     const { colorMode } = useColorMode();
@@ -54,6 +55,17 @@ export const Footer: React.FC = (props) => {
                 <Text fontSize="xs">
                     &copy; {new Date().getFullYear()} VerifiedInk, Inc. All rights reserved.
                 </Text>
+                <HStack columns={2} spacing="4" color="subtle">
+                    <Link href={"https://twitter.com/VfdInk"}>
+                        <Icon as={FaTwitter} boxSize="5" />
+                    </Link>
+                    <Link href={"https://www.linkedin.com/company/verifiedink/"}>
+                        <Icon as={FaLinkedin} boxSize="5" />
+                    </Link>
+                    <Link href={"https://www.instagram.com/vfdink/"}>
+                        <Icon as={FaInstagram} boxSize="5" />
+                    </Link>
+                </HStack>
             </Stack>
         </Stack>
     </Box>

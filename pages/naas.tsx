@@ -6,6 +6,8 @@ import validateEmail from "@/utils/validateEmail";
 import ShareButton from "@/components/Components/ShareButton";
 import Head from "next/head";
 import Card from "@/components/NftCard/Card";
+import { gatekeeperFromConfig } from "@metaplex-foundation/js";
+import * as ga from "@/utils/ga";
 
 interface Props {
     publicUrl?: string
@@ -40,7 +42,18 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
 
     async function validateEmailForm(e: any) {
         setEmail(e.target.value)
-        const valid = validateEmail(e.target.value);
+        let valid = validateEmail(e.target.value);
+        if(!valid){
+            // remove all non-numeric characters 
+            let phone = e.target.value.replace(/[^0-9]/g, '');
+            // format phone number
+            phone = phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+            setEmail(phone)
+            if(phone.length === 14){
+                valid = true
+            }
+        }
+
         setValidEmail(valid);
     }
 
@@ -57,8 +70,18 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
             setLoading(false);
             return null;
         }
+        let phone = ""
+        if(!validateEmail(email)){
+            phone = email.replace(/[^0-9]/g, '');
+        }
 
-        const { data: data, error: error } = await addEmailToWaitlist(email, "naas");
+        ga.event({
+            action: "conversion",
+            params: { send_to: 'AW-10929860785/ieVuCK-bu80DELHh4dso' },
+          });
+        
+
+        const { data: data, error: error } = await addEmailToWaitlist((phone =="" )? email: phone, "naas");
         if (error) {
 
             toast({
@@ -141,7 +164,7 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                                 <>
                                     <Heading textAlign={"center"}>Be the first to know</Heading>
                                     <Text textAlign={"center"} color="GrayText">Sign up for alerts for when the sale goes live, and don't miss out on a chance to win alongside the next basketball superstar.</Text>
-                                    <Input border="0" value={email} onChange={validateEmailForm} backgroundColor="#0d162b" placeholder="Your email address" _placeholder={{ color: "gray" }} />
+                                    <Input type='tel' border="0" value={email} onChange={validateEmailForm} backgroundColor="#0d162b" placeholder="Your phone number" _placeholder={{ color: "gray" }} />
                                     <Button onClick={handleEmail} disabled={!validEmail} isLoading={loading} p="5" backgroundColor={"#0067ff"}>SUBMIT</Button>
                                 </>
                                 :
