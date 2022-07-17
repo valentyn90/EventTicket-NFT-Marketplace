@@ -140,7 +140,7 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                     <Box  align="center" display={["none", "none", "block"]} pb="5"
                         // bg="radial-gradient(ellipse at top, #e66465, transparent),
                         // radial-gradient(ellipse at bottom, #4d9f0c, transparent);"
-                        // bgSize="cover"
+                        // bgSize="cover" 763
                         >
                        
                         <Card readOnly={true} nft_id={1160} reverse={reverse}></Card>

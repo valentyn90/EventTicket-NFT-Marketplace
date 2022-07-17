@@ -139,7 +139,8 @@ const Card: React.FunctionComponent<Props> = ({
       router.pathname.includes("step-8") ||
       router.pathname === "/" ||
       router.pathname.includes("/create/") ||
-      router.pathname.includes("/card/") 
+      router.pathname.includes("/card/") ||
+      router.pathname.includes("naas")
       // router.pathname.includes("/marketplace") 
     ) {
       setSmallCardSize(true);
