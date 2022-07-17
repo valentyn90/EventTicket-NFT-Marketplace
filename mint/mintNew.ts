@@ -114,7 +114,7 @@ export async function mintAndTransferNFT(nft_id: number, serial_no: number) {
       const tags = [{ name: "Content-Type", value: "image/png" }];
 
       const { uri, metadata } = await metaplex.nfts().uploadMetadata({
-        name: `${nft_details.first_name} ${nft_details.last_name} #${serial_no}/10`,
+        name: `${nft_details.first_name} ${nft_details.last_name} #${serial_no}/${nft_details.edition_quantity}`,
         symbol: "VFDINK",
         description: `VerifiedInk is a self-issued NFT platform for athletes to easily
        capitalize on their Name, Image, and Likeness.
@@ -161,15 +161,19 @@ export async function mintAndTransferNFT(nft_id: number, serial_no: number) {
           },
           {
             trait_type: "Edition",
-            value: "Launch"
+            value: nft_details.edition_name,
+          },
+          {
+            trait_type: "Rarity",
+            value: nft_details.edition_rarity,
           },
           {
             trait_type: "Mint Size",
-            value: "10"
+            value: nft_details.edition_quantity.toString(),
           },
           {
             trait_type: "Verified Year",
-            value: "2022"
+            value: nft_details.vfd_year.toString(),
           },
         ],
         properties: {

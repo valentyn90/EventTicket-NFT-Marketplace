@@ -504,7 +504,7 @@ const Home = () => {
               <Heading fontSize="xl" pb={2} textAlign={"center"}>Naas Cunningham NFTs dropping July 19th</Heading>
               <Button isLoading={submitting} onClick={()=>{setSubmitting(true); window.location.assign("/naas")}}>Tap to Learn More</Button>
             </VStack>
-            <StaticCard nft_id={763} width={100}></StaticCard>
+            <StaticCard nft_id={1160} width={100}></StaticCard>
           </HStack>
         </Box>
         <div className="hero">

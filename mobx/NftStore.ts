@@ -55,6 +55,16 @@ export class NftStore {
   color_bottom: string | null = null;
   color_transition: string | null = null;
 
+  vfd_year: number = 2022;
+  post_hs: boolean = false;
+
+  edition_name: string = "";
+  edition_size: number = 10;
+  edition_rarity: string = "";
+  edition_utility: any[] | null = null;
+
+
+
   constructor(
     input: Nft,
     store: UserStore,
@@ -89,6 +99,11 @@ export class NftStore {
     this.color_top = input.color_top;
     this.color_bottom = input.color_bottom;
     this.color_transition = input.color_transition;
+    this.post_hs = input.post_hs;
+    this.edition_name = input.edition_name;
+    this.edition_size = input.edition_size;
+    this.edition_rarity = input.edition_rarity;
+    this.edition_utility = input.edition_utility;
   }
 
   deleteThisNft = async (): Promise<boolean> => {

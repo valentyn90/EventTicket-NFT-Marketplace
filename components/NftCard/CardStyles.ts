@@ -9,6 +9,8 @@ interface StyleProps {
   transitionColor: string;
   founders: boolean;
   smallCardSize: boolean;
+  editionRarity: string;
+  editionName: string;
 }
 
 const ShinyAnimationCss = css`
@@ -34,7 +36,19 @@ export const CardWrapper = styled.div<StyleProps>`
   justify-content: center;
   align-self: center;
 
-  ${(props: StyleProps) => 
+
+  
+  ${(props) =>
+    // Glow from the whole card - doesnt work on safari
+    props.editionRarity === "Legendary" &&
+    `will-change: filter;
+     filter: drop-shadow( 0 0 20px gold) ;
+    `
+   
+  }
+  
+
+  ${(props: StyleProps) =>
     `transform: scale(calc(${props.nftWidth} / 600));
       height: ${props.nftWidth * 1.65}px;
       width: ${props.nftWidth}px;
@@ -65,6 +79,36 @@ export const CardWrapper = styled.div<StyleProps>`
     left: 0px;
     bottom: 0px;
   }
+  .border-mask-bottom {
+    position: absolute;
+    width: 544px;
+    height: 897px;
+    left: 0px;
+    bottom: 0px;
+    ${(props) =>
+    //Common standard border
+    props.editionRarity === "Common" ?
+      `background: #00000010;`
+      :
+      props.editionRarity === "Legendary"  ?
+        // `background: radial-gradient(ellipse, #cfc09f 60%, rgba(255,255,255,.8) 95%);`
+        `background: url(/img/gold.jpg);
+        background-size: cover;
+        `
+        :
+        props.editionRarity === "Rare" && props.editionName === "Extended" ?
+        `background: url(/img/silver.jpg);
+         background-size: cover;`
+        :
+        //Legendary + Launch/Base border
+        `background: #ffffff78;`
+  }
+    mix-blend-mode: normal;
+    mask-image: url(/img/border-mask-bottom.png);
+    mask-repeat: no-repeat;
+    mask-position: top center;
+  }
+
   .background-gradient {
     position: absolute;
     left: 0%;
@@ -72,10 +116,11 @@ export const CardWrapper = styled.div<StyleProps>`
     top: 0%;
     bottom: 0%;
     ${(props) =>
-      props.founders
-        ? `
-        background: linear-gradient(
-          45deg,
+    props.founders
+      ?
+      `background: 
+      radial-gradient(
+        circle in center,
           #bf953f,
           #fcf6ba,
           #b38728,
@@ -83,18 +128,30 @@ export const CardWrapper = styled.div<StyleProps>`
           #aa771c
           );
         background-size: 400% 400%;
-        ${ShinyAnimationCss}
-        `
-        : `background: linear-gradient(
+        ${ShinyAnimationCss}`
+      :
+      (props.editionRarity === "Legendary" && props.editionName != "Extended") ?
+        // Legendary Launch/Base
+        ` background-image: linear-gradient( rgba(0,0,0,.2), rgba(0,0,0,.5) ), url(/img/gold.jpg);
+          background-size: cover;` 
+        :
+
+        `background-image: 
+        // linear-gradient( rgba(212,175,55,.3), rgba(212,175,55,.3) ),
+        linear-gradient(
         219.17deg,
         ${props.topColor} -10.14%,
         ${props.transitionColor} 48.6%,
         ${props.bottomColor} 101.53%
-        );`}
+        );`
+
+  }
     mix-blend-mode: normal;
     mask-image: url(/img/card-mask.png);
     mask-repeat: no-repeat;
     mask-position: top center;
+
+    
   }
   .background-img {
     position: absolute;
@@ -103,21 +160,24 @@ export const CardWrapper = styled.div<StyleProps>`
     top: 0px;
     mask-image: linear-gradient(to bottom,rgba(0,0,0,1) 85%, rgba(0,0,0,0) 98%); 
   }
-  .name-gradient {
-    text-shadow:
-        0 0 14px rgb(239 239 240),
-        0 0 21px rgb(239 239 240),
-        0 0 42px #3f7bfb,
-        0 0 82px #3f7bfb,
-        0 0 92px #3f7bfb,
-        0 0 102px #3f7bfb;
-  }
+
+
+  // .name-gradient {
+  //   text-shadow:
+  //       0 0 14px rgb(239 239 240),
+  //       0 0 21px rgb(239 239 240),
+  //       0 0 42px #3f7bfb,
+  //       0 0 82px #3f7bfb,
+  //       0 0 92px #3f7bfb,
+  //       0 0 102px #3f7bfb;
+  // }
 
   .crop-background-img {
     position: absolute;
-    width: 100%;
+    width: 521px;
     height: 750px;
     overflow: hidden;
+    left: 12px;
     top: -80px;
     ${(props: StyleProps) => `transform: rotate(${props.rotation}deg);`}
   }
@@ -145,7 +205,13 @@ export const CardWrapper = styled.div<StyleProps>`
     mask-image: ${(props) => `url(${props.signatureFile})`};
     mask-size: 250px auto;
     mask-repeat: no-repeat;
-    background: white;
+    ${(props) =>
+      props.editionRarity === "Legendary" && props.editionName === "Extended" ?
+      `background: url(/img/gold.jpg);`
+      :
+      `background: white;`
+    }
+    
   }
   .serial-number {
     position: absolute;
@@ -167,7 +233,31 @@ export const CardWrapper = styled.div<StyleProps>`
     font-weight: 900;
     text-align: center;
     line-height: 65px;
-    color: white;
+
+    ${(props) =>
+    props.editionRarity === "Legendary" && props.editionName === "Extended" ?
+      `min-height: 135px;
+       color:#c3a343;
+       background: url(/img/gold.jpg) repeat;
+       background-clip: text;
+       -webkit-text-fill-color: transparent;
+       -webkit-background-clip: text;
+       `
+      :
+      props.editionRarity === "Rare" && props.editionName === "Extended" ?
+      `min-height: 135px;
+       color:#c3a343;
+       background: url(/img/silver-name.jpg) repeat;
+       background-clip: text;
+       background-size: cover;
+       -webkit-text-fill-color: transparent;
+       -webkit-background-clip: text;
+       `
+      :
+
+      `color: #ffffff;`
+  }
+
   }
   .athlete-school {
     position: absolute;
@@ -194,6 +284,7 @@ export const CardWrapper = styled.div<StyleProps>`
     text-align: left;
 
     width: 580px;
+    min-height: 400px;
     overflow: hidden;
     white-space: nowrap;
     -webkit-text-stroke: 1px white;

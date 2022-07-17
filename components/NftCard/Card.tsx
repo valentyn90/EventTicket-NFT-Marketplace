@@ -60,7 +60,10 @@ const Card: React.FunctionComponent<Props> = ({
     color_bottom: "",
     color_transition: "",
     crop_values: [],
-    slow_video: false,
+    // slow_video: false,
+    edition_name: "",
+    edition_rarity: "",
+    edition_quantity: "",
   });
   const [screenshot, setScreenshot] = useState("/img/card-placeholder.png");
 
@@ -81,7 +84,10 @@ const Card: React.FunctionComponent<Props> = ({
       color_bottom: "",
       color_transition: "",
       crop_values: [],
-      slow_video: false,
+      // slow_video: false,
+      edition_name: "",
+      edition_rarity: "",
+      edition_quantity: "",
     });
     setLoaded(false);
     const { data, error } = await getNftById(nft_id);
@@ -228,7 +234,11 @@ const Card: React.FunctionComponent<Props> = ({
   let transitionColor;
 
   let crop_values = nftCardData.crop_values || [];
-  let slow_video = nftCardData.slow_video || false;
+  // let slow_video = nftCardData.slow_video || false;
+
+  let edition_name;
+  let edition_rarity;
+  let edition_quantity;
 
   if (readOnly) {
     topColor = nftCardData.color_top || "#4f66e1";
@@ -251,6 +261,11 @@ const Card: React.FunctionComponent<Props> = ({
     location = `${high_school}, ${usa_state}`;
     sport_position = nftCardData.sport_position;
     sport = nftCardData.sport;
+
+    edition_name = nftCardData.edition_name;
+    edition_rarity = nftCardData.edition_rarity;
+    edition_quantity = nftCardData.edition_quantity;
+
   } else {
     preview_rotation = userStore.nftInput.preview_rotation;
 
@@ -348,6 +363,10 @@ const Card: React.FunctionComponent<Props> = ({
       bottomColor = nftCardData.color_bottom || "#cb0000";
       transitionColor = nftCardData.color_transition || "#3d142d";
     }
+
+    edition_name = nftCardData.edition_name || "Base";
+    edition_rarity = nftCardData.edition_rarity || "Common";
+    edition_quantity = nftCardData.edition_quantity || 10;
   }
 
   return (
@@ -360,6 +379,8 @@ const Card: React.FunctionComponent<Props> = ({
       transitionColor={transitionColor}
       founders={founders}
       smallCardSize={smallCardSize}
+      editionRarity={edition_rarity}
+      editionName={edition_name}
     >
       <Head>
         <meta
@@ -425,13 +446,13 @@ const Card: React.FunctionComponent<Props> = ({
                   )}
                 </div>
                 <img className="verified-logo" src="/img/card-logo.svg" />
-
+                <div className="border-mask-bottom"></div>
                 <div className="crop-background-img">
                   <img className="background-img" src={photo} />
                 </div>
                 <div className="background-gradient overlay-gradient"></div>
 
-                <div className="athlete-name">{fullName}</div>
+                <div className="athlete-name name-gradient">{fullName}</div>
                 <div className="athlete-school">{location}</div>
                 <div className="basic-info">
                   <div className="info-group">
@@ -455,7 +476,7 @@ const Card: React.FunctionComponent<Props> = ({
                     </>
                   ) : (
                     <>
-                      <div className="bold-info">{serial_no}</div>/10
+                      <div className="bold-info">{serial_no}</div>/{edition_quantity}
                     </>
                   )}
                 </div>
@@ -488,7 +509,7 @@ const Card: React.FunctionComponent<Props> = ({
                     src={video}
                     max_resolution={video_resolution}
                     crop_values={crop_values}
-                    slow_video={slow_video}
+                    // slow_video={slow_video}
                   />
 
                   <div className="reverse-logo-background"></div>
@@ -510,6 +531,7 @@ const Card: React.FunctionComponent<Props> = ({
                 </div>
               </div>
             </div>
+            <div className="border-mask-bottom"></div>
           </div>
         </div>
       </div>

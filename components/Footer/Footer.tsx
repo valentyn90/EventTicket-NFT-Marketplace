@@ -57,13 +57,13 @@ export const Footer: React.FC = (props) => {
                 </Text>
                 <HStack columns={2} spacing="4" color="subtle">
                     <Link href={"https://twitter.com/VfdInk"}>
-                        <Icon as={FaTwitter} boxSize="5" />
+                        <Icon boxSize="8" ><FaTwitter/></Icon>
                     </Link>
                     <Link href={"https://www.linkedin.com/company/verifiedink/"}>
-                        <Icon as={FaLinkedin} boxSize="5" />
+                    <Icon boxSize="8" ><FaLinkedin/></Icon>
                     </Link>
                     <Link href={"https://www.instagram.com/vfdink/"}>
-                        <Icon as={FaInstagram} boxSize="5" />
+                    <Icon boxSize="8" ><FaInstagram/></Icon>
                     </Link>
                 </HStack>
             </Stack>

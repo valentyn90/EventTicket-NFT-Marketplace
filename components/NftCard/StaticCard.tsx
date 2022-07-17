@@ -42,6 +42,9 @@ const StaticCard: React.FC<Props> = ({
     color_transition: "",
     crop_values: [],
     slow_video: false,
+    edition_name: "",
+    edition_rarity: "",
+    edition_quantity: "",
   });
 
   useEffect(() => {
@@ -57,6 +60,9 @@ const StaticCard: React.FC<Props> = ({
           color_transition: data.color_transition,
           crop_values: data.crop_values,
           slow_video: data.slow_video,
+          edition_name: data.edition_name,
+          edition_rarity: data.edition_rarity,
+          edition_quantity: data.edition_quantity,
         });
       }
     });
@@ -121,6 +127,8 @@ const StaticCard: React.FC<Props> = ({
       transitionColor={nftCardData.color_transition || "#3d142d"}
       founders={false}
       smallCardSize={true}
+      editionRarity={nftCardData.edition_rarity}
+      editionName={nftCardData.edition_name}
     >
       <Head>
         <meta
@@ -203,7 +211,6 @@ const StaticCard: React.FC<Props> = ({
                     src={nftCardData.mux_playback_id}
                     max_resolution={nftCardData.mux_max_resolution || ""}
                     crop_values={nftCardData.crop_values || []}
-                    slow_video={nftCardData.slow_video}
                   />
 
                   <div className="reverse-logo-background"></div>
@@ -225,6 +232,7 @@ const StaticCard: React.FC<Props> = ({
                 </div>
               </div>
             </div>
+            <div className="border-mask-bottom"></div>
           </div>
         </div>
       </div>

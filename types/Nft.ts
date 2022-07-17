@@ -35,6 +35,12 @@ interface Nft {
   crop_values: CropValue[];
   user_details?: UserDetails;
   admin_actions?: AdminActions[];
+  vfd_year: number;
+  post_hs: boolean;
+  edition_name: string;
+  edition_size: number;
+  edition_rarity: string;
+  edition_utility: any[] | null;
 }
 
 export default Nft;

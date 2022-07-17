@@ -142,8 +142,8 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                         // radial-gradient(ellipse at bottom, #4d9f0c, transparent);"
                         // bgSize="cover"
                         >
-                        {/* <Card readOnly={true} nft_id={96}/> */}
-                        <StaticCard nft_id={763} reverse={reverse}></StaticCard>
+                       
+                        <Card readOnly={true} nft_id={1160} reverse={reverse}></Card>
                     </Box>
                     <VStack mt={2} p={4} margin="auto" maxW="488px" align="center">
 
@@ -155,7 +155,7 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                         <Box align="center" display={["block", "block", "none"]} pb="5"
                             
                         >
-                            <StaticCard nft_id={763} width={350} reverse={reverse}></StaticCard>
+                            <Card readOnly={true} nft_id={1160} reverse={reverse}></Card>
                         </Box>
                         {/* <Box h={["50px","50px","100px"]}></Box> */}
                         <VStack  as="fieldset" backdropFilter="blur(5px)" border="1px" borderRadius="md" borderColor="#71c3ff73" p="3">
@@ -163,15 +163,15 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                             {!registered ?
                                 <>
                                     <Heading textAlign={"center"}>Be the first to know</Heading>
-                                    <Text textAlign={"center"} color="GrayText">Sign up for alerts for when the sale goes live, and don't miss out on a chance to win alongside the next basketball superstar.</Text>
+                                    <Text textAlign={"center"} color="gray">Sign up for alerts for when the sale goes live, and don't miss out on a chance to win alongside the next basketball superstar.</Text>
                                     <Input type='tel' border="0" value={email} onChange={validateEmailForm} backgroundColor="#0d162b" placeholder="Your phone number" _placeholder={{ color: "gray" }} />
                                     <Button onClick={handleEmail} disabled={!validEmail} isLoading={loading} p="5" backgroundColor={"#0067ff"}>SUBMIT</Button>
                                 </>
                                 :
                                 <>
                                     <Heading textAlign={"center"}>We've got you on the List!</Heading>
-                                    <Text textAlign={"center"} color="GrayText">As we get closer to Naas' drop, we'll keep you updated on timing and price at:</Text>
-                                    <Text textAlign={"center"} color="GrayText">{email}</Text>
+                                    <Text textAlign={"center"} color="gray">As we get closer to Naas' drop, we'll keep you updated on timing and price at:</Text>
+                                    <Text textAlign={"center"} color="gray">{email}</Text>
                                     <Divider borderColor="gray" />
                                     <Text textAlign={"center"}>Share this page with your friends to invite them to the future of fandom.</Text>
                                     <ShareButton buttonText="Share" url="https://verifiedink.us/naas" share_text="👀 The #1 Hoops Recruit from the class of 24 is dropping his first NFT on July 19th. Check it out here." title="Naas Cunningham Rookie NFT"></ShareButton>
