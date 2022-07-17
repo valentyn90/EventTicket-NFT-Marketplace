@@ -645,7 +645,7 @@ const Home = () => {
           </div >
         </div >
 
-        <div className="packs-section">
+        {/* <div className="packs-section">
           <div className="packs-content">
             <p className="packs-title">Packs</p>
             <p className="packs-subtitle">
@@ -679,7 +679,7 @@ const Home = () => {
               </div>
             </div >
           </div >
-        </div >
+        </div > */}
       </div >
       <style global jsx>{`
         html,
