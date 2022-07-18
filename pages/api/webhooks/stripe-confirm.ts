@@ -70,8 +70,55 @@ const handler = async (req: any, res: any) => {
 
           // console.log(data)
 
+          if (eventObject.metadata.drop_id && eventObject.payment_status === "paid") {
+            const { data, error } = await supabase
+              .from("drop_credit_card_sale")
+              .update({
+                status: "2_payment_completed",
+              })
+              .match({ stripe_tx: eventObject.id })
+              .single();
 
-          if (eventObject.payment_status === "paid") {
+             const { data: configData, error: configError } = await supabase
+              .from("configurations")
+              .select("*")
+              .match({ key: "naas_drop" })
+              .maybeSingle()
+
+             if(configData){
+              const items_left = configData.value.items_left - data.quantity
+
+              const new_values = {
+                next_price: configData.value.next_price,
+                items_left: items_left,
+                current_price: configData.value.current_price,
+                max_purchase_quantity: configData.value.max_purchase_quantity,
+              }
+
+              await supabase
+              .from("configurations")
+              .update({
+                value: new_values,
+              })
+              .match({ key: "naas_drop" })
+              .single();
+             } 
+             // Send success email to user 
+
+             // Call out to stripeTransfer to transfer the nft to the new owner
+            const requestOptions = {
+              method: "POST",
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: eventObject.customer_email})
+            }
+
+            const attempt_transfer = await fetch(`https://verifiedink.us/api/marketplace/randomAssignment`, requestOptions);
+
+            console.log(attempt_transfer)
+
+          }
+          else if (eventObject.payment_status === "paid") {
+
             const { data, error } = await supabase
               .from("credit_card_sale")
               .update({
@@ -134,7 +181,7 @@ const handler = async (req: any, res: any) => {
               eventObject.metadata.bid_amount,
               eventObject.metadata.bid_team_id)
 
-            if(eventObject.metadata.loser_id){
+            if (eventObject.metadata.loser_id) {
               await sendAuctionLoserMail(eventObject.metadata.loser_id,
                 eventObject.metadata.auction_id,
               )

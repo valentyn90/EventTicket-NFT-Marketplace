@@ -28,7 +28,7 @@ const Screenshot: React.FC = () => {
       {!int_id ? (
         <div></div>
       ) : (
-        <Card nft_id={int_id} serial_no={serial_int} nft_width={600} reverse={false} readOnly={true} />
+        <Card nft_id={int_id} serial_no={serial_int} nft_width={600} reverse={false} readOnly={true} noGlow={true} />
       )}
     </Wrapper>
   );

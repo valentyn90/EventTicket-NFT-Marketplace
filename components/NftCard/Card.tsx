@@ -26,6 +26,7 @@ interface Props {
   recruit_share?: boolean;
   serial_no?: number | undefined;
   sale_price?: number | undefined;
+  noGlow?: boolean | false;
 }
 
 const Card: React.FunctionComponent<Props> = ({
@@ -41,7 +42,8 @@ const Card: React.FunctionComponent<Props> = ({
   founders = false,
   recruit_share = false,
   serial_no = 1,
-  sale_price = undefined
+  sale_price = undefined,
+  noGlow = false
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [nftCardData, setNftCardData] = useState({
@@ -382,6 +384,7 @@ const Card: React.FunctionComponent<Props> = ({
       smallCardSize={smallCardSize}
       editionRarity={edition_rarity}
       editionName={edition_name}
+      noGlow={noGlow}
     >
       <Head>
         <meta

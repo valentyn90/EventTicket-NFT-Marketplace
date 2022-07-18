@@ -134,9 +134,10 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                 bgSize="cover"
                 minH={["unset", "unset", "75vh"]}
                 pt={["unset", "unset", "30px"]}
+                align="center" alignContent={"center"}
 
             >
-                <HStack margin="auto" align="center" justifyContent="center" gridGap={6}>
+                <HStack  align="center" justifyContent={["flex-start","center","center" ]}gridGap={6}>
                     <Box  align="center" display={["none", "none", "block"]} pb="5"
                         // bg="radial-gradient(ellipse at top, #e66465, transparent),
                         // radial-gradient(ellipse at bottom, #4d9f0c, transparent);"

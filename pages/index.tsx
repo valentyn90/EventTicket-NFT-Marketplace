@@ -458,7 +458,7 @@ const Home = () => {
   const [flipMain, setFlipMain] = useState(false);
   const [videoPlayed, setVideoPlayed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [packCardSize, setPackCardSize] = useState(200);
+  const [packCardSize, setPackCardSize] = useState(150);
   const [cardSize, setCardSize] = useState(350);
   const { width } = useWindowDimensions();
   mixpanel.init('b78dc989c036b821147f68e00c354313')
@@ -485,10 +485,10 @@ const Home = () => {
     if (width && width < 700) {
       // mobile
       setCardSize(300);
-      setPackCardSize(150);
+      // setPackCardSize(150);
     } else if (width && width >= 700) {
       setCardSize(350);
-      setPackCardSize(200);
+      // setPackCardSize(200);
     }
   }, [width]);
 

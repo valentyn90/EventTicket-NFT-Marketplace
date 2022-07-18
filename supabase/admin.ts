@@ -237,7 +237,7 @@ export const mintNft = async (nft_id: number, user_id: string) => {
         mint_datetime: new Date(Date.now()).toISOString(),
       },
     ])
-    .match({ id: nft_id });
+    .match({ id: nft_id }).maybeSingle();
 
   //Find referral to two levels
   const { data: user, error: error2 } = await supabase
@@ -268,6 +268,26 @@ export const mintNft = async (nft_id: number, user_id: string) => {
   console.log(`referral_1: ${referral_1}`);
   console.log(`referral_2: ${referral_2}`);
 
+  if(data.edition_name === "Extended"){
+    const quantity = data.edition_quantity
+    let new_nfts = []
+    
+    for(let i = 0; i < quantity; i++){
+      let j = { nft_id, "owner_id": user_id, "serial_no": i+1 }
+      new_nfts.push(j)
+    }
+
+    console.log(new_nfts)
+
+    const { data: data2, error: error4 } = await supabase
+    .from("nft_owner")
+    .upsert(new_nfts)
+
+
+  }
+
+  else{
+
   const { data: data2, error: error4 } = await supabase
     .from("nft_owner")
     .upsert([
@@ -282,6 +302,7 @@ export const mintNft = async (nft_id: number, user_id: string) => {
       { nft_id, owner_id: referral_1, serial_no: 9 },
       { nft_id, owner_id: verified_treasury, serial_no: 10 },
     ]);
+  }
 
   return true;
 };

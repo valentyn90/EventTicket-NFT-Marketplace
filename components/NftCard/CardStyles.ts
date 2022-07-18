@@ -11,6 +11,7 @@ interface StyleProps {
   smallCardSize: boolean;
   editionRarity: string;
   editionName: string;
+  noGlow?: boolean | null;
 }
 
 const ShinyAnimationCss = css`
@@ -40,7 +41,7 @@ export const CardWrapper = styled.div<StyleProps>`
   
   ${(props) =>
     // Glow from the whole card - doesnt work on safari
-    props.editionRarity === "Legendary" &&
+    props.editionRarity === "Legendary" && !props.noGlow &&
     `will-change: filter;
      filter: drop-shadow( 0 0 20px gold) ;
     `

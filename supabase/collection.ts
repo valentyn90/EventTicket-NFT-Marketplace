@@ -6,11 +6,12 @@ export const getOwnedNfts = async (user_id: string) => {
   const { data, error } = await supabase
     .from("nft_owner")
     .select("*")
-    .eq("owner_id", user_id);
+    .eq("owner_id", user_id)
+    .order("nft_id", {ascending: false});
 
   if (data) {
     const nft_arr = data.map((nft) => nft.nft_id);
-    return supabase.from("nft").select("*").in("id", nft_arr);
+    return supabase.from("nft").select("*").in("id", nft_arr).order("id", {ascending: false});
   } else {
     return supabase.from("nft").select("*").eq("user_id", user_id);
   }
