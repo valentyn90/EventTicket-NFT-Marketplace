@@ -107,7 +107,7 @@ const handler = async (req: any, res: any) => {
              await sendDropPurchaseMail(
               data.user_id,
               data.quantity,
-              data.price,
+              data.price_usd,
               data.drop_id,
              )
 
