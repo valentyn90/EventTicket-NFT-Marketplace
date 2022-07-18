@@ -1,6 +1,6 @@
 import Card from "@/components/NftCard/Card";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
-import { Box, HStack, Image, Text, VStack, Heading, Icon, Button, IconButton, Alert, AlertIcon, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, Input, Divider, Stack, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Flex } from "@chakra-ui/react";
+import { Box, HStack, Image, Text, VStack, Heading, Icon, Button, IconButton, Alert, AlertIcon, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, Input, Divider, Stack, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Flex, Skeleton } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "cookies";
 import { supabase } from "@/supabase/supabase-client";
@@ -51,10 +51,11 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
     const [auctionData, setAuctionData] = useState<any>();
     const [invalidInput, setInvalidInput] = useState(false);
     const [showBidEmail, setShowBidEmail] = useState(false);
-    const [bidAmount, setBidAmount] = useState(0);
+    const [bidAmount, setBidAmount] = useState<number>();
     const [minBidAmount, setMinBidAmount] = useState(0);
     const [minBid, setMinBid] = useState(0);
     const [minIncrement, setMinIncrement] = useState(0);
+    const [auctionLoading, setAuctionLoading] = useState(true);
 
     const ref = useRef<HTMLInputElement>(null);
 
@@ -250,7 +251,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                 action: "conversion",
                 params: {
                     send_to: 'AW-10929860785/P_4GCP6gs84DELHh4dso',
-                    value: .06 * (bidAmount) * 0.1,
+                    value: .06 * (bidAmount || 0) * 0.1,
                     currency: 'USD'
                 },
             });
@@ -316,6 +317,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
             const res = await fetch(`/api/auction/getAuctionData?auction_id=2`);
             const data = await res.json();
             setAuctionData(data);
+            setAuctionLoading(false);
         }
         getAuctionData();
     }, [])
@@ -333,7 +335,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
             setMinBidAmount(startingMinBid + auctionData.min_increment);
 
 
-            if (bidAmount < startingMinBid + auctionData.min_increment) {
+            if ((bidAmount || 0 ) < startingMinBid + auctionData.min_increment) {
                 setBidAmount(startingMinBid + auctionData.min_increment)
             }
 
@@ -503,7 +505,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                 grail for the VerifiedInk platform. Sporting an animated action shot and unqiue utility,
                                 bid to be the owner of the very first Legendary Launch Edition NFT.
                             </Text>
-
+                            <Skeleton isLoaded={!auctionLoading}>
                             <HStack justifyContent={"center"} gridGap="2">
                                 <Stack maxW="600px" >
                                     <Text pt="2" style={{ position: "absolute" }} fontSize="2xl">$</Text>
@@ -519,6 +521,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                 </Stack>
                                 <Button backgroundColor={"#0067ff"} disabled={invalidInput || !bidAmount || showBidEmail} onClick={() => setShowBidEmail(true)}>Bid</Button>
                             </HStack>
+                            </Skeleton>
                             {showBidEmail ?
                                 <>
                                     <Input autoFocus isDisabled={submitting} placeholder="Email@gmail.com" value={email} disabled={false}
