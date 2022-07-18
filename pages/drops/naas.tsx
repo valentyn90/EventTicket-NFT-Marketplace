@@ -1,12 +1,14 @@
 import Card from "@/components/NftCard/Card";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
-import { Box, HStack, Image, Text, VStack, Heading, Icon, Button, IconButton, Alert, AlertIcon, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, Input } from "@chakra-ui/react";
+import { Box, HStack, Image, Text, VStack, Heading, Icon, Button, IconButton, Alert, AlertIcon, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, Input, Divider } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Cookies from "cookies";
 import { supabase } from "@/supabase/supabase-client";
 import { CannotExchangeSOLForSolError } from "@metaplex-foundation/mpl-auction-house/dist/src/generated";
 import { getUserDetailsByEmail } from "@/supabase/userDetails";
 import validateEmail from "@/utils/validateEmail";
+import Head from "next/head";
+import Link from "next/link";
 
 
 interface Props {
@@ -64,7 +66,6 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
     }, [purchaseQuantity, maxQuantity]);
 
     useEffect(() => {
-        console.log("running this")
         supabase.from('configurations:key=eq.naas_drop').on("UPDATE",
             (payload) => {
                 console.log("naas_drop updated");
@@ -91,7 +92,6 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
     }, [price, maxQuantity])
 
     useEffect(() => {
-        console.log(email)
         if (email.trim().length != email.length) {
             setEmail(email.trim())
             return
@@ -208,8 +208,30 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
 
     }
 
+    const meta = (
+        <Head>
+            <title>#1 Naas Cunningham dropping his first NFT on July 19th</title>
+            <meta
+                property="og:title"
+                key="title"
+                content={`#1 Naas Cunningham dropping his first NFT on July 19th`}
+            />
+            <meta
+                property="og:image"
+                key="preview"
+                content={"https://verifiedink.us/img/naas/naas-3.png"}
+            />
+            <meta
+                property="twitter:image"
+                key="twitter-image"
+                content={`https://verifiedink.us/api/meta/showTwitterPreview/1160`}
+            />
+        </Head>
+    )
+
 
     return (
+        <>
         <Box py={3} align="center" alignContent={"center"}>
             <VStack>
                 <HStack gridGap={[0, 4, 8]} alignItems="flex-end" mb={3}>
@@ -247,7 +269,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                         </HStack>
                         <div></div>
                         {maxQuantity > 0 &&
-                            <Button disabled={purchaseQuantity < 1} onClick={()=>{setShowEmail(true)}} size="lg" fontSize={"xl"} minW="200px" background="blue">Buy - ${price * purchaseQuantity}</Button>
+                            <Button disabled={purchaseQuantity < 1 || showEmail} onClick={()=>{setShowEmail(true)}} size="lg" fontSize={"xl"} minW="200px" background="blue">Buy - ${price * purchaseQuantity}</Button>
                         }
                         {maxQuantity > 0 ?
                             <Text fontStyle="italic">
@@ -262,16 +284,16 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                         }
                         {showEmail ?
                             <>
-                                <Input placeholder="Email@gmail.com" value={email} disabled={false}
+                                <Input autoFocus isDisabled={submitting} placeholder="Email@gmail.com" value={email} disabled={false}
                                     onChange={(e) => setEmail(e.target.value)} />
-                                <Button disabled={emailInvalid} onClick={handlePurchase}>Purchase</Button>
+                                <Button isLoading={submitting} disabled={emailInvalid} onClick={handlePurchase}>Purchase</Button>
                             </>
                             :
                             null
                         }
-
-                        <Heading pt={4} as="h3" alignSelf={"start"} size="lg">NFTs In This Drop</Heading>
-                        <Text textAlign={"left"}>
+                        <Divider pt={2} />
+                        <Heading pt={4} px={2} as="h3" alignSelf={"start"} size="lg">NFTs In This Drop</Heading>
+                        <Text py={3} px={2} textAlign={"left"}>
                             #1 recruit Naas Cunningham is releasing his first NFT with VerifiedInk. Below we've outlined the different NFTs that are available in this drop.
                             With each purchase you will randomly receive one of these NFTs from the Extended Edition Set.
                         </Text>
@@ -312,9 +334,26 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
 
                     </VStack>
                 }
+                <Divider pt={2} maxW={["80%","400px","400px"]}/>
+                <Heading pt={4} as="h3" size="lg">More Details</Heading>
+                <Text py={3} textAlign={"left"} maxW={["90%","400px","400px"]}>
+                    If you'd like to learn more about the VerifiedInk platform and our plans, please 
+                    visit our Overview, read through the FAQs, or just reach out by clicking the blue
+                    help button in the corner.
+                </Text>
+                <HStack>
+                    <Link href="/blog">
+                        <Button>Verified Overview</Button>
+                    </Link>
+                    <Link href="/faq">
+                    <Button>FAQ</Button>
+                    </Link>
+                </HStack>
             </VStack>
 
         </Box>
+        {meta}
+        </>
     )
 }
 

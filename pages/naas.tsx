@@ -121,7 +121,7 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
             <meta
                 property="twitter:image"
                 key="twitter-image"
-                content={`https://verifiedink.us/api/meta/showTwitterPreview/763`}
+                content={`https://verifiedink.us/api/meta/showTwitterPreview/1160`}
             />
         </Head>
     )

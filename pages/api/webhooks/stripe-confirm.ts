@@ -7,7 +7,7 @@ import randCrypto from "crypto";
 import crypto from "crypto-js";
 import { cancel, cancelOrder, transferViaCreditCard } from "@/mint/marketplace";
 import generateKeypair, { getKeypair } from "@/mint/mint";
-import { sendAuctionLoserMail, sendAuctionMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
+import { sendAuctionLoserMail, sendAuctionMail, sendDropPurchaseMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2020-08-27",
@@ -86,7 +86,7 @@ const handler = async (req: any, res: any) => {
               .maybeSingle()
 
              if(configData){
-              const items_left = configData.value.items_left - data.quantity
+              const items_left = Math.max(configData.value.items_left - data.quantity,0)
 
               const new_values = {
                 next_price: configData.value.next_price,
@@ -104,6 +104,12 @@ const handler = async (req: any, res: any) => {
               .single();
              } 
              // Send success email to user 
+             await sendDropPurchaseMail(
+              data.user_id,
+              data.quantity,
+              data.price,
+              data.drop_id,
+             )
 
              // Call out to stripeTransfer to transfer the nft to the new owner
             const requestOptions = {

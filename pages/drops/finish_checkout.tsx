@@ -43,7 +43,7 @@ const SignIn: React.FC<Props> = () => {
         headers: new Headers({ "Content-Type": "application/json" }),
         credentials: "same-origin",
         body: JSON.stringify({
-          email,
+          email: email.toLowerCase(),
         }),
       });
     

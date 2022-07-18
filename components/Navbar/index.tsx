@@ -136,9 +136,7 @@ const NavIndex: React.FC = () => {
         </Link>
       </Navbar.Brand>
       <Navbar.Links>
-        {userStore.userDetails.role !== "marketplace" && (
-          <NavTabLink>Athletes</NavTabLink>
-        )}
+        <NavTabLink>Athletes</NavTabLink>
         <NavTabLink>Marketplace</NavTabLink>
         <NavTabLink>Drops</NavTabLink>
         <NavTabLink>Blog</NavTabLink>
