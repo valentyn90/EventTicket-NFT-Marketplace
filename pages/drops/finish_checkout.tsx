@@ -18,6 +18,8 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
+import * as ga from "@/utils/ga";
+import mixpanel from 'mixpanel-browser';
 
 interface Props { }
 
@@ -29,27 +31,44 @@ const SignIn: React.FC<Props> = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const email_router = router.query.email! as string;
-    console.log(email_router);
-    setEmail(email_router);
-  }, []);
+    if (router) {
+      const email_router = router.query.email! as string;
+      console.log(email_router);
+      setEmail(email_router);
+
+      const price = router.query.price! as string;
+      const purchaseQuantity = router.query.quantity! as string;
+
+      ga.event({
+        action: "conversion",
+        params: {
+          send_to: 'AW-10929860785/fU-YCPWBps4DELHh4dso',
+          value: .06 * (parseInt(purchaseQuantity) * parseInt(price)),
+          currency: 'USD'
+        },
+      });
+
+      mixpanel.track("Naas - Completed Transaction", { price: price, purchaseQuantity: purchaseQuantity, total_spend: (parseInt(purchaseQuantity) * parseInt(price)) });
+    }
+
+  }, [router]);
 
   useEffect(() => {
-    if(email){
-    // call out to Random Assignment API
-    const fetchData = async () => {
-      const res = await fetch(`/api/marketplace/randomAssignment`, {
-        method: "POST",
-        headers: new Headers({ "Content-Type": "application/json" }),
-        credentials: "same-origin",
-        body: JSON.stringify({
-          email: email.toLowerCase(),
-        }),
-      });
-    
+    if (email) {
+      // call out to Random Assignment API
+      const fetchData = async () => {
+        const res = await fetch(`/api/marketplace/randomAssignment`, {
+          method: "POST",
+          headers: new Headers({ "Content-Type": "application/json" }),
+          credentials: "same-origin",
+          body: JSON.stringify({
+            email: email.toLowerCase(),
+          }),
+        });
+
+      }
+      fetchData();
     }
-    fetchData();
-  }
 
     // fill in email for them
 
@@ -170,15 +189,15 @@ export async function getServerSideProps({
   });
 
 
-  const { user } = await supabase.auth.api.getUserByCookie(req);
-  if (user) {
-    return {
-      redirect: {
-        destination: "/collection",
-        permanent: false,
-      },
-    };
-  }
+  // const { user } = await supabase.auth.api.getUserByCookie(req);
+  // if (user) {
+  //   return {
+  //     redirect: {
+  //       destination: "/collection",
+  //       permanent: false,
+  //     },
+  //   };
+  // }
   return { props: {} };
 }
 

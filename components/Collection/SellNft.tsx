@@ -67,6 +67,9 @@ const SellNft: React.FC<Props> = ({
           if (gradYearNum > 22 && !NILState) {
             setGradYearDisable(true);
           }
+          if ([1160,1161,1162,763].includes(data.id)) {
+            setGradYearDisable(true);
+          }
         }
       });
     } else {
@@ -118,7 +121,9 @@ const SellNft: React.FC<Props> = ({
         </HStack>
         <Tooltip
           hasArrow
-          label="Only graduating seniors are currently able to place their VerifiedInks for sale in the marketplace."
+          label={
+            [1160,1161,1162,763].includes(nft_id) ? "You will be able to sell your Naas NFT about one week after the drop concludes." :
+            "Only graduating seniors are currently able to place their VerifiedInks for sale in the marketplace."}
           shouldWrapChildren
           isDisabled={!gradYearDisable}
         >

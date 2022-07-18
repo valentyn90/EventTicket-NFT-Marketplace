@@ -24,7 +24,7 @@ export default async function handler(
 
       // check to see if user is logged in
       const { user } = await supabase.auth.api.getUserByCookie(req);
-            
+
 
       // Verify that the bid is valid
       // Check to see if they already have bid on this auction
@@ -54,67 +54,69 @@ export default async function handler(
 
       // Lookup existing bid
 
-      const { data: user_bids, error: user_bids_error } = await supabase.from('auction_bids')
-        .select('*')
-        .eq('auction_id', auction_id)
-        .eq('user_id', user_id)
-        .eq('status', 'confirmed')
+      if (auction_id !== 2) {
 
-      if (user_bids && user_bids.length > 0) {
-        if (!user){
-          return res.status(200).json({
-            status: "error",
-            message: "You must be logged in to update your bid."
-          })
-        }
-        if (user_bids[0].bid_amount > bid_amount) {
-          return res.status(200).json({
-            status: "error",
-            message: "Bid is too low. You have already bid higher than this."
-          })
-        }
+        const { data: user_bids, error: user_bids_error } = await supabase.from('auction_bids')
+          .select('*')
+          .eq('auction_id', auction_id)
+          .eq('user_id', user_id)
+          .eq('status', 'confirmed')
 
-        // Cancel old bid and enter a new one
+        if (user_bids && user_bids.length > 0) {
+          if (!user) {
+            return res.status(200).json({
+              status: "error",
+              message: "You must be logged in to update your bid."
+            })
+          }
+          if (user_bids[0].bid_amount > bid_amount) {
+            return res.status(200).json({
+              status: "error",
+              message: "Bid is too low. You have already bid higher than this."
+            })
+          }
 
-        await supabase
-          .from("auction_bids")
-          .update({
-            status: "cancelled",
-          })
-          .match({
+          // Cancel old bid and enter a new one
+
+          await supabase
+            .from("auction_bids")
+            .update({
+              status: "cancelled",
+            })
+            .match({
+              user_id,
+              auction_id,
+            })
+
+          await supabase.from('auction_bids').insert({
             user_id,
             auction_id,
+            bid_amount,
+            bid_team_id,
+            status: 'confirmed'
           })
 
-        await supabase.from('auction_bids').insert({
-          user_id,
-          auction_id,
-          bid_amount,
-          bid_team_id,
-          status: 'confirmed'
-        })
+          // Send Success email
 
-        // Send Success email
-
-        await sendAuctionMail(user_id,
-          auction_id,
-          bid_amount,
-          bid_team_id,
+          await sendAuctionMail(user_id,
+            auction_id,
+            bid_amount,
+            bid_team_id,
           )
 
-        await sendAuctionLoserMail(loser_id,
-          auction_id,
-        )
+          await sendAuctionLoserMail(loser_id,
+            auction_id,
+          )
 
-        return res.status(200).json({
-          status: "success",
-          message: "Your bid has been updated!"
-        })
+          return res.status(200).json({
+            status: "success",
+            message: "Your bid has been updated!"
+          })
 
+        }
       }
 
-
-      const {data, error} = await supabase.from('auction_bids').insert({
+      const { data, error } = await supabase.from('auction_bids').insert({
         user_id,
         auction_id,
         bid_amount,
@@ -124,7 +126,7 @@ export default async function handler(
 
       let bid_id = ""
 
-      if(data){
+      if (data) {
         bid_id = data[0].bid_id
       }
 
@@ -135,39 +137,78 @@ export default async function handler(
 
       let customer = null
 
-      if (user_details && user_details[0].stripe_customer_id) {
-        console.log("existing customer")
-        customer = { id: user_details[0].stripe_customer_id }
+      if (auction_id != 2) {
+
+        if (user_details && user_details[0].stripe_customer_id) {
+          console.log("existing customer")
+          customer = { id: user_details[0].stripe_customer_id }
+        }
+        else {
+          console.log("new customer")
+          customer = await stripe.customers.create({
+            email,
+          })
+
+          await supabase.from('user_details').update({ 'stripe_customer_id': customer.id }).eq('user_id', user_id)
+        }
+
+
+
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          mode: 'setup',
+          customer: customer.id,
+          success_url: `${req.headers.origin}/auction/success?session_id={CHECKOUT_SESSION_ID}&user_id=${user_id}&auction_id=${auction_id}&team_id=${bid_team_id}`,
+          cancel_url: `${req.headers.origin}/auction/${auction_id}?status=cancelled`,
+          metadata: {
+            user_id: user_id,
+            auction_id: auction_id,
+            bid_amount: bid_amount,
+            bid_team_id: bid_team_id,
+            loser_id: loser_id,
+            bid_id: bid_id
+          }
+        });
+
+        // 303 redirect to session.url
+        return res.status(200).json({ sessionUrl: session.url });
       }
       else {
-        console.log("new customer")
-        customer = await stripe.customers.create({
-          email,
-        })
 
-        await supabase.from('user_details').update({ 'stripe_customer_id': customer.id }).eq('user_id', user_id)
+        const stripePrice = (bid_amount * 100).toFixed(0)
+
+        console.log(stripePrice)
+        // Create Checkout Sessions from body params.
+        const session = await stripe.checkout.sessions.create({
+          line_items: [
+            {
+              // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+              price_data: {
+                currency: "usd",
+                product: "prod_M575ljKlnIi6N3",
+                unit_amount: stripePrice,
+              },
+              quantity: 1,
+            },
+          ],
+          customer_email: email,
+          mode: "payment",
+          success_url: `${req.headers.origin}/drops/finish_bid_checkout?session_id={CHECKOUT_SESSION_ID}&email=${email}&success=true&quantity=${1}&price=${bid_amount}`,
+          cancel_url: `${req.headers.origin}/drops/naas?session_id={CHECKOUT_SESSION_ID}&canceled=true`,
+          metadata: {
+            naas_auction: true,
+            user_id: user_id,
+            auction_id: auction_id,
+            bid_amount: bid_amount,
+            bid_id: bid_id,
+            bid_team_id: bid_team_id,
+          },
+        });
+
+        // 303 redirect to session.url
+        return res.status(200).json({ sessionUrl: session.url });
+
       }
-
-
-
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        mode: 'setup',
-        customer: customer.id,
-        success_url: `${req.headers.origin}/auction/success?session_id={CHECKOUT_SESSION_ID}&user_id=${user_id}&auction_id=${auction_id}&team_id=${bid_team_id}`,
-        cancel_url: `${req.headers.origin}/auction/${auction_id}?status=cancelled`,
-        metadata: {
-          user_id: user_id,
-          auction_id: auction_id,
-          bid_amount: bid_amount,
-          bid_team_id: bid_team_id,
-          loser_id: loser_id,
-          bid_id: bid_id
-        }
-      });
-
-      // 303 redirect to session.url
-      return res.status(200).json({ sessionUrl: session.url });
 
 
     } catch (err: any) {

@@ -70,7 +70,29 @@ const handler = async (req: any, res: any) => {
 
           // console.log(data)
 
-          if (eventObject.metadata.drop_id && eventObject.payment_status === "paid") {
+          if (eventObject.metadata.naas_auction && eventObject.payment_status === "paid") {
+            console.log("Checkout session setup");
+            // Mark bid as "confirmed"
+            const { data, error } = await supabase
+              .from("auction_bids")
+              .update({
+                status: "confirmed",
+                stripe_tx: eventObject.id
+              })
+              .match({
+                user_id: eventObject.metadata.user_id,
+                auction_id: eventObject.metadata.auction_id,
+                bid_amount: eventObject.metadata.bid_amount,
+                bid_id: eventObject.metadata.bid_id,
+              })
+
+              await sendAuctionMail(eventObject.metadata.user_id,
+                eventObject.metadata.auction_id,
+                eventObject.metadata.bid_amount,
+                eventObject.metadata.bid_team_id)
+
+          } 
+          else if (eventObject.metadata.drop_id && eventObject.payment_status === "paid") {
             const { data, error } = await supabase
               .from("drop_credit_card_sale")
               .update({

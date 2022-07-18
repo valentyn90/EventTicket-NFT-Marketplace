@@ -49,7 +49,7 @@ export default async function handler(
           ],
           customer_email: email,
           mode: "payment",
-          success_url: `${req.headers.origin}/drops/finish_checkout?session_id={CHECKOUT_SESSION_ID}&email=${email}&success=true`,
+          success_url: `${req.headers.origin}/drops/finish_checkout?session_id={CHECKOUT_SESSION_ID}&email=${email}&success=true&quantity=${quantity}&price=${naas_drop_price}`,
           cancel_url: `${req.headers.origin}/drops/naas?session_id={CHECKOUT_SESSION_ID}&canceled=true`,
           metadata: {
             drop_id: drop_id,
