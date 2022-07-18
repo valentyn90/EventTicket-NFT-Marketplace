@@ -7,7 +7,7 @@ import randCrypto from "crypto";
 import crypto from "crypto-js";
 import { cancel, cancelOrder, transferViaCreditCard } from "@/mint/marketplace";
 import generateKeypair, { getKeypair } from "@/mint/mint";
-import { sendAuctionLoserMail, sendAuctionMail, sendDropPurchaseMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
+import { sendAuctionLoserMail, sendAuctionMail, sendDropAuctionMail, sendDropPurchaseMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2020-08-27",
@@ -86,7 +86,7 @@ const handler = async (req: any, res: any) => {
                 bid_id: eventObject.metadata.bid_id,
               })
 
-              await sendAuctionMail(eventObject.metadata.user_id,
+              await sendDropAuctionMail(eventObject.metadata.user_id,
                 eventObject.metadata.auction_id,
                 eventObject.metadata.bid_amount,
                 eventObject.metadata.bid_team_id)

@@ -25,10 +25,10 @@ export async function sendLoginMail(email: string, magic_link: string) {
     })
     .catch((error: any) => {
       console.log(error)
-      return{ "success": true }
+      return { "success": true }
     })
 
-    return {"success": true}
+  return { "success": true }
 
 }
 
@@ -55,7 +55,7 @@ export async function sendPurchaseMail(email: string, nft_id: string, sn: string
     })
     .catch((error: any) => {
       console.log(error)
-      return{ "success": true }
+      return { "success": true }
     })
 
 }
@@ -90,7 +90,7 @@ export async function sendDropPurchaseMail(user_id: string, quantity: number, pr
     })
     .catch((error: any) => {
       console.log(error)
-      return{ "success": true }
+      return { "success": true }
     })
 
 }
@@ -126,12 +126,12 @@ export async function sendSaleMail(user_id: string, nft_id: string, sn: string, 
     })
     .catch((error: any) => {
       console.log(error)
-      return{ "success": true }
+      return { "success": true }
     })
 
 }
 
-export async function sendAuctionLoserMail(loser_id: string, auction_id: string){
+export async function sendAuctionLoserMail(loser_id: string, auction_id: string) {
   let template_id = 'd-e4a1305bcdc54dfc92d1aeb550468164'
 
   const user_details = await supabase.from("user_details").select("*").eq("user_id", loser_id).maybeSingle();
@@ -166,7 +166,7 @@ export async function sendAuctionLoserMail(loser_id: string, auction_id: string)
     })
     .catch((error: any) => {
       console.log(error)
-      return{ "success": true }
+      return { "success": true }
     })
 
 
@@ -174,9 +174,12 @@ export async function sendAuctionLoserMail(loser_id: string, auction_id: string)
 
 }
 
+export async function sendDropAuctionMail(user_id: string, auction_id: string, bid_amount: string, bid_team_id: string) {
+  await sendAuctionMail(user_id, auction_id, bid_amount, bid_team_id, "d-ff378896d08b4232bb675c028368c121");
+}
 
-export async function sendAuctionMail(user_id: string, auction_id: string, bid_amount: string, bid_team_id:string){
-  let template_id = 'd-dd0432ef5ceb42a59d60fd669bb03925'
+
+export async function sendAuctionMail(user_id: string, auction_id: string, bid_amount: string, bid_team_id: string, template_id: string = 'd-e4a1305bcdc54dfc92d1aeb550468164') {
 
   const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
   const email = user_details.data.email;
@@ -216,7 +219,7 @@ export async function sendAuctionMail(user_id: string, auction_id: string, bid_a
     })
     .catch((error: any) => {
       console.log(error)
-      return{ "success": true }
+      return { "success": true }
     })
 
 }
@@ -247,7 +250,7 @@ async function sendMail(nft_id: number = 96, template: string = 'minted') {
 
   const { publicUrl, error: error2 } = await getFileLinkFromSupabase(data.screenshot_file_id);
 
- 
+
   const msg = {
     to: user_details.data.email,
     from: 'Nate@verifiedink.us',

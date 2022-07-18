@@ -199,17 +199,17 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
             mixpanel.track("Naas - Check Out", { price: price, purchaseQuantity: purchaseQuantity, total_spend: purchaseQuantity * price });
 
             const stripeRes = await fetch(`/api/marketplace/dropCheckout`, {
-                    method: "POST",
-                    headers: new Headers({ "Content-Type": "application/json" }),
-                    credentials: "same-origin",
-                    body: JSON.stringify({
-                        email: email.toLowerCase(),
-                        user_id: confirmedUserData.user_id,
-                        quantity: purchaseQuantity,
-                        drop_id: 1,
+                method: "POST",
+                headers: new Headers({ "Content-Type": "application/json" }),
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    email: email.toLowerCase(),
+                    user_id: confirmedUserData.user_id,
+                    quantity: purchaseQuantity,
+                    drop_id: 1,
 
-                    }),
-                })
+                }),
+            })
                 .then((res) => res.json())
                 .then(async (data) => {
                     if (data.sessionUrl) {
@@ -317,13 +317,11 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
             const res = await fetch(`/api/auction/getAuctionData?auction_id=2`);
             const data = await res.json();
             setAuctionData(data);
-            setAuctionLoading(false);
         }
         getAuctionData();
     }, [])
 
     useEffect(() => {
-        console.log(auctionData)
         if (auctionData) {
             setMinIncrement(auctionData.min_increment);
             setMinBid(auctionData.min_bid);
@@ -335,9 +333,10 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
             setMinBidAmount(startingMinBid + auctionData.min_increment);
 
 
-            if ((bidAmount || 0 ) < startingMinBid + auctionData.min_increment) {
+            if ((bidAmount || 0) < startingMinBid + auctionData.min_increment) {
                 setBidAmount(startingMinBid + auctionData.min_increment)
             }
+            setAuctionLoading(false);
 
         }
 
@@ -417,14 +416,14 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                             <Image width="175px" src="/img/naas/naas-legendary-launch.png" />
                             <Heading as="h2">Bid</Heading>
                             <Text>$500</Text>
-                            <Text color="gray">Launch Edition 1/1</Text>
+                            <Text color="gray">Launch Edition 1/10</Text>
                         </Box>
 
                     </HStack>
                     {showBuyNow ?
                         <VStack maxW={600} p={2}>
                             <Heading>Extended Edition</Heading>
-                            <Text color="gray.400" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition NFTs. Each purchase has a chance to pull either a Rare or Legendary NFT from Naas Cunningham's Extended Edition Set.</Text>
+                            <Text color="gray.400" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition NFTs. Each purchase has a chance to pull a Rare or Legendary Card.</Text>
                             <HStack gridGap={10}>
                                 <HStack>
                                     <IconButton size="md" isDisabled={!decrementEnabled} isRound={true} aria-label="Decrement Quantity" icon={<MinusIcon />} onClick={() => setPurchaseQuantity(purchaseQuantity - 1)}></IconButton>
@@ -438,7 +437,9 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                             </HStack>
                             <div></div>
                             {maxQuantity > 0 &&
-                                <Button disabled={purchaseQuantity < 1 || showEmail} onClick={() => { setShowEmail(true) }} size="lg" fontSize={"xl"} minW="200px" background="blue">Buy - ${price * purchaseQuantity}</Button>
+                                <Button disabled={purchaseQuantity < 1 || showEmail} onClick={() => { setShowEmail(true) }} size="lg" fontSize={"xl"} minW="200px" background="blue">
+                                    Buy &nbsp;&nbsp;${price * purchaseQuantity}
+                                </Button>
                             }
                             {maxQuantity > 0 ?
                                 <Text fontStyle="italic" color="red.500">
@@ -466,61 +467,68 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                 #1 recruit Naas Cunningham is releasing his first NFT with VerifiedInk. Below we've outlined the different NFTs that are available in this drop.
                                 With each purchase you will randomly receive one of these NFTs from the Extended Edition Set.
                             </Text>
-                            <HStack textAlign={"start"} minWidth={350} maxW={450} gridGap={4} >
+                            <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={1160} width={150} />
-                                <Box>
-                                    <Heading size="sm">Legendary - 15 Total</Heading>
-                                    <Text color="gray.400">Need Details here</Text>
+                                <Box p={2}>
+                                    <Heading size="md">Legendary - 15 Total</Heading>
+                                    <Text color="gray.400">Marked with a gold border, glow, name and signature with the Legendary Naas Image.</Text>
                                     <Text fontWeight="900" fontSize="lg">Utility</Text>
-                                    <li>sadf</li>
-                                    <li>sadf</li>
+                                    <li>Follow by Naas on Instgram/Twitter</li>
+                                    <li>Shoutout by Naas on Instagram/Twitter</li>
+                                    <li>1 in 15 chance to win a Launch Edition</li>
+                                    <li>Physical AR card in the mail</li>
+                                    <li>NFT Personally Designed by Naas</li>
                                 </Box>
-                            </HStack>
-                            <HStack textAlign={"start"} minWidth={350} maxW={450} gridGap={4}>
+                            </Stack>
+                            <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={1161} width={150} />
                                 <Box>
-                                    <Heading size="sm">Rare - 40 Total</Heading>
-                                    <Text color="gray.400">Need Details here</Text>
-                                    <Text fontWeight="900" fontSize="lg">Utility</Text>
-                                    <li>sadf</li>
-                                    <li>sadf</li>
+                                    <Heading size="md">Rare - 40 Total</Heading>
+                                    <Text color="gray.400">Marked with a silver border, silver name and the Rare Naas Image.</Text>
+                                    <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
+                                    <li>Follow by Naas on Instgram/Twitter</li>
+                                    <li>Physical AR card in the mail</li>
+                                    <li>NFT Personally Designed by Naas</li>
                                 </Box>
-                            </HStack>
-                            <HStack textAlign={"start"} minWidth={350} maxW={450} gridGap={4}>
+                            </Stack>
+                            <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={1162} width={150} />
                                 <Box>
-                                    <Heading size="sm">Common - 445 Total</Heading>
-                                    <Text color="gray.400">Need Details here</Text>
-                                    <Text fontWeight="900" fontSize="lg">Utility</Text>
-                                    <li>sadf</li>
-                                    <li>sadf</li>
+                                    <Heading size="md">Common - 445 Total</Heading>
+                                    <Text color="gray.400">Marked with Naas's Signature and the Common Naas Image.</Text>
+                                    <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
+                                    <li>Physical AR card in the mail</li>
+                                    <li>NFT Personally Designed by Naas</li>
                                 </Box>
-                            </HStack>
+                            </Stack>
+
+
+
                         </VStack>
                         :
                         <VStack maxW={600} p={2}>
                             <Heading>Launch Edition</Heading>
                             <Text color="gray.400" textAlign="center" maxW="400px">
                                 Bid to win the #1 / 10 Launch Edition NFT. Naas Cunningham's Ultimate Rookie NFT is the
-                                grail for the VerifiedInk platform. Sporting an animated action shot and unqiue utility,
-                                bid to be the owner of the very first Legendary Launch Edition NFT.
+                                most unique collectible for a sure-fire future NBA lottery pick. Sporting an animated action shot and unqiue utility.
+                                Bid to be the owner of the very first Legendary Launch Edition NFT.
                             </Text>
                             <Skeleton isLoaded={!auctionLoading}>
-                            <HStack justifyContent={"center"} gridGap="2">
-                                <Stack maxW="600px" >
-                                    <Text pt="2" style={{ position: "absolute" }} fontSize="2xl">$</Text>
-                                    <Input variant='flushed' textAlign="center" placeholder={`Min Bid: ${minBidAmount}`} fontSize={["xl", "2xl"]} value={bidAmount} onChange={handleBidChange} />
-                                    {/* <Text mt="0" fontSize="sm" textAlign="center">{invalidBidMessage}</Text> */}
-                                    <Slider aria-label='slider-ex-1' defaultValue={0} onChange={(val) => sliderChange(val)}>
-                                        <SliderTrack>
-                                            <SliderFilledTrack />
-                                        </SliderTrack>
-                                        <SliderThumb ref={ref} boxSize={10} />
-                                    </Slider>
+                                <HStack justifyContent={"center"} gridGap="2">
+                                    <Stack maxW="600px" >
+                                        <Text pt="2" style={{ position: "absolute" }} fontSize="2xl">$</Text>
+                                        <Input variant='flushed' textAlign="center" placeholder={`Min Bid: ${minBidAmount}`} fontSize={["xl", "2xl"]} value={bidAmount} onChange={handleBidChange} />
+                                        {/* <Text mt="0" fontSize="sm" textAlign="center">{invalidBidMessage}</Text> */}
+                                        <Slider aria-label='slider-ex-1' defaultValue={0} onChange={(val) => sliderChange(val)}>
+                                            <SliderTrack>
+                                                <SliderFilledTrack />
+                                            </SliderTrack>
+                                            <SliderThumb ref={ref} boxSize={10} />
+                                        </Slider>
 
-                                </Stack>
-                                <Button backgroundColor={"#0067ff"} disabled={invalidInput || !bidAmount || showBidEmail} onClick={() => setShowBidEmail(true)}>Bid</Button>
-                            </HStack>
+                                    </Stack>
+                                    <Button backgroundColor={"#0067ff"} disabled={invalidInput || !bidAmount || showBidEmail} onClick={() => setShowBidEmail(true)}>Bid</Button>
+                                </HStack>
                             </Skeleton>
                             {showBidEmail ?
                                 <>
@@ -536,19 +544,34 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                 <Box flex={1}>
                                     <Card nft_id={763} readOnly={true} nft_width={350} />
                                 </Box>
-                                <VStack flex={1} minW={[200, 400, 400]}>
+                                <VStack  flex={1} minW={[200, 400, 400]}>
                                     <Heading size="lg">Legendary - 10 Total</Heading>
-                                    <Text color="gray.400">Need Details here</Text>
                                     <Text fontWeight="900" fontSize="lg">Utility</Text>
-                                    <li>sadf</li>
-                                    <li>sadf</li>
+                                    <Box textAlign={"left"}>
+                                    <li>Exclusive early access to future Naas drops</li>
+                                    <li>Free Extended Edition NFT</li>
+                                    <li>Free NFTs from Future Editions</li>
+                                    <li>Follow from Naas on Twitter/Instagram</li>
+                                    <li>Shout out from Naas on Twitter/Instagram</li>
+                                    <li>1 in 15 chance to win a Launch Edition</li>
+                                    <li>Physical AR card in the mail</li>
+                                    <li>NFT Personally Designed by Naas</li>
+                                    </Box>
                                 </VStack>
                             </Stack>
                         </VStack>
                     }
 
+                    <Divider pt={5} maxW={["80%", "600px", "600px"]} />
+                    <Heading as="h2" pt={5} size="lg">Augmented Reality Physical Card</Heading>
+                    <Text color="gray.300" p={2}>Each purchase entitles you to a free AR card shipped anywhere in the US</Text>
+                    <Image src={'/img/VerifiedInk.gif'} w={["200px","200px","400px"]} alt="AR Card" />
+
+                    <Divider pt={5} maxW={["80%", "600px", "600px"]} />
+                    <Heading as="h2" pt={5} size="lg">More About Naas</Heading>
+
                     <Divider pt={2} maxW={["80%", "600px", "600px"]} />
-                    <Heading pt={4} as="h3" size="lg">More Details</Heading>
+                    <Heading pt={4} as="h3" size="lg">More About VerifiedInk</Heading>
                     <Text py={3} textAlign={"left"} maxW={["90%", "600px", "600px"]}>
                         If you'd like to learn more about the VerifiedInk platform and our plans, please
                         visit our Overview, read through the FAQs, or just reach out by clicking the blue
