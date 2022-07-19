@@ -51,6 +51,7 @@ const Ar: React.FC<Props> = ({
     if (router) {
       if (parseInt(router.query.ar_id! as string) > 500 && parseInt(router.query.ar_id! as string) <= 650) {
         setShowInvite(true)
+        setViewInvite(true)
       }
     }
   }, [router])
@@ -85,7 +86,7 @@ const Ar: React.FC<Props> = ({
       <ARViewer nft_id={nft_id} image_link={imageLink} video_link={videoLink} width={width} />
 
       {
-        (nftId && nftId != nft_id && nft_id === 332) ?
+        (nftId && nftId != nft_id && (nft_id === 332 || nft_id === 763)) ?
           (
             <Button onClick={associateNFT}
 
@@ -118,41 +119,40 @@ const Ar: React.FC<Props> = ({
           )
       }
       { showInvite && !viewInvite &&
-        <Box borderRadius={3} style={{zIndex:1000, left:"10px", top:"10px"}} position="fixed" onClick={()=>{setViewInvite(true)}} bgColor={"#1a202d"} p={"5"} w={60} textAlign="center"> 
+        <Box borderRadius={3} style={{zIndex:1000, top:"1%", left: "50%",
+          transform: 'translateX(-50%)',}} alignSelf={"center"} position="fixed" onClick={()=>{setViewInvite(true)}} bgColor={"#1a202d"} p={"5"} w={60} textAlign="center"> 
           <Heading size="md">Exclusive Invite</Heading>
         </Box>
       }
 
     { viewInvite &&
-        <VStack style={{zIndex:1001, left:"10%", top:"10%"}} position="fixed"  bgImage="linear-gradient(#1a202d,rgba(0, 0, 0, 0.4)), url('img/basketball-court.jpg')"
-        bgSize="cover" p={"5"} w={"80%"} h={"80%"} textAlign="center" overflowY={"scroll"}> 
+        <VStack style={{zIndex:1001, left:"5%", top:"5%"}} position="fixed"  bgImage="linear-gradient(#1a202d,rgba(0, 0, 0, 0.4)), url('img/basketball-court.jpg')"
+        bgSize="cover" p={"5"} w={"90%"} h={"90%"} textAlign="center" overflowY={"scroll"}> 
         
           <Icon as={CloseIcon} size="2x" onClick={()=>{setViewInvite(false)}} position="absolute" top="10px" right="10px" />
           <Heading mt={5}>Peach Jam Private NIL Event</Heading>
           <Text mt={6}>Hosted By</Text>
-          <Image src="/img/LogoWhiteLarge.png" width={"50%"} />
-          <Heading size="lg" alignSelf={"start"}  pt={2}>What</Heading>
+          <Image src="/img/LogoWhiteLarge.png" width={"45%"} />
+          <Heading size="lg" alignSelf={"start"}  pt={1}>What</Heading>
           <Text  textAlign={"start"}>
-            VerifiedInk hosts exclusive event for top players and their families to learn about and make money from their Name Image and Likeness.
+          VerifiedInk hosts exclusive event for top players and their families to learn about making money from their Name Image and Likeness.
+          </Text>
+
+          <Heading size="lg" alignSelf={"start"} pt={2}>When</Heading>
+          <Text alignSelf={"start"} textAlign={"start"}>Thursday, July 21 8:30 PM-11:00 PM 
           </Text>
 
           <Heading size="lg" alignSelf={"start"} pt={2}>Where</Heading>
           <Text textAlign={"start"}>
              Southbound Smokehouse, 1009 Center St, North Augusta, SC 29841
           </Text>
-          <Text textAlign={"start"} fontWeight="bold">
+          <Box textAlign={"start"} alignSelf={"start"} fontWeight="bold">
               <a href="https://goo.gl/maps/2peFESMcnu4HpwQb7">Google Maps Link</a>
-          </Text>
+          </Box>
 
-          <Heading size="lg" alignSelf={"start"} pt={2}>When</Heading>
-          <Text textAlign={"start"}>
-            8:30 PM-11:00 PM Thursday, July 21
-          </Text>
 
-          <Heading size="lg" alignSelf={"start"} pt={2}>Who</Heading>
-          <Text textAlign={"start"} pb={5}>
-            VerifiedInk and players and families of top 100 recruits of any recruiting class and other possible strategic partners
-          </Text>
+
+          <Box p={1}></Box>
 
           <Button p={5} bgColor="whiteAlpha.600"  onClick={()=>{setViewInvite(false)}}>Close Invite</Button>
           
@@ -170,6 +170,10 @@ export async function getServerSideProps(context: any) {
   const { ar_id } = context.query
   const { data, error } = await supabase.from(`ar_mapping`).select(`nft_id`).eq("ar_id", ar_id).maybeSingle()
   let nft_id = 332
+
+  if(ar_id > 500 && ar_id <= 650){
+    nft_id = 763
+  }
   if (data && data.nft_id) {
     nft_id = data.nft_id
   }
