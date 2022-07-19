@@ -339,17 +339,25 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
 
     useEffect(() => {
         if (auctionData) {
-            setMinIncrement(auctionData.min_increment);
+            try {
+                setMinIncrement(auctionData.min_increment);
 
-            // Look at highest current bid and take the min of that and the min bid
-            const highestBid = auctionData.active_bids[0].bid_amount;
-            const startingMinBid = Math.max(auctionData.min_bid, highestBid);
+                // Look at highest current bid and take the min of that and the min bid
+                const highestBid = auctionData.active_bids[0].bid_amount;
+                const startingMinBid = Math.max(auctionData.min_bid, highestBid);
 
-            setMinBidAmount(startingMinBid + auctionData.min_increment);
+                setMinBidAmount(startingMinBid + auctionData.min_increment);
 
 
-            if ((bidAmount || 0) < startingMinBid + auctionData.min_increment) {
-                setBidAmount(startingMinBid + auctionData.min_increment)
+                if ((bidAmount || 0) < startingMinBid + auctionData.min_increment) {
+                    setBidAmount(startingMinBid + auctionData.min_increment)
+                }
+
+            }
+            catch (err) {
+                console.log(err);
+                setMinBidAmount(auctionData.min_bid + auctionData.min_increment);
+
             }
             setAuctionLoading(false);
 
@@ -488,13 +496,13 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                             <Divider pt={2} />
                             <Heading pt={4} px={2} as="h3" alignSelf={"start"} size="lg">Buying Gives you a Chance to Win</Heading>
 
-                            <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
-                                <Image src="/img/tap.svg" alt="tap" position={"absolute"} w="50px" left={["60%","55%","unset"]}/>
+                            <Stack textAlign={"start"} py={6} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
+                                <Image src="/img/tap.svg" alt="tap" position={"absolute"} w="50px" left={["60%", "55%", "unset"]} />
                                 <StaticCard nft_id={1160} width={150} />
-                                <Box p={4}>
-                                    <Heading size="md">Legendary - 15 Total</Heading>
+                                <Box px={4}>
+                                    <Heading size="md" pb={3}>Legendary - 15 Total</Heading>
                                     <Text color="gray.400">Marked with a gold border, glow, name and signature with the Legendary Naas Image.</Text>
-                                    <Text fontWeight="900" fontSize="lg">Utility</Text>
+                                    <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
                                     <li>Follow by Naas on Instgram/Twitter</li>
                                     <li>Shoutout by Naas on Instagram/Twitter</li>
                                     <li>1 in 15 chance to win a Launch Edition</li>
@@ -502,10 +510,10 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                     <li>NFT Personally Designed by Naas</li>
                                 </Box>
                             </Stack>
-                            <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
+                            <Stack textAlign={"start"} py={6} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={1161} width={150} />
-                                <Box p={4}>
-                                    <Heading size="md">Rare - 40 Total</Heading>
+                                <Box px={4}>
+                                    <Heading size="md" pb={3}>Rare - 40 Total</Heading>
                                     <Text color="gray.400">Marked with a silver border, silver name and the Rare Naas Image.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
                                     <li>Follow by Naas on Instgram/Twitter</li>
@@ -513,10 +521,10 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                     <li>NFT Personally Designed by Naas</li>
                                 </Box>
                             </Stack>
-                            <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
+                            <Stack textAlign={"start"} py={6} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={1162} width={150} />
-                                <Box p={4}>
-                                    <Heading size="md">Common - 445 Total</Heading>
+                                <Box px={4}>
+                                    <Heading size="md" pb={3}>Common - 445 Total</Heading>
                                     <Text color="gray.400">Those that don't win a Rare or Legendary will receive a Common. Marked with Naas's Signature and the Common Naas Image.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
                                     <li>Physical AR card in the mail</li>
@@ -595,7 +603,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                     <Heading as="h2" pt={5} size="lg">Augmented Reality Physical Card</Heading>
                     <Text color="gray.300" p={2}>Each purchase entitles you to a free AR card shipped anywhere in the US</Text>
                     {/* <Image src={'/img/VerifiedInk.gif'} w={["200px", "200px", "300px"]} alt="AR Card" /> */}
-                    <video muted autoPlay loop src="/img/ar-card.mp4" width={300}></video>
+                    <video muted autoPlay playsInline loop src="/img/ar-card.mp4" width={300}></video>
 
                     {/* <Divider pt={5} maxW={["80%", "600px", "600px"]} />
                     <Heading as="h2" pt={5} size="lg">More About Naas</Heading> */}
