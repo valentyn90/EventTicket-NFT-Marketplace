@@ -452,7 +452,8 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                     {showBuyNow ?
                         <VStack maxW={600} p={2}>
                             <Heading>Extended Edition</Heading>
-                            <Text color="gray.400" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition NFTs. Each purchase will receive a Common, Rare or Legendary Card.</Text>
+                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">94% of Sales go directly to Naas</Text>
+                            <Text color="gray.300" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition NFTs. Each purchase will receive a Common, Rare or Legendary Card.</Text>
                             <HStack gridGap={10}>
                                 <HStack>
                                     <IconButton size="md" isDisabled={!decrementEnabled} isRound={true} aria-label="Decrement Quantity" icon={<MinusIcon />} onClick={() => setPurchaseQuantity(purchaseQuantity - 1)}></IconButton>
@@ -544,7 +545,8 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                         :
                         <VStack maxW={600} p={2}>
                             <Heading>Launch Edition</Heading>
-                            <Text color="gray.400" textAlign="left" maxW="400px" p={2}>
+                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">94% of Sales go directly to Naas</Text>
+                            <Text color="gray.300" textAlign="left" maxW="400px" p={2}>
                                 Bid to win the #1 / 10 Launch Edition NFT. Naas Cunningham's Ultimate Rookie NFT is the
                                 most unique collectible for a projected future NBA lottery pick. Sporting an animated action shot and unqiue utility.
                                 Bid to be the owner of the very first Legendary Launch Edition NFT.
@@ -611,8 +613,21 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                     {/* <Image src={'/img/VerifiedInk.gif'} w={["200px", "200px", "300px"]} alt="AR Card" /> */}
                     <video muted autoPlay playsInline loop src="/img/ar-card.mp4" width={300}></video>
 
-                    {/* <Divider pt={5} maxW={["80%", "600px", "600px"]} />
-                    <Heading as="h2" pt={5} size="lg">More About Naas</Heading> */}
+                    <Divider pt={5} maxW={["80%", "600px", "600px"]} />
+                    <Heading as="h2" pt={5} size="lg">More About Naas</Heading>
+                    <Text py={3} textAlign={"left"} maxW={["90%", "600px", "600px"]}>
+                    The 6’7” wing from West Orange NJ is rated the #1 recruit in the class of 2024. He has offers from Duke, 
+                    Kansas, UCLA, LSU, Auburn, UConn & more but signed with Overtime Elite so he has the option to go straight 
+                    to the NBA. He is the favorite to be the #1 pick in the 2025 NBA draft.  Invest in him now, and join him as 
+                    he follows in the footsteps of former top recruits that have been #1 picks like Lebron James, Kyrie Irving, 
+                    Anthony Davis, Ben Simmons, and Cade Cunningham.
+                    </Text>
+                    <HStack>
+                        <Link href="/naas-blog">
+                            <Button>Learn More</Button>
+                        </Link>
+                    </HStack>
+
 
                     <Divider pt={2} maxW={["80%", "600px", "600px"]} />
                     <Heading pt={4} as="h3" size="lg">More About VerifiedInk</Heading>
