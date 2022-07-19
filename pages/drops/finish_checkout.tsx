@@ -11,22 +11,30 @@ import {
   Text,
   useColorModeValue,
   VStack,
-  Image
+  Image,
+  Divider
 } from "@chakra-ui/react";
-import { NextApiRequest, NextApiResponse } from "next";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
 import * as ga from "@/utils/ga";
 import mixpanel from 'mixpanel-browser';
+import { getUserDetailsByEmail } from "@/supabase/userDetails";
+import ShareButton from "@/components/Components/ShareButton";
 
-interface Props { }
+interface Props {
+  user_id?: string;
+}
 
-const SignIn: React.FC<Props> = () => {
+const SignIn: React.FC<Props> = ({ user_id }) => {
   const [loading, setLoading] = useState(false);
   const [emailLinkSent, setEmailLinkSent] = useState(false);
   const [email, setEmail] = useState("");
+
+  const [nfts, setNfts] = useState<number[]>([]);
+
 
   const router = useRouter();
 
@@ -52,6 +60,18 @@ const SignIn: React.FC<Props> = () => {
     }
 
   }, [router]);
+
+  useEffect(() => {
+    console.log("user_id", user_id);
+    // supabase.from('configurations:key=eq.naas_drop').on("UPDATE",
+    //     (payload) => {
+    //         console.log("naas_drop updated");
+    //         if (payload.new.value) {
+    //             setNfts([payload.new.value.max_purchase_quantity, payload.new.value.items_left]);
+    //         }
+    //     }
+    // ).subscribe()
+  }, []);
 
   useEffect(() => {
     if (email) {
@@ -104,9 +124,17 @@ const SignIn: React.FC<Props> = () => {
     >
       <Box maxW="lg" mx="auto" alignContent={"center"}>
         <Heading as="h1" textAlign="center" size="2xl" fontWeight="extrabold">
-          Success
+          Success!
         </Heading>
-        <Heading as="h2" p={2} textAlign="center" size="md">
+        <Text textAlign={"center"} py={3}>Share this Drop with your Friends!</Text>
+
+        <ShareButton 
+         share_text="I just picked up #1 in the class of '24 Naas Cunningham's debut NFT. Tap in to get one."
+         url={`https://verifiedink.us/drops/naas?utm_content=${email}`}
+        />
+
+        <Divider py={5}></Divider>
+        <Heading as="h2" py={5} textAlign="center" size="md">
           Sign-in below to view your Naas NFT!
         </Heading>
         <VStack>
@@ -161,11 +189,11 @@ const SignIn: React.FC<Props> = () => {
           Are you an athlete who has created or want to create your own
           VerifiedInk?{" "}
           <NextLink href="/athletes/signin">
-            <a>
+            
               <Text color="viBlue" display="inline-block">
                 Athlete Sign Up
               </Text>
-            </a>
+            
           </NextLink>
         </Text>
       </Box>
@@ -173,32 +201,30 @@ const SignIn: React.FC<Props> = () => {
   );
 };
 
-export async function getServerSideProps({
-  req,
-  res,
-}: {
-  req: NextApiRequest;
-  res: NextApiResponse;
-}) {
-  const cookies = new Cookies(req, res);
+export const getServerSideProps : GetServerSideProps = async (context) => {
+  const { nft_id, serial_no } = context.query as any;
 
+  const req = context.req
+  const res = context.res
+  const cookies = new Cookies(req, res);
 
 
   cookies.set("redirect-link", "/collection", {
     maxAge: 1000 * 60 * 60,
   });
 
+  if (context.query && context.query.email) {
+    const { data: userData, error: userError } = await getUserDetailsByEmail(context.query.email as string);
+    return {
+      props: {
+        user_id: userData?.user_id,
+      }
+    };
+  }
+  else {
+    return { props: { user_id: null } };
+  }
 
-  // const { user } = await supabase.auth.api.getUserByCookie(req);
-  // if (user) {
-  //   return {
-  //     redirect: {
-  //       destination: "/collection",
-  //       permanent: false,
-  //     },
-  //   };
-  // }
-  return { props: {} };
 }
 
 export default SignIn;

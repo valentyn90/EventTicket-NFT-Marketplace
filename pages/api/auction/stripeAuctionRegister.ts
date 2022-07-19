@@ -174,7 +174,7 @@ export default async function handler(
         return res.status(200).json({ sessionUrl: session.url });
       }
       else {
-
+        // Drop Bid
         const stripePrice = (bid_amount * 100).toFixed(0)
 
         console.log(stripePrice)
@@ -186,12 +186,15 @@ export default async function handler(
               price_data: {
                 currency: "usd",
                 product: "prod_M575ljKlnIi6N3",
-                unit_amount: stripePrice,
+                unit_amount: 10000, //stripePrice,
               },
               quantity: 1,
             },
           ],
           customer_email: email,
+          phone_number_collection: {
+            enabled: true,
+          },
           mode: "payment",
           success_url: `${req.headers.origin}/drops/finish_bid_checkout?session_id={CHECKOUT_SESSION_ID}&email=${email}&success=true&quantity=${1}&price=${bid_amount}`,
           cancel_url: `${req.headers.origin}/drops/naas?session_id={CHECKOUT_SESSION_ID}&canceled=true`,

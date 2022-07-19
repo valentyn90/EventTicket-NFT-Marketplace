@@ -17,7 +17,7 @@ export async function getServerSideProps(context: any) {
 
     return {
       redirect: {
-        destination: `/naas` + queryString,
+        destination: `/drops/naas` + queryString,
         permanent: false,
       },
     }

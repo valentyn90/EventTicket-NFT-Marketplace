@@ -195,6 +195,20 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
 
 export async function getServerSideProps(context: any) {
 
+
+
+    const params = context.query 
+    let queryString = "?" + Object.keys(params).map(key => key + '=' + params[key]).join('&');
+    
+    (queryString === "?") ? queryString = "?utm_content=naas" : null;
+
+    return {
+      redirect: {
+        destination: `/drops/naas` + queryString,
+        permanent: false,
+      },
+    }
+
     const preview_url = await getScreenshot(763)
     return {
         props: {

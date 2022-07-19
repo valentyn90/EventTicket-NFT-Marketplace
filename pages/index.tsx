@@ -502,7 +502,7 @@ const Home = () => {
             <VStack pr={["unset","4","6"]}>
               <Box ml="1" mb={3} w="fit-content" boxShadow="0 0 100px red" paddingInline={3} paddingBlock={1} bg="red" transform={"auto"} skewX={"-5"} skewY={"-5"}><Heading fontWeight={"bold"} fontSize={"md"}>#1 IS COMING</Heading></Box>
               <Heading fontSize="xl" pb={2} textAlign={"center"}>Naas Cunningham NFTs dropping July 19th</Heading>
-              <Button isLoading={submitting} onClick={()=>{setSubmitting(true); window.location.assign("/naas")}}>Tap to Learn More</Button>
+              <Button isLoading={submitting} onClick={()=>{setSubmitting(true); window.location.assign("/drops/naas")}}>Tap to Learn More</Button>
             </VStack>
             <StaticCard nft_id={1160} width={100}></StaticCard>
           </HStack>
