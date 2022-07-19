@@ -618,9 +618,8 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                     <Text py={3} textAlign={"left"} maxW={["90%", "600px", "600px"]}>
                     The 6’7” wing from West Orange NJ is rated the #1 recruit in the class of 2024. He has offers from Duke, 
                     Kansas, UCLA, LSU, Auburn, UConn & more but signed with Overtime Elite so he has the option to go straight 
-                    to the NBA. He is the favorite to be the #1 pick in the 2025 NBA draft.  Invest in him now, and join him as 
-                    he follows in the footsteps of former top recruits that have been #1 picks like Lebron James, Kyrie Irving, 
-                    Anthony Davis, Ben Simmons, and Cade Cunningham.
+                    to the NBA. He is the favorite to be the #1 pick in the 2025 NBA draft, and would join a class of other top 
+                    high-school recruits like Lebron James, Kyrie Irving, Anthony Davis, Zion Williamson, and Cade Cunningham.
                     </Text>
                     <HStack>
                         <Link href="/naas-blog">
