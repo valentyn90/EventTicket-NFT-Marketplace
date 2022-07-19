@@ -97,10 +97,12 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
 
     useEffect(() => {
         if (showBuyNow) {
-            var CE_SNAPSHOT_NAME = "Naas Drop";
+            //@ts-ignore
+            window.CE_SNAPSHOT_NAME = "Naas Drop";
         }
         else {
-            var CE_SNAPSHOT_NAME = "Naas Auction";
+            //@ts-ignore
+            window.CE_SNAPSHOT_NAME = "Naas Auction";
         }
 
     }, [showBuyNow]);
