@@ -2,11 +2,12 @@ import ARViewer from "@/components/Components/arviewer"
 import { getNftById, getScreenshot, supabase } from "@/supabase/supabase-client"
 import Head from "next/head"
 import sizeOf from "image-size"
-import { Button, VStack } from "@chakra-ui/react";
+import { Box, Button, Heading, Icon, Image, Text, VStack } from "@chakra-ui/react";
 import userStore from "@/mobx/UserStore";
 import router, { useRouter } from "next/router";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { CloseIcon } from "@chakra-ui/icons";
 
 
 interface Props {
@@ -25,6 +26,8 @@ const Ar: React.FC<Props> = ({
 
   const [nftId, setNftId] = useState<number | undefined>(undefined)
   const [publicUrl, setPublicUrl] = useState<string>("")
+  const [showInvite, setShowInvite] = useState<boolean>(false)
+  const [viewInvite, setViewInvite] = useState<boolean>(false)
   const router = useRouter()
 
   const fetchScreenshot = useCallback(async () => {
@@ -43,6 +46,14 @@ const Ar: React.FC<Props> = ({
   useEffect(() => {
     fetchScreenshot()
   }, [nftId])
+
+  useEffect(() => {
+    if (router) {
+      if (parseInt(router.query.ar_id! as string) > 500 && parseInt(router.query.ar_id! as string) <= 650) {
+        setShowInvite(true)
+      }
+    }
+  }, [router])
 
   async function associateNFT() {
     const arId = router.query.ar_id
@@ -100,11 +111,53 @@ const Ar: React.FC<Props> = ({
               style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px" }}
             >
               <VStack spacing={0}>
-                {!nftId && <div style={{fontSize:"18px", fontFamily:"Lato"}}>Make your</div>}
+                {!nftId && <div style={{ fontSize: "18px", fontFamily: "Lato" }}>Make your</div>}
                 <div style={{ marginBottom: "5px" }}><img width="120px" src="/img/wordmark.svg" /></div>
               </VStack>
             </Button>
           )
+      }
+      { showInvite && !viewInvite &&
+        <Box borderRadius={3} style={{zIndex:1000, left:"10px", top:"10px"}} position="fixed" onClick={()=>{setViewInvite(true)}} bgColor={"#1a202d"} p={"5"} w={60} textAlign="center"> 
+          <Heading size="md">Exclusive Invite</Heading>
+        </Box>
+      }
+
+    { viewInvite &&
+        <VStack style={{zIndex:1001, left:"10%", top:"10%"}} position="fixed"  bgImage="linear-gradient(#1a202d,rgba(0, 0, 0, 0.4)), url('img/basketball-court.jpg')"
+        bgSize="cover" p={"5"} w={"80%"} h={"80%"} textAlign="center" overflowY={"scroll"}> 
+        
+          <Icon as={CloseIcon} size="2x" onClick={()=>{setViewInvite(false)}} position="absolute" top="10px" right="10px" />
+          <Heading mt={5}>Peach Jam Private NIL Event</Heading>
+          <Text mt={6}>Hosted By</Text>
+          <Image src="/img/LogoWhiteLarge.png" width={"50%"} />
+          <Heading size="lg" alignSelf={"start"}  pt={2}>What</Heading>
+          <Text  textAlign={"start"}>
+            VerifiedInk hosts exclusive event for top players and their families to learn about and make money from their Name Image and Likeness.
+          </Text>
+
+          <Heading size="lg" alignSelf={"start"} pt={2}>Where</Heading>
+          <Text textAlign={"start"}>
+             Southbound Smokehouse, 1009 Center St, North Augusta, SC 29841
+          </Text>
+          <Text textAlign={"start"} fontWeight="bold">
+              <a href="https://goo.gl/maps/2peFESMcnu4HpwQb7">Google Maps Link</a>
+          </Text>
+
+          <Heading size="lg" alignSelf={"start"} pt={2}>When</Heading>
+          <Text textAlign={"start"}>
+            8:30 PM-11:00 PM Thursday, July 21
+          </Text>
+
+          <Heading size="lg" alignSelf={"start"} pt={2}>Who</Heading>
+          <Text textAlign={"start"} pb={5}>
+            VerifiedInk and players and families of top 100 recruits of any recruiting class and other possible strategic partners
+          </Text>
+
+          <Button p={5} bgColor="whiteAlpha.600"  onClick={()=>{setViewInvite(false)}}>Close Invite</Button>
+          
+
+        </VStack>
       }
 
     </>

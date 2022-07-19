@@ -115,6 +115,8 @@ const handler = async (req: any, res: any) => {
                 items_left: items_left,
                 current_price: configData.value.current_price,
                 max_purchase_quantity: configData.value.max_purchase_quantity,
+                sale_open: configData.value.sale_open,
+                presale_open: configData.value.presale_open,
               }
 
               await supabase

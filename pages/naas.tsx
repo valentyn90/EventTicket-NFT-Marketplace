@@ -164,7 +164,7 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                             {!registered ?
                                 <>
                                     <Heading textAlign={"center"}>Be the first to know</Heading>
-                                    <Text textAlign={"center"} color="gray">Sign up for alerts for when the sale goes live, and don't miss out on a chance to win alongside the next basketball superstar.</Text>
+                                    <Text textAlign={"center"} color="gray">Sign up for early access at the lowest price, and don't miss out on a chance to win alongside the next basketball superstar.</Text>
                                     <Input type='tel' border="0" value={email} onChange={validateEmailForm} backgroundColor="#0d162b" placeholder="Your phone number" _placeholder={{ color: "gray" }} />
                                     <Button onClick={handleEmail} disabled={!validEmail} isLoading={loading} p="5" backgroundColor={"#0067ff"}>SUBMIT</Button>
                                 </>

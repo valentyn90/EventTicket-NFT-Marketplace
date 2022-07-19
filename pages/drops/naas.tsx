@@ -12,17 +12,19 @@ import Link from "next/link";
 import StaticCard from "@/components/NftCard/StaticCard";
 import * as ga from "@/utils/ga";
 import mixpanel from 'mixpanel-browser';
+import { useRouter } from "next/router";
 
 
 interface Props {
     orig_price: number,
     orig_next_price: number,
     items_left: number,
-    max_purchase_quantity: number
-
+    max_purchase_quantity: number,
+    sale_open: boolean,
+    presale_open: boolean,
 }
 
-const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max_purchase_quantity }) => {
+const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max_purchase_quantity, sale_open, presale_open }) => {
 
 
     // Show the card
@@ -34,6 +36,9 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
     const [showBuyNow, setShowBuyNow] = useState(true);
     const toast = useToast();
     const [submitting, setSubmitting] = useState(false);
+    const [saleOpen, setSaleOpen] = useState(sale_open);
+    const [presaleOpen, setPresaleOpen] = useState(presale_open);
+    const [wlAccess, setWlAccess] = useState(false);
 
     const [purchaseQuantity, setPurchaseQuantity] = useState(1);
     const [incrementEnabled, setIncrementEnabled] = useState(true);
@@ -53,11 +58,20 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
     const [showBidEmail, setShowBidEmail] = useState(false);
     const [bidAmount, setBidAmount] = useState<number>();
     const [minBidAmount, setMinBidAmount] = useState(0);
-    const [minBid, setMinBid] = useState(0);
     const [minIncrement, setMinIncrement] = useState(0);
     const [auctionLoading, setAuctionLoading] = useState(true);
 
     const ref = useRef<HTMLInputElement>(null);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (router) {
+            if (router.query.wl) {
+                presaleOpen ? setWlAccess(true) : null
+            }
+        }
+
+    }, [router, presaleOpen])
 
     useEffect(() => {
         if (maxQuantity === 0) {
@@ -100,6 +114,8 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                     setPrice(payload.new.value.current_price);
                     setItemsLeft(payload.new.value.items_left);
                     setNextPrice(payload.new.value.next_price);
+                    setSaleOpen(payload.new.value.sale_open);
+                    setPresaleOpen(payload.new.value.presale_open);
                 }
             }
         ).subscribe()
@@ -324,7 +340,6 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
     useEffect(() => {
         if (auctionData) {
             setMinIncrement(auctionData.min_increment);
-            setMinBid(auctionData.min_bid);
 
             // Look at highest current bid and take the min of that and the min bid
             const highestBid = auctionData.active_bids[0].bid_amount;
@@ -415,7 +430,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                         <Box flex="1" opacity={!showBuyNow ? "100%" : "20%"} onClick={() => { setShowBuyNow(false) }}>
                             <Image width="175px" src="/img/naas/naas-legendary-launch.png" />
                             <Heading as="h2">Bid</Heading>
-                            <Text>$500</Text>
+                            <Text>${minBidAmount}</Text>
                             <Text color="gray">Launch Edition 1/10</Text>
                         </Box>
 
@@ -423,7 +438,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                     {showBuyNow ?
                         <VStack maxW={600} p={2}>
                             <Heading>Extended Edition</Heading>
-                            <Text color="gray.400" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition NFTs. Each purchase has a chance to pull a Rare or Legendary Card.</Text>
+                            <Text color="gray.400" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition NFTs. Each purchase will receive a Common, Rare or Legendary Card.</Text>
                             <HStack gridGap={10}>
                                 <HStack>
                                     <IconButton size="md" isDisabled={!decrementEnabled} isRound={true} aria-label="Decrement Quantity" icon={<MinusIcon />} onClick={() => setPurchaseQuantity(purchaseQuantity - 1)}></IconButton>
@@ -436,13 +451,22 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                 <Text fontSize="5xl" pb="0">${price}</Text>
                             </HStack>
                             <div></div>
-                            {maxQuantity > 0 &&
+
+                            {!saleOpen && !wlAccess &&
+                                <Button disabled={true} size="lg" fontSize={"xl"} minW="200px" background="blue">
+                                    Public Sale Opens 7:00 PM EST
+                                </Button>
+
+                            }
+
+                            {(saleOpen || wlAccess) && maxQuantity > 0 &&
+
                                 <Button disabled={purchaseQuantity < 1 || showEmail} onClick={() => { setShowEmail(true) }} size="lg" fontSize={"xl"} minW="200px" background="blue">
                                     Buy &nbsp;&nbsp;${price * purchaseQuantity}
                                 </Button>
                             }
                             {maxQuantity > 0 ?
-                                <Text fontStyle="italic" color="red.500">
+                                (saleOpen || wlAccess) && <Text fontStyle="italic" color="red.500">
                                     Only {itemsLeft} left before price increases to ${nextPrice}
                                 </Text>
                                 :
@@ -462,14 +486,11 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                 null
                             }
                             <Divider pt={2} />
-                            <Heading pt={4} px={2} as="h3" alignSelf={"start"} size="lg">NFTs In This Drop</Heading>
-                            <Text py={3} px={2} textAlign={"left"}>
-                                #1 recruit Naas Cunningham is releasing his first NFT with VerifiedInk. Below we've outlined the different NFTs that are available in this drop.
-                                With each purchase you will randomly receive one of these NFTs from the Extended Edition Set.
-                            </Text>
+                            <Heading pt={4} px={2} as="h3" alignSelf={"start"} size="lg">Buying Gives you a Chance to Win</Heading>
+
                             <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={1160} width={150} />
-                                <Box p={2}>
+                                <Box p={4}>
                                     <Heading size="md">Legendary - 15 Total</Heading>
                                     <Text color="gray.400">Marked with a gold border, glow, name and signature with the Legendary Naas Image.</Text>
                                     <Text fontWeight="900" fontSize="lg">Utility</Text>
@@ -482,7 +503,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                             </Stack>
                             <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={1161} width={150} />
-                                <Box>
+                                <Box p={4}>
                                     <Heading size="md">Rare - 40 Total</Heading>
                                     <Text color="gray.400">Marked with a silver border, silver name and the Rare Naas Image.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
@@ -493,9 +514,9 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                             </Stack>
                             <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={1162} width={150} />
-                                <Box>
+                                <Box p={4}>
                                     <Heading size="md">Common - 445 Total</Heading>
-                                    <Text color="gray.400">Marked with Naas's Signature and the Common Naas Image.</Text>
+                                    <Text color="gray.400">Those that don't win a Rare or Legendary will receive a Common. Marked with Naas's Signature and the Common Naas Image.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
                                     <li>Physical AR card in the mail</li>
                                     <li>NFT Personally Designed by Naas</li>
@@ -510,7 +531,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                             <Heading>Launch Edition</Heading>
                             <Text color="gray.400" textAlign="center" maxW="400px">
                                 Bid to win the #1 / 10 Launch Edition NFT. Naas Cunningham's Ultimate Rookie NFT is the
-                                most unique collectible for a sure-fire future NBA lottery pick. Sporting an animated action shot and unqiue utility.
+                                most unique collectible for a projected future NBA lottery pick. Sporting an animated action shot and unqiue utility.
                                 Bid to be the owner of the very first Legendary Launch Edition NFT.
                             </Text>
                             <Skeleton isLoaded={!auctionLoading}>
@@ -527,9 +548,17 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                         </Slider>
 
                                     </Stack>
-                                    <Button backgroundColor={"#0067ff"} disabled={invalidInput || !bidAmount || showBidEmail} onClick={() => setShowBidEmail(true)}>Bid</Button>
+                                    {!(!saleOpen && !wlAccess) &&
+                                        <Button backgroundColor={"#0067ff"} disabled={invalidInput || !bidAmount || showBidEmail} onClick={() => setShowBidEmail(true)}>Bid</Button>
+                                    }
                                 </HStack>
+
                             </Skeleton>
+                            {(!saleOpen && !wlAccess) &&
+                                <Button disabled={true} size="lg" fontSize={"xl"} minW="200px" background="blue">
+                                    Bidding Opens 7:00 PM EST
+                                </Button>
+                            }
                             {showBidEmail ?
                                 <>
                                     <Input autoFocus isDisabled={submitting} placeholder="Email@gmail.com" value={email} disabled={false}
@@ -544,18 +573,17 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                 <Box flex={1}>
                                     <Card nft_id={763} readOnly={true} nft_width={350} />
                                 </Box>
-                                <VStack  flex={1} minW={[200, 400, 400]}>
+                                <VStack flex={1} minW={[200, 400, 400]}>
                                     <Heading size="lg">Legendary - 10 Total</Heading>
                                     <Text fontWeight="900" fontSize="lg">Utility</Text>
                                     <Box textAlign={"left"}>
-                                    <li>Exclusive early access to future Naas drops</li>
-                                    <li>Free Extended Edition NFT</li>
-                                    <li>Free NFTs from Future Editions</li>
-                                    <li>Follow from Naas on Twitter/Instagram</li>
-                                    <li>Shout out from Naas on Twitter/Instagram</li>
-                                    <li>1 in 15 chance to win a Launch Edition</li>
-                                    <li>Physical AR card in the mail</li>
-                                    <li>NFT Personally Designed by Naas</li>
+                                        <li>Exclusive early access to future Naas drops</li>
+                                        <li>Free Extended Edition NFT</li>
+                                        <li>Free NFTs from Future Editions</li>
+                                        <li>Follow from Naas on Twitter/Instagram</li>
+                                        <li>Shout out from Naas on Twitter/Instagram</li>
+                                        <li>Physical AR card in the mail</li>
+                                        <li>NFT Personally Designed by Naas</li>
                                     </Box>
                                 </VStack>
                             </Stack>
@@ -565,10 +593,11 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                     <Divider pt={5} maxW={["80%", "600px", "600px"]} />
                     <Heading as="h2" pt={5} size="lg">Augmented Reality Physical Card</Heading>
                     <Text color="gray.300" p={2}>Each purchase entitles you to a free AR card shipped anywhere in the US</Text>
-                    <Image src={'/img/VerifiedInk.gif'} w={["200px","200px","400px"]} alt="AR Card" />
+                    {/* <Image src={'/img/VerifiedInk.gif'} w={["200px", "200px", "300px"]} alt="AR Card" /> */}
+                    <video muted autoPlay loop src="/img/ar-card.mp4" width={300}></video>
 
-                    <Divider pt={5} maxW={["80%", "600px", "600px"]} />
-                    <Heading as="h2" pt={5} size="lg">More About Naas</Heading>
+                    {/* <Divider pt={5} maxW={["80%", "600px", "600px"]} />
+                    <Heading as="h2" pt={5} size="lg">More About Naas</Heading> */}
 
                     <Divider pt={2} maxW={["80%", "600px", "600px"]} />
                     <Heading pt={4} as="h3" size="lg">More About VerifiedInk</Heading>
@@ -611,6 +640,8 @@ export async function getServerSideProps(context: any) {
             orig_next_price: priceData.value.next_price,
             items_left: priceData.value.items_left,
             max_purchase_quantity: priceData.value.max_purchase_quantity,
+            sale_open: priceData.value.sale_open,
+            presale_open: priceData.value.presale_open,
         }
     };
 }
