@@ -419,6 +419,10 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                 key="twitter-image"
                 content={`https://verifiedink.us/api/meta/showTwitterPreview/1160`}
             />
+            <meta property="og:video" content="https://verifiedink.us/img/naas/naas-card.mp4" />
+            <meta property="og:video:type" content="video/mp4" />
+            <meta property="og:video:width" content="720" />
+            <meta property="og:video:height" content="720" />
         </Head>
     )
 
