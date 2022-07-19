@@ -144,7 +144,7 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                         // bgSize="cover" 763
                         >
                        
-                        <Card readOnly={true} nft_id={1160} reverse={reverse}></Card>
+                       <StaticCard nft_id={1160} reverse={reverse}></StaticCard>
                     </Box>
                     <VStack mt={2} p={4} margin="auto" maxW="488px" align="center">
 
@@ -156,7 +156,7 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
                         <Box align="center" display={["block", "block", "none"]} pb="5"
                             
                         >
-                            <Card readOnly={true} nft_id={1160} reverse={reverse}></Card>
+                            <StaticCard nft_id={1160} reverse={reverse}></StaticCard>
                         </Box>
                         {/* <Box h={["50px","50px","100px"]}></Box> */}
                         <VStack  as="fieldset" backdropFilter="blur(5px)" border="1px" borderRadius="md" borderColor="#71c3ff73" p="3">

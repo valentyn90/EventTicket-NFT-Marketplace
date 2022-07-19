@@ -489,6 +489,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                             <Heading pt={4} px={2} as="h3" alignSelf={"start"} size="lg">Buying Gives you a Chance to Win</Heading>
 
                             <Stack textAlign={"start"} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
+                                <Image src="/img/tap.svg" alt="tap" position={"absolute"} w="50px" left={["60%","55%","unset"]}/>
                                 <StaticCard nft_id={1160} width={150} />
                                 <Box p={4}>
                                     <Heading size="md">Legendary - 15 Total</Heading>
@@ -529,7 +530,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                         :
                         <VStack maxW={600} p={2}>
                             <Heading>Launch Edition</Heading>
-                            <Text color="gray.400" textAlign="center" maxW="400px">
+                            <Text color="gray.400" textAlign="left" maxW="400px" p={2}>
                                 Bid to win the #1 / 10 Launch Edition NFT. Naas Cunningham's Ultimate Rookie NFT is the
                                 most unique collectible for a projected future NBA lottery pick. Sporting an animated action shot and unqiue utility.
                                 Bid to be the owner of the very first Legendary Launch Edition NFT.
