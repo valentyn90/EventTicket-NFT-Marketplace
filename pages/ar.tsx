@@ -49,7 +49,7 @@ const Ar: React.FC<Props> = ({
 
   useEffect(() => {
     if (router) {
-      if (parseInt(router.query.ar_id! as string) > 500 && parseInt(router.query.ar_id! as string) <= 650) {
+      if (parseInt(router.query.ar_id! as string) > 500 && parseInt(router.query.ar_id! as string) <= 900) {
         setShowInvite(true)
         setViewInvite(true)
       }
@@ -171,7 +171,7 @@ export async function getServerSideProps(context: any) {
   const { data, error } = await supabase.from(`ar_mapping`).select(`nft_id`).eq("ar_id", ar_id).maybeSingle()
   let nft_id = 332
 
-  if(ar_id > 500 && ar_id <= 650){
+  if(ar_id > 500 && ar_id <= 900){
     nft_id = 763
   }
   if (data && data.nft_id) {
