@@ -316,15 +316,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     maxAge: 1000 * 60 * 60,
   });
 
-  const { user } = await supabase.auth.api.getUserByCookie(req);
-  if (user) {
-    return {
-      redirect: {
-        destination: "/collection",
-        permanent: false,
-      },
-    };
-  }
+  // const { user } = await supabase.auth.api.getUserByCookie(req);
+  // if (user) {
+  //   return {
+  //     redirect: {
+  //       destination: "/collection",
+  //       permanent: false,
+  //     },
+  //   };
+  // }
 
 
   if (context.query && context.query.email) {

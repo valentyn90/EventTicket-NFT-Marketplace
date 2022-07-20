@@ -656,10 +656,6 @@ export default Auction;
 export async function getServerSideProps(context: any) {
     const cookies = new Cookies(context.req, context.res);
 
-    cookies.set("redirect-link", `drops/naas`, {
-        maxAge: 1000 * 60 * 60,
-    });
-
     const { data: priceData, error: priceError } = await supabase.from('configurations').select('value').eq('key', 'naas_drop').maybeSingle()
 
 
