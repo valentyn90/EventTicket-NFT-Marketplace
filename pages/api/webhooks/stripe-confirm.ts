@@ -107,12 +107,20 @@ const handler = async (req: any, res: any) => {
               .maybeSingle()
 
              if(configData){
-              const items_left = Math.max(configData.value.items_left - data.quantity,0)
+              let items_left = Math.max(configData.value.items_left - data.quantity,0)
+              let next_price = configData.value.next_price
+              let current_price = configData.value.current_price
+
+              if (items_left == 0) {
+                items_left = 97
+                current_price = next_price
+                next_price = current_price + 15
+              }
 
               const new_values = {
-                next_price: configData.value.next_price,
+                next_price: next_price,
                 items_left: items_left,
-                current_price: configData.value.current_price,
+                current_price: current_price,
                 max_purchase_quantity: configData.value.max_purchase_quantity,
                 sale_open: configData.value.sale_open,
                 presale_open: configData.value.presale_open,
