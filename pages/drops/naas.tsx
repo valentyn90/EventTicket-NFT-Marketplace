@@ -403,11 +403,11 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
 
     const meta = (
         <Head>
-            <title>#1 Naas Cunningham dropping his first NFT on July 19th</title>
+            <title>#1 Naas Cunningham dropping his first NFT on VerifiedInk</title>
             <meta
                 property="og:title"
                 key="title"
-                content={`#1 Naas Cunningham dropping his first NFT on July 19th`}
+                content={`#1 Naas Cunningham dropping his first NFT on VerifiedInk`}
             />
             <meta
                 property="og:image"

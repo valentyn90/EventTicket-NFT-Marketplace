@@ -107,11 +107,11 @@ const Naas: React.FC<Props> = ({ publicUrl }) => {
 
     const meta = (
         <Head>
-            <title>#1 Naas Cunningham dropping his first NFT on July 19th</title>
+            <title>#1 Naas Cunningham dropping his first NFT on VerifiedInk</title>
             <meta
                 property="og:title"
                 key="title"
-                content={`#1 Naas Cunningham dropping his first NFT on July 19th`}
+                content={`#1 Naas Cunningham dropping his first NFT on VerifiedInk`}
             />
             <meta
                 property="og:image"
