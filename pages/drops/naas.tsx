@@ -481,9 +481,15 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                                 </Button>
                             }
                             {maxQuantity > 0 ?
-                                (saleOpen || wlAccess) && <Text fontStyle="italic" color="red.500">
+                                (saleOpen || wlAccess) && 
+                                <Box>  
+                                <HStack justifyContent={"center"}><Text textDecoration={"line-through"} color="gray.500">$25</Text>
+                                <Text color="gray.500">SOLD OUT</Text>
+                                </HStack>
+                                <Text fontStyle="italic" color="red.500">
                                     Only {itemsLeft} left before price increases to ${nextPrice}
                                 </Text>
+                                </Box> 
                                 :
                                 <Box bgColor="blue.200" p={4} borderRadius={3}>
 

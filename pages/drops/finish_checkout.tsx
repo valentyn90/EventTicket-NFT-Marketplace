@@ -238,11 +238,8 @@ const SignIn: React.FC<Props> = ({ user_id, pending_assignment }) => {
 
         <Divider py={5}></Divider>
         <Heading as="h2" py={5} textAlign="center" size="md">
-          Sign-in below to access your Account!
+          Sign-in below to View your Collection!
         </Heading>
-        <VStack>
-          <Image src="/img/naas/naas-3.png" w="300px"></Image>
-        </VStack>
 
         <Text pt={6} textAlign="center" w={["100%", "100%", "75%"]} m="0 auto">
           VerifiedInk uses “magic links” for you to access your Collector
