@@ -49,7 +49,7 @@ const Ar: React.FC<Props> = ({
 
   useEffect(() => {
     if (router) {
-      if (parseInt(router.query.ar_id! as string) > 500 && parseInt(router.query.ar_id! as string) <= 900) {
+      if (parseInt(router.query.ar_id! as string) > 500 && parseInt(router.query.ar_id! as string) <= 1000) {
         setShowInvite(true)
         setViewInvite(true)
       }
@@ -103,7 +103,7 @@ const Ar: React.FC<Props> = ({
           (
             <Button
               onClick={() => {
-                window.location.assign("/athletes?referralCode=agmfpKV&utm_source=physical_card");
+                window.location.assign("/athletes?referralCode=agmfpKV&utm_content=physical_card");
               }
               }
               variant={"solid"}
@@ -123,6 +123,11 @@ const Ar: React.FC<Props> = ({
           transform: 'translateX(-50%)',}} alignSelf={"center"} position="fixed" onClick={()=>{setViewInvite(true)}} bgColor={"#1a202d"} p={"5"} w={60} textAlign="center"> 
           <Heading size="md">Exclusive Invite</Heading>
         </Box>
+      }
+      { showInvite &&
+                <Box borderRadius={3} style={{zIndex:1000, bottom:"10px", right: "10px"}} alignSelf={"center"} position="fixed" onClick={()=>{window.location.assign("/drops/naas?utm_content=physical_card");}} bgColor={"#1a202d"} p={"5"} w={40} textAlign="center"> 
+                <Heading size="md">Buy Naas's NFT</Heading>
+              </Box>
       }
 
     { viewInvite &&
@@ -171,7 +176,7 @@ export async function getServerSideProps(context: any) {
   const { data, error } = await supabase.from(`ar_mapping`).select(`nft_id`).eq("ar_id", ar_id).maybeSingle()
   let nft_id = 332
 
-  if(ar_id > 500 && ar_id <= 900){
+  if(ar_id > 500 && ar_id <= 1000){
     nft_id = 763
   }
   if (data && data.nft_id) {
