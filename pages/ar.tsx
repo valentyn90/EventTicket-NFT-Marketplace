@@ -28,6 +28,7 @@ const Ar: React.FC<Props> = ({
   const [publicUrl, setPublicUrl] = useState<string>("")
   const [showInvite, setShowInvite] = useState<boolean>(false)
   const [viewInvite, setViewInvite] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const router = useRouter()
 
   const fetchScreenshot = useCallback(async () => {
@@ -125,9 +126,9 @@ const Ar: React.FC<Props> = ({
         </Box>
       }
       { showInvite &&
-                <Box borderRadius={3} style={{zIndex:1000, bottom:"10px", right: "10px"}} alignSelf={"center"} position="fixed" onClick={()=>{window.location.assign("/drops/naas?utm_content=physical_card");}} bgColor={"#1a202d"} p={"5"} w={40} textAlign="center"> 
+              <Button borderRadius={3} style={{zIndex:1000, bottom:"10px", right: "10px"}} isLoading={loading} alignSelf={"center"} position="fixed" onClick={()=>{setLoading(true); window.location.assign("/drops/naas?utm_content=physical_card");}} bgColor={"#1a202d"} p={"4"} w={40} textAlign="center"> 
                 <Heading size="md">Buy Naas's NFT</Heading>
-              </Box>
+              </Button>
       }
 
     { viewInvite &&

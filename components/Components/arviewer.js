@@ -79,6 +79,11 @@ export default class ARViewer extends React.Component {
                             <a-entity obj-model="obj: #mask;" rotation="0 -90 0" position="0 0 0.001" cloak></a-entity>
                             <a-image id="play_image" width="0.2" height="0.2" position="0 0.05 0.01" src="ar/images/play.png" />
                         </a-entity>
+                        <a-entity mindar-image-target="targetIndex: 2">
+                            <a-video src="#card-video" autoPlay webkit-playsinline="true" muted playsInline
+                                loop={true} width={this.props.width} height="1" position="0 0 0"></a-video>
+                            <a-entity obj-model="obj: #mask;" rotation="0 -90 0" position="0 0 0.001" cloak></a-entity>
+                        </a-entity>
                     </a-scene>
                 }
             </>
