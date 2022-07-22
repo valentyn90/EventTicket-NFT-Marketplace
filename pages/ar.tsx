@@ -119,19 +119,13 @@ const Ar: React.FC<Props> = ({
             </Button>
           )
       }
-      { showInvite && !viewInvite &&
-        <Box borderRadius={3} style={{zIndex:1000, top:"1%", left: "50%",
-          transform: 'translateX(-50%)',}} alignSelf={"center"} position="fixed" onClick={()=>{setViewInvite(true)}} bgColor={"#1a202d"} p={"5"} w={60} textAlign="center"> 
-          <Heading size="md">Exclusive Invite</Heading>
-        </Box>
-      }
       { showInvite &&
               <Button borderRadius={3} style={{zIndex:1000, bottom:"10px", right: "10px"}} isLoading={loading} alignSelf={"center"} position="fixed" onClick={()=>{setLoading(true); window.location.assign("/drops/naas?utm_content=physical_card");}} bgColor={"#1a202d"} p={"4"} w={40} textAlign="center"> 
-                <Heading size="md">Buy Naas's NFT</Heading>
+                <Heading size="md">Buy This NFT</Heading>
               </Button>
       }
 
-    { viewInvite &&
+    { false && viewInvite &&
         <VStack style={{zIndex:1001, left:"5%", top:"5%"}} position="fixed"  bgImage="linear-gradient(#1a202d,rgba(0, 0, 0, 0.4)), url('img/basketball-court.jpg')"
         bgSize="cover" p={"5"} w={"90%"} h={"90%"} textAlign="center" overflowY={"scroll"}> 
         
