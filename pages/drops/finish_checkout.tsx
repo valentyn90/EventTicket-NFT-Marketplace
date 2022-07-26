@@ -1,5 +1,6 @@
 import { DividerWithText } from "@/components/ui/DividerWithText";
 import { signIn, supabase } from "@/supabase/supabase-client";
+import { supabase as admin } from "@/supabase/supabase-admin";
 import Cookies from "cookies";
 import {
   Box,
@@ -14,12 +15,14 @@ import {
   Divider,
   Skeleton,
   Spacer,
-  Center
+  Center,
+  Tooltip,
+  useToast
 } from "@chakra-ui/react";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
 import * as ga from "@/utils/ga";
 import mixpanel from 'mixpanel-browser';
@@ -29,16 +32,24 @@ import Card from "@/components/NftCard/Card";
 import { ElementaryStreamTypes } from "hls.js";
 import { useReward } from "react-rewards";
 import Head from "next/head";
+import { ShippingInformation } from "@/components/ui/ShippingInformation";
+import { EMPTY_OBJECT } from "mobx/dist/internal";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 
 interface Props {
   user_id?: string;
   pending_assignment?: boolean;
+  validated_tx?: boolean;
+  addressInDb?: boolean;
 }
 
-const SignIn: React.FC<Props> = ({ user_id, pending_assignment }) => {
+const SignIn: React.FC<Props> = ({ user_id, pending_assignment, validated_tx, addressInDb }) => {
   const [loading, setLoading] = useState(false);
   const [emailLinkSent, setEmailLinkSent] = useState(false);
   const [email, setEmail] = useState("");
+
+  const [addressRegistered, setAddressRegistered] = useState(false);
+  const [addressValidated, setAddressValidated] = useState(false);
 
   const [pendingAssingment, setPendingAssignment] = useState(pending_assignment);
 
@@ -47,6 +58,9 @@ const SignIn: React.FC<Props> = ({ user_id, pending_assignment }) => {
 
 
   const router = useRouter();
+  const addressRef = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
+  const toast = useToast();
 
   const { reward: confettiReward, isAnimating: isConfettiAnimating } =
     useReward('NaasReward', 'emoji', {
@@ -64,21 +78,26 @@ const SignIn: React.FC<Props> = ({ user_id, pending_assignment }) => {
       const price = router.query.price! as string;
       const purchaseQuantity = router.query.quantity! as string;
 
-      ga.event({
-        action: "conversion",
-        params: {
-          send_to: 'AW-10929860785/fU-YCPWBps4DELHh4dso',
-          value: .06 * (parseInt(purchaseQuantity) * parseInt(price)),
-          currency: 'USD'
-        },
-      });
+      if (price && purchaseQuantity) {
+        ga.event({
+          action: "conversion",
+          params: {
+            send_to: 'AW-10929860785/fU-YCPWBps4DELHh4dso',
+            value: .06 * (parseInt(purchaseQuantity) * parseInt(price)),
+            currency: 'USD'
+          },
+        });
 
-      mixpanel.track("Naas - Completed Transaction", { price: price, purchaseQuantity: purchaseQuantity, total_spend: (parseInt(purchaseQuantity) * parseInt(price)) });
+        mixpanel.track("Naas - Completed Transaction", { price: price, purchaseQuantity: purchaseQuantity, total_spend: (parseInt(purchaseQuantity) * parseInt(price)) });
+      }
     }
 
   }, [router]);
 
   useEffect(() => {
+    if (addressInDb) {
+      setAddressRegistered(true);
+    }
 
     if (pendingAssingment) {
 
@@ -106,6 +125,13 @@ const SignIn: React.FC<Props> = ({ user_id, pending_assignment }) => {
     }
   }
 
+  useEffect(() => {
+    if (router.query.needs_address && addressRef && addressRef.current) {
+      addressRef.current.scrollIntoView({ behavior: "smooth" });
+      window.scrollTo({ top: 1535, behavior: 'smooth' });
+    }
+  }
+    , [addressRef, router])
 
   useEffect(() => {
     if (email && pending_assignment) {
@@ -147,157 +173,266 @@ const SignIn: React.FC<Props> = ({ user_id, pending_assignment }) => {
     }
   }
 
+
+  async function handleAddressChange(e: React.FormEvent) {
+    e.preventDefault();
+
+    const data = new FormData(ref.current! as HTMLFormElement);
+    const json_data = JSON.stringify(Object.fromEntries(data))
+
+    const empty = JSON.parse(json_data)
+
+    let validated = true
+    //iterate over properies of the object
+    for (const [key, value] of Object.entries(empty)) {
+      if (value === "" && key !== "phone" && key !== "street_2") {
+        validated = false
+      }
+    }
+    setAddressValidated(validated)
+
+  }
+
+  async function handleAddress(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+
+    const data = new FormData(e.target as HTMLFormElement);
+
+    let phone = data.get("phone")!.valueOf() as String;
+    data.set("phone", phone.replace(/[^\d]/g, ""));
+    data.set("state", (data.get("state")!.valueOf() as String).toUpperCase());
+
+    const json_data = JSON.stringify(Object.fromEntries(data))
+
+    const empty = JSON.parse(json_data)
+
+    let validated = true
+    //iterate over properies of the object
+    for (const [key, value] of Object.entries(empty)) {
+      if (value === "" && key !== "phone" && key !== "street_2") {
+        validated = false
+      }
+    }
+    setAddressValidated(validated)
+
+
+    const res = await fetch(`/api/admin/send-address`, {
+      method: "POST",
+      headers: new Headers({ "Content-Type": "application/json" }),
+      credentials: "same-origin",
+      body: json_data,
+    });
+
+    const resj = await res.json();
+
+    if (res.ok) {
+      setAddressRegistered(true);
+    }
+    else {
+      toast({
+        title: "Error Registering",
+        description: resj.message,
+        status: "error",
+        duration: 9000,
+        position: "top",
+      })
+      setAddressRegistered(true);
+    }
+    setLoading(false)
+  }
+
   const meta = (
     <Head>
-        <title>Reveal Your VerifiedInk</title>
-        <meta
-            property="og:title"
-            key="title"
-            content={`See which Editions I pulled from the VerifiedInk Drop.`}
-        />
-        <meta
-            property="og:image"
-            key="preview"
-            content={"https://verifiedink.us/img/naas/naas-3.png"}
-        />
-        <meta
-            property="twitter:image"
-            key="twitter-image"
-            content={`https://verifiedink.us/api/meta/showTwitterPreview/1160`}
-        />
-        <meta property="og:video" content="https://verifiedink.us/img/naas/naas-card.mp4" />
-        <meta property="og:video:type" content="video/mp4" />
-        <meta property="og:video:width" content="720" />
-        <meta property="og:video:height" content="720" />
+      <title>Reveal Your VerifiedInk</title>
+      <meta
+        property="og:title"
+        key="title"
+        content={`See which Editions I pulled from the VerifiedInk Drop.`}
+      />
+      <meta
+        property="og:image"
+        key="preview"
+        content={"https://verifiedink.us/img/naas/naas-3.png"}
+      />
+      <meta
+        property="twitter:image"
+        key="twitter-image"
+        content={`https://verifiedink.us/api/meta/showTwitterPreview/1160`}
+      />
+      <meta property="og:video" content="https://verifiedink.us/img/naas/naas-card.mp4" />
+      <meta property="og:video:type" content="video/mp4" />
+      <meta property="og:video:width" content="720" />
+      <meta property="og:video:height" content="720" />
     </Head>
-)
+  )
 
   return (
     <>{meta}
-    <Box
-      bg={useColorModeValue("gray.50", "inherit")}
-      minH="100vh"
-      py={"12"}
-      px={{ base: "4", lg: "8" }}
-    >
-      <Box maxW="lg" mx="auto" alignContent={"center"}>
-        <Heading as="h1" textAlign="center" size="2xl" fontWeight="extrabold">
-          Success!
-        </Heading>
+      <Box
+        bg={useColorModeValue("gray.50", "inherit")}
+        minH="100vh"
+        py={"12"}
+        px={{ base: "4", lg: "8" }}
+      >
+        <Box maxW="lg" mx="auto" alignContent={"center"}>
+          <Heading as="h1" textAlign="center" size="2xl" fontWeight="extrabold">
+            Success!
+          </Heading>
 
-        <Heading as="h2" py={5} textAlign="center" size="lg">
-          Your Naas NFTs {nfts.length > 0 ? " are ready" : " are minting..."}
-        </Heading>
+          <Heading as="h2" py={5} textAlign="center" size="lg">
+            Your Naas NFTs {nfts.length > 0 ? " are ready" : " are minting..."}
+          </Heading>
 
-        {nfts.length > 0 &&
-          <Center>
-            <span id="NaasReward" />
-            <Button onClick={() => { setReveal(!reveal); confettiReward(); }} disabled={reveal}>Tap to Reveal</Button>
-          </Center>
-        }
-        <Spacer p={5} />
-
-
-        {nfts.length > 0 ?
-
-          nfts.map((nft, index) => {
-
-            return (
-              <>
-
-                <Skeleton key={index + "d"} isLoaded={reveal} speed={1.2} >
-                  <Center key={index}>
-                    <VStack>
-                      <Card nft_id={nft.nft_id} nft_width={375} serial_no={nft.serial_no} readOnly={true} />
-                      <Heading size={"md"}>{nft.nft_id === 1160 ? `Legendary ${nft.serial_no}/15` : nft.nft_id === 1161 ? `Rare ${nft.serial_no}/40` : `Common ${nft.serial_no}/445`}</Heading>
-                    </VStack>
-                  </Center>
-                </Skeleton>
-                <Box p={2} key={index}></Box>
-              </>
-            )
-          })
-          :
-          <>
-            <Center><Spinner size="xl" /></Center>
-          </>
-        }
-
-        <Divider py={5}></Divider>
-
-        <Heading textAlign={"center"} size={"lg"} py={3}>Share this Drop with your Friends</Heading>
-        <Text textAlign={"center"} size={"md"} pb={5}>Each referral that buys increases your chances to win NFTs from future VerifiedInk drops.</Text>
-
-        <ShareButton
-          share_text="I just picked up #1 in the class of '24 Naas Cunningham's debut NFT. Tap in to get one."
-          url={`https://verifiedink.us/drops/naas?utm_content=${email}`}
-        />
+          {nfts.length > 0 &&
+            <Center>
+              <span id="NaasReward" />
+              <Button onClick={() => { setReveal(!reveal); confettiReward(); }} disabled={reveal}>Tap to Reveal</Button>
+            </Center>
+          }
+          <Spacer p={5} />
 
 
+          {nfts.length > 0 ?
+
+            nfts.map((nft, index) => {
+
+              return (
+                <>
+
+                  <Skeleton key={index + "d"} isLoaded={reveal} speed={1.2} >
+                    <Center key={index}>
+                      <VStack>
+                        <Card nft_id={nft.nft_id} nft_width={375} serial_no={nft.serial_no} readOnly={true} />
+                        <Heading size={"md"}>{nft.nft_id === 1160 ? `Legendary ${nft.serial_no}/15` : nft.nft_id === 1161 ? `Rare ${nft.serial_no}/40` : `Common ${nft.serial_no}/445`}</Heading>
+                      </VStack>
+                    </Center>
+                  </Skeleton>
+                  <Box p={2} key={index}></Box>
+                </>
+              )
+            })
+            :
+            <>
+              <Center><Spinner size="xl" /></Center>
+            </>
+          }
+
+          <Divider py={5}></Divider>
+
+          <Heading ref={addressRef} textAlign={"center"} size={"lg"} py={3}>Get Your AR Card</Heading>
+          <Center p={5}><video muted autoPlay playsInline loop src="/img/ar-card.mp4" width={300}></video></Center>
+
+          <Text textAlign={"center"} size={"md"} pb={5}>Tell us where we should send your physical AR card. We'll get it out to you within a few days.</Text>
+
+          {addressRegistered ?
+            <Box p={8} bgColor={"green.500"} textAlign="center" borderRadius={5}>
+              <Heading>Check your Mailbox!</Heading>
+              <Box p={3}>
+                <CheckCircleIcon boxSize="40px" />
+              </Box>
+              <Text>JK, we're not that fast, but your AR card is on it's way!</Text>
+            </Box>
+            :
+            validated_tx ?
+              // Is the user signed in or otherwise validated?
+              <form ref={ref} onSubmit={handleAddress} onChange={handleAddressChange}>
+                <ShippingInformation />
+                <input hidden={true} readOnly name="email" id="email" type="text" value={email} />
+                <Spacer p="6" />
+                <Tooltip
+                  hasArrow
+                  label="Please fill out your address."
+                  shouldWrapChildren
+                  isDisabled={addressValidated}
+                >
+                  <Button type="submit" width="100%" py="6" colorScheme="blue" color="white" borderRadius={1}
+                    disabled={!addressValidated}
+                    isLoading={loading}
+                  >Submit</Button>
+                </Tooltip>
+              </form> :
+              <Box p={6} borderRadius={5} bgColor="red.600">
+                <Text textAlign={"center"} size={"md"}>Something went wrong. Please check your email or click the blue chat button below.</Text>
+              </Box>
+          }
 
 
-        <Divider py={5}></Divider>
-        <Heading as="h2" py={5} textAlign="center" size="md">
-          Sign-in below to View your Collection!
-        </Heading>
+          <Divider py={5}></Divider>
 
-        <Text pt={6} textAlign="center" w={["100%", "100%", "75%"]} m="0 auto">
-          VerifiedInk uses “magic links” for you to access your Collector
-          Account. Just enter your email below and we’ll send you a sign in
-          link.
-        </Text>
+          <Heading textAlign={"center"} size={"lg"} py={3}>Share this Drop with your Friends</Heading>
+          <Text textAlign={"center"} size={"md"} pb={5}>Each referral that buys increases your chances to win NFTs from future VerifiedInk drops.</Text>
 
-        <Box mt="1" py={8}>
-          <form onSubmit={handleSignin}>
-            {!emailLinkSent && (
-              <>
-                <Text fontWeight="bold">Email Address</Text>
-                <Input
-                  value={email}
-                  type="email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  mt={1}
-                  mb={8}
+          <ShareButton
+            share_text="I just picked up #1 in the class of '24 Naas Cunningham's debut NFT. Tap in to get one."
+            url={`https://verifiedink.us/drops/naas?utm_content=${email}`}
+          />
+
+
+
+
+          <Divider py={5}></Divider>
+          <Heading as="h2" py={5} textAlign="center" size="md">
+            Sign-in below to View your Collection!
+          </Heading>
+
+          <Text pt={6} textAlign="center" w={["100%", "100%", "75%"]} m="0 auto">
+            VerifiedInk uses “magic links” for you to access your Collector
+            Account. Just enter your email below and we’ll send you a sign in
+            link.
+          </Text>
+
+          <Box mt="1" py={8}>
+            <form onSubmit={handleSignin}>
+              {!emailLinkSent && (
+                <>
+                  <Text fontWeight="bold">Email Address</Text>
+                  <Input
+                    value={email}
+                    type="email"
+                    onChange={(e) => setEmail(e.target.value)}
+                    mt={1}
+                    mb={8}
+                    borderRadius={1}
+                  />
+                </>
+              )}
+              {!emailLinkSent ? (
+                <Button
+                  py={6}
+                  type="submit"
+                  width="100%"
+                  colorScheme="blue"
+                  color="white"
                   borderRadius={1}
-                />
-              </>
-            )}
-            {!emailLinkSent ? (
-              <Button
-                py={6}
-                type="submit"
-                width="100%"
-                colorScheme="blue"
-                color="white"
-                borderRadius={1}
-              >
-                {loading ? <Spinner /> : "Sign in"}
-              </Button>
-            ) : (
-              <VStack spacing={6}>
-                <Text textAlign="center" fontSize="3xl" fontWeight="bold">
-                  Check your email
-                </Text>
-                <Text textAlign="center">
-                  A sign in link has been sent to your email. <br />Please check your SPAM or Updates folders if you don’t see it in your Inbox.
-                </Text>
-              </VStack>
-            )}
-          </form>
+                >
+                  {loading ? <Spinner /> : "Sign in"}
+                </Button>
+              ) : (
+                <VStack spacing={6}>
+                  <Text textAlign="center" fontSize="3xl" fontWeight="bold">
+                    Check your email
+                  </Text>
+                  <Text textAlign="center">
+                    A sign in link has been sent to your email. <br />Please check your SPAM or Updates folders if you don’t see it in your Inbox.
+                  </Text>
+                </VStack>
+              )}
+            </form>
+          </Box>
+          <Text pt={16} textAlign="center">
+            Are you an athlete who has created or want to create your own
+            VerifiedInk?{" "}
+            <NextLink href="/athletes/signin">
+
+              <Text color="viBlue" display="inline-block">
+                Athlete Sign Up
+              </Text>
+
+            </NextLink>
+          </Text>
         </Box>
-        <Text pt={16} textAlign="center">
-          Are you an athlete who has created or want to create your own
-          VerifiedInk?{" "}
-          <NextLink href="/athletes/signin">
-
-            <Text color="viBlue" display="inline-block">
-              Athlete Sign Up
-            </Text>
-
-          </NextLink>
-        </Text>
       </Box>
-    </Box>
     </>
   );
 };
@@ -327,17 +462,40 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.query && context.query.email) {
     const { data: userData, error: userError } = await getUserDetailsByEmail(context.query.email as string);
 
+    const stripe_tx = context.query.stripe_tx
+
+    let validated_tx = null
+    let addressInDb = null
+
     // Check if any credit card sales are still in completed status
     if (userData) {
+      const { data: validTx, error: validTxError } = await supabase.from("drop_credit_card_sale").select("*")
+        .match({ "stripe_tx": stripe_tx, "user_id": userData?.user_id })
+
+      if (validTx && validTx.length > 0) {
+        validated_tx = true
+      }
+
+      const { data: address, error: addressError } = await admin.from("contact").select("*")
+        .match({ "email": userData?.email })
+
+      if (address && address.length > 0) {
+        addressInDb = true
+      }
+
       const { data: statusOfSales, error: statusOfSalesError } =
         await supabase.from("drop_credit_card_sale").select("*")
           .match({ "status": "2_payment_completed", "user_id": userData?.user_id })
+
+
 
       if (statusOfSales && statusOfSales.length > 0) {
         return {
           props: {
             user_id: userData.user_id,
             pending_assignment: true,
+            validated_tx,
+            addressInDb
           }
         };
       }
@@ -346,6 +504,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           props: {
             user_id: userData.user_id,
             pending_assignment: false,
+            validated_tx,
+            addressInDb
           }
         };
       }
@@ -355,6 +515,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         user_id: null,
+        validated_tx,
+        addressInDb
       }
     };
   }
