@@ -462,7 +462,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.query && context.query.email) {
     const { data: userData, error: userError } = await getUserDetailsByEmail(context.query.email as string);
 
-    const stripe_tx = context.query.stripe_tx
+    const stripe_tx = context.query.session_id
 
     let validated_tx = null
     let addressInDb = null
