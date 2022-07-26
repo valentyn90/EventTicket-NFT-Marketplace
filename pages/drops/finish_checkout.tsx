@@ -58,7 +58,7 @@ const SignIn: React.FC<Props> = ({ user_id, pending_assignment, validated_tx, ad
 
 
   const router = useRouter();
-  const addressRef = useRef<HTMLDivElement>(null);
+  const addressRef = useRef<HTMLHRElement>(null);
   const ref = useRef(null);
   const toast = useToast();
 
@@ -128,10 +128,9 @@ const SignIn: React.FC<Props> = ({ user_id, pending_assignment, validated_tx, ad
   useEffect(() => {
     if (router.query.needs_address && addressRef && addressRef.current) {
       addressRef.current.scrollIntoView({ behavior: "smooth" });
-      window.scrollTo({ top: 1535, behavior: 'smooth' });
     }
   }
-    , [addressRef, router])
+    , [addressRef, router, nfts])
 
   useEffect(() => {
     if (email && pending_assignment) {
@@ -318,9 +317,9 @@ const SignIn: React.FC<Props> = ({ user_id, pending_assignment, validated_tx, ad
             </>
           }
 
-          <Divider py={5}></Divider>
+          <Divider ref={addressRef}  py={5}></Divider>
 
-          <Heading ref={addressRef} textAlign={"center"} size={"lg"} py={3}>Get Your AR Card</Heading>
+          <Heading textAlign={"center"} size={"lg"} py={3}>Get Your AR Card</Heading>
           <Center p={5}><video muted autoPlay playsInline loop src="/img/ar-card.mp4" width={300}></video></Center>
 
           <Text textAlign={"center"} size={"md"} pb={5}>Tell us where we should send your physical AR card. We'll get it out to you within a few days.</Text>
