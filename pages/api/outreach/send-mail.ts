@@ -1,5 +1,6 @@
 import { Template } from "@/components/Navbar/Navbar";
 import { getFileLinkFromSupabase, getNftById, getScreenshot } from "@/supabase/supabase-client";
+import { getUserDetailsByEmail } from "@/supabase/userDetails";
 import { supabase } from "../../../supabase/supabase-admin";
 
 const sgMail = require('@sendgrid/mail')
@@ -174,10 +175,45 @@ export async function sendAuctionLoserMail(loser_id: string, auction_id: string)
 
 }
 
+export async function sendAddressMail(email: string) {
+
+  const { data: userData, error: userError } = await getUserDetailsByEmail(email);
+
+  if (userData) {
+    const user_id = userData.user_id;
+
+    const purchase_record = await supabase.from('drop_credit_card_sale')
+      .select('*').eq('user_id', user_id).limit(1).maybeSingle();
+
+    if (purchase_record.data) {
+      const msg = {
+        to: email,
+        from: 'VerifiedInk@verifiedink.us',
+        reply_to: 'Support@verifiedink.us',
+        bcc: 'aaron@verifiedink.us',
+        template_id: "d-ffa32fea50c44bd0b26ce31186b9804a",
+        dynamic_template_data: {
+          email,
+          session_id: purchase_record.data.stripe_tx
+        }
+      }
+
+      await sgMail
+        .send(msg)
+        .then(() => {
+          return { "success": true }
+        })
+        .catch((error: any) => {
+          console.log(error)
+          return { "success": true }
+        })
+    }
+  }
+}
+
 export async function sendDropAuctionMail(user_id: string, auction_id: string, bid_amount: string, bid_team_id: string) {
   await sendAuctionMail(user_id, auction_id, bid_amount, bid_team_id, "d-ff378896d08b4232bb675c028368c121");
 }
-
 
 export async function sendAuctionMail(user_id: string, auction_id: string, bid_amount: string, bid_team_id: string, template_id: string = 'd-e4a1305bcdc54dfc92d1aeb550468164') {
 
