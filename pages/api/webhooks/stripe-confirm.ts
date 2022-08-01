@@ -111,11 +111,11 @@ const handler = async (req: any, res: any) => {
               let next_price = configData.value.next_price
               let current_price = configData.value.current_price
 
-              if (items_left == 0) {
-                items_left = 97
-                current_price = next_price
-                next_price = current_price + 15
-              }
+              // if (items_left == 0) {
+              //   items_left = 97
+              //   current_price = next_price
+              //   next_price = current_price + 15
+              // }
 
               const new_values = {
                 next_price: next_price,
