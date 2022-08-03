@@ -483,9 +483,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
                             {maxQuantity > 0 ?
                                 (saleOpen || wlAccess) && 
                                 <Box>  
-                                <HStack justifyContent={"center"}><Text textDecoration={"line-through-1"} color="gray.500">$25 & $35</Text>
-                                <Text color="gray.500">SOLD OUT</Text>
-                                </HStack>
+                        
                                 <Text fontStyle="italic" color="red.500">
                                     Only {itemsLeft} left
                                 </Text>
