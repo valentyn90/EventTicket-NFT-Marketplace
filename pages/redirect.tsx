@@ -4,8 +4,9 @@ import Cookies from "cookies";
 import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useMixpanel } from 'react-mixpanel-browser';
+import { useMixpanel } from "react-mixpanel-browser";
 import { useIntercom } from "react-use-intercom";
+import cookieCutter from "cookie-cutter";
 
 interface Props {
   redirect: string;
@@ -35,17 +36,20 @@ const Redirect: React.FC<Props> = ({ redirect }) => {
             update({
               customAttributes: {
                 created_account: true,
-              }
-            })
+              },
+            });
             if (redirect) {
+              // // unset cookie
+              // cookieCutter.set("redirect-link", null, {
+              //   expires: new Date(0),
+              // });
               router.push(redirect);
-            }
-            else {
+            } else {
               // NOTE: Need to wait for the cookie to be written
               router.push("/create/step-1");
             }
           } else {
-            router.push("/athletes/signin");
+            // router.push("/athletes/signin");
           }
         }, 750);
       }
@@ -66,23 +70,27 @@ const Redirect: React.FC<Props> = ({ redirect }) => {
         maxWidth: "400px",
       }}
     >
-      {(notFound === "error") ?
+      {notFound === "error" ? (
         <Text fontSize="4xl">Invalid Login Link</Text>
-        :
-        (notFound === "No Email") ?
-          <Stack alignItems={"center"}>
-            <Text fontSize="3xl" mb="3">No Email Found</Text>
-            <Text fontSize="l" textAlign={"center"} mb="3">Your Twitter handle does not have an associated Email Address. Please 
-            either add an email to your Twitter profile or choose a different account to connect.</Text>
-          </Stack>
-
-          :
-          <Stack alignItems={"center"}>
-            <Text fontSize="3xl" mb="3">Redirecting... </Text>
-            <Spinner size="xl" />
-          </Stack>
-      }
-
+      ) : notFound === "No Email" ? (
+        <Stack alignItems={"center"}>
+          <Text fontSize="3xl" mb="3">
+            No Email Found
+          </Text>
+          <Text fontSize="l" textAlign={"center"} mb="3">
+            Your Twitter handle does not have an associated Email Address.
+            Please either add an email to your Twitter profile or choose a
+            different account to connect.
+          </Text>
+        </Stack>
+      ) : (
+        <Stack alignItems={"center"}>
+          <Text fontSize="3xl" mb="3">
+            Redirecting...{" "}
+          </Text>
+          <Spinner size="xl" />
+        </Stack>
+      )}
     </div>
   );
 };

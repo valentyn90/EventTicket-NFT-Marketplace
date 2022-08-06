@@ -133,39 +133,43 @@ const StaticCard: React.FC<Props> = ({
       <Head>
         <meta
           property="og:title"
-          content={sale_price ?  
-            "Buy " +
-            (db_first_name ? `${db_first_name}\'s ` : "") +
-            "VerifiedInk from $" + sale_price
-            :
-            "Check out " +
-            (db_first_name ? `${db_first_name}\'s ` : "") +
-            "VerifiedInk"
+          content={
+            sale_price
+              ? "Buy " +
+                (db_first_name ? `${db_first_name}\'s ` : "") +
+                "VerifiedInk from $" +
+                sale_price
+              : "Check out " +
+                (db_first_name ? `${db_first_name}\'s ` : "") +
+                "VerifiedInk"
           }
           key="title"
         />
         <meta
           property="og:image"
-          content={`${typeof public_url === "string" && public_url.length > 0
-            ? public_url
-            : "https://verifiedink.us/img/verified-ink-site.png"
-            }`}
+          content={`${
+            typeof public_url === "string" && public_url.length > 0
+              ? public_url
+              : "https://verifiedink.us/img/verified-ink-site.png"
+          }`}
           key="preview"
         />
         <meta
           property="twitter:image"
-          content={`${typeof public_url === "string" && public_url.length > 0
-            ? `https://verifiedink.us/api/meta/showTwitterPreview/${nft_id}`
-            : "https://verifiedink.us/img/twitter-site-image.png"
-            }`}
+          content={`${
+            typeof public_url === "string" && public_url.length > 0
+              ? `https://verifiedink.us/api/meta/showTwitterPreview/${nft_id}`
+              : "https://verifiedink.us/img/twitter-site-image.png"
+          }`}
           key="twitter-image"
         />
         <meta
           property="description"
-          content={`${recruit_share
-            ? "Check out this NFT I made with @VfdInk. Just for athletes. I get paid every single time it sells. Here's a referral link if you want to make your own."
-            : "Create your own custom NFT with VerifiedInk - @VfdInk"
-            }`}
+          content={`${
+            recruit_share
+              ? "Check out this NFT I made with @VfdInk. Just for athletes. I get paid every single time it sells. Here's a referral link if you want to make your own."
+              : "Create your own custom NFT with VerifiedInk - @VfdInk"
+          }`}
         />
       </Head>
       <div className="viewer">
@@ -180,14 +184,15 @@ const StaticCard: React.FC<Props> = ({
           onClick={flipCard}
           style={cssTransform}
         >
-          {(screenshot === "/img/card-placeholder.png") ?
-            <motion.div className="card front"
+          {screenshot === "/img/card-placeholder.png" ? (
+            <motion.div
+              className="card front"
               initial={{
                 opacity: 0,
               }}
               animate={{
-                opacity: .8,
-                scale: .98
+                opacity: 0.8,
+                scale: 0.98,
               }}
               transition={{
                 repeat: Infinity,
@@ -197,11 +202,11 @@ const StaticCard: React.FC<Props> = ({
             >
               <img src={screenshot} alt="" />
             </motion.div>
-            :
+          ) : (
             <div className="card front">
               <img src={screenshot} alt="" />
             </div>
-          }
+          )}
 
           <div className="card reverse">
             <div className="background">

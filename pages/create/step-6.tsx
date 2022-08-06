@@ -3,20 +3,35 @@ import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
 import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
 import forwardMinted from "@/utils/forwardMinted";
-import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  Flex,
+  Heading,
+  Spinner,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import SignaturePad from "react-signature-pad-wrapper";
+import { FaGoogle, FaTwitter } from "react-icons/fa";
+import cookieCutter from "cookie-cutter";
+import { signIn, supabase } from "@/supabase/supabase-client";
 
 const StepSix = () => {
   const signatureRef: any = useRef(null);
 
   const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
     // ensure the video finished processing;
@@ -26,7 +41,6 @@ const StepSix = () => {
       console.log(new Date());
     }
     finish_video();
-
   }, [userStore]);
 
   function handleClear() {
@@ -39,28 +53,38 @@ const StepSix = () => {
   async function handleStepSixSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    if (userStore.stepSixSkip) {
+    if (userStore.stepSixSkip && userStore.loggedIn) {
       router.push("/create/step-7");
     } else {
-      
-      const newSigFile = await dataUrlToFile(
-        signatureRef.current.toDataURL(),
-        "signaturePic.png"
-      );
-      const res = await userStore.nft?.uploadSignatureToSupabase(newSigFile);
-      
-      if (res) {
-        // success
-        userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
-        router.push("/create/step-7");
-      }
-      else{
-        setSubmitting(false);
+      if (signatureRef.current) {
+        const newSigFile = await dataUrlToFile(
+          signatureRef.current.toDataURL(),
+          "signaturePic.png"
+        );
+        const res = await userStore.nft?.uploadSignatureToSupabase(newSigFile);
+
+        if (res) {
+          // success
+          userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
+
+          if (userStore.loggedIn) {
+            router.push("/create/step-7");
+          } else {
+            // show login buttons
+            cookieCutter.set("redirect-link", "/create/step-7", { path: "/", expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365) });
+            setShowSignup(true);
+          }
+        } else {
+          setSubmitting(false);
+        }
+      } else {
+        cookieCutter.set("redirect-link", "/create/step-7", { path: "/", expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365) });
+        setShowSignup(true);
       }
     }
   }
 
-  return (
+  return !showSignup ? (
     <CreateLayout>
       <form onSubmit={handleStepSixSubmit}>
         <Flex direction="column">
@@ -133,6 +157,7 @@ const StepSix = () => {
                   </Flex>
                 </>
               )}
+
               <Button
                 colorScheme="blue"
                 color="white"
@@ -144,10 +169,7 @@ const StepSix = () => {
               >
                 Last Step
               </Button>
-              <Box
-                display={["block", "block", "none"]}
-                alignSelf="center"
-              >
+              <Box display={["block", "block", "none"]} pt={8} alignSelf="center">
                 <Card
                   nft_id={userStore.nft?.id}
                   nft={userStore.loadedNft}
@@ -155,7 +177,6 @@ const StepSix = () => {
                   reverse={false}
                 />
               </Box>
-
             </Flex>
           </Flex>
           <Divider mt="6" mb="6" />
@@ -169,6 +190,83 @@ const StepSix = () => {
         </Flex>
       </form>
     </CreateLayout>
+  ) : (
+    <Box minH="100vh" py={"12"} px={{ base: "4", lg: "8" }}>
+      <Container centerContent>
+        <VStack spacing={4}>
+
+          <Heading
+            fontWeight="extrabold"
+            fontSize={["4xl", "4xl", "5xl"]}
+            textAlign="center"
+            w={["100%", "100%", "75%"]}
+          >
+            Create Your Account
+          </Heading>
+          <Box display={["block", "block", "block"]} alignSelf="center">
+                <Card
+                  nft_id={userStore.nft?.id}
+                  nft={userStore.loadedNft}
+                  nft_width={150}
+                  reverse={false}
+                />
+          </Box>
+          <Text
+            fontSize="lg"
+            textAlign="center"
+            pt={2}
+            w={["100%", "100%", "75%"]}
+          >
+            It looks great! Now, let's save all that hard work. Sign up with your Twitter or Google account below.
+          </Text>
+
+          <VStack spacing={8} w="90%" mt={4}>
+            <Button
+              py={6}
+              w="100%"
+              background="#1DA1F2"
+              color="white"
+              isLoading={loading}
+              onClick={() => {
+                // Set redirect to step 7 cookie here
+                cookieCutter.set("redirect-link", "/create/step-7", {
+                  expires: new Date(Date.now() + 1000 * 60 * 60),
+                });
+                setLoading(true);
+                signIn({ provider: "twitter" });
+              }}
+            >
+              <FaTwitter />
+              <Text ml="2rem" fontWeight="bold">
+                Sign Up with Twitter
+              </Text>
+            </Button>
+            <Button
+              py={6}
+              w="100%"
+              color="currentColor"
+              variant="outline"
+              isLoading={loading}
+              onClick={() => {
+                // Set redirect to step 7 cookie here
+                cookieCutter.set("redirect-link", "/create/step-7", {
+                  expires: new Date(Date.now() + 1000 * 60 * 60),
+                });
+                setLoading(true);
+                signIn({ provider: "google" });
+              }}
+            >
+              <FaGoogle />
+              <Text ml="2rem" fontWeight="bold">
+                Sign Up with Google
+              </Text>
+            </Button>
+          </VStack>
+
+
+        </VStack>
+      </Container>
+    </Box>
   );
 };
 

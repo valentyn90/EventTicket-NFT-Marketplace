@@ -22,6 +22,7 @@ export class NftStore {
   id: number;
   user_id = "";
   user_details_id = "";
+  temp_user_id: string | null = null;
 
   first_name = "";
   last_name = "";
@@ -63,8 +64,6 @@ export class NftStore {
   edition_rarity: string = "";
   edition_utility: any[] | null = null;
 
-
-
   constructor(
     input: Nft,
     store: UserStore,
@@ -76,6 +75,7 @@ export class NftStore {
     this.photo = nftPhoto;
     this.signature = nftSignature;
     this.id = input.id;
+    this.temp_user_id = input.temp_user_id;
     this.mux_asset_id = input.mux_asset_id;
     this.mux_upload_id = input.mux_upload_id;
     this.mux_playback_id = input.mux_playback_id;
@@ -126,30 +126,37 @@ export class NftStore {
       nft_id: this.id,
       firstName: this.store.nftInput?.first_name.trim(),
       lastName: this.store.nftInput?.last_name.trim(),
-      gradYear: this.store.nftInput?.graduation_year,
+      gradYear:
+        this.store.nftInput?.graduation_year.length > 2
+          ? this.store.nftInput?.graduation_year.slice(-2)
+          : this.store.nftInput?.graduation_year,
     });
 
     const user_name = `${this.store.nftInput?.first_name.trim()} ${this.store.nftInput?.last_name.trim()}`;
-    const { data: data2, error: error2 } = await updateUsername(
-      user_name,
-      this.store.userDetails.id
-    );
-
-    const { data: updateTwitterData, error: updateTwitterError } =
-      await updateTwitter(
-        this.store.nftInput.twitter.replace("@","").trim(),
+    if (this.store.loggedIn) {
+      const { data: data2, error: error2 } = await updateUsername(
+        user_name,
         this.store.userDetails.id
       );
+
+      const { data: updateTwitterData, error: updateTwitterError } =
+        await updateTwitter(
+          this.store.nftInput.twitter.replace("@", "").trim(),
+          this.store.userDetails.id
+        );
+    }
 
     if (error) {
       alert(error.message);
       return false;
     } else {
-      this.store.userDetails.setFieldValue("user_name", user_name);
-      this.store.userDetails.setFieldValue(
-        "twitter",
-        this.store.nftInput.twitter
-      );
+      if (this.store.loggedIn) {
+        this.store.userDetails.setFieldValue("user_name", user_name);
+        this.store.userDetails.setFieldValue(
+          "twitter",
+          this.store.nftInput.twitter
+        );
+      }
       return true;
     }
   };
@@ -276,13 +283,26 @@ export class NftStore {
 
   uploadPhotoToSupabase = async (): Promise<boolean> => {
     try {
-      // 1. set the path name
-      const filePath = `${this.store.id}/${new Date().getTime()}${
-        this.store.nftInput.localPhoto?.name
-      }`;
-      const ogFilePath = `${this.store.id}/${new Date().getTime()}${
-        this.store.nftInput.ogPhoto?.name
-      }`;
+      // check if user is logged in
+      let filePath = "";
+      let ogFilePath = "";
+
+      if (!this.store.loggedIn) {
+        // 1. set the path name
+        filePath = `tempnft/${this.temp_user_id}/${new Date().getTime()}${
+          this.store.nftInput.localPhoto?.name
+        }`;
+        ogFilePath = `tempnft/${this.temp_user_id}/${new Date().getTime()}${
+          this.store.nftInput.ogPhoto?.name
+        }`;
+      } else {
+        filePath = `${this.id}/${new Date().getTime()}${
+          this.store.nftInput.localPhoto?.name
+        }`;
+        ogFilePath = `${this.id}/${new Date().getTime()}${
+          this.store.nftInput.ogPhoto?.name
+        }`;
+      }
 
       // 1. upload image file
       const { data, error } = await uploadFileToStorage(
@@ -366,9 +386,14 @@ export class NftStore {
 
   uploadSignatureToSupabase = async (sigFile: File): Promise<boolean> => {
     try {
-      const filePath = `${
-        this.store.id
-      }/${new Date().getTime()}signaturePic.png`;
+      let filePath = "";
+      if (this.store.loggedIn) {
+        filePath = `${this.store.id}/${new Date().getTime()}signaturePic.png`;
+      } else {
+        filePath = `tempnft/${
+          this.temp_user_id
+        }/${new Date().getTime()}signaturePic.png`;
+      }
 
       const { data, error } = await uploadFileToStorage(filePath, sigFile);
 

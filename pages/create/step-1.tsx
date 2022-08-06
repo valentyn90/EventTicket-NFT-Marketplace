@@ -1,7 +1,10 @@
 import CreateLayout from "@/components/Create/CreateLayout";
+import PhotoPreviewSide from "@/components/Create/PhotoPreviewSide";
+import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
 import { supabase } from "@/supabase/supabase-client";
 import {
+  Box,
   Button,
   Divider,
   Flex,
@@ -11,6 +14,7 @@ import {
   Spinner,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import Cookies from "cookies";
 import { toJS } from "mobx";
@@ -18,19 +22,33 @@ import { observer } from "mobx-react-lite";
 import { NextApiRequest, NextApiResponse } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useMixpanel } from 'react-mixpanel-browser';
+import { useMixpanel } from "react-mixpanel-browser";
 
 const StepOne = () => {
   const router = useRouter();
   const mixpanel = useMixpanel();
+  const toast = useToast();
 
   const [submitting, setSubmitting] = useState(false);
 
   async function handleStepOneSubmit(e: React.FormEvent) {
     e.preventDefault();
-    mixpanel.track(
-      "NFT - Started"
-    )
+    mixpanel.track("NFT - Started");
+
+    if (
+      !userStore.nftInput.first_name ||
+      !userStore.nftInput.last_name ||
+      !userStore.nftInput.graduation_year
+    ) {
+      toast({
+        position: "top",
+        status: "error",
+        description: "You are missing some inputs.",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
 
     if (userStore.nft) {
       // nft exists, update values
@@ -45,8 +63,7 @@ const StepOne = () => {
         if (res) {
           // successfully updated
           router.push("/create/step-2");
-        }
-        else{
+        } else {
           setSubmitting(false);
         }
       }
@@ -57,8 +74,7 @@ const StepOne = () => {
       if (res) {
         // success
         router.push("/create/step-2");
-      }
-      else{
+      } else {
         setSubmitting(false);
       }
     }
@@ -95,12 +111,14 @@ const StepOne = () => {
           <Flex direction={["column", "column", "row"]}>
             {/* Text */}
             <Flex direction="column" flex="1">
-              <Text fontSize="3xl" fontWeight="bold">
-                It Starts With <span style={{ color: "blue:500" }}>You</span>
-              </Text>
-              <Text mt="1">
-                Let's get some basic info to start creating your VerifiedInk.
-              </Text>
+              <PhotoPreviewSide
+                title="It Starts With You"
+                subtitle="Let's get some basic info to start creating your VerifiedInk."
+                flex="1"
+                nft_id={userStore.loadedNft?.id}
+                nft={userStore.loadedNft}
+                emptyCard={userStore.loadedNft ? false : true}
+              />
             </Flex>
             <Flex
               justify={["flex-start", "flex-start", "center"]}
@@ -153,10 +171,10 @@ const StepOne = () => {
                   />
                 </FormControl>
                 <FormControl id="twitter">
-                  <FormLabel>Twitter  (Optional)</FormLabel>
+                  <FormLabel>Twitter (Optional)</FormLabel>
                   <Input
                     type="text"
-                    placeholder="jack"
+                    // disabled={!userStore.loggedIn}
                     value={userStore.nftInput?.twitter || ""}
                     onChange={(e) =>
                       userStore.nftInput?.setInputValue(
@@ -171,11 +189,24 @@ const StepOne = () => {
           </Flex>
           <Divider mt="6" mb="6" />
           {/* Button row */}
-          <Flex justify="end" >
-            <Button isLoading={submitting} colorScheme="blue" color="white" type="submit" w={["100%","fit-content"]}>
-               Next Step
+          <Flex justify="end">
+            <Button
+              isLoading={submitting}
+              colorScheme="blue"
+              color="white"
+              type="submit"
+              w={["100%", "fit-content"]}
+            >
+              Next Step
             </Button>
           </Flex>
+          <Box display={["block", "block", "none"]} pt={8} alignSelf="center">
+            <Card
+              nft_id={userStore.loadedNft?.id}
+              nft_width={375}
+              reverse={false}
+            />
+          </Box>
         </Flex>
       </form>
     </CreateLayout>
@@ -192,35 +223,20 @@ export async function getServerSideProps({
   const { user } = await supabase.auth.api.getUserByCookie(req);
   const cookies = new Cookies(req, res);
 
-  if (!user) {
-    console.log("No user found, redirecting to login");
-
-    cookies.set("redirect-link", "/create/step-1", {
-      maxAge: 1000 * 60 * 60,
-    });
-
-    return {
-      redirect: {
-        destination: "/athletes/signin",
-        permanent: false,
-      },
-    };
-  } else {
-
-    const nft = await supabase.from("nft").select("minted").eq("user_id", user.id).single();
+  if (user) {
+    const nft = await supabase
+      .from("nft")
+      .select("minted")
+      .eq("user_id", user.id)
+      .single();
     if (nft.data && nft.data.minted) {
       return {
         redirect: {
           destination: "/create/step-8",
           permanent: false,
-        }
-      }
+        },
+      };
     }
-
-    // cookies.set("redirect-link", "/create", {
-    //   maxAge: 1000 * 60 * 60,
-    // });
-
   }
 
   return {

@@ -2,9 +2,15 @@ import Nft from "@/types/Nft";
 import UserDetails from "@/types/UserDetails";
 import {
   createNewNft,
+  createNewTempNft,
+  deleteTempUserId,
   getFileFromSupabase,
+  getFilePath,
+  getTempNft,
   getUserNft,
+  moveFiles,
   supabase,
+  updateTempUserNftToRealId,
 } from "@/supabase/supabase-client";
 import { makeAutoObservable } from "mobx";
 import { NftInput } from "./NftInput";
@@ -12,10 +18,14 @@ import { NftStore } from "./NftStore";
 import { UserDetailsStore } from "./UserDetailsStore";
 import {
   getUserDetails,
+  updateTempUserDetails,
   updateTwitter,
   updateUsername,
 } from "@/supabase/userDetails";
+import { v4 as uuidv4 } from "uuid";
+import cookieCutter from "cookie-cutter";
 import { UiStore } from "./UiStore";
+import makeNewStorageFilename from "@/utils/makeNewStorageFilename";
 
 export class UserStore {
   loaded = false;
@@ -29,6 +39,11 @@ export class UserStore {
   nftInput: NftInput;
   userDetails: UserDetailsStore;
   ui: UiStore;
+
+  setFieldValue = (key: string, value: any) => {
+    // @ts-ignore
+    this[key] = value;
+  };
 
   resetThisState() {
     this.loaded = true;
@@ -79,7 +94,7 @@ export class UserStore {
       if (res.status === 200) {
         // there is a user
         const { user } = await res.json();
-        let userData
+        let userData;
 
         // Get user details data from db
         const { data: userDataCheck, error: userError } = await getUserDetails(
@@ -102,8 +117,7 @@ export class UserStore {
             localStorage.setItem("sign_up", "completed");
             localStorage.removeItem("referral_code");
             // Get user details data from db
-          }
-          else {
+          } else {
             await this.userDetails.initSignUp(
               null,
               user.id,
@@ -119,11 +133,102 @@ export class UserStore {
           );
           userData = userData2;
 
+          // If new user, check if they have temp user id
+          // And update their nft value
+          // attach user details id to nft
+          const temp_user_id = cookieCutter.get("temp_user_id");
+          if (temp_user_id) {
+            const { data: updateTempUser, error: updateTempUserError } =
+              await updateTempUserNftToRealId(
+                temp_user_id,
+                user.id,
+                userData.id
+              );
+
+            // delete temp user id in nft
+            // const { data: deleteTempId, error: deleteTempIdError } =
+            //   await deleteTempUserId(user.id);
+
+            // Need to update storage bucket locations
+            // And user details information
+            const { data: tempNft, error: tempNftError } = await getTempNft(
+              temp_user_id
+            );
+
+            /**
+             * Need the file ids for the files that were uploaded
+             * then get the file path from the file objects
+             * then update the file path name to the new user id
+             * then move them
+             */
+            let fileUpdatePromises: Promise<any>[] = [];
+
+            if (tempNft.photo_file) {
+              // get file path name
+              const { oldName, newName } = await makeNewStorageFilename(
+                tempNft.photo_file,
+                temp_user_id,
+                user.id
+              );
+              if (oldName && newName) {
+                fileUpdatePromises.push(
+                  moveFiles(oldName, newName, tempNft.photo_file)
+                );
+              }
+            }
+            if (tempNft.og_photo_id) {
+              // get file path name
+              const { oldName, newName } = await makeNewStorageFilename(
+                tempNft.og_photo_id,
+                temp_user_id,
+                user.id
+              );
+              if (oldName && newName) {
+                fileUpdatePromises.push(
+                  moveFiles(oldName, newName, tempNft.og_photo_id)
+                );
+              }
+            }
+            if (tempNft.signature_file) {
+              // get file path name
+              const { oldName, newName } = await makeNewStorageFilename(
+                tempNft.signature_file,
+                temp_user_id,
+                user.id
+              );
+              if (oldName && newName) {
+                fileUpdatePromises.push(
+                  moveFiles(oldName, newName, tempNft.signature_file)
+                );
+              }
+            }
+
+            try {
+              await Promise.all(fileUpdatePromises);
+            } catch (err) {
+              console.log(err);
+            }
+
+            // Delete the temp user id folder
+            const { data: deleteFolder, error: deleteFolderError } =
+              await supabase.storage.from("private").remove([temp_user_id]);
+
+            // Update user details object for new user
+            const { data: userDetails, error: userDetailsError } =
+              await updateTempUserDetails(
+                user.id,
+                `${tempNft.first_name} ${tempNft.last_name}`
+              );
+
+            // unset cookie
+            cookieCutter.set("temp_user_id", null, {
+              expires: new Date(0),
+            });
+          }
         } else {
           localStorage.setItem("sign_up", "completed");
           userData = userDataCheck;
         }
-
 
         // Get user's public key
         if (user.id) {
@@ -173,13 +278,53 @@ export class UserStore {
             nftSignature,
             userData
           );
+
+          // After nft is set, check if user created an NFT without logging in
+          // Then redirect
+          // Check if user created an NFT without logging in here
+          const temp_user_id = cookieCutter.get("temp_user_id");
+          if (temp_user_id) {
+            cookieCutter.set("alreadyCreatedRedirect", true, { path: "/", expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365) })
+            // unset cookie
+            cookieCutter.set("temp_user_id", null, {
+              expires: new Date(0),
+            });
+          }
         } else {
           // no new user, create empty nftInput and keep nft as null
           this.setNewData(user, userData);
         }
       } else if (res.status === 401) {
-        this.finishLoading();
-        // no user
+        // check if there's a temp user id cookie
+        // and load nft data from that cookie temp user id
+        const temp_user_id = cookieCutter.get("temp_user_id");
+
+        if (temp_user_id) {
+          // temp user id exists, load their temporary NFT in store
+          const { data, error } = await getTempNft(temp_user_id);
+          let nftPhoto = "";
+          let nftSignature = "";
+          if (data.photo_file) {
+            const { file, error } = await getFileFromSupabase(data.photo_file);
+            if (file) {
+              //@ts-ignore
+              nftPhoto = URL.createObjectURL(file);
+            }
+          }
+
+          if (data.signature_file) {
+            const { file } = await getFileFromSupabase(data.signature_file);
+            if (file) {
+              //@ts-ignore
+              nftSignature = URL.createObjectURL(file);
+            }
+          }
+
+          this.setTempNft(data, nftPhoto, nftSignature);
+        } else {
+          this.finishLoading();
+          // no user
+        }
       }
     } catch (err) {
       this.finishLoading();
@@ -190,6 +335,12 @@ export class UserStore {
   finishLoading = () => {
     this.loaded = true;
   };
+
+  setTempNft(nftData: Nft, nftPhoto: string, nftSignature: string) {
+    this.nft = new NftStore(nftData, this, nftPhoto, nftSignature);
+    this.nftInput.setValues(nftData, "");
+    this.loaded = true;
+  }
 
   setInitialUserAndNft(
     nftData: Nft,
@@ -296,7 +447,7 @@ export class UserStore {
   }
 
   get videoExists() {
-    return (this.nft?.mux_playback_id !== "" && this.nft?.mux_playback_id);
+    return this.nft?.mux_playback_id !== "" && this.nft?.mux_playback_id;
   }
 
   get loadedNft() {
@@ -318,34 +469,68 @@ export class UserStore {
   }
 
   createNft = async () => {
-    const { data, error } = await createNewNft({
-      firstName: this.nftInput?.first_name,
-      lastName: this.nftInput?.last_name,
-      gradYear: this.nftInput?.graduation_year,
-      user_id: this.id,
-      user_details_id: this.userDetails.id,
-    });
+    // Check if creating an NFT for non logged in user
+    if (!this.loggedIn) {
+      const uuid = uuidv4();
 
-    const user_name = `${this.nftInput?.first_name} ${this.nftInput?.last_name}`;
-    const { data: data2, error: error2 } = await updateUsername(
-      user_name,
-      this.userDetails.id
-    );
+      const { data, error } = await createNewTempNft({
+        firstName: this.nftInput?.first_name,
+        lastName: this.nftInput?.last_name,
+        gradYear:
+          this.nftInput?.graduation_year.length > 2
+            ? this.nftInput?.graduation_year.slice(-2)
+            : this.nftInput?.graduation_year,
+        temp_user_id: uuid,
+      });
 
-    const { data: updateTwitterData, error: updateTwitterError } =
-      await updateTwitter(this.nftInput.twitter.replace("@", ""), this.userDetails.id);
-
-    if (error) {
-      alert(error.message);
-      return false;
-    } else {
-      if (data) {
-        this.nft = new NftStore(data[0], this);
-        this.userDetails.setFieldValue("user_name", user_name);
-        this.userDetails.setFieldValue("twitter", this.nftInput.twitter);
-        return true;
-      } else {
+      if (error) {
+        alert(error.message);
         return false;
+      } else {
+        if (data) {
+          this.nft = new NftStore(data[0], this);
+
+          // save uuid data in cookie
+          cookieCutter.set("temp_user_id", uuid, { path: "/", expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365) });
+          return true;
+        }
+      }
+    } else {
+      const { data, error } = await createNewNft({
+        firstName: this.nftInput?.first_name,
+        lastName: this.nftInput?.last_name,
+        gradYear:
+          this.nftInput?.graduation_year.length > 2
+            ? this.nftInput?.graduation_year.slice(-2)
+            : this.nftInput?.graduation_year,
+        user_id: this.id,
+        user_details_id: this.userDetails.id,
+      });
+
+      const user_name = `${this.nftInput?.first_name} ${this.nftInput?.last_name}`;
+      const { data: data2, error: error2 } = await updateUsername(
+        user_name,
+        this.userDetails.id
+      );
+
+      const { data: updateTwitterData, error: updateTwitterError } =
+        await updateTwitter(
+          this.nftInput.twitter.replace("@", ""),
+          this.userDetails.id
+        );
+
+      if (error) {
+        alert(error.message);
+        return false;
+      } else {
+        if (data) {
+          this.nft = new NftStore(data[0], this);
+          this.userDetails.setFieldValue("user_name", user_name);
+          this.userDetails.setFieldValue("twitter", this.nftInput.twitter);
+          return true;
+        } else {
+          return false;
+        }
       }
     }
   };

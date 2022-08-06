@@ -72,6 +72,8 @@ export const signOut = () => supabase.auth.signOut();
 
 const getFileObject = (file_id: number) =>
   supabase.from("files").select("*").eq("id", file_id).maybeSingle();
+export const getFilePath = (file_id: number) =>
+  supabase.from("files").select("file_name").eq("id", file_id).single();
 export const getSupabaseFile = (file_name: string) =>
   supabase.storage.from("private").download(file_name);
 const getSupabaseFileLink = (file_name: string) =>
@@ -80,6 +82,30 @@ const deleteStorageFile = (file_name: string) =>
   supabase.storage.from("private").remove([file_name]);
 const deleteFileById = (file_id: number) =>
   supabase.from("files").delete().match({ id: file_id });
+
+export const moveFiles = async (from: string, to: string, file_id: number) => {
+  return new Promise(async (res, rej) => {
+    const { data: move, error: moveError } = await supabase.storage
+      .from("private")
+      .move(from, to);
+
+    // update file object filename
+    const { data, error } = await supabase
+      .from("files")
+      .update([
+        {
+          file_name: to,
+        },
+      ])
+      .match({ id: file_id });
+
+    if (move && data) {
+      res(true);
+    } else {
+      rej(false);
+    }
+  });
+};
 
 export const attachFileToNft = (
   fileType: string,
@@ -110,6 +136,13 @@ export const uploadFileToStorage = (filePath: string, photoFile: File) =>
 
 export const getUserNft = (user_id: string) =>
   supabase.from("nft").select("*").eq("user_id", user_id).maybeSingle();
+
+export const getTempNft = (temp_user_id: string) =>
+  supabase
+    .from("nft")
+    .select("*")
+    .eq("temp_user_id", temp_user_id)
+    .maybeSingle();
 
 export const getNftById = (nft_id: number) =>
   supabase.from("nft").select("*").eq("id", nft_id).maybeSingle();
@@ -177,25 +210,26 @@ export const getFileLinkFromSupabase = async (
 
 export const getScreenshots = async (
   nft_ids: number[]
-): Promise<{ nft_id: number, public_url: string }[]> => {
-
+): Promise<{ nft_id: number; public_url: string }[]> => {
   let screenshots: any = [];
   const { data, error } = await supabase
     .from("nft")
     .select(`id, files!nft_screenshot_file_id_fkey(file_name)`)
-    .in("id", nft_ids)
+    .in("id", nft_ids);
 
   if (data) {
-    data.map(async res => {
-      const public_url = await supabase.storage.from("private").getPublicUrl(res.files.file_name)
+    data.map(async (res) => {
+      const public_url = await supabase.storage
+        .from("private")
+        .getPublicUrl(res.files.file_name);
       screenshots.push({
         nft_id: res.id,
-        public_url: public_url.publicURL
-      })
-    })
+        public_url: public_url.publicURL,
+      });
+    });
   }
   return screenshots;
-}
+};
 
 export const getScreenshot = async (
   nft_id: number
@@ -274,6 +308,16 @@ export const createNewNft = (input: NftFormInput) =>
     },
   ]);
 
+export const createNewTempNft = (input: NftFormInput) =>
+  supabase.from("nft").insert([
+    {
+      first_name: input.firstName,
+      last_name: input.lastName,
+      graduation_year: input.gradYear,
+      temp_user_id: input.temp_user_id,
+    },
+  ]);
+
 export const stepThreeSubmit = (input: NftFormInput) =>
   supabase
     .from("nft")
@@ -348,3 +392,28 @@ export const saveTeamColors = (
 
 export const addEmailToWaitlist = (email: string, waitlist?: string) =>
   supabase.from("waitlist").insert([{ email, waitlist }]);
+
+export const updateTempUserNftToRealId = (
+  temp_user_id: string,
+  user_id: string,
+  user_details_id: string
+) =>
+  supabase
+    .from("nft")
+    .update([
+      {
+        user_id,
+        user_details_id,
+      },
+    ])
+    .match({ temp_user_id });
+
+export const deleteTempUserId = (user_id: string) =>
+  supabase
+    .from("nft")
+    .update([
+      {
+        temp_user_id: "",
+      },
+    ])
+    .match({ user_id });

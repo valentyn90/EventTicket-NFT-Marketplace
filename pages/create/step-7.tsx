@@ -2,37 +2,36 @@ import CreateLayout from "@/components/Create/CreateLayout";
 import Card from "@/components/NftCard/Card";
 import userStore from "@/mobx/UserStore";
 import forwardMinted from "@/utils/forwardMinted";
-import { Box, Button, Divider, Flex, Spinner, Text } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Text } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useMixpanel } from 'react-mixpanel-browser';
-
+import { useMixpanel } from "react-mixpanel-browser";
+import Cookies from "cookies";
 
 const StepSeven = () => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const mixpanel = useMixpanel();
 
-
   useEffect(() => {
     userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
   }, []);
 
   async function handleStepSixSubmit(e: React.FormEvent) {
-    mixpanel.track("NFT - User Approved")
+    mixpanel.track("NFT - User Approved");
     e.preventDefault();
     setSubmitting(true);
     userStore.nft?.setNftCardScreenshot(userStore.nft.id, userStore.id);
     const res = await userStore.nft?.stepSevenSubmit();
-    const res2 = await fetch(`/api/outreach/${userStore.nft?.id}?message_type=created`);
+    const res2 = await fetch(
+      `/api/outreach/${userStore.nft?.id}?message_type=created`
+    );
     if (res2 && res) {
-
       router.push("/create/step-8");
-    }
-    else{
+    } else {
       setSubmitting(false);
     }
   }
@@ -52,9 +51,9 @@ const StepSeven = () => {
                 mt={["1rem", "1rem", 0]}
                 colorScheme="gray"
               >
-                Take a look that everything is how you want it.
-                If you see any issues, you can go back and fix them.
-                Once it's approved, we will start the minting process.
+                Take a look that everything is how you want it. If you see any
+                issues, you can go back and fix them. Once it's approved, we
+                will start the minting process.
               </Text>
               <Text
                 flex="1"
@@ -72,7 +71,8 @@ const StepSeven = () => {
                 color="white"
                 type="submit"
                 w={["100%", "fit-content"]}
-                isLoading={submitting}>
+                isLoading={submitting}
+              >
                 Approved!
               </Button>
             </Flex>
@@ -88,7 +88,7 @@ const StepSeven = () => {
                 // w={["none", "none", "380px"]}
                 alignSelf="center"
               >
-                <Text  textAlign="center" mb="1" fontSize="2xl">
+                <Text textAlign="center" mb="1" fontSize="2xl">
                   Front
                 </Text>
                 <Card
@@ -121,7 +121,8 @@ const StepSeven = () => {
             color="white"
             type="submit"
             w={["100%", "fit-content"]}
-            isLoading={submitting}>
+            isLoading={submitting}
+          >
             Approved!
           </Button>
           <Divider mt="6" mb="6" />
@@ -131,7 +132,6 @@ const StepSeven = () => {
                 <Button>Back</Button>
               </a>
             </NextLink>
-
           </Flex>
         </Flex>
       </form>
@@ -140,6 +140,18 @@ const StepSeven = () => {
 };
 
 export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+
+  const cookies = new Cookies(req);
+
+  if (cookies.get("alreadyCreatedRedirect")) {
+    return {
+      redirect: {
+        destination: "/create/already-created",
+        permanent: false,
+      },
+    }
+  }
+  
   return await forwardMinted(req);
 }
 

@@ -11,23 +11,33 @@ import { observer } from "mobx-react-lite";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMixpanel } from 'react-mixpanel-browser';
 
 
 const StepTwo = () => {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+  const [disabled, setDisabled] = useState(true);
   const mixpanel = useMixpanel();
 
-  async function handleStepTwoSubmit(e: React.FormEvent) {
-    mixpanel.track("NFT - Uploaded Photo")
+  useEffect(() => {
+    if (userStore.nft && userStore.nft.photo) {
+      setDisabled(false);
+    }
+    if (userStore.nftInput.localPhoto){
+      setDisabled(false);
+    }
+
+  }, [userStore.nftInput.localPhoto, userStore.nft?.photo])
+
+  async function handleStepTwoSubmit(e: any) {
     e.preventDefault();
+    mixpanel.track("NFT - Uploaded Photo")
+    setSubmitting(true);
     if (userStore.stepTwoSkip) {
-      setSubmitting(true);
       router.push("/create/step-3");
     } else {
-      setSubmitting(true);
       if (userStore.nftInput?.preview_rotation !== 0) {
         // rotate image
         let photoToUse;
@@ -62,12 +72,11 @@ const StepTwo = () => {
       }
 
       const res = await userStore.nft?.uploadPhotoToSupabase();
-
-      setSubmitting(false);
       if (res) {
         // success
         router.push("/create/step-3");
       }
+
     }
   }
 
@@ -98,7 +107,7 @@ const StepTwo = () => {
                 colorScheme="blue"
                 color="white"
                 type="submit"
-                disabled={userStore.nftInput?.photoUploading}
+                disabled={userStore.nftInput?.photoUploading || disabled}
                 isLoading={submitting}
                 w={["100%", "fit-content"]}
               >
@@ -107,7 +116,7 @@ const StepTwo = () => {
             </Flex>
 
             <Box
-              display={["block", "block", "none"]}
+              display={["block", "block", "none"]} pt={8}
               alignSelf="center">
               
               <Card

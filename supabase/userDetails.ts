@@ -62,3 +62,14 @@ export const unlockNft = (nft_id: number) =>
     .from("nft")
     .update([{ approved: false }])
     .match({ id: nft_id });
+
+export const updateTempUserDetails = (user_id: string, user_name: string) =>
+  supabase
+    .from("user_details")
+    .update([
+      {
+        user_name,
+        role: "marketplace",
+      },
+    ])
+    .match({ user_id });

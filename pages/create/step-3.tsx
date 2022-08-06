@@ -124,7 +124,7 @@ const StepThree = () => {
             </Flex>
 
             <Box
-              display={["block", "block", "none"]}
+              display={["block", "block", "none"]} pt={8}
               alignSelf="center">
 
               <Card

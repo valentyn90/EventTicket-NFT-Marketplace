@@ -10,6 +10,7 @@ interface NftFormInput {
   sportPosition?: string;
   choiceQuote?: string;
   user_details_id?: string;
+  temp_user_id?: string;
 }
 
 export default NftFormInput;

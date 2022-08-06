@@ -13,11 +13,10 @@ import { observer } from "mobx-react-lite";
 import userStore from "@/mobx/UserStore";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import { IntercomProvider } from 'react-use-intercom';
-import mixpanel from 'mixpanel-browser';
-import { MixpanelProvider } from 'react-mixpanel-browser';
-import TagManager from 'react-gtm-module';
-
+import { IntercomProvider } from "react-use-intercom";
+import mixpanel from "mixpanel-browser";
+import { MixpanelProvider } from "react-mixpanel-browser";
+import TagManager from "react-gtm-module";
 
 require("../css/rsuite.css");
 
@@ -40,8 +39,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       if (
         router.pathname.includes("collection") ||
         router.pathname.includes("profile") ||
-        router.pathname.includes("recruit") ||
-        router.pathname.includes("create/step")
+        router.pathname.includes("recruit")
       ) {
         router.push("/athletes/signin");
       }
@@ -49,16 +47,15 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [userStore.loggedIn, userStore.loaded, router.pathname]);
 
   useEffect(() => {
-    TagManager.initialize({ gtmId: 'GTM-KP825Q5' });
+    TagManager.initialize({ gtmId: "GTM-KP825Q5" });
   }, []);
-
 
   return (
     <ChakraProvider theme={theme}>
       <WalletConnectionProvider>
         <WalletModalProvider>
-          <MixpanelProvider token={"b78dc989c036b821147f68e00c354313"} >
-            <IntercomProvider appId={"b3ms6uff"} >
+          <MixpanelProvider token={"b78dc989c036b821147f68e00c354313"}>
+            <IntercomProvider appId={"b3ms6uff"}>
               <Head>
                 <title>VerifiedInk</title>
                 <meta

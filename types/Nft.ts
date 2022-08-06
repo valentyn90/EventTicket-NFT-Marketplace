@@ -41,6 +41,7 @@ interface Nft {
   edition_size: number;
   edition_rarity: string;
   edition_utility: any[] | null;
+  temp_user_id: string | null;
 }
 
 export default Nft;

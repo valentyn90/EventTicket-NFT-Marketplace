@@ -119,17 +119,9 @@ export const CardWrapper = styled.div<StyleProps>`
     ${(props) =>
     props.founders
       ?
-      `background: 
-      radial-gradient(
-        circle in center,
-          #bf953f,
-          #fcf6ba,
-          #b38728,
-          #fbf5b7,
-          #aa771c
-          );
-        background-size: 400% 400%;
-        ${ShinyAnimationCss}`
+      `background-image: linear-gradient( rgba(0,0,0,.2), rgba(0,0,0,.5) ), url(/img/gold.jpg);
+      background-size: cover;
+        `
       :
       (props.editionRarity === "Legendary" && props.editionName != "Extended") ?
         // Legendary Launch/Base

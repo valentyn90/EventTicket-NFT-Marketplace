@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import VideoPlayer from "../Components/VideoPlayer";
 import { goFullscreen, handleTouchEvent } from "./CardMethods";
 import { CardWrapper } from "./CardStyles";
+import { toJS } from "mobx";
 
 interface Props {
   nft_id?: number | undefined;
@@ -27,6 +28,7 @@ interface Props {
   serial_no?: number | undefined;
   sale_price?: number | undefined;
   noGlow?: boolean | false;
+  emptyCard?: boolean;
 }
 
 const Card: React.FunctionComponent<Props> = ({
@@ -43,7 +45,8 @@ const Card: React.FunctionComponent<Props> = ({
   recruit_share = false,
   serial_no = 1,
   sale_price = undefined,
-  noGlow = false
+  noGlow = false,
+  emptyCard = false,
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [nftCardData, setNftCardData] = useState({
@@ -121,12 +124,17 @@ const Card: React.FunctionComponent<Props> = ({
   }
 
   useEffect(() => {
-    getCardData();
+    if (!emptyCard) {
+      getCardData();
+    } else {
+      setLoaded(true);
+    }
   }, [
     nft_id,
     nft?.photo_file,
     nft?.signature_file,
     userStore.nft?.mux_playback_id,
+    emptyCard,
   ]);
 
   const router = useRouter();
@@ -143,7 +151,7 @@ const Card: React.FunctionComponent<Props> = ({
       router.pathname.includes("/create/") ||
       router.pathname.includes("/card/") ||
       router.pathname.includes("naas")
-      // router.pathname.includes("/marketplace") 
+      // router.pathname.includes("/marketplace")
     ) {
       setSmallCardSize(true);
     } else {
@@ -268,7 +276,6 @@ const Card: React.FunctionComponent<Props> = ({
     edition_name = nftCardData.edition_name;
     edition_rarity = nftCardData.edition_rarity;
     edition_quantity = nftCardData.edition_quantity;
-
   } else {
     preview_rotation = userStore.nftInput.preview_rotation;
 
@@ -298,13 +305,14 @@ const Card: React.FunctionComponent<Props> = ({
     }
 
     if (userStore.nftInput.graduation_year) {
+      const localGradYear = localInputOrNot(
+        userStore.nftInput.graduation_year.toString(),
+        nftCardData.graduation_year
+      );
       graduation_year =
-        localInputOrNot(
-          userStore.nftInput.graduation_year.toString(),
-          nftCardData.graduation_year
-        ).toString().length > 2
-          ? nftCardData.graduation_year
-          : `'${nftCardData.graduation_year.toString().padStart(2, "0")}`;
+        localGradYear.toString().length > 2
+          ? `'${localGradYear.slice(-2)}`
+          : `'${localGradYear.padStart(2, "0")}`;
     } else {
       graduation_year =
         nftCardData.graduation_year.toString().length > 2
@@ -361,9 +369,15 @@ const Card: React.FunctionComponent<Props> = ({
       nftCardData.color_transition
     );
 
-    if (!topColor || !bottomColor || !transitionColor) {
+    if (!topColor) {
       topColor = nftCardData.color_top || "#4f66e1";
+    }
+
+    if (!bottomColor) {
       bottomColor = nftCardData.color_bottom || "#cb0000";
+    }
+
+    if (!transitionColor) {
       transitionColor = nftCardData.color_transition || "#3d142d";
     }
 
@@ -389,39 +403,43 @@ const Card: React.FunctionComponent<Props> = ({
       <Head>
         <meta
           property="og:title"
-          content={sale_price ?  
-            "Buy " +
-            (db_first_name ? `${db_first_name}\'s ` : "") +
-            "VerifiedInk from $" + sale_price
-            :
-            "Check out " +
-            (db_first_name ? `${db_first_name}\'s ` : "") +
-            "VerifiedInk"
+          content={
+            sale_price
+              ? "Buy " +
+                (db_first_name ? `${db_first_name}\'s ` : "") +
+                "VerifiedInk from $" +
+                sale_price
+              : "Check out " +
+                (db_first_name ? `${db_first_name}\'s ` : "") +
+                "VerifiedInk"
           }
           key="title"
         />
         <meta
           property="og:image"
-          content={`${typeof public_url === "string" && public_url.length > 0
+          content={`${
+            typeof public_url === "string" && public_url.length > 0
               ? public_url
               : "https://verifiedink.us/img/verified-ink-site.png"
-            }`}
+          }`}
           key="preview"
         />
         <meta
           property="twitter:image"
-          content={`${typeof public_url === "string" && public_url.length > 0
+          content={`${
+            typeof public_url === "string" && public_url.length > 0
               ? `https://verifiedink.us/api/meta/showTwitterPreview/${nft_id}`
               : "https://verifiedink.us/img/twitter-site-image.png"
-            }`}
+          }`}
           key="twitter-image"
         />
         <meta
           property="description"
-          content={`${recruit_share
+          content={`${
+            recruit_share
               ? "Check out this NFT I made with @VfdInk. Just for athletes. I get paid every single time it sells. Here's a referral link if you want to make your own."
               : "Create your own custom NFT with VerifiedInk - @VfdInk"
-            }`}
+          }`}
         />
       </Head>
       <div className="viewer">
@@ -480,21 +498,23 @@ const Card: React.FunctionComponent<Props> = ({
                     </>
                   ) : (
                     <>
-                      <div className="bold-info">{serial_no}</div>/{edition_quantity}
+                      <div className="bold-info">{serial_no}</div>/
+                      {edition_quantity}
                     </>
                   )}
                 </div>
               </div>
             </div>
           ) : (
-            <motion.div className="card front"
+            <motion.div
+              className="card front"
               initial={{
                 opacity: 0,
-                scale:.98
+                scale: 0.98,
               }}
               animate={{
-                opacity: .8,
-                scale: 1
+                opacity: 0.8,
+                scale: 1,
               }}
               transition={{
                 repeat: Infinity,
