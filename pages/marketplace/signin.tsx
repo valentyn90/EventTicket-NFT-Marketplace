@@ -17,6 +17,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
+import cookieCutter from "cookie-cutter";
 
 interface Props {}
 
@@ -31,6 +32,13 @@ const SignIn: React.FC<Props> = () => {
     const email_router = router.query.email! as string;
     console.log(email_router);
     setEmail(email_router);
+
+    if(!cookieCutter.get("redirect-link")){
+      cookieCutter.set("redirect-link","/collection", {
+        path: "/",
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
+      });
+    }
   }, []);
 
   async function handleSignin(e: React.FormEvent) {
@@ -134,13 +142,6 @@ export async function getServerSideProps({
   res: NextApiResponse;
 }) {
   const cookies = new Cookies(req, res);
-
-  if(!cookies.get("redirect-link")){
-
-    cookies.set("redirect-link", "/collection", {
-      maxAge: 1000 * 60 * 60,
-    });
-  }
 
   const { user } = await supabase.auth.api.getUserByCookie(req);
   if (user) {

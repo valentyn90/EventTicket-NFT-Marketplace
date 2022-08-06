@@ -1,7 +1,7 @@
 import { supabase } from "@/supabase/supabase-client";
 import { Spinner, Stack, Text } from "@chakra-ui/react";
 import Cookies from "cookies";
-import { NextApiRequest } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useMixpanel } from "react-mixpanel-browser";
@@ -95,13 +95,17 @@ const Redirect: React.FC<Props> = ({ redirect }) => {
   );
 };
 
-export async function getServerSideProps({ req }: { req: NextApiRequest }) {
-  const cookies = new Cookies(req);
+export async function getServerSideProps({ req ,res }: { req: NextApiRequest, res:NextApiResponse }) {
+  const cookies = new Cookies(req, res);
 
   let redirect_link =
     cookies.get("redirect-link") === undefined
       ? null
       : cookies.get("redirect-link");
+
+  cookies.set("redirect-link", "/collection", {
+    expires: new Date(0),
+  });
 
   return {
     props: {

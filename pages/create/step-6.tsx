@@ -15,13 +15,14 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { observer } from "mobx-react-lite";
-import { NextApiRequest } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import SignaturePad from "react-signature-pad-wrapper";
 import { FaGoogle, FaTwitter } from "react-icons/fa";
 import cookieCutter from "cookie-cutter";
+import Cookies from "cookies";
 import { signIn, supabase } from "@/supabase/supabase-client";
 
 const StepSix = () => {
@@ -36,9 +37,7 @@ const StepSix = () => {
   useEffect(() => {
     // ensure the video finished processing;
     async function finish_video() {
-      console.log(new Date());
       await userStore.nft?.getMuxAsset();
-      console.log(new Date());
     }
     finish_video();
   }, [userStore]);
@@ -270,7 +269,12 @@ const StepSix = () => {
   );
 };
 
-export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+export async function getServerSideProps({ req, res }: { req: NextApiRequest, res: NextApiResponse }) {
+  const cookies = new Cookies(req, res);
+  cookies.set("redirect-link", "/collection", {
+    expires: new Date(0),
+  });
+
   return await forwardMinted(req);
 }
 

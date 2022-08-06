@@ -29,6 +29,9 @@ const Page = () => {
             It looks like you've already created your first VerifiedInk! We'll
             be enabling second mints soon, but for now you can only create one.
           </Text>
+          <Text>
+            Please reach out via the blue help button below if you have any questions.
+          </Text>
 
           {alreadyMinted ? (
             <Button
