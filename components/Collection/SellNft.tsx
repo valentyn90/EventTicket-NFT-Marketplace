@@ -70,6 +70,9 @@ const SellNft: React.FC<Props> = ({
           if ([1160,1161,1162,763].includes(data.id)) {
             setGradYearDisable(true);
           }
+          if(data.post_hs){
+            setGradYearDisable(false);
+          }
         }
       });
     } else {
