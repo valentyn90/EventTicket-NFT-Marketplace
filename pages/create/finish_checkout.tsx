@@ -73,20 +73,19 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb }) => {
         console.log(propsEmail)
       }
 
-      const price = router.query.price! as string;
       const purchaseQuantity = router.query.quantity! as string;
 
-      if (price && purchaseQuantity) {
+      if (purchaseQuantity) {
         ga.event({
           action: "conversion",
           params: {
-            send_to: 'AW-10929860785/fU-YCPWBps4DELHh4dso',
-            value: .06 * (parseInt(purchaseQuantity) * parseInt(price)),
+            send_to: 'AW-10929860785/zDSiCL3x6dMDELHh4dso',
+            value: parseInt(purchaseQuantity)==1 ? 19.99 : 59,
             currency: 'USD'
           },
         });
 
-        mixpanel.track("Naas - Completed Transaction", { price: price, purchaseQuantity: purchaseQuantity, total_spend: (parseInt(purchaseQuantity) * parseInt(price)) });
+        mixpanel.track("AR Card - Completed Transaction", { purchaseQuantity: purchaseQuantity, total_spend: (parseInt(purchaseQuantity)==1 ? 19.99 : 59) });
       }
     }
 

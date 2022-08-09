@@ -24,15 +24,13 @@ const Completed = () => {
         ga.event({
             action: "conversion",
             params: {
-                send_to: 'AW-10929860785/rZfECK7b9s0DELHh4dso',
+                send_to: 'AW-10929860785/qCYvCMDx6dMDELHh4dso',
                 value: oneSelected ? 19.99 : 59,
                 currency: 'USD'
             },
         });
 
-        mixpanel.track("AR Card - Check Out", { price: oneSelected ? 19.99 : 59, total_spend: oneSelected ? 19.99 : 59 });
-
-
+        mixpanel.track("AR Card - Check Out", { purchaseQuantity: oneSelected ? 1 : 5, total_spend: oneSelected ? 19.99 : 59 });
 
         const stripeRes = await fetch(`/api/marketplace/arCheckout`, {
             method: "POST",
