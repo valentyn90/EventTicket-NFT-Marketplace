@@ -30,7 +30,7 @@ const StepSeven = () => {
       `/api/outreach/${userStore.nft?.id}?message_type=created`
     );
     if (res2 && res) {
-      router.push("/create/step-8");
+      router.push("/create/completed");
     } else {
       setSubmitting(false);
     }

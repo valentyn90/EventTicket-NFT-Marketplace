@@ -96,6 +96,39 @@ export async function sendDropPurchaseMail(user_id: string, quantity: number, pr
 
 }
 
+export async function sendARPurchaseMail(user_id: string, quantity: number, price: number, nft_id: number) {
+  let template_id = 'd-bb5733c1ab614d7e97628fa96cfff374'
+
+  const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
+
+  const email = user_details.data.email;
+
+  const msg = {
+    to: email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    bcc: 'ARSales@verifiedink.us',
+    template_id: template_id,
+    dynamic_template_data: {
+      price,
+      quantity,
+      email,
+      nft_id
+    }
+  }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error)
+      return { "success": true }
+    })
+
+}
+
 export async function sendSaleMail(user_id: string, nft_id: string, sn: string, card_preview_image: string, price: string) {
   let template_id = 'd-97a66a1035544e4faefa2e0b4a0c6505'
 

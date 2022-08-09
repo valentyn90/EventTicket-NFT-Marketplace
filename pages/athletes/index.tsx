@@ -8,7 +8,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { SplashModal } from "@/components/ui/SplashModal";
 import StaticCard from "@/components/NftCard/StaticCard";
 import mixpanel from 'mixpanel-browser';
-import { Button } from "@chakra-ui/react";
+import { Button, Spacer } from "@chakra-ui/react";
+import { FaPen, FaPenAlt, FaPenFancy, FaSignature } from "react-icons/fa";
 
 const Wrapper = styled.div`
   background: radial-gradient(
@@ -271,8 +272,9 @@ const Wrapper = styled.div`
   }
 
   .icon-svg-div {
+
     > svg {
-      height: 88px;
+      height: 120px;
     }
   }
 
@@ -563,20 +565,20 @@ const Athletes: React.FC = () => {
                   variants={headerVariants}
                   className="header"
                 >
-                  Your Collectible
+                  Your Journey
                 </motion.div>
                 <motion.div variants={headerVariants} className="header gradient">
-                  You Get Paid
+                  Your Collectible
                 </motion.div>
               </div>
               <motion.div variants={childVariants} className="sub-box">
                 <p className="subtitle">
                   VerifiedInk is the first place for athletes like you to design, own,
-                  and sell their own limited edition NFTs.
+                  and sell their own limited edition AR Digital Trading Card.
                   {/* Design, own, and sell your limited edition NFTs. */}
                 </p>
                 <p className="subtitle">
-                Completely free to make. Earn on every single sale.
+                Completely free to make. Show it off with physcial AR Cards for a small fee.
                 </p>
                 <div className="buttons margin-button">
                   <Link href="/create/step-1">
@@ -593,16 +595,17 @@ const Athletes: React.FC = () => {
                     <div className="line-section"></div>
                     <p className="hero-section-title">2 Minute Drill</p>
                     <p className="hero-section-subtitle">
-                      We make creating your first NFT as easy as posting to your
-                      favorite social media app - you'll be done in 2 minutes.
+                      We make creating your first Digital Trading Card as easy as posting to your
+                      favorite social media app - it takes 2 minutes.
                     </p>
                   </div>
                   <div className="hero-section-block">
                     <div className="line-section"></div>
-                    <p className="hero-section-title">Earn the Most</p>
+                    <p className="hero-section-title">IRL</p>
                     <p className="hero-section-subtitle">
-                      Free to create, and yours to sell. You earn not just on the first
-                      sale, but on every sale.
+                      Starting at $20, you can view your Digital Collectible IRL with 
+                      our unique physical Augmented Reality (AR) Card. 
+                  
                     </p>
                   </div>
                 </div>
@@ -612,7 +615,7 @@ const Athletes: React.FC = () => {
               <div className="hero-card-mobile">
               <div className="hero-card-box mb-2">
               <img src="/img/tap.svg" className="tap" alt="tap" />
-                <StaticCard nft_id={332}
+                <StaticCard nft_id={763}
                   reverse={flipMain}
                   width={400}
                 />
@@ -638,31 +641,48 @@ const Athletes: React.FC = () => {
                 <div className="icon-svg-div">
                   <StarIcon />
                 </div>
-                <p className="how-it-works-title">Create</p>
+                <p className="how-it-works-title">Design</p>
                 <p className="how-it-works-subtitle">
                   Take 2 minutes to create your VerifiedInk
                 </p>
               </motion.div>
               <motion.div className="icon-box" variants={childVariants}>
                 <div className="icon-svg-div">
-                  <TagIcon />
+                  <FaSignature size={130}/>
                 </div>
-                <p className="how-it-works-title">List</p>
+                <p className="how-it-works-title">Sign</p>
                 <p className="how-it-works-subtitle">
-                  Sell your VerifiedInk on our Marketplace
+                  Mint your VerifiedInk to the Blockchain (we make it easy)
                 </p>
               </motion.div>
               <motion.div className="icon-box" variants={childVariants}>
-                <div className="icon-svg-div">
-                  <CashIcon />
-                </div>
-                <p className="how-it-works-title">Profit</p>
+                {/* <div className="icon-svg-div"> */}
+                <video width={"120"} autoPlay loop muted playsInline>
+                        <source
+                            src="https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/videos/ar-card-safari.mp4"
+                            type='video/mp4; codecs="hvc1"' />
+                        <source
+                            src="https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/videos/ar-card-vp9-chrome.webm"
+                            type="video/webm" />
+                    </video>
+                {/* </div> */}
+                <p className="how-it-works-title">Hold</p>
                 <p className="how-it-works-subtitle">
-                  You make 94% from your first sale and 4% from all additional
-                  sales forever
+                  Show off your creation with our Physical AR Card
                 </p>
               </motion.div>
             </div>
+            <Spacer p={8} />
+            <div className="buttons margin-button">
+                  <Link href="/create/step-1">
+                  <Button className="button"
+                      isLoading={loading}
+                      onClick={() =>{setLoading(true)}}
+                    >
+                      Create your &nbsp; <span className="bold-text">VERIFIED</span>INK
+                    </Button>
+                  </Link>
+                </div>
           </div>
         </motion.div>
 

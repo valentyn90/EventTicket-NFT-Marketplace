@@ -69,7 +69,6 @@ export const updateTempUserDetails = (user_id: string, user_name: string) =>
     .update([
       {
         user_name,
-        role: "marketplace",
       },
     ])
     .match({ user_id });

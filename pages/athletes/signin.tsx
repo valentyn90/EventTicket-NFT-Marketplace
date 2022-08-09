@@ -28,7 +28,7 @@ const AthleteSignin: React.FC = () => {
     }
   },[bypass])
 
-  return bypass ? (
+  return true ? (
     <Box minH="100vh" py={"12"} px={{ base: "4", lg: "8" }}>
       <Container centerContent>
         <VStack spacing={4}>

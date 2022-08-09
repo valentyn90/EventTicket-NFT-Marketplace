@@ -7,7 +7,7 @@ import randCrypto from "crypto";
 import crypto from "crypto-js";
 import { cancel, cancelOrder, transferViaCreditCard } from "@/mint/marketplace";
 import generateKeypair, { getKeypair } from "@/mint/mint";
-import { sendAuctionLoserMail, sendAuctionMail, sendDropAuctionMail, sendDropPurchaseMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
+import { sendARPurchaseMail, sendAuctionLoserMail, sendAuctionMail, sendDropAuctionMail, sendDropPurchaseMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2020-08-27",
@@ -91,6 +91,31 @@ const handler = async (req: any, res: any) => {
                 eventObject.metadata.bid_team_id)
 
           } 
+          else if (eventObject.metadata.ar_card && eventObject.payment_status === "paid") {
+
+            const orderTotal = eventObject.amount_total / 100;
+            
+            let orderQuantity = eventObject.metadata.ar_quantity;
+            if (orderTotal > 30){
+              orderQuantity = 5;
+            }
+
+            const { data, error } = await supabase
+              .from("ar_credit_card_sale")
+              .update({
+                status: "2_payment_completed",
+                quantity: orderQuantity,
+                total_cost: orderTotal,
+              })
+              .match({ stripe_tx: eventObject.id })
+              .single();
+
+              await sendARPurchaseMail(eventObject.metadata.user_id,
+                orderQuantity,
+                orderTotal,
+                eventObject.metadata.nft_id)
+
+          }
           else if (eventObject.metadata.drop_id && eventObject.payment_status === "paid") {
             const { data, error } = await supabase
               .from("drop_credit_card_sale")

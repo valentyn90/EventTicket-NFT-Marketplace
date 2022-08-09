@@ -74,6 +74,7 @@ export const getAdminNfts = async ({
           .not("first_name", "is", null)
           .not("last_name", "is", null)
           .not("graduation_year", "is", null)
+          .not("user_id","is", null)
           .is("minted", null );
         if (data1) {
           dataArr = [...dataArr, ...data1];
@@ -108,7 +109,9 @@ export const getAdminNfts = async ({
       .is("minted", null )
       .not("first_name", "is", null)
       .not("last_name", "is", null)
-      .not("graduation_year", "is", null);
+      .not("graduation_year", "is", null)
+      .not("user_id","is", null)
+      ;
   }
 
   const { data, error } = await query;
