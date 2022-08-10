@@ -23,9 +23,7 @@ import router, { Router } from "next/router";
 import React, { useEffect, useState } from "react";
 
 const Collection = () => {
-  const collectionTextString = `This is your personal collection of VerifiedInk NFTs. \
-  Soon, you’ll be able to gift or trade these to \
-  friends and sell them on the marketplace.`;
+  const collectionTextString = `This is your personal collection of VerifiedInk Digital Collectibles. Tap into each Card to view or list.`;
 
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 

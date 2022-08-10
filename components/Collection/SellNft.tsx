@@ -64,15 +64,16 @@ const SellNft: React.FC<Props> = ({
         if (data) {
           const gradYearNum = Number(data.graduation_year);
           const NILState = ["CA","CT","NJ","NY","LA","CO","NE","UT","AK","KS"].includes(data.usa_state) ;
+          if(data.post_hs){
+            setGradYearDisable(false);
+          } else
           if (gradYearNum > 22 && !NILState) {
             setGradYearDisable(true);
           }
           if ([1160,1161,1162,763].includes(data.id)) {
             setGradYearDisable(true);
           }
-          if(data.post_hs){
-            setGradYearDisable(false);
-          }
+
         }
       });
     } else {
