@@ -7,22 +7,22 @@ const Wrapper = styled.div`
   // background: white !important;
   background: #c0c0c0 !important;
   margin: 0px !important;
-  padding: 40px !important;
+  // padding: 40px !important;
   position: relative;
-  width: 626px;
-  height: 980px;
+  width: 500px;
+  height: 824.47px;
 
   #react-qrcode-logo {
     position: relative;
-    top: 377px;
-    left: 168px;
+    top: 357px;
+    left: 167px;
     opacity: 0.75;
     backdrop-filter: blur(12px) brightness(0.85);
   }
 
   .target {
     position: absolute;
-    height: 900px;
+    width: 500px;
   }
 
   .text{
@@ -33,11 +33,11 @@ const Wrapper = styled.div`
   }
   .id{
     position: absolute;
-    top: 813px;
-    left: 416px;
+    top: 525px;
+    left: 219px;
     opacity: 0.7;
     transform-origin: top left;
-    transform: rotate(-40deg);
+    // transform: rotate(-40deg);
     // backdrop-filter: blur(12px);
     
   }
@@ -63,7 +63,7 @@ const Screenshot: React.FC = () => {
     <Wrapper id="card">
       <img className="target" src={back ? '/ar/source/target-back.png' : '/ar/source/target-front.png'}></img>
       {back ? null :
-        <QRCode size={200} bgColor="transparent" fgColor="white" value={`https://verifiedink.us/ar?ar_id=${id}`} qrStyle="dots" />
+        <QRCode size={150} bgColor="transparent" fgColor="white" value={`https://verifiedink.us/ar?ar_id=${id}`} qrStyle="dots" />
       }
       <text className="text">Scan Me</text>
       {back ? null : <text className="id">No. {id}</text>}
