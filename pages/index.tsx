@@ -17,11 +17,8 @@ const WordChange = keyframes`
 
 const Wrapper = styled.div`
   /* overflow: hidden; */
-  background: radial-gradient(
-    231.34% 231.34% at 21.53% 17.78%,
-    #1a202d 7.33%,
-    #152547 100%
-  );
+  background-color: var(--chakra-colors-blueBlack);
+  
   min-height: 100vh;
 
   .inner {

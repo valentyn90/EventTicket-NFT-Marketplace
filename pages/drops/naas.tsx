@@ -476,7 +476,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
 
                             {(saleOpen || wlAccess) && maxQuantity > 0 &&
 
-                                <Button disabled={purchaseQuantity < 1 || showEmail} onClick={() => { setShowEmail(true) }} size="lg" fontSize={"xl"} minW="200px" background="blue">
+                                <Button disabled={purchaseQuantity < 1 || showEmail} onClick={() => { setShowEmail(true) }} size="lg" pb="4px" color="white" fontSize={"xl"} minW="200px" colorScheme="blue">
                                     Buy &nbsp;&nbsp;${price * purchaseQuantity}
                                 </Button>
                             }
@@ -570,7 +570,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
 
                                     </Stack>
                                     {!(!saleOpen && !wlAccess) &&
-                                        <Button backgroundColor={"#0067ff"} disabled={invalidInput || !bidAmount || showBidEmail} onClick={() => setShowBidEmail(true)}>Bid</Button>
+                                        <Button colorScheme="blue" color="white" disabled={invalidInput || !bidAmount || showBidEmail} onClick={() => setShowBidEmail(true)}>Bid</Button>
                                     }
                                 </HStack>
 

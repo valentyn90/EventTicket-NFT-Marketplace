@@ -58,6 +58,18 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+  .navbar-logo-wrapper {
+    > svg {
+      max-height: 36px;
+      width: auto;
+    }
+
+    > img {
+      max-height: 36px;
+      width: auto;
+    }
+  }
+
   @media screen and (max-width: 1100px){
     .solana-wallet-multi-btn {
       font-size: 14px;

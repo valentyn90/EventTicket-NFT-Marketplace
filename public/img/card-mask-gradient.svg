@@ -2,9 +2,9 @@
 <path d="M0 59C0 26.4152 26.4152 0 59 0H135.25H270.5H405.75H482C514.585 0 541 26.4152 541 59V220V440V645.73C541 654.759 536.934 663.307 529.929 669.004L290.06 864.092C278.666 873.358 262.334 873.358 250.94 864.092L11.0709 669.004C4.06636 663.307 0 654.759 0 645.73V440V220V59Z" fill="url(#paint0_linear)"/>
 <defs>
 <linearGradient id="paint0_linear" x1="271" y1="317" x2="270.5" y2="880" gradientUnits="userSpaceOnUse">
-<stop stop-color="#9CA3AF" stop-opacity="0"/>
-<stop offset="0.139614" stop-color="#9CA3AF" stop-opacity="0.491483"/>
-<stop offset="0.349255" stop-color="#9CA3AF"/>
+<stop stopColor="#9CA3AF" stop-opacity="0"/>
+<stop offset="0.139614" stopColor="#9CA3AF" stop-opacity="0.491483"/>
+<stop offset="0.349255" stopColor="#9CA3AF"/>
 </linearGradient>
 </defs>
 </svg>

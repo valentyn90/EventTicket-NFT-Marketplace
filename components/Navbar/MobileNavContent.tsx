@@ -9,7 +9,7 @@ interface Props {
 
 export const MobileNavContent: React.FC<Props> = (props) => {
   const { isOpen, onClose, children } = props;
-  const bg = useColorModeValue("white", "gray.800");
+  const bg = "blueBlack";
   return (
     <AnimatePresence>
       {isOpen && (
@@ -29,8 +29,8 @@ export const MobileNavContent: React.FC<Props> = (props) => {
             top={0}
             left={0}
             zIndex={20}
-            px={4}
-            py={4}
+            px={2}
+            py={2}
           >
             {children}
             <CloseButton pos="absolute" top={4} right={4} onClick={onClose} />

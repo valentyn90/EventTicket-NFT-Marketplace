@@ -12,11 +12,13 @@ import { Button, Spacer } from "@chakra-ui/react";
 import { FaPen, FaPenAlt, FaPenFancy, FaSignature } from "react-icons/fa";
 
 const Wrapper = styled.div`
-  background: radial-gradient(
-    231.34% 231.34% at 21.53% 17.78%,
-    #1a202d 7.33%,
-    #152547 100%
-  );
+  background-color: var(--chakra-colors-blueBlack);
+  
+  // radial-gradient(
+  //   231.34% 231.34% at 21.53% 17.78%,
+  //   var(--chakra-colors-blueBlack) 7.33%,
+  //   var(--chakra-colors-blueBlack2) 100%
+  // );
 
   padding: 2rem 0;
 

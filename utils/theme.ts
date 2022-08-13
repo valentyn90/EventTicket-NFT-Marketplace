@@ -13,19 +13,32 @@ const Alert = {
   },
 };
 
+const blueBlack2 = "#1d253c"
+const blueBlack = "#040d27"
+
 const theme = extendTheme({
   config,
+  styles:{
+    global: {
+      body:{
+        bg: blueBlack
+      }
+    }
+  },
   fonts: {
-    heading: "Lato",
-    body: "Lato",
+    heading: "sofia-pro, sans-serif",
+    body: "sofia-pro, sans-serif",
   },
   colors: {
     blue: {
-      500: "#4688F1",
-      200: "#4688F1",
+      200:"#0D9DE5",
+      500:"#0D9DE5",
     },
-    viBlue: "#4688F1",
-    viBlue2: "#0B56BF",
+    blueBlack: blueBlack,
+    blueBlack2: blueBlack2,
+    blueBlackTransparent: "#040d2760",
+    viBlue: "#0D9DE5",
+    viBlue2: "#0D9DE5",
   },
   components: {
     Alert,
