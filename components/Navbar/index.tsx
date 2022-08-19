@@ -111,7 +111,7 @@ const NavIndex: React.FC = () => {
         <Navbar.Links>
           <NavTabLink>Athletes</NavTabLink>
           <NavTabLink>Marketplace</NavTabLink>
-          {/* <NavTabLink>Challenges</NavTabLink> */}
+          <NavTabLink>Challenges</NavTabLink>
           <NavTabLink>Drops</NavTabLink>
           <NavTabLink>Blog</NavTabLink>
           {userStore.loggedIn && <NavTabLink>Collection</NavTabLink>}

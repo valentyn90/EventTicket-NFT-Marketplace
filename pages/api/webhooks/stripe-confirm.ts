@@ -88,7 +88,7 @@ const handler = async (req: any, res: any) => {
 
               await sendFanChallengeEmail(
                 eventObject.metadata.email,
-                data.id
+                eventObject.metadata.order_id
               )
             
 

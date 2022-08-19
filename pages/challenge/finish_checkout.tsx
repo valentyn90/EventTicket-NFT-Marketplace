@@ -303,24 +303,24 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb, fc_id,
             validated_tx ?
               // Is the user signed in or otherwise validated?
               <Box backdropFilter="blur(10px)">
-              <form ref={ref} onSubmit={handleAddress} onChange={handleAddressChange}>
-                <ShippingInformation />
-                <input hidden={true} readOnly name="email" id="email" type="text" value={email} />
-                <Spacer p="6" />
-                <Tooltip
-                  hasArrow
-                  label="Please fill out your address."
-                  shouldWrapChildren
-                  isDisabled={addressValidated}
-                >
-                  <Button type="submit" width="100%" py="6" colorScheme="blue" color="white" borderRadius={1}
-                    disabled={!addressValidated}
-                    isLoading={loading}
-                  >Submit</Button>
-                </Tooltip>
-              </form>
+                <form ref={ref} onSubmit={handleAddress} onChange={handleAddressChange}>
+                  <ShippingInformation />
+                  <input hidden={true} readOnly name="email" id="email" type="text" value={email} />
+                  <Spacer p="6" />
+                  <Tooltip
+                    hasArrow
+                    label="Please fill out your address."
+                    shouldWrapChildren
+                    isDisabled={addressValidated}
+                  >
+                    <Button type="submit" width="100%" py="6" colorScheme="blue" color="white" borderRadius={1}
+                      disabled={!addressValidated}
+                      isLoading={loading}
+                    >Submit</Button>
+                  </Tooltip>
+                </form>
               </Box>
-               :
+              :
               <Box p={6} borderRadius={5} bgColor="red.600">
                 <Text textAlign={"center"} size={"md"}>Something went wrong. Please check your email or click the blue chat button below.</Text>
               </Box>
@@ -329,11 +329,11 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb, fc_id,
 
           <Divider py={5}></Divider>
 
-          <Heading textAlign={"center"} size={"lg"} py={3}>Share VerifiedInk with Your Friends</Heading>
-          <Text textAlign={"center"} size={"md"} pb={5}>Each referral that signs up increases your chances to win NFTs from future VerifiedInk drops.</Text>
+          <Heading textAlign={"center"} size={"lg"} py={3}>Share VerifiedInk with Fellow {team.school} Fans</Heading>
+          <Text textAlign={"center"} size={"md"} pb={5}>The more {team.school} fans that support {fc.name}, the better chance he's in a {team.school} jersey next year.</Text>
 
           <ShareButton
-            share_text={`Support ${fc.name} and ${team.school} ${fc.sport}. I just grabbed ${order.quantity} risk free collectibles.`}
+            share_text={`Support ${fc.name} and ${team.school} ${fc.sport}. I just grabbed ${order.quantity > 1 ? order.quantity : "a"} risk free collectible${order.quantity > 1 ? "s" : ""}.`}
             url={`https://verifiedink.us/challenge/${fc_id}?utm_content=${email}&team_id=${order.team_id}`}
           />
         </Box>
@@ -363,11 +363,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     validated_tx = validTx && validTx.length > 0
 
-    const { data: fc} = await supabase.from("fan_challenge").select("*")
-    .match({ "id": fc_id }).maybeSingle()
+    const { data: fc } = await supabase.from("fan_challenge").select("*")
+      .match({ "id": fc_id }).maybeSingle()
 
-    const { data: team} = await supabase.from("school").select("*")
-    .match({ "id": validTx![0].team_id }).maybeSingle()
+    const { data: team } = await supabase.from("school").select("*")
+      .match({ "id": validTx![0].team_id }).maybeSingle()
 
 
     // Check if any credit card sales are still in completed status
