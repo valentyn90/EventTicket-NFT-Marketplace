@@ -46,18 +46,20 @@ export const Template: React.FC = (props) => {
       setTabIndex(0);
     } else if (router.pathname.toLowerCase().includes("marketplace")) {
       setTabIndex(1);
+    } else if (router.pathname.toLowerCase().includes("challenge")) {
+      setTabIndex(2);
     } else if (router.pathname.toLowerCase().includes("naas")) {
-      setTabIndex(2);
-    } else if (router.pathname.toLowerCase().includes("drops")) {
-      setTabIndex(2);
-    } else if (router.pathname.toLowerCase().includes("blog")) {
       setTabIndex(3);
-    } else if (router.pathname.toLowerCase().includes("collection")) {
+    } else if (router.pathname.toLowerCase().includes("drops")) {
+      setTabIndex(3);
+    } else if (router.pathname.toLowerCase().includes("blog")) {
       setTabIndex(4);
-    } else if (router.pathname.toLowerCase().includes("listings")) {
+    } else if (router.pathname.toLowerCase().includes("collection")) {
       setTabIndex(5);
-    } else {
+    } else if (router.pathname.toLowerCase().includes("listings")) {
       setTabIndex(6);
+    } else {
+      setTabIndex(7);
     }
   });
 

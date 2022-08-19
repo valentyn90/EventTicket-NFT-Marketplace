@@ -1055,7 +1055,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         .match({ id: id })
         .single();
 
-    console.log(challenge_data);
 
     if (challenge_data) {
         const { data: teams, error } = await supabase
@@ -1068,11 +1067,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             _fc_id: challenge_data.id,
         });
 
-        console.log(challenge_data);
-        const return_data = {
-            ...challenge_data,
-            leaderboard: data,
-        };
         return {
             props: {
                 id,
