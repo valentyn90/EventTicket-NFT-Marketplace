@@ -417,3 +417,23 @@ export const deleteTempUserId = (user_id: string) =>
       },
     ])
     .match({ user_id });
+
+    export const createNewUser = async (email: string) => {
+      const createRes = await fetch(`/api/admin/create-user`, {
+        method: "POST",
+        headers: new Headers({ "Content-Type": "application/json" }),
+        credentials: "same-origin",
+        body: JSON.stringify({
+            email: email.toLowerCase(),
+        }),
+    })
+        .then((res) => {return res.json()})
+        .catch((err) => {
+            console.log(err);
+            return {
+                user: null,
+                error: true,
+            };
+        });
+    }
+    

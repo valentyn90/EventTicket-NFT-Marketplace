@@ -15,6 +15,9 @@ interface Props {
   public_url?: string;
   recruit_share?: boolean;
   sale_price?: number | undefined;
+  glow?: string;
+  flip?: boolean | undefined;
+  initFlip?: boolean | undefined;
 }
 
 const StaticCard: React.FC<Props> = ({
@@ -25,6 +28,9 @@ const StaticCard: React.FC<Props> = ({
   public_url,
   recruit_share = false,
   sale_price = undefined,
+  glow = "",
+  flip = false,
+  initFlip = false,
 }) => {
   const [screenshot, setScreenshot] = useState("/img/card-placeholder.png");
   const [lastX, setLastX] = useState(-1);
@@ -75,6 +81,14 @@ const StaticCard: React.FC<Props> = ({
       }
     });
   }, [nft_id]);
+
+  useEffect(() => {
+    // Check if this is the first time the card modal loaded
+    // So the card doesn't flip automatically when modal is opened
+    if (initFlip) {
+      flipCard();
+    }
+  }, [flip]);
 
   const flipCard = () => {
     setLastY(lastY + 180);
@@ -129,6 +143,7 @@ const StaticCard: React.FC<Props> = ({
       smallCardSize={true}
       editionRarity={nftCardData.edition_rarity}
       editionName={nftCardData.edition_name}
+      glow={glow}
     >
       <Head>
         <meta

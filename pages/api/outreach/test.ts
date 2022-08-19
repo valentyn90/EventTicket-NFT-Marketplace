@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import sendMail, { sendAddressMail, sendAuctionMail } from "./send-mail";
+import sendMail, { sendAddressMail, sendAuctionMail, sendFanChallengeEmail } from "./send-mail";
 
 export default async function outreach(
     req: NextApiRequest,
@@ -18,7 +18,7 @@ export default async function outreach(
     //     count = count + 1
     // }
 
-    // const result = await sendAddressMail("nathan.slutzky@gmail.com")
+    // const result = await sendFanChallengeEmail("aaron.linsky@gmail.com","9")
 
     const result = {nothing: "nothing"}
     // console.log(result)

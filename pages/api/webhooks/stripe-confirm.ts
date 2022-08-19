@@ -7,7 +7,7 @@ import randCrypto from "crypto";
 import crypto from "crypto-js";
 import { cancel, cancelOrder, transferViaCreditCard } from "@/mint/marketplace";
 import generateKeypair, { getKeypair } from "@/mint/mint";
-import { sendARPurchaseMail, sendAuctionLoserMail, sendAuctionMail, sendDropAuctionMail, sendDropPurchaseMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
+import { sendARPurchaseMail, sendAuctionLoserMail, sendAuctionMail, sendDropAuctionMail, sendDropPurchaseMail, sendFanChallengeEmail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2020-08-27",
@@ -69,8 +69,31 @@ const handler = async (req: any, res: any) => {
           //   .single();
 
           // console.log(data)
+          if (eventObject.metadata.fc_id && eventObject.payment_status === "paid") {
+            const { data, error } = await supabase
+              .from("fan_challenge_orders")
+              .update({
+                status: "2_payment_completed",
+              })
+              .match({ stripe_tx: eventObject.id })
+              .single();
 
-          if (eventObject.metadata.naas_auction && eventObject.payment_status === "paid") {
+              const requestOptions = {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: eventObject.customer_email})
+              }
+  
+              const assign_nfts = await fetch(`https://verifiedink.us/api/marketplace/randomAssignmentChallenge`, requestOptions);
+
+              await sendFanChallengeEmail(
+                eventObject.metadata.email,
+                data.id
+              )
+            
+
+          }
+          else if (eventObject.metadata.naas_auction && eventObject.payment_status === "paid") {
             // Mark bid as "confirmed"
             const { data, error } = await supabase
               .from("auction_bids")

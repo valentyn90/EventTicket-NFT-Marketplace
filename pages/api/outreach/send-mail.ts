@@ -244,6 +244,50 @@ export async function sendAddressMail(email: string) {
   }
 }
 
+export async function sendFanChallengeEmail(email: string, order_id: string) {
+
+  const { data: userData, error: userError } = await getUserDetailsByEmail(email);
+
+  if (userData) {
+    const user_id = userData.user_id;
+
+    const {data: order} = await supabase.from('fan_challenge_orders')
+      .select(`*, fan_challenge(*), school(*)`).eq('id', order_id).maybeSingle();
+    
+    if (order) {
+      const msg = {
+        to: email,
+        from: 'VerifiedInk@verifiedink.us',
+        reply_to: 'Support@verifiedink.us',
+        bcc: 'aaron@verifiedink.us',
+        template_id: "d-d922c27e53774d6cbe2186059b29bdf4",
+        dynamic_template_data: {
+          email,
+          price: order.fan_challenge.price,
+          quantity: order.quantity,
+          nft_id: order.fan_challenge.nfts[0].nft_id,
+          fc_id: order.fc_id,
+          athlete_name: order.fan_challenge.name,
+          order_id,
+          team: order.school.school,
+          sport: order.fan_challenge.sport,
+          team_id: order.team_id,
+        }
+      }
+
+      await sgMail
+        .send(msg)
+        .then(() => {
+          return { "success": true }
+        })
+        .catch((error: any) => {
+          console.log(error)
+          return { "success": true }
+        })
+    }
+  }
+}
+
 export async function sendDropAuctionMail(user_id: string, auction_id: string, bid_amount: string, bid_team_id: string) {
   await sendAuctionMail(user_id, auction_id, bid_amount, bid_team_id, "d-ff378896d08b4232bb675c028368c121");
 }

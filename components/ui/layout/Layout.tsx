@@ -13,6 +13,7 @@ interface Props {
 const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const showNav = router.pathname === "/screenshot/[id]" ? false : true;
+  const overlayNav = router.pathname.includes("challenge/") ? true : false;
   const showNavForLanding =
     ( router.pathname === "/ar" || router.pathname === "/screenshot/qr")
       ? false
@@ -44,7 +45,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       </Head>
       {showNav && showNavForLanding && <Navbar />}
       {/* Margin for fixed navbar position */}
-      {showNav && showNavForLanding ? (
+      {showNav && showNavForLanding && !overlayNav? (
         <Box
           minH="calc(100vh - 56px - 286px)"
           mt="56px"

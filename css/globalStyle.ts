@@ -70,6 +70,20 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+  .challenge-staticcard-box {
+    width: calc(100vw - 2rem);
+    display: flex;
+    justify-content: center;
+  }
+  
+  .challenge-staticcard-wrapper {
+    justify-content: flex-start;
+  }
+  
+  .challenge-leaderboard-wrapper {
+    width: calc(100vw - 2rem);
+  }
+
   @media screen and (max-width: 1100px){
     .solana-wallet-multi-btn {
       font-size: 14px;
@@ -88,6 +102,27 @@ export const GlobalStyle = createGlobalStyle`
         height: 20px;
         width: 20px;
       }
+    }
+  }
+
+  @media screen and (min-width: 48em) {
+    .challenge-staticcard-wrapper {
+      gap: 30px;
+      justify-content: center;
+    }
+    .challenge-staticcard-box {
+      width: 100%;
+    }
+    .challenge-leaderboard-wrapper {
+      width: 100%;
+    }
+  }
+
+
+  
+  @media screen and (min-width: 62em) {
+    .challenge-staticcard-wrapper {
+      gap: 100px;
     }
   }
 

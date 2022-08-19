@@ -12,6 +12,7 @@ interface StyleProps {
   editionRarity: string;
   editionName: string;
   noGlow?: boolean | null;
+  glow?: string | null;
 }
 
 const ShinyAnimationCss = css`
@@ -37,7 +38,7 @@ export const CardWrapper = styled.div<StyleProps>`
   justify-content: center;
   align-self: center;
 
-
+  ${ (props) => props.glow ? `filter: drop-shadow( 0 0 30px ${props.glow}) ;` : null}
   
   ${(props) =>
     // Glow from the whole card - doesnt work on safari
