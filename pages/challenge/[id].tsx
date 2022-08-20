@@ -30,7 +30,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import delay from "@/utils/delayMethod";
 import validateEmail from "@/utils/validateEmail";
 import { getUserDetailsByEmail } from "@/supabase/userDetails";
-import { createNewUser, supabase } from "@/supabase/supabase-client";
+import { createNewUser, getScreenshot, supabase } from "@/supabase/supabase-client";
 import * as ga from "@/utils/ga";
 import mixpanel from "mixpanel-browser";
 import { debounce } from "lodash";
@@ -43,10 +43,11 @@ interface Props {
     id: number;
     challenge_data: any;
     leaderboard: any;
+    public_url: string;
 }
 
 // See https://www.figma.com/file/oqujOXuBtyQpJPFMUWUiYA/VerifiedInk-Top5-Delivery-Mockup-(Copy)?node-id=1%3A154
-const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard }) => {
+const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_url }) => {
     const { width, height } = useWindowDimensions();
     const staticCardControls = useAnimation();
     const leaderboardControls = useAnimation();
@@ -549,7 +550,7 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard }) => {
             <meta
                 property="og:image"
                 key="preview"
-                content={`https://verifiedink.us/api/meta/showTwitterPreview/${challenge_data.nfts[0].nft_id}`}
+                content={public_url}
             />
             <meta
                 property="description"
@@ -561,10 +562,10 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard }) => {
                 key="twitter-image"
                 content={`https://verifiedink.us/api/meta/showTwitterPreview/${challenge_data.nfts[0].nft_id}`}
             />
-            {/* <meta property="og:video" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/athlete_video/${challenge_data.nfts[0].nft_id}.mp4`} />
+            <meta property="og:video" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/athlete_video/${challenge_data.nfts[0].nft_id}.mp4`} />
             <meta property="og:video:type" content="video/mp4" />
             <meta property="og:video:width" content="720" />
-            <meta property="og:video:height" content="720" /> */}
+            <meta property="og:video:height" content="720" />
         </Head>
     );
 
@@ -1054,14 +1055,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         .from("fan_challenge")
         .select("*")
         .match({ id: id })
-        .single();
-
+        .single();    
 
     if (challenge_data) {
-        const { data: teams, error } = await supabase
-            .from("school")
-            .select("*")
-            .in("id", challenge_data.teams);
+        const nft_id = challenge_data.nfts[0].nft_id
+
+        const {publicUrl} = await getScreenshot(parseInt(nft_id))
 
         const { data } = await supabase.rpc("fc_leaderboard", {
             _teams: challenge_data.teams,
@@ -1073,6 +1072,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
                 id,
                 challenge_data,
                 leaderboard: data,
+                public_url: publicUrl
             },
         };
     }
