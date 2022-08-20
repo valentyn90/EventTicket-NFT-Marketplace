@@ -561,11 +561,10 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard }) => {
                 key="twitter-image"
                 content={`https://verifiedink.us/api/meta/showTwitterPreview/${challenge_data.nfts[0].nft_id}`}
             />
-            <meta property="og:video" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/athlete_video/${challenge_data.nfts[0].nft_id}.mp4`} />
-            {/* <meta property="og:video:secure_url" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/athlete_video/${challenge_data.nfts[0].nft_id}.mp4`} /> */}
+            {/* <meta property="og:video" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/athlete_video/${challenge_data.nfts[0].nft_id}.mp4`} />
             <meta property="og:video:type" content="video/mp4" />
             <meta property="og:video:width" content="720" />
-            <meta property="og:video:height" content="720" />
+            <meta property="og:video:height" content="720" /> */}
         </Head>
     );
 
