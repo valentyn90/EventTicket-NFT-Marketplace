@@ -1,4 +1,5 @@
 import Card from "@/components/NftCard/Card";
+import { Box, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import styled from "styled-components";
@@ -18,11 +19,20 @@ const Screenshot: React.FC = () => {
     };
   }, []);
   const router = useRouter();
-  const { id, serial_no } = router.query;
+  const { id, serial_no, video } = router.query;
   let int_id = parseInt(id as string);
   let serial_int = serial_no === undefined ? 1 : parseInt(serial_no as string);
 
   return (
+
+    video ? 
+      <Wrapper>
+        <VStack pt={40}>
+          <Card nft_id={int_id} serial_no={serial_int} nft_width={200} reverse={false} readOnly={true} noGlow={true} />
+        </VStack>
+      </Wrapper>
+
+      :
 
     <Wrapper>
       {!int_id ? (
@@ -31,6 +41,8 @@ const Screenshot: React.FC = () => {
         <Card nft_id={int_id} serial_no={serial_int} nft_width={600} reverse={false} readOnly={true} noGlow={true} />
       )}
     </Wrapper>
+
+      
   );
 };
 

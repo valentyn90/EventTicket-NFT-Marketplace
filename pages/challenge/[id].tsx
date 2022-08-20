@@ -561,6 +561,11 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard }) => {
                 key="twitter-image"
                 content={`https://verifiedink.us/api/meta/showTwitterPreview/${challenge_data.nfts[0].nft_id}`}
             />
+            <meta property="og:video" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/athlete_video/${challenge_data.nfts[0].nft_id}.mp4`} />
+            {/* <meta property="og:video:secure_url" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/athlete_video/${challenge_data.nfts[0].nft_id}.mp4`} /> */}
+            <meta property="og:video:type" content="video/mp4" />
+            <meta property="og:video:width" content="720" />
+            <meta property="og:video:height" content="720" />
         </Head>
     );
 
@@ -888,22 +893,19 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard }) => {
                                 </Text>
                             </Box>
                         </MotionBox>
-                        <VStack pb={8} spacing={4} maxW={["95%", "400px", "600px"]}>
+                        <VStack pb={8} spacing={4} maxW={["95%", "400px", "500px"]}>
                             <Heading size="lg" textAlign="center">
                                 How It Works
                             </Heading>
                                 <Text fontSize="xl">Show your fandom!</Text>        
                                  <Box px={["8","8","unset"]}>    
                                 <ol >
-                                    <li>You show your support for {challengeData.name} and your team by buying as many collectibles as you want</li>
-                                    <li>{challengeData.name} commits to a school</li>
-                                    <li>Once enrolled {challengeData.name}, receives funds only from sales aligned with his chosen school</li>
-                                    <li>If {challengeData.name} chooses a different school from the one you chose, you
-                                        have the option to return your collectibles for a credit to use in another Fan Challenge.
-                                    </li>
+                                    <li>You show your support for {challengeData.name} and your team by buying as many collectibles as you want.</li>
+                                    <li>If {challengeData.name} commits to a school you didn't select, you have the option to return your collectibles for credit to use in another Fan Challenge.</li>
+                                    <li>{challengeData.name} gets {challengeData.percentage}% of all money not returned. </li>
                                 </ol>
                                 </Box>  
-                            <Text fontSize="l">Even after {challengeData.name} commits, you can buy additional collectibles to show your support and help ensure he enrolls next fall.</Text>    
+                            <Text fontSize="l">Even after {challengeData.name} commits, you can buy additional collectibles to show your support and help ensure he doesn't commit to another school.</Text>    
 
 
 
