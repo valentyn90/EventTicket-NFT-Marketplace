@@ -32,7 +32,7 @@ interface Props {
 }
 
 const Card: React.FunctionComponent<Props> = ({
-  nft_id = 93,
+  nft_id = -1,
   nft_width = 400,
   reverse = false,
   flip = false,
@@ -95,6 +95,10 @@ const Card: React.FunctionComponent<Props> = ({
       edition_quantity: "",
     });
     setLoaded(false);
+    if (nft_id === -1) {
+      setLoaded(true);
+      return;
+    }
     const { data, error } = await getNftById(nft_id);
     if (!error && data) {
       // check/get all the files
