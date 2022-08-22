@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useMixpanel } from "react-mixpanel-browser";
 import Cookies from "cookies";
+import cookieCutter from "cookie-cutter";
 
 const StepSeven = () => {
   const router = useRouter();
@@ -30,7 +31,12 @@ const StepSeven = () => {
       `/api/outreach/${userStore.nft?.id}?message_type=created`
     );
     if (res2 && res) {
-      router.push("/create/completed");
+      if (cookieCutter.get("school")) {
+        router.push("/create/step-8");
+
+      } else {
+        router.push("/create/completed");
+      }
     } else {
       setSubmitting(false);
     }
@@ -151,7 +157,7 @@ export async function getServerSideProps({ req }: { req: NextApiRequest }) {
       },
     }
   }
-  
+
   return await forwardMinted(req);
 }
 

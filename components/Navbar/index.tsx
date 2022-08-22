@@ -83,6 +83,9 @@ const NavIndex: React.FC = () => {
       );
       cookieCutter.set("SplashBypass", "true");
     }
+    if (router.query.program){
+      cookieCutter.set("school", router.query.program,{ path: "/", expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)});
+    }
   }, [router.query]);
 
   useEffect(() => {

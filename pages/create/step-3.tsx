@@ -18,7 +18,8 @@ import { observer } from "mobx-react-lite";
 import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import cookieCutter from "cookie-cutter";
 
 const StepThree = () => {
   const router = useRouter();
@@ -39,6 +40,14 @@ const StepThree = () => {
       }
     }
   }
+
+  useEffect(() => {
+    if(userStore.loaded){
+    if(cookieCutter.get("school") &&  userStore.nftInput.high_school=="") {
+      userStore.nftInput.high_school = cookieCutter.get("school");
+    }
+  }
+  },[router, userStore.loaded])
 
   return (
     <CreateLayout>

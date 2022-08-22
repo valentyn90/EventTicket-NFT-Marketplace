@@ -134,17 +134,8 @@ const StepEight = () => {
     <>
       <Text colorScheme="gray" w={["100%", "100%", "60%"]}>
         You've made your VerifiedInk, now grow your collection by inviting friends and
-        teammates to make theirs. You'll receive a VerifiedInk of each person that mints
-        through your link AND another one of each person they refer.
+        teammates to make theirs.
 
-        <br />
-        <br />
-        If five of your referrals mint an Ink within the next 48 hours, we'll grant you
-        five more referrals and drop you an exclusive 1 of 1 Gold Founder's edition
-        release of your Ink.
-        <br />
-        <br />
-        Enough reading, time to grow your team!
         <br />
         <br />
         Your referral Code: {userStore.userDetails.referral_code}
@@ -168,7 +159,7 @@ const StepEight = () => {
         justifyContent="center"
       >
         <Box
-          display={["none", "none", "block"]}
+          display={"block"}
           flex={["none", "none", "2"]}
           h={["570px", "400px", "400px"]}
           w={["none", "none", "100px"]}
@@ -180,57 +171,7 @@ const StepEight = () => {
             reverse={false}
           />
         </Box>
-        <Box
-          h="100px"
-          mt="100px"
-          flex={["none", "none", "2"]}
-          display={["none", "none", "block"]}
-        >
-          <ArrowForwardIcon h="100%" w="100%" />
-        </Box>
-        <Wrapper>
-          <Box
-            className="minted-card-card"
-            flex={["none", "none", "2"]}
-            // display={["block", "block", "none"]}
-            // alignSelf="center"
-            // h={["380px", "380px", "380px"]}
-            // w={["380px", "380px", "380px"]}
-          >
-            <Card
-              nft_id={userStore.nft?.id}
-              nft={userStore.loadedNft}
-              nft_width={150}
-              reverse={false}
-              founders={true}
-            />
-          </Box>
-          <img
-            className="minted-card minted-card-img-1"
-            src="/img/image1.png"
-            alt=""
-          />
-          <img
-            className="minted-card minted-card-img-2"
-            src="/img/image2.png"
-            alt=""
-          />
-          <img
-            className="minted-card minted-card-img-3"
-            src="/img/image3.png"
-            alt=""
-          />
-          <img
-            className="minted-card minted-card-img-4"
-            src="/img/image4.png"
-            alt=""
-          />
-          <img
-            className="minted-card minted-card-img-5"
-            src="/img/image5.png"
-            alt=""
-          />
-        </Wrapper>
+        
       </Flex>
 
       <VStack px={4} alignItems="flex-start">
