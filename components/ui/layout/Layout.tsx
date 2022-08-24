@@ -13,7 +13,7 @@ interface Props {
 const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const showNav = router.pathname === "/screenshot/[id]" ? false : true;
-  const overlayNav = router.pathname.includes("challenge/") ? true : false;
+  const overlayNav = router.pathname.includes("challenge") ? true : false;
   const showNavForLanding =
     ( router.pathname === "/ar" || router.pathname === "/screenshot/qr")
       ? false
