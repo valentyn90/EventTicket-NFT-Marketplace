@@ -343,7 +343,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                     {showBuyNow ?
                         <VStack maxW={600} p={2}>
                             <Heading>Extended Edition</Heading>
-                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">94% of Sales go directly to {dropData.player_name.split(" ")[0]}</Text>
+                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">Almost all Sales go directly to {dropData.player_name.split(" ")[0]}</Text>
                             <Text color="gray.300" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition Digital Collectibles. Each purchase will receive a Legendary, Rare or Common Card.</Text>
                             <HStack gridGap={10}>
                                 <HStack>
@@ -433,7 +433,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                         :
                         <VStack maxW={600} p={2}>
                             <Heading>Launch Edition</Heading>
-                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">94% of Sales go directly to {dropData.player_name.split(" ")[0]}</Text>
+                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">Almost all Sales go directly to {dropData.player_name.split(" ")[0]}</Text>
                             <Text color="gray.300" textAlign="center" maxW="400px" p={2}>
                                 Own 1 of only 10 Launch Edition Legendary Digital Collectibles. <br></br>This is {dropData.player_name.split(" ")[0]}'s ultimate rookie card.
                             </Text>
