@@ -85,7 +85,7 @@ const Challenges: React.FC = () => {
           colorScheme="gray"
           fontSize={["l", "l", "xl"]}
         >
-          Tommorrow's Stars Today! <br></br> 
+          Tomorrow's Stars Today! <br></br> 
         </Text>
         {loading ?
       <Spinner size="xl"/> :
