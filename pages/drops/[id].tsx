@@ -293,26 +293,26 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
 
     const meta = (
         <Head>
-            <title>{dropData.player_name} dropping his first NFT on VerifiedInk</title>
+            <title>{drop_data.player_name} dropping his first NFT on VerifiedInk</title>
             <meta
                 property="og:title"
                 key="title"
-                content={`${dropData.player_name} dropping his first NFT on VerifiedInk`}
+                content={`${drop_data.player_name} dropping his first NFT on VerifiedInk`}
             />
             <meta
                 property="og:image"
                 key="preview"
-                content={"https://verifiedink.us/img/naas/naas-3.png"}
+                content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${drop_data.id}-standard.png`}
             />
             <meta
                 property="twitter:image"
                 key="twitter-image"
-                content={`https://verifiedink.us/api/meta/showTwitterPreview/1160`}
+                content={`https://verifiedink.us/api/meta/showTwitterPreview/${drop_data.nfts[0]}`}
             />
-            <meta property="og:video" content="https://verifiedink.us/img/naas/naas-card.mp4" />
+            {/* <meta property="og:video" content="https://verifiedink.us/img/naas/naas-card.mp4" />
             <meta property="og:video:type" content="video/mp4" />
             <meta property="og:video:width" content="720" />
-            <meta property="og:video:height" content="720" />
+            <meta property="og:video:height" content="720" /> */}
         </Head>
     )
 
