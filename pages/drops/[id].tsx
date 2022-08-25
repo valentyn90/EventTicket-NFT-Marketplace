@@ -398,6 +398,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                                     <Heading size="md" pb={3}>Legendary - 15 Total</Heading>
                                     <Text color="gray.400">Marked with a gold border, glow, name and signature with the Legendary {dropData.player_name.split(" ")[0]} Image.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
+                                    <li>Video call with {dropData.player_name.split(" ")[0]}</li>
                                     <li>Follow by {dropData.player_name.split(" ")[0]} on Instgram/Twitter</li>
                                     <li>Shoutout by {dropData.player_name.split(" ")[0]} on Instagram/Twitter</li>
                                     <li>1 in 15 chance to win a Launch Edition</li>
@@ -492,7 +493,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                                     <Heading size="lg">Legendary - 10 Total</Heading>
                                     <Text fontWeight="900" fontSize="lg">Utility</Text>
                                     <Box textAlign={"left"}>
-                                        <li>Exclusive early access to future drops</li>
+                                        <li>Video call with {dropData.player_name.split(" ")[0]}</li>
                                         <li>Follow from {dropData.player_name.split(" ")[0]} on Twitter/Instagram</li>
                                         <li>Shout out from {dropData.player_name.split(" ")[0]} on Twitter/Instagram</li>
                                         <li>Physical AR card in the mail</li>
