@@ -97,7 +97,7 @@ export async function sendDropPurchaseMail(user_id: string, quantity: number, pr
 }
 
 export async function sendGenericDropPurchaseMail(user_id: string, quantity: number, price: number, drop_id: number, nft_type: string) {
-  let template_id = 'd-f6de04a4190540e897b4b8fa27f682ad'
+  let template_id = 'd-40fff40051ce46298d1c45978b3fec1d'
 
   const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
 
