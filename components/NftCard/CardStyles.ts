@@ -230,7 +230,7 @@ export const CardWrapper = styled.div<StyleProps>`
 
     ${(props) =>
     props.editionRarity === "Legendary" && props.editionName === "Extended" ?
-      `min-height: 135px;
+      `
        color:#c3a343;
        background: url(/img/gold.jpg) repeat;
        background-clip: text;
@@ -239,7 +239,7 @@ export const CardWrapper = styled.div<StyleProps>`
        `
       :
       props.editionRarity === "Rare" && props.editionName === "Extended" ?
-      `min-height: 135px;
+      `
        color:#c3a343;
        background: url(/img/silver-name.jpg) repeat;
        background-clip: text;
