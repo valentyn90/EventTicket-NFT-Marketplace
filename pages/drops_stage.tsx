@@ -4,6 +4,7 @@ import { supabase } from "@/supabase/supabase-client";
 import { Box, Container, Flex, Grid, Heading, HStack, Image, Spacer, Spinner, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import { CannotMatchFreeSalesWithoutAuctionHouseOrSellerSignoffError } from "@metaplex-foundation/mpl-auction-house/dist/src/generated";
 import { NextApiRequest } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -36,6 +37,31 @@ const Challenges: React.FC = () => {
 
 
   }, [])
+
+  const meta = (
+    <Head>
+        <title>VerifiedInk Drops</title>
+        <meta
+            property="og:title"
+            key="title"
+            content={`VerifiedInk Drops`}
+        />
+        <meta
+            property="og:image"
+            key="preview"
+            content={`/img/drops.png`}
+        />
+        {/*<meta
+            property="twitter:image"
+            key="twitter-image"
+            content={`https://verifiedink.us/api/meta/showTwitterPreview/${drop_data.nfts[0]}`}
+        />
+         <meta property="og:video" content="https://verifiedink.us/img/naas/naas-card.mp4" />
+        <meta property="og:video:type" content="video/mp4" />
+        <meta property="og:video:width" content="720" />
+        <meta property="og:video:height" content="720" /> */}
+    </Head>
+)
 
   return (
     <Container maxW="8xl" mb={8}>
@@ -128,7 +154,7 @@ const Challenges: React.FC = () => {
 
 
       </Box>
-
+      {meta}
     </Container>
   );
 };
