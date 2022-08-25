@@ -5,8 +5,6 @@ import { supabase } from "@/supabase/supabase-admin";
 import * as web3 from "@solana/web3.js";
 import base58 from "bs58";
 
-
-///// ONLY FOR NAAS SALE /////
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -14,7 +12,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
 
-    let { email } = req.body;
+    let { email, drop_id } = req.body;
 
     const user_id = await supabase.from('user_details').select('user_id').match({ email }).maybeSingle();
     console.log(user_id);
@@ -22,7 +20,7 @@ export default async function handler(
     if (user_id.data) {
 
         // Lookup in drop_credit_card_sales table
-        const drop_credit_card_sale = await supabase.from('drop_credit_card_sale').select('*').match({ user_id: user_id.data.user_id, drop_id:1, status: '2_payment_completed' });
+        const drop_credit_card_sale = await supabase.from('drop_credit_card_sale').select('*').match({ user_id: user_id.data.user_id, drop_id:drop_id, status: '2_payment_completed' });
 
         console.log(drop_credit_card_sale)
         if (drop_credit_card_sale.data && drop_credit_card_sale.data[0]) {
@@ -34,9 +32,16 @@ export default async function handler(
                 .match({ stripe_tx: drop_credit_card_sale.data[0].stripe_tx })
                 .single();
 
-            // Shortcut here for Naas, need to generalize using drop id  
-            const { data: remaining_nfts, error: remaining_nfts_error } =
-                await supabase.from('nft_owner').select('*').in('nft_id', [1160, 1161, 1162]).eq('owner_id', 'a5e225d1-4936-4523-8d21-85127d4b806e')
+            const {data: drop} = await supabase.from('drop').select('*').match({id: drop_id}).maybeSingle()  
+
+            // Need to pipe through premimum logic here
+            const { data: remaining_standard_nfts, error: remaining_nfts_error } =
+                await supabase.from('nft_owner').select('*').in('nft_id', drop.nfts).eq('owner_id', drop.athlete_id)
+            const { data: remaining_premium_nfts} =
+                await supabase.from('nft_owner').select('*').eq('nft_id', drop.premium_nft).eq('owner_id', drop.athlete_id)
+
+            const remaining_nfts = drop_credit_card_sale.data[0].nft_type === "standard" ? remaining_standard_nfts : remaining_premium_nfts;
+
 
             if (remaining_nfts) {
                 let transfer_nfts = [];

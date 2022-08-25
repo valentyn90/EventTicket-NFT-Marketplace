@@ -7,7 +7,7 @@ import randCrypto from "crypto";
 import crypto from "crypto-js";
 import { cancel, cancelOrder, transferViaCreditCard } from "@/mint/marketplace";
 import generateKeypair, { getKeypair } from "@/mint/mint";
-import { sendARPurchaseMail, sendAuctionLoserMail, sendAuctionMail, sendDropAuctionMail, sendDropPurchaseMail, sendFanChallengeEmail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
+import { sendARPurchaseMail, sendAuctionLoserMail, sendAuctionMail, sendDropAuctionMail, sendDropPurchaseMail, sendFanChallengeEmail, sendGenericDropPurchaseMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2020-08-27",
@@ -78,19 +78,19 @@ const handler = async (req: any, res: any) => {
               .match({ stripe_tx: eventObject.id })
               .single();
 
-              const requestOptions = {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: eventObject.customer_email})
-              }
-  
-              const assign_nfts = await fetch(`https://verifiedink.us/api/marketplace/randomAssignmentChallenge`, requestOptions);
+            const requestOptions = {
+              method: "POST",
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: eventObject.customer_email })
+            }
 
-              await sendFanChallengeEmail(
-                eventObject.metadata.email,
-                eventObject.metadata.order_id
-              )
-            
+            const assign_nfts = await fetch(`https://verifiedink.us/api/marketplace/randomAssignmentChallenge`, requestOptions);
+
+            await sendFanChallengeEmail(
+              eventObject.metadata.email,
+              eventObject.metadata.order_id
+            )
+
 
           }
           else if (eventObject.metadata.naas_auction && eventObject.payment_status === "paid") {
@@ -108,18 +108,18 @@ const handler = async (req: any, res: any) => {
                 bid_id: eventObject.metadata.bid_id,
               })
 
-              await sendDropAuctionMail(eventObject.metadata.user_id,
-                eventObject.metadata.auction_id,
-                eventObject.metadata.bid_amount,
-                eventObject.metadata.bid_team_id)
+            await sendDropAuctionMail(eventObject.metadata.user_id,
+              eventObject.metadata.auction_id,
+              eventObject.metadata.bid_amount,
+              eventObject.metadata.bid_team_id)
 
-          } 
+          }
           else if (eventObject.metadata.ar_card && eventObject.payment_status === "paid") {
 
             const orderTotal = eventObject.amount_total / 100;
-            
+
             let orderQuantity = eventObject.metadata.ar_quantity;
-            if (orderTotal > 30){
+            if (orderTotal > 30) {
               orderQuantity = 5;
             }
 
@@ -133,13 +133,13 @@ const handler = async (req: any, res: any) => {
               .match({ stripe_tx: eventObject.id })
               .single();
 
-              await sendARPurchaseMail(eventObject.metadata.user_id,
-                orderQuantity,
-                orderTotal,
-                eventObject.metadata.nft_id)
+            await sendARPurchaseMail(eventObject.metadata.user_id,
+              orderQuantity,
+              orderTotal,
+              eventObject.metadata.nft_id)
 
           }
-          else if (eventObject.metadata.drop_id && eventObject.payment_status === "paid") {
+          else if (eventObject.metadata.drop_id && eventObject.metadata.drop_id == 1 && eventObject.payment_status === "paid") {
             const { data, error } = await supabase
               .from("drop_credit_card_sale")
               .update({
@@ -148,14 +148,14 @@ const handler = async (req: any, res: any) => {
               .match({ stripe_tx: eventObject.id })
               .single();
 
-             const { data: configData, error: configError } = await supabase
+            const { data: configData, error: configError } = await supabase
               .from("configurations")
               .select("*")
               .match({ key: "naas_drop" })
               .maybeSingle()
 
-             if(configData){
-              let items_left = Math.max(configData.value.items_left - data.quantity,0)
+            if (configData) {
+              let items_left = Math.max(configData.value.items_left - data.quantity, 0)
               let next_price = configData.value.next_price
               let current_price = configData.value.current_price
 
@@ -175,29 +175,88 @@ const handler = async (req: any, res: any) => {
               }
 
               await supabase
-              .from("configurations")
-              .update({
-                value: new_values,
-              })
-              .match({ key: "naas_drop" })
-              .single();
-             } 
-             // Send success email to user 
-             await sendDropPurchaseMail(
+                .from("configurations")
+                .update({
+                  value: new_values,
+                })
+                .match({ key: "naas_drop" })
+                .single();
+            }
+            // Send success email to user 
+            await sendDropPurchaseMail(
               data.user_id,
               data.quantity,
               data.price_usd,
               data.drop_id,
-             )
+            )
 
-             // Call out to stripeTransfer to transfer the nft to the new owner
+            // Call out to stripeTransfer to transfer the nft to the new owner
             const requestOptions = {
               method: "POST",
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: eventObject.customer_email})
+              body: JSON.stringify({ email: eventObject.customer_email })
             }
 
             const attempt_transfer = await fetch(`https://verifiedink.us/api/marketplace/randomAssignment`, requestOptions);
+
+            console.log(attempt_transfer)
+
+          }
+          else if (eventObject.metadata.drop_id && eventObject.payment_status === "paid") {
+            const { data, error } = await supabase
+              .from("drop_credit_card_sale")
+              .update({
+                status: "2_payment_completed",
+              })
+              .match({ stripe_tx: eventObject.id })
+              .single();
+
+            const { data: configData, error: configError } = await supabase
+              .from("drop")
+              .select("*")
+              .match({ id: eventObject.metadata.drop_id })
+              .maybeSingle()
+
+            if (configData) {
+              let new_values = {}
+              if (eventObject.metadata.nft_type === "standard") {
+                new_values = {
+                  standard: Math.max(configData.quantity_left.standard - data.quantity, 0),
+                  premium: configData.quantity_left.premium
+                }
+              }
+              else {
+                new_values = {
+                  premium: Math.max(configData.quantity_left.premium - data.quantity, 0),
+                  standard: configData.quantity_left.standard
+                }
+              }
+
+              await supabase
+                .from("drop")
+                .update({
+                  quantity_left: new_values,
+                })
+                .match({ id: eventObject.metadata.drop_id })
+                .single();
+            }
+            // Send success email to user 
+            await sendGenericDropPurchaseMail(
+              data.user_id,
+              data.quantity,
+              data.price_usd,
+              data.drop_id,
+              eventObject.metadata.nft_type
+            )
+
+            // Call out to stripeTransfer to transfer the nft to the new owner
+            const requestOptions = {
+              method: "POST",
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: eventObject.customer_email, drop_id: eventObject.metadata.drop_id })
+            }
+
+            const attempt_transfer = await fetch(`https://verifiedink.us/api/marketplace/randomAssignmentDrop`, requestOptions);
 
             console.log(attempt_transfer)
 

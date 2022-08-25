@@ -1,6 +1,6 @@
 import Card from "@/components/NftCard/Card";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
-import { Box, HStack, Image, Text, VStack, Heading, Icon, Button, IconButton, Alert, AlertIcon, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, Input, Divider, Stack, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Flex, Skeleton } from "@chakra-ui/react";
+import { Box, HStack, Image, Text, VStack, Heading, Icon, Button, IconButton, Alert, AlertIcon, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, Input, Divider, Stack, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Flex, Skeleton, Spacer } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "cookies";
 import { supabase } from "@/supabase/supabase-client";
@@ -430,6 +430,7 @@ const Auction: React.FC<Props> = ({ orig_price, orig_next_price, items_left, max
     return (
         <>
             <Box py={3} align="center" alignContent={"center"}>
+            <Spacer h="56px" />
                 <VStack>
                     <HStack gridGap={[0, 4, 8]} alignItems="flex-end" mb={3}>
 

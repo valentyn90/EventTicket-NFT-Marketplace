@@ -96,6 +96,53 @@ export async function sendDropPurchaseMail(user_id: string, quantity: number, pr
 
 }
 
+export async function sendGenericDropPurchaseMail(user_id: string, quantity: number, price: number, drop_id: number, nft_type: string) {
+  let template_id = 'd-f6de04a4190540e897b4b8fa27f682ad'
+
+  const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
+
+  const {data: drop} = await supabase.from("drop").select("*").eq("id", drop_id).maybeSingle();
+
+  const email = user_details.data.email;
+
+  const total_price = price * quantity;
+
+  let imageLink = ""
+  nft_type === "standard" ?
+          imageLink = `https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${drop_id}-standard.png` :
+          imageLink = `https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${drop_id}-premium.png` 
+
+
+  const msg = {
+    to: email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    bcc: 'Aaron@verifiedink.us',
+    template_id: template_id,
+    dynamic_template_data: {
+      price,
+      quantity,
+      total_price,
+      email,
+      drop_id,
+      athlete_name: drop.player_name.split(" ")[0],
+      card_preview_image: imageLink
+    }
+  }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error)
+      return { "success": true }
+    })
+
+}
+
+
 export async function sendARPurchaseMail(user_id: string, quantity: number, price: number, nft_id: number) {
   let template_id = 'd-bb5733c1ab614d7e97628fa96cfff374'
 
