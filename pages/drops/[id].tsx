@@ -325,7 +325,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                     <HStack gridGap={[0, 4, 8]} alignItems="flex-end" mb={3}>
 
                         <Box flex="1" onClick={() => { setShowBuyNow(true) }} opacity={showBuyNow ? "100%" : "20%"}>
-                            <Image width="175px" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-standard.png`} />
+                            <Image width="175px" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-standard.png?update`} />
                             <Heading as="h2">Buy Now</Heading>
                             <Text>${price}</Text>
                             <Text color="gray">Extended Edition 1/500</Text>
@@ -333,7 +333,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
 
 
                         <Box flex="1" opacity={!showBuyNow ? "100%" : "20%"} onClick={() => { setShowBuyNow(false) }}>
-                            <Image width="175px" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-premium.png`} />
+                            <Image width="175px" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-premium.png?update`} />
                             <Heading as="h2">1 of 10</Heading>
                             <Text>${dropData.price.premium}</Text>
                             <Text color="gray">Launch Edition 1/10</Text>
@@ -343,7 +343,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                     {showBuyNow ?
                         <VStack maxW={600} p={2}>
                             <Heading>Extended Edition</Heading>
-                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">Almost all Sales go directly to {dropData.player_name.split(" ")[0]}</Text>
+                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">80%+ of Sales go directly to {dropData.player_name.split(" ")[0]}</Text>
                             <Text color="gray.300" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition Digital Collectibles. Each purchase will receive a Legendary, Rare or Common Card.</Text>
                             <HStack gridGap={10}>
                                 <HStack>
@@ -434,7 +434,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                         :
                         <VStack maxW={600} p={2}>
                             <Heading>Launch Edition</Heading>
-                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">Almost all Sales go directly to {dropData.player_name.split(" ")[0]}</Text>
+                            <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">80%+ of Sales go directly to {dropData.player_name.split(" ")[0]}</Text>
                             <Text color="gray.300" textAlign="center" maxW="400px" p={2}>
                                 Own 1 of only 10 Launch Edition Legendary Digital Collectibles. <br></br>This is {dropData.player_name.split(" ")[0]}'s ultimate rookie card.
                             </Text>
