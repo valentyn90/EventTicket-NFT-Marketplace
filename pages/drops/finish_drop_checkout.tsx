@@ -462,7 +462,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       const { data: validTx, error: validTxError } = await supabase.from("drop_credit_card_sale").select("*")
         .match({ "stripe_tx": stripe_tx, "user_id": userData?.user_id }).maybeSingle()
 
-      if (validTx && validTx.length > 0) {
+      if (validTx && validTx.id) {
         validated_tx = true
       }
 
