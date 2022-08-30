@@ -75,7 +75,7 @@ const Marketplace: React.FC = () => {
           colorScheme="gray"
           fontSize={["l", "l", "xl"]}
         >
-          94% of Sales go directly to our Athletes <br></br> Purchase with Credit Card or Crypto in seconds
+          80%+ of Sales go directly to our Athletes <br></br> Purchase with Credit Card or Crypto in seconds
         </Text>
 
         <Box w={["100%", "50%"]}>
