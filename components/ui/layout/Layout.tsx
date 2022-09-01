@@ -15,6 +15,7 @@ const Layout: React.FC<Props> = ({ children }) => {
   const showNav = router.pathname === "/screenshot/[id]" ? false : true;
   const overlayNav = (router.pathname.includes("challenge") 
     || router.pathname.includes("drop")
+    || router.pathname.includes("marketplace")
   )? true : false;
   const showNavForLanding =
     ( router.pathname === "/ar" || router.pathname === "/screenshot/qr")

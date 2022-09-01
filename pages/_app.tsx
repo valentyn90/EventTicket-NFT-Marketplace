@@ -17,6 +17,8 @@ import { IntercomProvider } from "react-use-intercom";
 import mixpanel from "mixpanel-browser";
 import { MixpanelProvider } from "react-mixpanel-browser";
 import TagManager from "react-gtm-module";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
 
 require("../css/rsuite.css");
 
@@ -31,6 +33,8 @@ const WalletConnectionProvider = dynamic<{ children: ReactNode }>(
     ssr: true,
   }
 );
+
+const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -56,6 +60,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <WalletModalProvider>
           <MixpanelProvider token={"b78dc989c036b821147f68e00c354313"}>
             <IntercomProvider appId={"b3ms6uff"}>
+            <QueryClientProvider client={queryClient}>
               <Head>
                 <title>VerifiedInk</title>
                 <meta
@@ -85,6 +90,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <Layout>
                 <Component {...pageProps} />
               </Layout>
+              </QueryClientProvider>
             </IntercomProvider>
           </MixpanelProvider>
         </WalletModalProvider>

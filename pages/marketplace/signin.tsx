@@ -7,6 +7,7 @@ import {
   Button,
   Heading,
   Input,
+  Spacer,
   Spinner,
   Text,
   useColorModeValue,
@@ -70,6 +71,7 @@ const SignIn: React.FC<Props> = () => {
       py={"12"}
       px={{ base: "4", lg: "8" }}
     >
+      <Spacer h="56px" />
       <Box maxW="lg" mx="auto">
         <Heading textAlign="center" size="2xl" fontWeight="extrabold">
           Access your Collector Account

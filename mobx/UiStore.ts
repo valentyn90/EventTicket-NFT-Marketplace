@@ -19,6 +19,8 @@ export class UiStore {
 
   openAlert = false;
 
+  marketplaceFilter: any[] = [];
+
   resetValues() {
     this.selectedNft = null;
     this.openModal = false;
