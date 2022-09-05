@@ -8,7 +8,11 @@ export default async function outreach(
 
 
     // const addresses = [
-    //     "aaronhlevitan@gmail.com",
+    //     "ryan.rossi@itsovertime.com",
+    //     "cgroup6278@yahoo.com",
+    //     "mbell107@gmail.com",
+    //     "wkperry93@gmail.com",
+    //     "pyattepressurewash@gmail.com"
     // ]
 
     // let count = 0
@@ -20,9 +24,9 @@ export default async function outreach(
 
     // const result = await sendFanChallengeEmail("aaron.linsky@gmail.com","9")
 
-    const result = {nothing: "nothing"}
+    const result = { nothing: "nothing" }
     // console.log(result)
 
-    return res.status(200).json( result );
+    return res.status(200).json(result);
 
 }

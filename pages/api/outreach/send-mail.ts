@@ -263,8 +263,10 @@ export async function sendAddressMail(email: string) {
     const user_id = userData.user_id;
 
     const purchase_record = await supabase.from('drop_credit_card_sale')
-      .select('*').eq('user_id', user_id).limit(1).maybeSingle();
+      .select('*').eq('user_id', user_id).order('id',{ascending:false}).limit(1).maybeSingle();
 
+      console.log(`https://verifiedink.us/drops/finish_drop_checkout?email=${email}&session_id=${purchase_record.data.stripe_tx}&needs_address=true`)
+      // return { "success": true }
     if (purchase_record.data) {
       const msg = {
         to: email,
