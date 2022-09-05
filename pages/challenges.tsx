@@ -1,7 +1,7 @@
 import StaticCard from "@/components/NftCard/StaticCard";
 import AppModal from "@/components/ui/AppModal";
 import { supabase } from "@/supabase/supabase-client";
-import { Box, Container, Flex, Grid, Heading, HStack, Image, Spacer, Spinner, Text, useColorModeValue, VStack } from "@chakra-ui/react";
+import { Box, Container, Flex, Grid, Heading, HStack, Image, SimpleGrid, Spacer, Spinner, Stack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import { CannotMatchFreeSalesWithoutAuctionHouseOrSellerSignoffError } from "@metaplex-foundation/mpl-auction-house/dist/src/generated";
 import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
@@ -26,7 +26,11 @@ const Challenges: React.FC = () => {
 
       // const {data: teams} = await supabase.from('school').select('*')
 
-      if (challenge_data) { setActiveChallenges(challenge_data) }
+      if (challenge_data) { 
+        
+        setActiveChallenges(challenge_data.filter((challenge: any) =>{
+          return challenge.start_time < new Date().toISOString() && (challenge.end_time > new Date().toISOString() || challenge.end_time === null)
+        })) }
 
       console.table(challenge_data)
 
