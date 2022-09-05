@@ -41,7 +41,7 @@ export const buy = async (
 
   let env_name = "devnet";
 
-  if(env === "https://ssc-dao.genesysgo.net/"){
+  if(env === "https://ssc-dao.genesysgo.net/" || env.includes("mainnet")) {
     env_name = "mainnet-beta";
   }
 

@@ -366,7 +366,7 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
               fontSize={["sm", "sm", "sm"]}
               mb={8}
               onClick={() => {
-                if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("ssc-dao")) {
+                if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("mainnet")) {
                   window.open(`https://solscan.io/token/${mintId}`, "_blank");
                 } else {
                   window.open(

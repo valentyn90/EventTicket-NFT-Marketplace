@@ -358,7 +358,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
                   cursor={"pointer"}
                   fontSize={["sm", "sm", "sm"]}
                   onClick={() => {
-                    if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("ssc-dao")) {
+                    if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("mainnet")) {
                       window.open(
                         `https://solscan.io/token/${mintId}`,
                         "_blank"

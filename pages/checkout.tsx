@@ -606,7 +606,7 @@ const Checkout: React.FC<Props> = ({ nft, serial_no, publicUrl }) => {
                   fontSize={["sm", "sm", "sm"]}
                   mb={8}
                   onClick={() => {
-                    if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("ssc-dao")) {
+                    if (process.env.NEXT_PUBLIC_SOL_ENV!.includes("mainnet")) {
                       window.open(
                         `https://solscan.io/token/${mintId}`,
                         "_blank"
