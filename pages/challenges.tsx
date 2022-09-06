@@ -114,19 +114,19 @@ const Challenges: React.FC = () => {
                 <Heading size="sm">
                   {challenge.name}'s Fan Challenge
                 </Heading>
-                <HStack>
+                <Flex wrap="wrap" justifyContent="center">
                   {challenge.teams.map((team:any) => {
                     return (
-
+                    
                       <Image
                       src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/teams/${team}.png`}
                       alt=""
                       w="22px"
+                      m="4px"
                       filter={(challenge.team_chosen && challenge.team_chosen != team)? "grayscale(90%)" : "none"}
                   />
                   )})}
-                </HStack>
-
+                  </Flex>
               </VStack>
             )
           })}

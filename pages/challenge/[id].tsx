@@ -179,7 +179,7 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
     async function sequence() {
 
         await verifiedFanBtnsControls.start({
-            marginTop: "-40px",
+            marginTop: "0px",
             transition: { duration: 0.5, ease: "easeInOut" },
         });
 
@@ -289,13 +289,13 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                         ease: "easeInOut",
                     },
                 });
-                verifiedFanBtnsControls.start({
-                    marginTop: "-4.5rem",
-                    transition: {
-                        duration: 0,
-                        ease: "easeInOut",
-                    },
-                });
+                // verifiedFanBtnsControls.start({
+                //     marginTop: "-4.5rem",
+                //     transition: {
+                //         duration: 0,
+                //         ease: "easeInOut",
+                //     },
+                // });
             }
         } else {
             // set elements to desktop values
