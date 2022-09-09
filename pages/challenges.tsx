@@ -18,6 +18,7 @@ const Challenges: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const [activeChallenges, setActiveChallenges] = useState<any[]>([]);
+  const [comingSoonChallenges, setComingSoonChallenges] = useState<any[]>([]);
 
   useEffect(() => {
 
@@ -26,11 +27,17 @@ const Challenges: React.FC = () => {
 
       // const {data: teams} = await supabase.from('school').select('*')
 
-      if (challenge_data) { 
-        
-        setActiveChallenges(challenge_data.filter((challenge: any) =>{
+      if (challenge_data) {
+
+        setActiveChallenges(challenge_data.filter((challenge: any) => {
           return challenge.start_time < new Date().toISOString() && (challenge.end_time > new Date().toISOString() || challenge.end_time === null)
-        })) }
+        }))
+
+        setComingSoonChallenges(challenge_data.filter((challenge: any) => {
+          return challenge.start_time > new Date().toISOString() && challenge.start_time < new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        }))
+
+      }
 
       console.table(challenge_data)
 
@@ -40,6 +47,10 @@ const Challenges: React.FC = () => {
 
 
   }, [])
+
+  useEffect(() => {
+    console.table(comingSoonChallenges)
+  }, [comingSoonChallenges])
 
   return (
     <Container maxW="8xl" mb={8}>
@@ -68,9 +79,9 @@ const Challenges: React.FC = () => {
 
       </Box>
 
-      <Box align="center" py="4"          minH="calc(100vh - 280px)">
+      <Box align="center" py="4" minH="calc(100vh - 280px)">
 
-      <Spacer h="56px" />
+        <Spacer h="56px" />
         <Flex mt={2} align="center" justify="center">
           <Heading
             color={logoColor}
@@ -92,46 +103,72 @@ const Challenges: React.FC = () => {
           Show your Fandom! <br></br> Help your team land and keep top talent.
         </Text>
         {loading ?
-      <Spinner size="xl"/> :
-        <Grid
+          <Spinner size="xl" /> :
+          <Grid
 
-        pt={6}
-         templateColumns={{
-          base: "repeat(auto-fit, 166px)",
-          sm: "repeat(auto-fit, 170px)",
-          md: "repeat(auto-fit, 230px)",
-          lg: "repeat(auto-fit, 250px)",
-        }}
-        justifyContent={["space-around", "space-around", "center"]}
-        justifyItems="center"
-        gap={[2, 4, 6]}
-        >
-          {activeChallenges.map((challenge, index) => {
+            pt={6}
+            templateColumns={{
+              base: "repeat(auto-fit, 166px)",
+              sm: "repeat(auto-fit, 170px)",
+              md: "repeat(auto-fit, 230px)",
+              lg: "repeat(auto-fit, 250px)",
+            }}
+            justifyContent={["space-around", "space-around", "center"]}
+            justifyItems="center"
+            gap={[2, 4, 6]}
+          >
+            {comingSoonChallenges.map((challenge, index) => {
 
-            return (
-              <VStack p={2}  bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={()=>{setLoading(true); router.push(`/challenge/${challenge.id}`)}}>
-                <StaticCard nft_id={challenge.nfts[0].nft_id} width={150} />
-                <Heading size="sm">
-                  {challenge.name}'s Fan Challenge
-                </Heading>
-                <Flex wrap="wrap" justifyContent="center">
-                  {challenge.teams.map((team:any) => {
-                    return (
-                    
-                      <Image
-                      src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/teams/${team}.png`}
-                      alt=""
-                      w="22px"
-                      m="4px"
-                      filter={(challenge.team_chosen && challenge.team_chosen != team)? "grayscale(90%)" : "none"}
-                  />
-                  )})}
+              return (
+                <VStack p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" filter={"grayscale(90%)"}>
+                  <StaticCard nft_id={1555} width={150} />
+                  <Heading size="sm">
+                    Coming {new Date(challenge.start_time).toLocaleDateString('en-us', { day:"numeric", month:"short"})}
+                  </Heading>
+                  <Flex wrap="wrap" justifyContent="center">
+                    {challenge.teams.map((team: any) => {
+                      return (
+
+                        <Image
+                          src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/teams/${team}.png`}
+                          alt=""
+                          w="22px"
+                          m="4px"
+                          filter={(challenge.team_chosen && challenge.team_chosen != team) ? "grayscale(90%)" : "none"}
+                        />
+                      )
+                    })}
                   </Flex>
-              </VStack>
-            )
-          })}
-        </Grid>
-}
+                </VStack>
+              )
+            })}
+            {activeChallenges.map((challenge, index) => {
+
+              return (
+                <VStack p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/challenge/${challenge.id}`) }}>
+                  <StaticCard nft_id={challenge.nfts[0].nft_id} width={150} />
+                  <Heading size="sm">
+                    {challenge.name}'s Fan Challenge
+                  </Heading>
+                  <Flex wrap="wrap" justifyContent="center">
+                    {challenge.teams.map((team: any) => {
+                      return (
+
+                        <Image
+                          src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/teams/${team}.png`}
+                          alt=""
+                          w="22px"
+                          m="4px"
+                          filter={(challenge.team_chosen && challenge.team_chosen != team) ? "grayscale(90%)" : "none"}
+                        />
+                      )
+                    })}
+                  </Flex>
+                </VStack>
+              )
+            })}
+          </Grid>
+        }
 
 
 
