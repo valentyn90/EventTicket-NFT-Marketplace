@@ -100,7 +100,7 @@ const Challenges: React.FC = () => {
           colorScheme="gray"
           fontSize={["l", "l", "xl"]}
         >
-          Show your Fandom! <br></br> Help your team land and keep top talent.
+          Show your Fandom! <br></br> Support elite athletes and your team.
         </Text>
         {loading ?
           <Spinner size="xl" /> :

@@ -887,9 +887,10 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                                 </Heading>
                                 <Text textAlign="center">
                                     {" "}
-                                    If {challengeData && challengeData.name} commits to a school
-                                    you didn't select, you have the option to return your card 
-                                    and get 100% of your purchase price back to support another recruit.
+                                    {challengeData && challengeData.name} can choose any school, but 
+                                    if {challengeData && challengeData.name} commits to a school
+                                    you didn't select, you can return your card 
+                                    and get 100% back to support another recruit.
                                 </Text>
                             </Box>
                         </MotionBox>
@@ -899,16 +900,15 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                             </Heading>
                                 <Text fontSize="xl">Show your fandom!</Text>        
                                  <Box px={["8","8","unset"]}>    
-                                <ol >
-                                    <li>You show your support for {challengeData.name} and your team by buying as many collectibles as you want.</li>
-                                    <li>If {challengeData.name} commits to a school you didn't select, you have the option to return your collectibles for credit to use in another Fan Challenge.</li>
-                                    <li>{challengeData.name} gets {challengeData.percentage}% of all money not returned. </li>
+                                <ol>
+                                    <li style={{marginBottom:"10px"}}>Play the role of General Manager for your favorite team and show your support for {challengeData && challengeData.name} by buying as many collectibles as you want.</li>
+                                    <li style={{marginBottom:"10px"}}>Just like a GM, your job is not over once {challengeData && challengeData.name} commits, you can still purchase cards for any listed team until we close the challenge.</li>
+                                    <li style={{marginBottom:"10px"}}>{challengeData && challengeData.name} keeps {challengeData && challengeData.percentage}% of all final sales. </li>
+                                    <li style={{marginBottom:"10px"}}>When {challengeData && challengeData.name} makes the big play that wins your team the conference championship, you will get credit for being a 
+                                    part of his journey.</li>
+                                    <li>When {challengeData && challengeData.name} makes it big, you can sell your digital collectible on our marketplace.</li>
                                 </ol>
                                 </Box>  
-                            <Text fontSize="l">Even after {challengeData.name} commits, you can buy additional collectibles to show your support and help ensure he doesn't commit to another school.</Text>    
-
-
-
                             
                             <Heading size="lg" textAlign="center">
                                 What You Get
@@ -918,7 +918,7 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                                 </Text>
                                 <ul>
                                 <li>1 Augmented Reality Card</li>
-                                <li>1 Digital Collectible - One of Three Rarities</li>
+                                <li>1 Digital Collectible - One of Three Rarities, personally designed by {challengeData && challengeData.name}</li>
                                 </ul>
                             
                             <Heading size="lg" textAlign="center">
@@ -977,10 +977,6 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                                     <ul>
                                     <li>The most exclusive digital collectible</li>
                                     <li>Maximum utility in future challenges</li>
-                                    <li>Physical AR card in the mail</li>
-                                    <li>
-                                        Personally designed by {challengeData && challengeData.name}
-                                    </li>
                                     </ul>
                                 </Box>
                             </Stack>
@@ -1005,10 +1001,6 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                                     <ul>
                                     <li>Exclusive digital collectible</li>
                                     <li>Enhanced utility in future challenges</li>
-                                    <li>Physical AR card in the mail</li>
-                                    <li>
-                                        Personally designed by {challengeData && challengeData.name}
-                                    </li>
                                     </ul>
                                 </Box>
                             </Stack>
@@ -1028,15 +1020,6 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                                         Those that don't win a Rare or Legendary will receive a
                                         Common.{" "}
                                     </Text>
-                                    <Text pt={2} fontWeight="900" fontSize="lg">
-                                        Utility
-                                    </Text>
-                                    <ul>
-                                    <li>Physical AR card in the mail</li>
-                                    <li>
-                                        Personally designed by {challengeData && challengeData.name}
-                                    </li>
-                                    </ul>
                                 </Box>
                             </Stack>
                         </VStack>
