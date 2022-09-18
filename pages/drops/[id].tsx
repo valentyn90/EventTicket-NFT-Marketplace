@@ -298,10 +298,10 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
             <Box py={3} align="center" alignContent={"center"}>
                 <Spacer h="56px" />
                 <VStack>
-                    <HStack gridGap={[0, 4, 8]} alignItems="flex-end" mb={3}>
+                    <HStack gridGap={[0, 4, 8]} alignItems="flex-start" mb={3}>
 
                         <Box flex="1" onClick={() => { setShowBuyNow(true) }} opacity={showBuyNow ? "100%" : "20%"}>
-                            <Image width="175px" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-standard.png?update`} />
+                            <Image h="233px" w="175px" maxWidth="unset" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-standard.png?update`} />
                             <Heading as="h2">Buy Now</Heading>
                             <Text>${price}</Text>
                             <Text color="gray">Extended Edition 1/500</Text>
@@ -309,7 +309,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
 
 
                         <Box flex="1" opacity={!showBuyNow ? "100%" : "20%"} onClick={() => { setShowBuyNow(false) }}>
-                            <Image width="175px" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-premium.png?update`} />
+                            <Image h="233px" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-premium.png?update`} />
                             <Heading as="h2">1 of 10</Heading>
                             <Text>${dropData.price.premium}</Text>
                             <Text color="gray">Launch Edition 1/10</Text>
