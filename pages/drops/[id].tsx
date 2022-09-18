@@ -13,6 +13,7 @@ import StaticCard from "@/components/NftCard/StaticCard";
 import * as ga from "@/utils/ga";
 import mixpanel from 'mixpanel-browser';
 import { useRouter } from "next/router";
+import moment from "moment";
 
 
 interface Props {
@@ -31,7 +32,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
     const [showBuyNow, setShowBuyNow] = useState(true);
     const toast = useToast();
     const [submitting, setSubmitting] = useState(false);
-    const [saleOpen, setSaleOpen] = useState(true);
+    const [saleOpen, setSaleOpen] = useState(false);
     const [presaleOpen, setPresaleOpen] = useState(true);
     const [wlAccess, setWlAccess] = useState(false);
 
@@ -69,27 +70,13 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
 
     }, [router, presaleOpen])
 
-    // useEffect(() => {
-    //     if (maxQuantity === 0) {
-    //         setIncrementEnabled(false);
-    //         setDecrementEnabled(false);
-    //     }
-    //     else if (purchaseQuantity >= maxQuantity) {
-    //         // setPurchaseQuantity(maxQuantity);
-    //         setIncrementEnabled(false)
-    //     } else
-    //         if (purchaseQuantity < 1 && maxQuantity > 0) {
-    //             setPurchaseQuantity(1);
-    //         } else
-    //             if (purchaseQuantity === 1) {
-    //                 setDecrementEnabled(false);
-    //                 setIncrementEnabled(true);
-    //             } else {
-    //                 setDecrementEnabled(true);
-    //                 setIncrementEnabled(true);
-    //             }
+    useEffect(() => {
+        console.log(dropData)
+        if(dropData){
+            (new Date(dropData.drop_start).valueOf() < Date.now() && !dropData.drop_ended) ? setSaleOpen(true) : setSaleOpen(false);
+        }
 
-    // }, [purchaseQuantity, maxQuantity]);
+    },[dropData])
 
     useEffect(() => {
         if (purchaseQuantity === 1) {
@@ -146,17 +133,6 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
         ).subscribe()
     }, []);
 
-    // useEffect(() => {
-    //     if (purchaseQuantity > maxQuantity) {
-    //         setPurchaseQuantity(maxQuantity);
-    //         toast({
-    //             position: "top",
-    //             title: "Selling Out at This Price",
-    //             description: "Only " + maxQuantity + " left at this price.",
-    //         })
-    //     }
-
-    // }, [price, maxQuantity])
 
     useEffect(() => {
         if (email.trim().length != email.length) {
@@ -347,22 +323,28 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                             <Text color="gray.300" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition Digital Collectibles. Each purchase will receive a Legendary, Rare or Common Card.</Text>
                             <HStack gridGap={10}>
                                 <HStack>
-                                    <IconButton size="md" isDisabled={!decrementEnabled} isRound={true} aria-label="Decrement Quantity" icon={<MinusIcon />} onClick={() => setPurchaseQuantity(purchaseQuantity - 1)}></IconButton>
+                                    <IconButton size="md" isDisabled={!decrementEnabled || !saleOpen} isRound={true} aria-label="Decrement Quantity" icon={<MinusIcon />} onClick={() => setPurchaseQuantity(purchaseQuantity - 1)}></IconButton>
                                     <VStack>
                                         <Text fontSize="5xl" pb="0">{purchaseQuantity}</Text>
                                         <Text mt="-10px !important" >Quantity</Text>
                                     </VStack>
-                                    <IconButton size="md" isDisabled={!incrementEnabled} isRound={true} aria-label="Increment Quantity" icon={<AddIcon />} onClick={() => setPurchaseQuantity(purchaseQuantity + 1)}></IconButton>
+                                    <IconButton size="md" isDisabled={!incrementEnabled || !saleOpen} isRound={true} aria-label="Increment Quantity" icon={<AddIcon />} onClick={() => setPurchaseQuantity(purchaseQuantity + 1)}></IconButton>
                                 </HStack>
                                 <Text fontSize="5xl" pb="0">${price}</Text>
                             </HStack>
                             <div></div>
 
-                            {(saleOpen || wlAccess) && itemsLeft > 0 &&
+                            {itemsLeft > 0 &&
 
-                                <Button disabled={purchaseQuantity < 1 || showEmail} onClick={() => { setShowEmail(true) }} size="lg" pb="4px" color="white" fontSize={"xl"} minW="200px" colorScheme="blue">
+                                <Button disabled={purchaseQuantity < 1 || showEmail || !saleOpen} onClick={() => { setShowEmail(true) }} size="lg" pb="4px" color="white" fontSize={"xl"} minW="200px" colorScheme="blue">
                                     Buy &nbsp;&nbsp;${price * purchaseQuantity}
                                 </Button>
+                            }
+                            {!saleOpen && !dropData.sale_ended &&
+                                <Text color="gray.300" textAlign="center" maxW="400px">Drop Opens {moment(dropData.drop_start).format("MMMM Do YYYY, h:mm a")}</Text>
+                            }
+                            {!saleOpen && dropData.sale_ended &&
+                                <Text color="gray.300" textAlign="center" maxW="400px">Drop Ended</Text>
                             }
                             {itemsLeft > 0 ?
                                 (saleOpen || wlAccess) &&
@@ -398,9 +380,9 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                                     <Heading size="md" pb={3}>Legendary - 15 Total</Heading>
                                     <Text color="gray.400">Marked with a gold border, glow, name and signature with the Legendary {dropData.player_name.split(" ")[0]} Image.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
-                                    <li>Video call with {dropData.player_name.split(" ")[0]}</li>
-                                    <li>Follow by {dropData.player_name.split(" ")[0]} on Instgram/Twitter</li>
-                                    <li>Shoutout by {dropData.player_name.split(" ")[0]} on Instagram/Twitter</li>
+                                    {dropData.utility_video && <li>Video call with {dropData.player_name.split(" ")[0]}</li>}
+                                    {dropData.utility_follow && <li>Follow by {dropData.player_name.split(" ")[0]} on Instgram/Twitter</li>}
+                                    {dropData.utility_follow && <li>Shoutout by {dropData.player_name.split(" ")[0]} on Instagram/Twitter</li>}
                                     <li>1 in 15 chance to win a Launch Edition</li>
                                     <li>Physical AR card in the mail</li>
                                     <li>Digital Collectible Personally Designed by {dropData.player_name.split(" ")[0]}</li>
@@ -412,7 +394,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                                     <Heading size="md" pb={3}>Rare - 40 Total</Heading>
                                     <Text color="gray.400">Marked with a silver border and silver name.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
-                                    <li>Follow by {dropData.player_name.split(" ")[0]} on Instgram/Twitter</li>
+                                    {dropData.utility_follow && <li>Follow by {dropData.player_name.split(" ")[0]} on Instgram/Twitter</li>}
                                     <li>Physical AR card in the mail</li>
                                     <li>Digital Collectible Personally Designed by {dropData.player_name.split(" ")[0]}</li>
                                 </Box>
@@ -493,9 +475,9 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                                     <Heading size="lg">Legendary - 10 Total</Heading>
                                     <Text fontWeight="900" fontSize="lg">Utility</Text>
                                     <Box textAlign={"left"}>
-                                        <li>Video call with {dropData.player_name.split(" ")[0]}</li>
-                                        <li>Follow from {dropData.player_name.split(" ")[0]} on Twitter/Instagram</li>
-                                        <li>Shout out from {dropData.player_name.split(" ")[0]} on Twitter/Instagram</li>
+                                        {dropData.utility_video && <li>Video call with {dropData.player_name.split(" ")[0]}</li>}
+                                        {dropData.utility_follow &&<li>Follow from {dropData.player_name.split(" ")[0]} on Twitter/Instagram</li>}
+                                        {dropData.utility_follow &&<li>Shout out from {dropData.player_name.split(" ")[0]} on Twitter/Instagram</li>}
                                         <li>Physical AR card in the mail</li>
                                         <li>Digital Collectible Personally Designed by {dropData.player_name.split(" ")[0]}</li>
                                     </Box>
