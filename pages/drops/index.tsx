@@ -25,7 +25,7 @@ const Drops: React.FC = () => {
   useEffect(() => {
 
     const getDropData = async () => {
-      const { data: challenge_data } = await supabase.from('drop').select('*').order('id', { ascending: false })
+      const { data: challenge_data } = await supabase.from('drop').select('*').order('drop_start', { ascending: true })
 
       // const {data: teams} = await supabase.from('school').select('*')
 

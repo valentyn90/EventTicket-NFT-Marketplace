@@ -3,6 +3,7 @@ import AppModal from "@/components/ui/AppModal";
 import { supabase } from "@/supabase/supabase-client";
 import { Box, Container, Flex, Grid, Heading, HStack, Image, SimpleGrid, Spacer, Spinner, Stack, Text, useColorModeValue, VStack } from "@chakra-ui/react";
 import { CannotMatchFreeSalesWithoutAuctionHouseOrSellerSignoffError } from "@metaplex-foundation/mpl-auction-house/dist/src/generated";
+import { Int } from "@solana/buffer-layout";
 import { NextApiRequest } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -120,16 +121,17 @@ const Challenges: React.FC = () => {
             {comingSoonChallenges.map((challenge, index) => {
 
               return (
-                <VStack p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" filter={"grayscale(90%)"}>
+                <VStack key={index + "_comingSoon"} p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" filter={"grayscale(90%)"}>
                   <StaticCard nft_id={1555} width={150} />
                   <Heading size="sm">
                     Coming {new Date(challenge.start_time).toLocaleDateString('en-us', { day:"numeric", month:"short"})}
                   </Heading>
                   <Flex wrap="wrap" justifyContent="center">
-                    {challenge.teams.map((team: any) => {
+                    {challenge.teams.map((team: any, index:any) => {
                       return (
 
                         <Image
+                          key={index+"_team_cs"}
                           src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/teams/${team}.png`}
                           alt=""
                           w="22px"
@@ -145,16 +147,17 @@ const Challenges: React.FC = () => {
             {activeChallenges.map((challenge, index) => {
 
               return (
-                <VStack p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/challenge/${challenge.id}`) }}>
+                <VStack key={index} p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/challenge/${challenge.id}`) }}>
                   <StaticCard nft_id={challenge.nfts[0].nft_id} width={150} />
                   <Heading size="sm">
                     {challenge.name}'s Fan Challenge
                   </Heading>
                   <Flex wrap="wrap" justifyContent="center">
-                    {challenge.teams.map((team: any) => {
+                    {challenge.teams.map((team: any, index:any) => {
                       return (
 
                         <Image
+                          key={index+"_team"}
                           src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/teams/${team}.png`}
                           alt=""
                           w="22px"
