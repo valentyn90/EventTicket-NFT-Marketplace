@@ -40,8 +40,6 @@ const Challenges: React.FC = () => {
 
       }
 
-      console.table(challenge_data)
-
     }
 
     getChallengeData()
@@ -121,10 +119,10 @@ const Challenges: React.FC = () => {
             {comingSoonChallenges.map((challenge, index) => {
 
               return (
-                <VStack key={index + "_comingSoon"} p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" filter={"grayscale(90%)"}>
-                  <StaticCard nft_id={1555} width={150} />
+                <VStack key={index + "_comingSoon"} p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/challenge/${challenge.id}`) }}>
+                  <StaticCard nft_id={challenge.nfts[0].nft_id} width={150} />
                   <Heading size="sm">
-                    Coming {new Date(challenge.start_time).toLocaleDateString('en-us', { day:"numeric", month:"short"})}
+                    {new Date(challenge.start_time).toLocaleDateString('en-us', { day:"numeric", month:"short"})} @ {new Date(challenge.start_time).toLocaleTimeString('en-us', { hour: 'numeric', minute: 'numeric', hour12: true })}
                   </Heading>
                   <Flex wrap="wrap" justifyContent="center">
                     {challenge.teams.map((team: any, index:any) => {

@@ -38,6 +38,7 @@ import useWindowDimensions from "@/utils/useWindowDimensions";
 import Head from "next/head";
 import { MotionBox } from "@/components/ui/ChakraMotion/ChakraMotion";
 import { useRouter } from "next/router";
+import moment from "moment";
 
 interface Props {
     id: number;
@@ -77,6 +78,7 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
     const [emailInvalid, setEmailInvalid] = useState(true);
     const [showEmail, setShowEmail] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [saleOpen, setSaleOpen] = useState(false);
     const toast = useToast();
     const router = useRouter();
 
@@ -331,6 +333,7 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
             }, 0);
 
             setChallengeData(data);
+            setSaleOpen(new Date(data.start_time).valueOf() < Date.now());
             setMaxVal(maxVal);
             if(router.query.team_id || data.team_chosen){
                 let team_id = parseInt(router.query.team_id as string)
@@ -771,7 +774,7 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                                                 transform: "matrix(1, 0, 0.58, 1, 0, 0)",
                                             },
                                         }}
-                                        disabled={showEmail || quantity == 0}
+                                        disabled={showEmail || quantity == 0 || !saleOpen}
                                         onClick={() => {
                                             if (selectedTeamId && selectedTeamId < 0) {
                                                 onOpen();
@@ -866,13 +869,17 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                                             },
                                         }}
                                         isLoading={loading}
-                                        disabled={emailInvalid || quantity == 0}
+                                        disabled={emailInvalid || quantity == 0 }
                                         onClick={handlePurchase}
                                     >
                                         <Text>Purchase ${price * quantity}</Text>
                                     </Button>
                                 </VStack>
                             )}
+                                                            {!saleOpen && 
+                                // Sale will open at challengeData.start_time
+                                <Text textAlign="center">Challenge Opens {moment(challengeData.start_time).format("MMMM Do @ h:mm a")}</Text>
+}
                             <Box
                                 borderColor={"blue.500"}
                                 bgColor="viBlueTransparent"
