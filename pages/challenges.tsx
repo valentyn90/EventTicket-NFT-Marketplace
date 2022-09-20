@@ -1,3 +1,4 @@
+import CardPicture from "@/components/NftCard/CardPicture";
 import StaticCard from "@/components/NftCard/StaticCard";
 import AppModal from "@/components/ui/AppModal";
 import { supabase } from "@/supabase/supabase-client";
@@ -120,7 +121,8 @@ const Challenges: React.FC = () => {
 
               return (
                 <VStack key={index + "_comingSoon"} p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/challenge/${challenge.id}`) }}>
-                  <StaticCard nft_id={challenge.nfts[0].nft_id} width={150} />
+                  {/* <StaticCard nft_id={challenge.nfts[0].nft_id} width={150} /> */}
+                  <CardPicture nft_id={challenge.nfts[0].nft_id} width={140}/>
                   <Heading size="sm">
                     {new Date(challenge.start_time).toLocaleDateString('en-us', { day:"numeric", month:"short"})} @ {new Date(challenge.start_time).toLocaleTimeString('en-us', { hour: 'numeric', minute: 'numeric', hour12: true })}
                   </Heading>
@@ -146,7 +148,8 @@ const Challenges: React.FC = () => {
 
               return (
                 <VStack key={index} p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/challenge/${challenge.id}`) }}>
-                  <StaticCard nft_id={challenge.nfts[0].nft_id} width={150} />
+                  {/* <StaticCard nft_id={challenge.nfts[0].nft_id} width={150} /> */}
+                  <CardPicture nft_id={challenge.nfts[0].nft_id} width={140}/>
                   <Heading size="sm">
                     {challenge.name}'s Fan Challenge
                   </Heading>

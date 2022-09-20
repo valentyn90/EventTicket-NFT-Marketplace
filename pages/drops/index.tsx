@@ -1,3 +1,4 @@
+import CardPicture from "@/components/NftCard/CardPicture";
 import StaticCard from "@/components/NftCard/StaticCard";
 import AppModal from "@/components/ui/AppModal";
 import { supabase } from "@/supabase/supabase-client";
@@ -145,7 +146,7 @@ const Drops: React.FC = () => {
 
               return (
                 <VStack key={index} p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/drops/${challenge.id}`) }}>
-                  <StaticCard nft_id={challenge.nfts[2]} width={150} />
+                  <CardPicture nft_id={challenge.nfts[2]} width={140} glow={true}/>
                   <Heading size="sm">
                     Drops {new Date(challenge.drop_start).toLocaleDateString('en-us', { day:"numeric", month:"short"})} @ {new Date(challenge.drop_start).toLocaleTimeString('en-us', { hour: 'numeric', minute: 'numeric', hour12: true })}
                   </Heading>
@@ -153,7 +154,8 @@ const Drops: React.FC = () => {
               )
             })}
             <VStack p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/drops/naas`) }}>
-              <StaticCard nft_id={1160} width={150} />
+              {/* <StaticCard nft_id={1160} width={150} /> */}
+              <CardPicture nft_id={1160} width={140} glow={true}/>
               <Heading size="sm">
                 Naas Cunningham's Drop
               </Heading>
@@ -162,7 +164,8 @@ const Drops: React.FC = () => {
 
               return (
                 <VStack key={index} p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/drops/${challenge.id}`) }}>
-                  <StaticCard nft_id={challenge.nfts[2]} width={150} />
+                  {/* <StaticCard nft_id={challenge.nfts[2]} width={150} /> */}
+                  <CardPicture nft_id={challenge.nfts[2]} width={140} glow={true}/>
                   <Heading size="sm">
                     {challenge.player_name}'s Drop
                   </Heading>
