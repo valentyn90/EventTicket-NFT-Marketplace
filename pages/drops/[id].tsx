@@ -309,7 +309,8 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
 
 
                         <Box flex="1" opacity={!showBuyNow ? "100%" : "20%"} onClick={() => { setShowBuyNow(false) }}>
-                            <Image h="233px" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-premium.png?update`} />
+                            <Image h="233px" opacity={premiumItemsLeft < 1 ? "20%" : "100%"} src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-premium.png?update`} />
+                            {premiumItemsLeft < 1 ? <Box filter="drop-shadow( 0 0 5px black)" position="relative" mb="-50px" top="-150px" ><Image h="50px"  src={'/img/soldout.png'}/></Box> : null}
                             <Heading as="h2">1 of 10</Heading>
                             <Text>${dropData.price.premium}</Text>
                             <Text color="gray">Launch Edition 1/10</Text>
@@ -441,7 +442,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                                     Buy &nbsp;&nbsp;${premiumPrice * premiumPurchaseQuantity}
                                 </Button>
                             }
-                            {maxQuantity > 0 ?
+                            {premiumItemsLeft > 0 ?
                                 (saleOpen || wlAccess) &&
                                 <Box>
 
