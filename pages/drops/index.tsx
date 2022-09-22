@@ -26,9 +26,11 @@ const Drops: React.FC = () => {
   useEffect(() => {
 
     const getDropData = async () => {
-      const { data: challenge_data } = await supabase.from('drop').select('*').order('drop_start', { ascending: true })
+      const { data: challenge_data } = await supabase.from('drop').select('*').order('order').order('drop_start', { ascending: false })
 
       // const {data: teams} = await supabase.from('school').select('*')
+
+      console.table(challenge_data)
 
       if (challenge_data) {
         const activeDrops = challenge_data.filter(

@@ -912,7 +912,7 @@ const Challenge: React.FC<Props> = ({ id, challenge_data, leaderboard, public_ur
                                     <li style={{marginBottom:"10px"}}>Just like a GM, your job is not over once {challengeData && challengeData.name} commits, you can still purchase cards for any listed team until we close the challenge.</li>
                                     <li style={{marginBottom:"10px"}}>{challengeData && challengeData.name} keeps {challengeData && challengeData.percentage}% of all final sales. </li>
                                     <li style={{marginBottom:"10px"}}>When {challengeData && challengeData.name} makes the big play that wins your team the conference championship, you will get credit for being a 
-                                    part of his journey.</li>
+                                    part of their journey.</li>
                                     <li>When {challengeData && challengeData.name} makes it big, you can sell your digital collectible on our marketplace.</li>
                                 </ol>
                                 </Box>  
