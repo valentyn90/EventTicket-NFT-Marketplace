@@ -26,6 +26,7 @@ const Marketplace: React.FC = () => {
   const [teamName, setTeamName] = useState<string>();
 
   const [beginFilter, setBeginFilter] = useState<any>();
+  const [showPack, setShowPack] = useState<number>();
 
 
   const [value, setValue] = useState("");
@@ -47,6 +48,10 @@ const Marketplace: React.FC = () => {
           return;
         }
         else if (value === "" && teamId !== undefined) {
+          console.log(teamId)
+          teamId===19 ?
+            setShowPack(teamId) : setShowPack(-1)
+          
           const filtered = marketplaceNfts.filter((nft) => {
             return nft.nft.high_school === teamName;
           });
@@ -197,7 +202,7 @@ const Marketplace: React.FC = () => {
           />
         </Stack>
 
-        <CardList listType="marketplace" marketplaceNfts={filteredNfts} />
+        <CardList listType="marketplace" marketplaceNfts={filteredNfts} showPack={showPack} />
         <AppModal />
       </Box>
     </Container>

@@ -8,7 +8,7 @@ import SellData from "@/types/SellData";
 import { Box, Grid } from "@chakra-ui/layout";
 import React, { useEffect } from "react";
 import CardListItemNew from "./CardListItemNew";
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme, Heading, Image } from "@chakra-ui/react";
 import CardListItem from "./CardListItem";
 import getSolPrice from "@/hooks/nft/getSolPrice";
 import NftItem from "@/types/NftItem";
@@ -20,6 +20,7 @@ interface Props {
   nfts?: Nft[];
   listingData?: ListingData[];
   marketplaceNfts?: NftItem[];
+  showPack?: number;
 }
 
 const CardList: React.FC<Props> = ({
@@ -27,6 +28,7 @@ const CardList: React.FC<Props> = ({
   listType,
   listingData,
   marketplaceNfts,
+  showPack
 }) => {
 
   const solPrice = getSolPrice()
@@ -35,6 +37,8 @@ const CardList: React.FC<Props> = ({
   const [nftsToShow, setNftsToShow] = React.useState<any[]>([]);
 
   const [cardListNew, setCardListNew] = React.useState<any[]>([]);
+
+  console.log(showPack)
 
   let cardList;
   if (listingData && nfts) {
@@ -79,6 +83,48 @@ const CardList: React.FC<Props> = ({
       return <CardListItemNew key={nft.id} nft={nft} nft_id={nft.id} listType={listType} />;
     });
   }
+
+  let pack = (
+    <Box
+      // py={4}
+      // px={2}
+      mb={[6, 6, "unset"]}
+      w={["180px", "225px", "250px"]}
+      h={["360px", "450px", "500px"]}
+      // borderWidth="1px"
+      // borderRadius="lg"
+      overflow="hidden"
+      boxShadow="xl"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      position="relative"
+    >
+      <Box
+        position="relative"
+        display="block"
+        w="100%"
+        h="100%"
+        mt="-40px"
+      >
+        <Image position="absolute"
+          top={0}
+          left={0}
+          width="100%"
+          height="100%"
+          objectFit="contain"
+          className="card-twist" src="https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/teams/packs/pack-19-3-basketball.png?new=u" />
+      </Box>
+      <Box
+        // flexDir={["column", "column", "row"]}
+        justifyContent="space-around"
+        w="100%"
+      >
+        <Heading marginTop="-40px;" size="lg">Packs Coming Soon!</Heading>
+      </Box>
+    </Box>
+  )
 
   useEffect(() => {
     if (marketplaceNfts) {
@@ -139,31 +185,30 @@ const CardList: React.FC<Props> = ({
       return cardList[0] as JSX.Element
     }
     else {
-      if(listingData && nfts){
-       return (
+      if (listingData && nfts) {
+        return (
 
-            <Grid
-              id="cardGrid"
-              w="100%"
-              mt={8}
-              templateColumns={{
-                base: "repeat(auto-fit, 166px)",
-                sm: "repeat(auto-fit, 170px)",
-                md: "repeat(auto-fit, 230px)",
-                lg: "repeat(auto-fit, 250px)",
-              }}
-              justifyContent={["space-around", "space-around", "center"]}
-              justifyItems="center"
-              gap={[2, 4, 6]}
-            >
-  
-              {cardList} 
+          <Grid
+            id="cardGrid"
+            w="100%"
+            mt={8}
+            templateColumns={{
+              base: "repeat(auto-fit, 166px)",
+              sm: "repeat(auto-fit, 170px)",
+              md: "repeat(auto-fit, 230px)",
+              lg: "repeat(auto-fit, 250px)",
+            }}
+            justifyContent={["space-around", "space-around", "center"]}
+            justifyItems="center"
+            gap={[2, 4, 6]}
+          >
+            {cardList}
 
-  
-            </Grid>
 
-  
-  
+          </Grid>
+
+
+
         )
 
       }
@@ -191,6 +236,7 @@ const CardList: React.FC<Props> = ({
           >
 
             {/* {(listingData && nfts) ? cardList : cardListNew} */}
+            {showPack === 19 ? pack : null}
             {cardListNew}
 
           </Grid>
