@@ -57,6 +57,12 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
 
     const [dropData, setDropData] = useState(drop_data);
 
+    const [extendedQuantities, setExtendedQuantities] = useState<any>({
+        common: 445,
+        rare: 40,
+        legendary: 15
+    });
+
 
     const ref = useRef<HTMLInputElement>(null);
     const router = useRouter();
@@ -74,6 +80,14 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
         console.log(dropData)
         if(dropData){
             (new Date(dropData.drop_start).valueOf() < Date.now() && !dropData.drop_ended) ? setSaleOpen(true) : setSaleOpen(false);
+
+            if(dropData.extended_quantity === 100){
+                setExtendedQuantities({
+                    common: 84,
+                    rare: 12,
+                    legendary: 4
+                })
+            }
         }
 
     },[dropData])
@@ -304,7 +318,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                             <Image h="233px" w="175px" maxWidth="unset" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-standard.png?update`} />
                             <Heading as="h2">Buy Now</Heading>
                             <Text>${price}</Text>
-                            <Text color="gray">Extended Edition 1/500</Text>
+                            <Text color="gray">Extended Edition 1/{dropData.extended_quantity}</Text>
                         </Box>
 
 
@@ -321,7 +335,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                         <VStack maxW={600} p={2}>
                             <Heading>Extended Edition</Heading>
                             <Text px={3} bg="#ececec" borderRadius={20} color="gray.800">80%+ of Sales go directly to {dropData.player_name.split(" ")[0]}</Text>
-                            <Text color="gray.300" textAlign="center" maxW="400px">Buy 1 of 500 Extended Edition Digital Collectibles. Each purchase will receive a Legendary, Rare or Common Card.</Text>
+                            <Text color="gray.300" textAlign="center" maxW="400px">Buy 1 of {dropData.extended_quantity} Extended Edition Digital Collectibles. Each purchase will receive a Legendary, Rare or Common Card.</Text>
                             <HStack gridGap={10}>
                                 <HStack>
                                     <IconButton size="md" isDisabled={!decrementEnabled || !saleOpen} isRound={true} aria-label="Decrement Quantity" icon={<MinusIcon />} onClick={() => setPurchaseQuantity(purchaseQuantity - 1)}></IconButton>
@@ -378,13 +392,13 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                                 <Image src="/img/tap.svg" alt="tap" position={"absolute"} w="50px" left={["60%", "55%", "unset"]} />
                                 <StaticCard nft_id={dropData.nfts[2]} width={150} />
                                 <Box px={4}>
-                                    <Heading size="md" pb={3}>Legendary - 15 Total</Heading>
+                                    <Heading size="md" pb={3}>Legendary - {extendedQuantities.legendary} Total</Heading>
                                     <Text color="gray.400">Marked with a gold border, glow, name and signature with the Legendary {dropData.player_name.split(" ")[0]} Image.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
                                     {dropData.utility_video && <li>Video call with {dropData.player_name.split(" ")[0]}</li>}
                                     {dropData.utility_follow && <li>Follow by {dropData.player_name.split(" ")[0]} on Instgram/Twitter</li>}
                                     {dropData.utility_follow && <li>Shoutout by {dropData.player_name.split(" ")[0]} on Instagram/Twitter</li>}
-                                    <li>1 in 15 chance to win a Launch Edition</li>
+                                    {dropData.utility_follow && <li>1 in {extendedQuantities.legendary} chance to win a Launch Edition</li>}
                                     <li>Physical AR card in the mail</li>
                                     <li>Digital Collectible Personally Designed by {dropData.player_name.split(" ")[0]}</li>
                                 </Box>
@@ -392,7 +406,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                             <Stack textAlign={"start"} py={6} direction={["column", "column", "row-reverse"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={dropData.nfts[1]} width={150} />
                                 <Box px={4}>
-                                    <Heading size="md" pb={3}>Rare - 40 Total</Heading>
+                                    <Heading size="md" pb={3}>Rare - {extendedQuantities.rare} Total</Heading>
                                     <Text color="gray.400">Marked with a silver border and silver name.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
                                     {dropData.utility_follow && <li>Follow by {dropData.player_name.split(" ")[0]} on Instgram/Twitter</li>}
@@ -403,7 +417,7 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                             <Stack textAlign={"start"} py={6} direction={["column", "column", "row"]} minWidth={350} gridGap={4} >
                                 <StaticCard nft_id={dropData.nfts[0]} width={150} />
                                 <Box px={4}>
-                                    <Heading size="md" pb={3}>Common - 445 Total</Heading>
+                                    <Heading size="md" pb={3}>Common - {extendedQuantities.common} Total</Heading>
                                     <Text color="gray.400">Those that don't win a Rare or Legendary will receive a Common. Marked with {dropData.player_name.split(" ")[0]}'s Signature.</Text>
                                     <Text pt={2} fontWeight="900" fontSize="lg">Utility</Text>
                                     <li>Physical AR card in the mail</li>
