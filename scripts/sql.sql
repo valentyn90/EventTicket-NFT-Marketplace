@@ -32,7 +32,7 @@ where id = 1543 --Replace this video with the one above
 
 
 
-select * from public.drop where id=6
+select * from public.drop where id=7
 
 
 -- 348d305f-3156-44ec-98f6-5d052bea2aa8 - VerifiedId
@@ -42,39 +42,45 @@ select * from public.drop where id=6
 -- Rare    - 4   / 40
 -- Leg     - 1   / 15
 
-{1607,1608,1609}	1543	'7472d65f-d77d-474e-9e59-f41418474d4a'	
+-- P - 1  / 10
+-- C - 9  / 84
+-- R - 1  / 12
+-- L - 0  / 4
+{1662,1663,1664}	1577	'3315a388-c244-414f-b1a3-a61b03b24d1c'
 
 Delete from
 --select * from 
-nft_owner where nft_id in (1543,1607,1608,1609)
+nft_owner where nft_id in (1577,1662,1663,1664)
 
-select id, edition_quantity, edition_name, * from nft where id in (1543,1607,1608,1609)
+select id, edition_quantity, edition_name, * from nft where id in (1577,1662,1663,1664)
 
 --Launch
 insert into nft_owner(nft_id, owner_id, serial_no)
-select 1543 as nft_id, UUID('7472d65f-d77d-474e-9e59-f41418474d4a') as owner_id, generate_series as serial_no from generate_series(1,9)
+select 1577 as nft_id, UUID('3315a388-c244-414f-b1a3-a61b03b24d1c') as owner_id, generate_series as serial_no from generate_series(1,9)
 UNION ALL
-select  1543 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(10,10)
+select  1577 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(10,10)
 
 -- Common
 insert into nft_owner(nft_id, owner_id, serial_no)
-select 1607 as nft_id, UUID('7472d65f-d77d-474e-9e59-f41418474d4a') as owner_id, generate_series as serial_no from generate_series(1,401)
+select 1662 as nft_id, UUID('3315a388-c244-414f-b1a3-a61b03b24d1c') as owner_id, generate_series as serial_no from generate_series(1,75) -- generate_series(1,401)
 UNION ALL
-select  1607 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(402,445)
+select  1662 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(76,84) --generate_series(402,445)
 
 --Rare
 insert into nft_owner(nft_id, owner_id, serial_no)
-select 1608 as nft_id, UUID('7472d65f-d77d-474e-9e59-f41418474d4a') as owner_id, generate_series as serial_no from generate_series(1,36)
+select 1663 as nft_id, UUID('3315a388-c244-414f-b1a3-a61b03b24d1c') as owner_id, generate_series as serial_no from generate_series(1,11) --generate_series(1,36)
 UNION ALL
-select  1608 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(37,40)
+select  1663 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(12,12) --generate_series(37,40)
 
 --Lego
 insert into nft_owner(nft_id, owner_id, serial_no)
-select 1609 as nft_id, UUID('7472d65f-d77d-474e-9e59-f41418474d4a') as owner_id, generate_series as serial_no from generate_series(1,14)
+select 1664 as nft_id, UUID('3315a388-c244-414f-b1a3-a61b03b24d1c') as owner_id, generate_series as serial_no from generate_series(1,4) --generate_series(1,14)
 UNION ALL
-select  1609 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(15,15)
+select  1664 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(1,1) --generate_series(15,15)
+
+select * from generate_series(1,1)
 
 update nft 
 set minted = true, mint_datetime=now()
 --select minted, mint_datetime from nft
-where id in (1543,1607,1608,1609)
+where id in (1577,1662,1663,1664)
