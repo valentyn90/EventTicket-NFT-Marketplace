@@ -4,19 +4,19 @@ INSERT INTO public.nft(
 	
 	Select inserted_at, updated_at, user_id, first_name, last_name, graduation_year, high_school, usa_state, sport, sport_position, video_link, quotes, finished, approved, minted, signature_file, photo_file, clip_file, mux_playback_id, mux_upload_id, mux_asset_id, screenshot_file_id, user_details_id, 
 	mint_datetime, color_top, color_bottom, color_transition, mux_max_resolution, og_photo_id, crop_keyframes, slow_video, crop_values, admin_feedback, post_hs, vfd_year, 
-	'Extended', 445, 'Common', edition_utility, temp_user_id
+	'Extended', 84, 'Common', edition_utility, temp_user_id
 	from public.nft
 		where id=1586
 	UNION ALL
 	Select inserted_at, updated_at, user_id, first_name, last_name, graduation_year, high_school, usa_state, sport, sport_position, video_link, quotes, finished, approved, minted, signature_file, photo_file, clip_file, mux_playback_id, mux_upload_id, mux_asset_id, screenshot_file_id, user_details_id, 
 	mint_datetime, color_top, color_bottom, color_transition, mux_max_resolution, og_photo_id, crop_keyframes, slow_video, crop_values, admin_feedback, post_hs, vfd_year, 
-	'Extended', 40, 'Rare', edition_utility, temp_user_id
+	'Extended', 12, 'Rare', edition_utility, temp_user_id
 	from public.nft
 		where id=1586
 	UNION ALL
 	Select inserted_at, updated_at, user_id, first_name, last_name, graduation_year, high_school, usa_state, sport, sport_position, video_link, quotes, finished, approved, minted, signature_file, photo_file, clip_file, mux_playback_id, mux_upload_id, mux_asset_id, screenshot_file_id, user_details_id, 
 	mint_datetime, color_top, color_bottom, color_transition, mux_max_resolution, og_photo_id, crop_keyframes, slow_video, crop_values, admin_feedback, post_hs, vfd_year, 
-	'Extended', 15, 'Legendary', edition_utility, temp_user_id
+	'Extended', 4, 'Legendary', edition_utility, temp_user_id
 	from public.nft
 		where id=1586
 
@@ -75,8 +75,8 @@ select  1663 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id
 --Lego
 insert into nft_owner(nft_id, owner_id, serial_no)
 select 1664 as nft_id, UUID('3315a388-c244-414f-b1a3-a61b03b24d1c') as owner_id, generate_series as serial_no from generate_series(1,4) --generate_series(1,14)
-UNION ALL
-select  1664 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(1,1) --generate_series(15,15)
+--UNION ALL
+--select  1664 as nft_id, UUID('348d305f-3156-44ec-98f6-5d052bea2aa8') as owner_id, generate_series as serial_no from generate_series(1,1) --generate_series(15,15)
 
 select * from generate_series(1,1)
 
