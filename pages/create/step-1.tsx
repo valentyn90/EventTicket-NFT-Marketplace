@@ -23,6 +23,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useMixpanel } from "react-mixpanel-browser";
+import cookieCutter from "cookie-cutter";
 
 const StepOne = () => {
   const router = useRouter();
@@ -30,6 +31,15 @@ const StepOne = () => {
   const toast = useToast();
 
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if(router.query.marathon){
+      console.log("marathon");
+      mixpanel.track("Marathon Start NFT");
+      cookieCutter.set("marathon", "true", { path: "/", expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365) });
+
+    }
+  }, [router]);
 
   async function handleStepOneSubmit(e: React.FormEvent) {
     e.preventDefault();

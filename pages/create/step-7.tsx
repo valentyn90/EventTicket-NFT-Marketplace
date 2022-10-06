@@ -34,7 +34,9 @@ const StepSeven = () => {
       if (cookieCutter.get("school")) {
         router.push("/create/step-8");
 
-      } else {
+      } else if(cookieCutter.get("marathon")){
+        router.push("/create/completed-hm");
+      } else{
         router.push("/create/completed");
       }
     } else {

@@ -10,6 +10,7 @@ import {
   Divider,
   Flex,
   Heading,
+  Input,
   Spinner,
   Text,
   VStack,
@@ -34,6 +35,9 @@ const StepSix = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
 
+  const [emailLinkSent, setEmailLinkSent] = useState(false);
+  const [email, setEmail] = useState("");
+
   useEffect(() => {
     // ensure the video finished processing;
     async function finish_video() {
@@ -46,6 +50,30 @@ const StepSix = () => {
     if (signatureRef) {
       signatureRef.current.instance.clear();
       userStore.nftInput.setLocalSignature(null);
+    }
+  }
+
+  async function handleSignin(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    // const emailSignIn = await signIn({ email });
+    cookieCutter.set("redirect-link", "/create/step-7", { path: "/", expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365) });
+
+
+    const res = await fetch(`/api/admin/send-magic-link`, {
+      method: "POST",
+      headers: new Headers({ "Content-Type": "application/json" }),
+      credentials: "same-origin",
+      body: JSON.stringify({
+        email,
+      }),
+    });
+
+    const resj = await res.json();
+
+    setLoading(false);
+    if (resj) {
+      setEmailLinkSent(true);
     }
   }
 
@@ -260,6 +288,51 @@ const StepSix = () => {
                 Sign Up with Google
               </Text>
             </Button>
+            <Divider />
+
+            <Box mt="12" >
+            <Text fontSize="lg" textAlign="center">
+              OR
+              </Text>
+          <form onSubmit={handleSignin}>
+            {!emailLinkSent && (
+              <>
+                <Text fontWeight="bold">Email Address</Text>
+                <Input
+                  
+                  value={email}
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  mt={1}
+                  mb={8}
+                  borderRadius={1}
+                />
+              </>
+            )}
+            {!emailLinkSent ? (
+              <Button
+                py={6}
+                type="submit"
+                width="100%"
+                colorScheme="blue"
+                color="white"
+                borderRadius={1}
+              >
+                {loading ? <Spinner /> : "Sign up with Email"}
+              </Button>
+            ) : (
+              <VStack spacing={6}>
+                <Text textAlign="center" fontSize="3xl" fontWeight="bold">
+                  Check your email
+                </Text>
+                <Text textAlign="center">
+                  A sign in link has been sent to your email. <br/>Please check your SPAM or Updates folders if you don’t see it in your Inbox.
+                </Text>
+              </VStack>
+            )}
+          </form>
+        </Box>
+
           </VStack>
 
 
