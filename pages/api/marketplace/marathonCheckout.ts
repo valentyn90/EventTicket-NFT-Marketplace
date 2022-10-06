@@ -65,6 +65,8 @@ export default async function handler(
             user_id: user_id,
             nft_id: nft_id
           },
+          allow_promotion_codes: true,
+          
         });
 
       
