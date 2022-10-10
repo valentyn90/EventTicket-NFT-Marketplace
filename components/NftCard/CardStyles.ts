@@ -236,6 +236,8 @@ export const CardWrapper = styled.div<StyleProps>`
        background-clip: text;
        -webkit-text-fill-color: transparent;
        -webkit-background-clip: text;
+       height: 143px;
+       bottom: 38%;
        `
       :
       props.editionRarity === "Rare" && props.editionName === "Extended" ?
@@ -246,6 +248,8 @@ export const CardWrapper = styled.div<StyleProps>`
        background-size: cover;
        -webkit-text-fill-color: transparent;
        -webkit-background-clip: text;
+       height: 143px;
+       bottom: 38%;
        `
       :
 
