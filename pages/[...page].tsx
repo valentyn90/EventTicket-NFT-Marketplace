@@ -77,6 +77,12 @@ export default function Page({ page } : any) {
         {/* Add any relevant SEO metadata or open graph tags here */}
         <title>{page?.data.title}</title>
         <meta name="description" content={page?.data.descripton} />
+        <meta property="og:video" content={page?.data.video} />
+        <meta property="og:video:type" content="video/mp4" />
+        <meta property="og:video:width" content="720" />
+        <meta property="og:video:height" content="1280" />
+        <meta property="og:image" content={page?.data.image} />
+        <meta property="og:title" content={page?.data.title} />
       </Head>
 
       {/* Render the Builder page */}
