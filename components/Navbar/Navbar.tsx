@@ -42,24 +42,26 @@ export const Template: React.FC = (props) => {
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
 
   useEffect(() => {
-    if (router.pathname.toLowerCase().includes("athletes")) {
+    if (router.pathname.toLowerCase().includes("gift")) {
       setTabIndex(0);
-    } else if (router.pathname.toLowerCase().includes("marketplace")) {
+    } else if (router.pathname.toLowerCase().includes("athletes")) {
       setTabIndex(1);
-    } else if (router.pathname.toLowerCase().includes("challenge")) {
+    } else if (router.pathname.toLowerCase().includes("marketplace")) {
       setTabIndex(2);
+    } else if (router.pathname.toLowerCase().includes("challenge")) {
+      setTabIndex(3);
     } else if (router.pathname.toLowerCase().includes("naas")) {
-      setTabIndex(3);
-    } else if (router.pathname.toLowerCase().includes("drops")) {
-      setTabIndex(3);
-    } else if (router.pathname.toLowerCase().includes("blog")) {
       setTabIndex(4);
-    } else if (router.pathname.toLowerCase().includes("collection")) {
+    } else if (router.pathname.toLowerCase().includes("drops")) {
+      setTabIndex(4);
+    } else if (router.pathname.toLowerCase().includes("blog")) {
       setTabIndex(5);
-    } else if (router.pathname.toLowerCase().includes("listings")) {
+    } else if (router.pathname.toLowerCase().includes("collection")) {
       setTabIndex(6);
-    } else {
+    } else if (router.pathname.toLowerCase().includes("listings")) {
       setTabIndex(7);
+    } else {
+      setTabIndex(8);
     }
   });
 

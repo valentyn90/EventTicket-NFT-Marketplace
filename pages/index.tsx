@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button, HStack, Text, Skeleton, Stack, Heading, Box, VStack } from "@chakra-ui/react";
 import useWindowDimensions from "@/utils/useWindowDimensions";
 import mixpanel from 'mixpanel-browser';
+import { BuilderComponent, builder } from '@builder.io/react';
 
 const WordChange = keyframes`
   0% { content: "Collector" }
@@ -451,7 +452,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Home = () => {
+const Home = ({announce} : any) => {
   const [flipMain, setFlipMain] = useState(false);
   const [videoPlayed, setVideoPlayed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -460,6 +461,7 @@ const Home = () => {
   const { width } = useWindowDimensions();
   mixpanel.init('b78dc989c036b821147f68e00c354313')
   mixpanel.track("Home Page Viewed");
+  builder.init('52246859efc049d1aaa68e6c2ee2b1c4')
 
   useEffect(() => {
     setTimeout(() => {
@@ -492,7 +494,8 @@ const Home = () => {
   return (
     <Wrapper>
       <div className="inner">
-        <Box>
+        <BuilderComponent model="landing-page-announcement-hero" content={announce}/>
+        {/* <Box>
           <HStack p="6" bgPos="bottom"
             bgImage="linear-gradient(#1a202d,#1a202d,rgba(0, 0, 0, 0.1)), url('img/basketball-court.jpg')"
             bgSize="cover" alignItems={"center"} justifyContent="center">
@@ -503,7 +506,7 @@ const Home = () => {
             </VStack>
             <StaticCard nft_id={1449} width={100}></StaticCard>
           </HStack>
-        </Box>
+        </Box> */}
         <div className="hero">
           <div className="hero-left">
             <p className="hero-title">The <text className="hero-gradient">Ultimate</text> Rookie Card</p>
@@ -687,5 +690,20 @@ const Home = () => {
     </Wrapper >
   );
 };
+
+export async function getStaticProps({ params } :any) {
+  builder.init('52246859efc049d1aaa68e6c2ee2b1c4')
+  const urlPath = '/' + (params?.page?.join('/') || '');
+  console.log(urlPath)
+  const announce = await builder
+    .get('landing-page-announcement-hero', { userAttributes: { urlPath } })
+    .toPromise();
+
+  return {
+    props: {
+      announce: announce || null,
+    },
+  };
+}
 
 export default Home;

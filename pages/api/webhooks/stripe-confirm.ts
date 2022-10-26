@@ -132,11 +132,13 @@ const handler = async (req: any, res: any) => {
               })
               .match({ stripe_tx: eventObject.id })
               .single();
+            
 
             await sendARPurchaseMail(eventObject.metadata.user_id,
               orderQuantity,
               orderTotal,
-              eventObject.metadata.nft_id)
+              eventObject.metadata.nft_id,
+              eventObject.customer_email)
 
           }
           else if (eventObject.metadata.drop_id && eventObject.metadata.drop_id == 1 && eventObject.payment_status === "paid") {

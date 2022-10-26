@@ -112,6 +112,7 @@ const NavIndex: React.FC = () => {
           </Link>
         </Navbar.Brand>
         <Navbar.Links>
+          <NavTabLink>Gift</NavTabLink>
           <NavTabLink>Athletes</NavTabLink>
           <NavTabLink>Marketplace</NavTabLink>
           <NavTabLink>Challenges</NavTabLink>

@@ -143,18 +143,20 @@ export async function sendGenericDropPurchaseMail(user_id: string, quantity: num
 }
 
 
-export async function sendARPurchaseMail(user_id: string, quantity: number, price: number, nft_id: number) {
+export async function sendARPurchaseMail(user_id: string, quantity: number, price: number, nft_id: number, customer_email: string) {
   let template_id = 'd-bb5733c1ab614d7e97628fa96cfff374'
 
-  const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
-
-  const email = user_details.data.email;
+  let email = customer_email;
+  if(user_id){
+    const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
+     email = user_details.data.email;
+  }
 
   const msg = {
     to: email,
     from: 'VerifiedInk@verifiedink.us',
     reply_to: 'Support@verifiedink.us',
-    bcc: 'ARSales@verifiedink.us',
+    bcc: 'aaron@verifiedink.us',
     template_id: template_id,
     dynamic_template_data: {
       price,
