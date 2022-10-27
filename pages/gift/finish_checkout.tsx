@@ -377,8 +377,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const ship = context.query.ship == "false" ? false : true
 
-    console.log(context.query)
-
     if (email) {
       const { data: address, error: addressError } = await admin.from("contact").select("*")
         .match({ "email": email })

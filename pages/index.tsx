@@ -681,7 +681,7 @@ const Home = ({announce} : any) => {
   );
 };
 
-export async function getStaticProps({ params } :any) {
+export async function getServerSideProps({ params } :any) {
   builder.init('52246859efc049d1aaa68e6c2ee2b1c4')
   const urlPath = '/' + (params?.page?.join('/') || '');
   console.log(urlPath)
