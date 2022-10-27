@@ -5,6 +5,7 @@ import React from 'react';
 import { BuilderComponent, builder, useIsPreviewing, Builder } from '@builder.io/react';
 import TransformButton from '@/components/ui/TransformButton';
 import StaticCard from '@/components/NftCard/StaticCard';
+import Hero from '@/components/Builder/Hero';
 
 /*
   Initialize the Builder SDK with your organization's API Key
@@ -128,6 +129,11 @@ Builder.registerComponent(TransformButton,{
 Builder.registerComponent(StaticCard,{
   name: 'StaticCard',
   inputs:[{name:'nft_id', type: 'number'},{name:'width', type: 'number', defaultValue: 300},{name:'reverse', type: 'boolean', defaultValue: false}]
+})
+
+Builder.registerComponent(Hero,{
+  name: 'Hero',
+  inputs:[{name:'nft_id', type: 'number'},{name:'banner_text', type: 'string'},{name:'heading', type: 'string'},{name:'link_text', type: 'string'},{name:'link_url', type: 'string'},{name:'flip_timer', type: 'number',defaultValue: 5}]
 })
 
 // Register a custom insert menu to organize your custom componnets

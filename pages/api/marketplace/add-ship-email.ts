@@ -2,6 +2,7 @@ import { getCheckoutData } from "@/supabase/marketplace";
 import { supabase } from "@/supabase/supabase-admin";
 import { fetchNFTMetadata } from "@/utils/web3/queries";
 import { NextApiRequest, NextApiResponse } from "next";
+import { sendARGiftMail } from "../outreach/send-mail";
 
 
 
@@ -23,6 +24,9 @@ export default async function handler(
       ).match({stripe_tx:validated_tx});
 
       // Still need to actually send the email here
+      const purchaser_email = data![0].email
+
+      await sendARGiftMail(email, purchaser_email)
       
       
       if (data) {

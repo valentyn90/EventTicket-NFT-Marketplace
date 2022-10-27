@@ -142,6 +142,33 @@ export async function sendGenericDropPurchaseMail(user_id: string, quantity: num
 
 }
 
+export async function sendARGiftMail(email: string, purchaser_email: string) {
+  let template_id = 'd-a898ab5aeb8541298ab738857d7e4daa'
+
+  const msg = {
+    to: email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    bcc: 'aaron@verifiedink.us',
+    template_id: template_id,
+    dynamic_template_data: {
+      purchaser_email,
+      email
+    }
+  }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error)
+      return { "success": true }
+    })
+
+}
+
 
 export async function sendARPurchaseMail(user_id: string, quantity: number, price: number, nft_id: number, customer_email: string) {
   let template_id = 'd-bb5733c1ab614d7e97628fa96cfff374'

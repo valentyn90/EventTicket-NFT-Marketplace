@@ -42,7 +42,7 @@ interface Props {
   propsEmail: string;
   validated_tx?: string;
   addressInDb?: string[];
-  ship: boolean;
+  ship?: boolean;
   stripe_tx?: string;
 }
 
@@ -60,6 +60,7 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb, ship, 
   const [nfts, setNfts] = useState<any[]>([]);
   const [reveal, setReveal] = useState(false);
 
+  const [bypassValidatedTx, setBypassValidatedTx] = useState(false);
 
   const router = useRouter();
   const addressRef = useRef<HTMLHRElement>(null);
@@ -90,6 +91,11 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb, ship, 
         });
 
         mixpanel.track("AR Card - Completed Transaction", { purchaseQuantity: purchaseQuantity, total_spend: (parseInt(purchaseQuantity) == 1 ? 19.99 : 59) });
+      }
+
+      const shippingOnly = router.query.shippingOnly! as string;
+      if (shippingOnly) {
+        setBypassValidatedTx(true)
       }
     }
 
@@ -190,7 +196,6 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb, ship, 
     setLoading(true);
 
 
-
     const res = await fetch(`/api/marketplace/add-ship-email`, {
       method: "POST",
       headers: new Headers({ "Content-Type": "application/json" }),
@@ -250,21 +255,24 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb, ship, 
                 <Box p={3}>
                   <CheckCircleIcon boxSize="40px" />
                 </Box>
-                <Text pb={4}>JK, we're not that fast, but your AR card is on it's way to:</Text>
+
+                
                 {addressInDb && <>
+                  <Text pb={4}>JK, we're not that fast, but your AR card is on it's way to:</Text>
                   <Text>{addressInDb[0]}</Text>
                   <Text>{addressInDb[1]}</Text>
                   <Text>{addressInDb[2]}</Text>
+                  <Text pt={4} fontStyle="italic" opacity={"50%"}>If this address is incorrect, please contact us using the blue help button below.</Text>
                 </>}
                 {!addressInDb && <>
-
+                  <Text pb={4}>JK, we're not that fast, but your AR card is on it's way.</Text>
 
                 </>}
 
-                <Text pt={4} fontStyle="italic" opacity={"50%"}>If this address is incorrect, please contact us using the blue help button below.</Text>
+               
               </Box>
               :
-              validated_tx ?
+              (validated_tx || bypassValidatedTx)?
                 // Is the user signed in or otherwise validated?
                 <form ref={ref} onSubmit={handleAddress} onChange={handleAddressChange}>
                   <ShippingInformation />
@@ -352,7 +360,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.query) {
 
 
-    const stripe_tx = context.query.session_id
+    const stripe_tx = context.query.session_id || null;
 
     let validated_tx = null
     let addressInDb = null
@@ -368,6 +376,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const email = context.query.email
 
     const ship = context.query.ship == "false" ? false : true
+
+    console.log(context.query)
 
     if (email) {
       const { data: address, error: addressError } = await admin.from("contact").select("*")
