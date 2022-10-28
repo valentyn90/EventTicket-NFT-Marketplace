@@ -18,11 +18,32 @@ import mixpanel from "mixpanel-browser";
 import { MixpanelProvider } from "react-mixpanel-browser";
 import TagManager from "react-gtm-module";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import builder, { Builder } from "@builder.io/react";
+import Hero from "@/components/Builder/Hero";
+import TransformButton from "@/components/ui/TransformButton";
+import StaticCard from "@/components/NftCard/StaticCard";
 
 
 require("../css/rsuite.css");
 
 require("@solana/wallet-adapter-react-ui/styles.css");
+
+builder.init('52246859efc049d1aaa68e6c2ee2b1c4');
+
+Builder.registerComponent(TransformButton,{
+  name: 'TransformButton',
+  inputs: [{name: 'text', type: 'string'},{name:'textSize', type:'string'},{ name: 'color', type: 'color'},{ name: 'shadow', type: 'color'}, {name: 'disabled', type: 'boolean', defaultValue: false}],
+})
+
+Builder.registerComponent(StaticCard,{
+  name: 'StaticCard',
+  inputs:[{name:'nft_id', type: 'number'},{name:'width', type: 'number', defaultValue: 300},{name:'reverse', type: 'boolean', defaultValue: false}]
+})
+
+Builder.registerComponent(Hero,{
+  name: 'Hero',
+  inputs:[{name:'nft_id', type: 'number'},{name:'banner_text', type: 'string'},{name:'heading', type: 'string'},{name:'subtext', type: 'string'},{name:'link_text', type: 'string'},{name:'link_url', type: 'string'},{name:'flip_timer', type: 'number',defaultValue: 5}]
+})
 
 const WalletConnectionProvider = dynamic<{ children: ReactNode }>(
   () =>

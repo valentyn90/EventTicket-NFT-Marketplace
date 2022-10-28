@@ -121,20 +121,8 @@ Builder.registerComponent(MyCustomComponent, {
   ],
 });
 
-Builder.registerComponent(TransformButton,{
-  name: 'TransformButton',
-  inputs: [{name: 'text', type: 'string'},{name:'textSize', type:'string'},{ name: 'color', type: 'color'},{ name: 'shadow', type: 'color'}, {name: 'disabled', type: 'boolean', defaultValue: false}],
-})
 
-Builder.registerComponent(StaticCard,{
-  name: 'StaticCard',
-  inputs:[{name:'nft_id', type: 'number'},{name:'width', type: 'number', defaultValue: 300},{name:'reverse', type: 'boolean', defaultValue: false}]
-})
 
-Builder.registerComponent(Hero,{
-  name: 'Hero',
-  inputs:[{name:'nft_id', type: 'number'},{name:'banner_text', type: 'string'},{name:'heading', type: 'string'},{name:'link_text', type: 'string'},{name:'link_url', type: 'string'},{name:'flip_timer', type: 'number',defaultValue: 5}]
-})
 
 // Register a custom insert menu to organize your custom componnets
 // https://www.builder.io/c/docs/custom-components-visual-editor#:~:text=than%20this%20screenshot.-,organizing%20your%20components%20in%20custom%20sections,-You%20can%20create

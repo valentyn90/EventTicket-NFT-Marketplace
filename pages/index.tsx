@@ -6,8 +6,9 @@ import Link from "next/link";
 import { Button, HStack, Text, Skeleton, Stack, Heading, Box, VStack } from "@chakra-ui/react";
 import useWindowDimensions from "@/utils/useWindowDimensions";
 import mixpanel from 'mixpanel-browser';
-import { BuilderComponent, builder } from '@builder.io/react';
+import { BuilderComponent, builder, Builder } from '@builder.io/react';
 import Hero from "@/components/Builder/Hero";
+import TransformButton from "@/components/ui/TransformButton";
 
 const WordChange = keyframes`
   0% { content: "Collector" }
@@ -495,7 +496,7 @@ const Home = ({announce} : any) => {
   return (
     <Wrapper>
       <div className="inner">
-        <BuilderComponent model="landing-page-announcement-hero" content={announce}/>
+        <BuilderComponent model="landing-page-announcement-hero" content={announce} contentError={(error)=>{console.log(error)}}/>
         {/* <Hero nft_id={96} banner_text="Great Gift!" heading="Any Athlete Can Make Their Own VerifiedInk" link_text="Gift Now" link_url="/gift" flip_timer={5}/> */}
         <div className="hero">
           <div className="hero-left">
@@ -684,7 +685,7 @@ const Home = ({announce} : any) => {
 export async function getServerSideProps({ params } :any) {
   builder.init('52246859efc049d1aaa68e6c2ee2b1c4')
   const urlPath = '/' + (params?.page?.join('/') || '');
-  console.log(urlPath)
+  
   const announce = await builder
     .get('landing-page-announcement-hero', { userAttributes: { urlPath } })
     .toPromise();

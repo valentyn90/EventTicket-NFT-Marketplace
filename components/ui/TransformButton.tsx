@@ -1,6 +1,6 @@
-import { Button, Box, Text } from "@chakra-ui/react";
+import { Button, Box, Text, ButtonProps } from "@chakra-ui/react";
 
-interface Props {
+interface Props extends ButtonProps{
     text: string;
     textSize: string;
     color: string;
@@ -9,7 +9,7 @@ interface Props {
 }
 // react component for a button with props for background color, text, shadow color and click handler
 const TransformButton = (props: Props) => {
-    const { text, color, shadow, textSize, disabled } = props;
+    const { text, color, shadow, textSize, disabled, ...moreProps  } = props;
     return (
         <Button
             bg={color}
@@ -18,7 +18,7 @@ const TransformButton = (props: Props) => {
             // maxW={"300px"}
             // flex="1"
             h="auto"
-            border={`0.5px solid ${shadow}`}
+            // border={`0.5px solid ${shadow}`}
             boxShadow={`0px 0px 20px white,
                         0px 0px 30px ${shadow}`}
             transform={`matrix(0.89, 0, -0.58, 1, 0, 0)`}
@@ -29,6 +29,7 @@ const TransformButton = (props: Props) => {
             }}
             fontSize={textSize}
             disabled={disabled}
+            {...moreProps}
         >
             <Box mb=".25rem" mx="1rem" >
                 {text}
