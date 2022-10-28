@@ -11,7 +11,7 @@ const Completed = () => {
 
 
     const [oneSelected, setOneSelected] = useState(true)
-    const [ship, setShip] = useState(false)
+    const [ship, setShip] = useState(true)
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState("")
     const [emailInvalid, setEmailInvalid] = useState(true)
@@ -153,6 +153,7 @@ const Completed = () => {
                                         placeholder="Email@gmail.com"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
+                                        borderColor={emailInvalid ? "red" : "blue.200"}
                                     />
                                     
                           
