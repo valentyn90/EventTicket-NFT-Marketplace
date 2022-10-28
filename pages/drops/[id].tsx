@@ -3,7 +3,7 @@ import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import { Box, HStack, Image, Text, VStack, Heading, Icon, Button, IconButton, Alert, AlertIcon, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, Input, Divider, Stack, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Flex, Skeleton, Spacer } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import Cookies from "cookies";
-import { supabase } from "@/supabase/supabase-client";
+import { getScreenshot, supabase } from "@/supabase/supabase-client";
 import { CannotExchangeSOLForSolError } from "@metaplex-foundation/mpl-auction-house/dist/src/generated";
 import { getUserDetailsByEmail } from "@/supabase/userDetails";
 import validateEmail from "@/utils/validateEmail";
@@ -14,13 +14,15 @@ import * as ga from "@/utils/ga";
 import mixpanel from 'mixpanel-browser';
 import { useRouter } from "next/router";
 import moment from "moment";
+import Triptych from "@/components/NftCard/triptych";
 
 
 interface Props {
     drop_data: any;
+    publicUrl: string;
 }
 
-const Auction: React.FC<Props> = ({ drop_data }) => {
+const Auction: React.FC<Props> = ({ drop_data, publicUrl }) => {
 
 
     // Show the card
@@ -292,12 +294,12 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
             <meta
                 property="og:image"
                 key="preview"
-                content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${drop_data.id}-standard.png`}
+                content={publicUrl}
             />
             <meta
                 property="twitter:image"
                 key="twitter-image"
-                content={`https://verifiedink.us/api/meta/showTwitterPreview/${drop_data.nfts[0]}`}
+                content={`https://verifiedink.us/api/meta/showTwitterPreview/${drop_data.premium_nft}`}
             />
             {/* <meta property="og:video" content="https://verifiedink.us/img/naas/naas-card.mp4" />
             <meta property="og:video:type" content="video/mp4" />
@@ -315,7 +317,10 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
                     <HStack gridGap={[0, 4, 8]} alignItems="flex-start" mb={3}>
 
                         <Box flex="1" onClick={() => { setShowBuyNow(true) }} opacity={showBuyNow ? "100%" : "20%"}>
-                            <Image h="233px" w="175px" maxWidth="unset" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-standard.png?update`} />
+                            {/* <Image h="233px" w="175px" maxWidth="unset" src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-standard.png?update`} /> */}
+                            <Box h="233px" w="175px">
+                                <Triptych nft_list={dropData.nfts} />
+                            </Box>
                             <Heading as="h2">Buy Now</Heading>
                             <Text>${price}</Text>
                             <Text color="gray">Extended Edition 1/{dropData.extended_quantity}</Text>
@@ -323,7 +328,10 @@ const Auction: React.FC<Props> = ({ drop_data }) => {
 
 
                         <Box flex="1" opacity={!showBuyNow ? "100%" : "20%"} onClick={() => { setShowBuyNow(false) }}>
-                            <Image h="233px" opacity={premiumItemsLeft < 1 ? "20%" : "100%"} src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-premium.png?update`} />
+                            {/* <Image h="233px" opacity={premiumItemsLeft < 1 ? "20%" : "100%"} src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${dropData.id}-premium.png?update`} /> */}
+                            <Box h="233px" w="175px" opacity={premiumItemsLeft < 1 ? "20%" : "100%"}>
+                                <Triptych nft_list={[dropData.premium_nft]} />
+                            </Box>
                             {premiumItemsLeft < 1 ? <Box filter="drop-shadow( 0 0 5px black)" position="relative" mb="-50px" top="-150px" ><Image h="50px"  src={'/img/soldout.png'}/></Box> : null}
                             <Heading as="h2">1 of 10</Heading>
                             <Text>${dropData.price.premium}</Text>
@@ -550,11 +558,14 @@ export async function getServerSideProps(context: any) {
 
     const { data: dropData } = await supabase.from('drop').select('*').eq('id', context.query.id).maybeSingle()
 
-    console.log(dropData)
+    const publicUrl = await (await getScreenshot(dropData.premium_nft)).publicUrl
+
+    console.log(publicUrl)
 
     return {
         props: {
             drop_data: dropData,
+            publicUrl: publicUrl,
         }
     };
 }
