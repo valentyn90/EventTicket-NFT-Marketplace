@@ -24,11 +24,11 @@ update public.nft
 set edition_rarity = 'Legendary'
 where id = 1586
 
---Replacing a video
-update nft 
-set (mux_playback_id, mux_upload_id, mux_asset_id, mux_max_resolution, crop_values)
-= (select mux_playback_id, mux_upload_id, mux_asset_id, mux_max_resolution, crop_values from nft where id = 1599) 
-where id = 1543 --Replace this video with the one above
+select * from nft where last_name = 'Meadow'
+
+INSERT INTO public.drop(
+	player_name, quantity_left, nfts, premium_nft, price, athlete_id, utility_follow, utility_video, drop_ended, extended_quantity, percentage)
+	VALUES ('Andrew Meadow', '{"standard":91,"premium":9}','{1969,1970,1971}', 1497, '{"standard":20,"premium":100}',UUID('6efcd0a8-e944-4427-852d-c8ce8e50b5f1'),false, false, true,100,90)
 
 
 
@@ -88,3 +88,9 @@ set minted = true, mint_datetime=now()
 --select minted, mint_datetime from nft
 where id in (1499,1797,1798,1799)
 
+
+--Replacing a video
+update nft 
+set (mux_playback_id, mux_upload_id, mux_asset_id, mux_max_resolution, crop_values)
+= (select mux_playback_id, mux_upload_id, mux_asset_id, mux_max_resolution, crop_values from nft where id = 1599) 
+where id = 1543 --Replace this video with the one above

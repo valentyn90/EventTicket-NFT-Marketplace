@@ -56,6 +56,30 @@ export default async function handler(
 
                 await supabase.from('nft_owner').update({ owner_id: user_id.data.user_id, state: "awaiting_transfer" }).in('id', transfer_nfts);
 
+                // create new entries in drop_nfts table
+                const order_id = drop_credit_card_sale.data[0].id;
+                const drop_id = drop_credit_card_sale.data[0].drop_id;
+                const status = "awating_shipment";
+
+                const { data: nfts, error: nfts_error } = await supabase.from('nft_owner').select('nft_id, serial_no').in('id', transfer_nfts);
+
+                let drop_nfts: Partial<any> = [];
+
+                nfts?.map((nft) => {
+                    drop_nfts.push({
+                        order_id,
+                        drop_id,
+                        nft_id: nft.nft_id,
+                        serial_no: nft.serial_no,
+                        status,
+                        opened: false,
+                        user_id: user_id.data.user_id,
+                    });
+                })
+
+                await supabase.from('drop_nfts').insert(drop_nfts);
+
+
                 await supabase
                     .from("drop_credit_card_sale")
                     .update({
