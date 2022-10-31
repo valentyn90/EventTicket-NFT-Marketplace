@@ -107,11 +107,11 @@ export async function sendGenericDropPurchaseMail(user_id: string, quantity: num
 
   const total_price = price * quantity;
 
-  let imageLink = ""
-  nft_type === "standard" ?
-          imageLink = `https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${drop_id}-standard.png` :
-          imageLink = `https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/drops/${drop_id}-premium.png` 
+  const premiumScreenshot = await getScreenshot(drop.premium_nft);
+  const standardScreenshot = await getScreenshot(drop.nfts[0]);
 
+  let imageLink = ""
+  nft_type === "standard" ? imageLink = standardScreenshot.publicUrl || 'https://verifiedink.us/img/header' : imageLink = premiumScreenshot.publicUrl || 'https://verifiedink.us/img/header';
 
   const msg = {
     to: email,
