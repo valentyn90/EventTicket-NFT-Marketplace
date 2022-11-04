@@ -87,7 +87,7 @@ export default async function handler(
                     ],
                     customer_email: email,
                     mode: "payment",
-                    success_url: `${req.headers.origin}/events/${event_id}/psuccess?session_id={CHECKOUT_SESSION_ID}&email=${email}&success=true&quantity=${quantity}&price=${price}&order_id=${orderData.id}`,
+                    success_url: `${req.headers.origin}/events/${event_id}/success?session_id={CHECKOUT_SESSION_ID}&email=${email}&success=true&quantity=${quantity}&price=${price}&order_id=${orderData.id}`,
                     cancel_url: `${req.headers.origin}/events/${event_id}?&session_id={CHECKOUT_SESSION_ID}&canceled=true`,
                     metadata: {
                         event_id,
@@ -100,7 +100,10 @@ export default async function handler(
 
                 const {data: updateOrderData, error: updateOrderError} = await supabase
                     .from("event_credit_card_sale")
-                    .update({stripe_session_id: session.id})
+                    .update({stripe_tx: session.id})
+                    .match({id: orderData.id})
+
+                console.log(updateOrderData || updateOrderError)
 
                 
                 // Associate tickets with order -- this does not mean the tickets are assigned to the user yet

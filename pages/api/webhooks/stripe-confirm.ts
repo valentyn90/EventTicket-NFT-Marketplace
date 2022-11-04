@@ -290,6 +290,8 @@ const handler = async (req: any, res: any) => {
                 .in("ticket_id", ticketData.map((ticket) => ticket.ticket_id))
                 .is("user_id", null)
 
+                console.log(assignedTickets || `Error: ${assignedTicketsError}`)
+
             }
 
             // Send success email to user
