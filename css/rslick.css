@@ -1,0 +1,49 @@
+@import url("https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css");
+@import url("https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css");
+
+.slick-slider {
+  position: relative !important;
+  border: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -khtml-user-select: none !important;
+  -ms-touch-action: pan-y !important;
+  touch-action: pan-y !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.slick-track,
+.slick-track:focus {
+  border: none;
+  outline: none;
+}
+
+.slick-slide {
+  outline: none !important;
+  border: none !important;
+}
+.slick-slide:focus {
+  outline: 0;
+  outline: none;
+}
+
+.slick-slide div {
+  outline: none;
+}
+
+.slick-dots {
+  margin-top: -24px !important;
+}
+.css-1n2mv2k {
+  height: 12px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.css-2yn7lz > button {
+  color: transparent;
+}

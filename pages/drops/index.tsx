@@ -48,7 +48,6 @@ const Drops: React.FC = () => {
 
 
   }, [])
-
   const meta = (
     <Head>
       <title>VerifiedInk Drops</title>

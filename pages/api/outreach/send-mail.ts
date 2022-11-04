@@ -2,6 +2,10 @@ import { Template } from "@/components/Navbar/Navbar";
 import { getFileLinkFromSupabase, getNftById, getScreenshot } from "@/supabase/supabase-client";
 import { getUserDetailsByEmail } from "@/supabase/userDetails";
 import { supabase } from "../../../supabase/supabase-admin";
+import events from "@/components/Events/events.json";
+import { eventTabs } from "@/components/Events/utils/tier"
+import moment from "moment";
+
 
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -101,7 +105,7 @@ export async function sendGenericDropPurchaseMail(user_id: string, quantity: num
 
   const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
 
-  const {data: drop} = await supabase.from("drop").select("*").eq("id", drop_id).maybeSingle();
+  const { data: drop } = await supabase.from("drop").select("*").eq("id", drop_id).maybeSingle();
 
   const email = user_details.data.email;
 
@@ -205,6 +209,55 @@ export async function sendARPurchaseMail(user_id: string, quantity: number, pric
 
 }
 
+
+export async function sendTicketMail(order_id: number) {
+  let template_id = 'd-a1647c1f7dd747b8949fc2b76e5804d4'
+
+  //Lookup everything from the order_id
+
+  const { data: order } = await supabase.from("event_credit_card_sale").select("*").eq("id", order_id).maybeSingle();
+
+  console.log(order)
+  // get tier data
+  const tier = eventTabs.find((tab) => tab.id === order.tier_id);
+
+  //hard code event
+  const event = events[0]
+
+
+  const msg = {
+    to: order.email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    bcc: 'aaron+tickets@verifiedink.us',
+    template_id: template_id,
+    dynamic_template_data: {
+      price: order.price,
+      quantity: order.quantity,
+      total_price: order.price * order.quantity,
+      email: order.email,
+      event: event.event_name,
+      tier: tier!.name,
+      event_venue: event.event_venue_name,
+      event_street: event.event_street,
+      event_city: event.event_city,
+      event_state: event.event_state,
+      event_start: moment(event.event_start).format("MMM DD, YYYY h:mm a")
+    }
+  }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error.response.body.errors)
+      return { "success": true }
+    })
+
+}
+
 export async function sendSaleMail(user_id: string, nft_id: string, sn: string, card_preview_image: string, price: string) {
   let template_id = 'd-97a66a1035544e4faefa2e0b4a0c6505'
 
@@ -292,10 +345,10 @@ export async function sendAddressMail(email: string) {
     const user_id = userData.user_id;
 
     const purchase_record = await supabase.from('drop_credit_card_sale')
-      .select('*').eq('user_id', user_id).order('id',{ascending:false}).limit(1).maybeSingle();
+      .select('*').eq('user_id', user_id).order('id', { ascending: false }).limit(1).maybeSingle();
 
-      console.log(`https://verifiedink.us/drops/finish_drop_checkout?email=${email}&session_id=${purchase_record.data.stripe_tx}&needs_address=true`)
-      // return { "success": true }
+    console.log(`https://verifiedink.us/drops/finish_drop_checkout?email=${email}&session_id=${purchase_record.data.stripe_tx}&needs_address=true`)
+    // return { "success": true }
     if (purchase_record.data) {
       const msg = {
         to: email,
@@ -329,9 +382,9 @@ export async function sendFanChallengeEmail(email: string, order_id: string) {
   if (userData) {
     const user_id = userData.user_id;
 
-    const {data: order} = await supabase.from('fan_challenge_orders')
+    const { data: order } = await supabase.from('fan_challenge_orders')
       .select(`*, fan_challenge(*), school(*)`).eq('id', order_id).maybeSingle();
-    
+
     if (order) {
       const msg = {
         to: email,

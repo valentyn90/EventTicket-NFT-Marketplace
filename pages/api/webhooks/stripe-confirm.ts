@@ -7,7 +7,7 @@ import randCrypto from "crypto";
 import crypto from "crypto-js";
 import { cancel, cancelOrder, transferViaCreditCard } from "@/mint/marketplace";
 import generateKeypair, { getKeypair } from "@/mint/mint";
-import { sendARPurchaseMail, sendAuctionLoserMail, sendAuctionMail, sendDropAuctionMail, sendDropPurchaseMail, sendFanChallengeEmail, sendGenericDropPurchaseMail, sendPurchaseMail, sendSaleMail } from "../outreach/send-mail";
+import { sendARPurchaseMail, sendAuctionLoserMail, sendAuctionMail, sendDropAuctionMail, sendDropPurchaseMail, sendFanChallengeEmail, sendGenericDropPurchaseMail, sendPurchaseMail, sendSaleMail, sendTicketMail } from "../outreach/send-mail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2020-08-27",
@@ -261,6 +261,42 @@ const handler = async (req: any, res: any) => {
             const attempt_transfer = await fetch(`https://verifiedink.us/api/marketplace/randomAssignmentDrop`, requestOptions);
 
             console.log(attempt_transfer)
+
+          }
+          else if (eventObject.metadata.event_id) {
+            // Event Ticket Sale
+
+            const { data, error } = await supabase
+              .from("event_credit_card_sale")
+              .update({
+                status: "2_payment_completed",
+              })
+              .match({ stripe_tx: eventObject.id })
+              .single();
+
+            // Assign ticket to user
+            const { data: ticketData, error: ticketError } = await supabase
+              .from("event_order_ticket")
+              .select("*")
+              .eq("order_id", data.id)
+
+            if (ticketData) {
+              const { data: assignedTickets, error: assignedTicketsError } = await supabase
+                .from("event_ticket_owner")
+                .update({
+                  user_id: data.user_id,
+                  on_hold: null
+                })
+                .in("ticket_id", ticketData.map((ticket) => ticket.ticket_id))
+                .is("user_id", null)
+
+            }
+
+            // Send success email to user
+            await sendTicketMail(
+              data.id
+            )
+
 
           }
           else if (eventObject.payment_status === "paid") {

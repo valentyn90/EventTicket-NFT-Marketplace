@@ -23,8 +23,8 @@ import Hero from "@/components/Builder/Hero";
 import TransformButton from "@/components/ui/TransformButton";
 import StaticCard from "@/components/NftCard/StaticCard";
 
-
 require("../css/rsuite.css");
+require("../css/rslick.css");
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 
@@ -55,7 +55,7 @@ const WalletConnectionProvider = dynamic<{ children: ReactNode }>(
   }
 );
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -81,21 +81,21 @@ function MyApp({ Component, pageProps }: AppProps) {
         <WalletModalProvider>
           <MixpanelProvider token={"b78dc989c036b821147f68e00c354313"}>
             <IntercomProvider appId={"b3ms6uff"}>
-            <QueryClientProvider client={queryClient}>
-              <Head>
-                <title>VerifiedInk</title>
-                <meta
-                  property="og:image"
-                  content="https://verifiedink.us/img/verified-ink-site.png"
-                  key="preview"
-                />
-                <script
-                  async
-                  src="https://www.googletagmanager.com/gtag/js?id=G-68N30YNDQ1"
-                ></script>
-                <script
-                  dangerouslySetInnerHTML={{
-                    __html: `
+              <QueryClientProvider client={queryClient}>
+                <Head>
+                  <title>VerifiedInk</title>
+                  <meta
+                    property="og:image"
+                    content="https://verifiedink.us/img/verified-ink-site.png"
+                    key="preview"
+                  />
+                  <script
+                    async
+                    src="https://www.googletagmanager.com/gtag/js?id=G-68N30YNDQ1"
+                  ></script>
+                  <script
+                    dangerouslySetInnerHTML={{
+                      __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -104,13 +104,13 @@ function MyApp({ Component, pageProps }: AppProps) {
             cookie_flags: 'secure;samesite=none'
           });
           `,
-                  }}
-                />
-              </Head>
-              <GlobalStyle />
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
+                    }}
+                  />
+                </Head>
+                <GlobalStyle />
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
               </QueryClientProvider>
             </IntercomProvider>
           </MixpanelProvider>

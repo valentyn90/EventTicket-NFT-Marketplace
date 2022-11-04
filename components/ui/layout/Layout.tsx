@@ -13,12 +13,22 @@ interface Props {
 const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const showNav = router.pathname === "/screenshot/[id]" ? false : true;
-  const overlayNav = (router.pathname.includes("challenge") 
-    || router.pathname.includes("drop")
-    || router.pathname.includes("marketplace")
-  )? true : false;
+  const overlayNav =
+    router.pathname.includes("challenge") ||
+    router.pathname.includes("drop") ||
+    router.pathname.includes("marketplace")
+      ? true
+      : false;
   const showNavForLanding =
-    ( router.pathname === "/ar" || router.pathname === "/screenshot/qr")
+    router.pathname === "/ar" || router.pathname === "/screenshot/qr"
+      ? false
+      : true;
+
+  const showFooterForLanding =
+    router.pathname === "/ar" ||
+    router.pathname === "/screenshot/qr" ||
+    router.pathname === "/events/[id]/tickets" ||
+    router.pathname === "/events/accept_tickets"
       ? false
       : true;
   const { colorMode, setColorMode } = useColorMode();
@@ -48,7 +58,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       </Head>
       {showNav && showNavForLanding && <Navbar />}
       {/* Margin for fixed navbar position */}
-      {showNav && showNavForLanding && !overlayNav? (
+      {showNav && showNavForLanding && !overlayNav ? (
         <Box
           minH="calc(100vh - 56px - 286px)"
           mt="56px"
@@ -66,7 +76,7 @@ const Layout: React.FC<Props> = ({ children }) => {
           {children}
         </Box>
       )}
-      {showNav && showNavForLanding && <Footer />}
+      {showNav && showFooterForLanding && <Footer />}
       {showNav && showNavForLanding && <CookieBanner />}
     </>
   );

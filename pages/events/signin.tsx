@@ -71,11 +71,11 @@ const SignIn: React.FC<Props> = () => {
       <Spacer h="56px" />
       <Box maxW="lg" mx="auto">
         <Heading textAlign="center" size="2xl" fontWeight="extrabold">
-          Access your Collector Account
+          Access your Tickets
         </Heading>
         <Text pt={6} textAlign="center" w={["100%", "100%", "75%"]} m="0 auto">
-          VerifiedInk uses “magic links” for you to access your Collector
-          Account. Just enter your email below and we’ll send you a sign in
+          VerifiedInk uses “magic links” for you to access your Account. 
+          Just enter your email below and we’ll send you a sign in
           link.
         </Text>
 
@@ -146,7 +146,7 @@ export async function getServerSideProps({
   if (user) {
     return {
       redirect: {
-        destination: "/collection",
+        destination: "/events/1/tickets",
         permanent: false,
       },
     };
