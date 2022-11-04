@@ -284,14 +284,11 @@ const handler = async (req: any, res: any) => {
               const { data: assignedTickets, error: assignedTicketsError } = await supabase
                 .from("event_ticket_owner")
                 .update({
-                  user_id: data.user_id,
+                  owner_id: data.user_id,
                   on_hold: null
                 })
                 .in("ticket_id", ticketData.map((ticket) => ticket.ticket_id))
-                .is("user_id", null)
-
-                console.log(assignedTickets || `Error: ${assignedTicketsError}`)
-
+                .is("owner_id", null)
             }
 
             // Send success email to user
