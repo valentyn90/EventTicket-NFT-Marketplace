@@ -89,6 +89,12 @@ const Auction: React.FC<Props> = ({ drop_data, publicUrl }) => {
                     rare: 12,
                     legendary: 4
                 })
+            } else if (dropData.extended_quantity === 50){
+                setExtendedQuantities({
+                    common: 42,
+                    rare: 6,
+                    legendary: 2
+                })
             }
         }
 
