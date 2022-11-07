@@ -2,6 +2,7 @@ import { Box, Stack, Image, Text, Flex } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
 import events from "@/components/Events/events.json";
+import TicketPlaceholder from "../../components/TicketPlaceholder";
 
 const EventInfo = () => {
 
@@ -30,7 +31,7 @@ const EventInfo = () => {
   return (
     <Stack
       w="full"
-      direction={["column", "row"]}
+      direction={["column", "column", "row"]}
       spacing={[2, 2]}
       py={6}
       justifyContent={["center", "flex-start"]}
@@ -39,9 +40,9 @@ const EventInfo = () => {
       backgroundImage={`linear-gradient(180deg, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, 0.95) 100%),url("${event.event_pic_2}")`}
       backgroundSize={["fit","cover"]}
     >
-      <Box>
+      <Box maxW={"300px"}>
         
-        <Image
+        {/* <Image
           src="/img/ticket/game_ticket.png"
           alt="Ticket"
           width="100%"
@@ -50,7 +51,8 @@ const EventInfo = () => {
           objectFit="contain"
           fallbackSrc="https://verifiedink.us/img/card-mask.png"
           filter={"drop-shadow(0 0 0.75rem white)"}
-        />
+        /> */}
+        <TicketPlaceholder tier={1} />
       </Box>
       <Flex
         direction="column"
@@ -75,8 +77,6 @@ const EventInfo = () => {
           overflow="hidden"
         >
           <Text fontSize="md" textAlign="justify">
-            The Battleground 2k22 event slate presents intriguing matchups:
-            <br /><br />
             6:00 p.m. – Texas A&M Aggies (SEC) vs. Boise State Broncos (MWC)
             <br />
             8:30 p.m. – Houston Cougars (AAC) vs. Saint Mary’s Gaels (WCC).

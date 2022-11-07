@@ -31,6 +31,7 @@ import { useEventHook } from "../../hooks/useEventHook";
 import events from "../../events.json";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/supabase/supabase-client";
+import TicketPlaceholder from "../../components/TicketPlaceholder";
 
 const momentFormat = "MMM DD, YYYY h:mm a";
 
@@ -257,7 +258,7 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                         alignItems="flex-start"
                         justifyItems="flex-start"
                       >
-                        <Center w="100%">
+                        {/* <Center w="100%">
                           <Heading
                             size="2xl"
                             textTransform="uppercase"
@@ -265,14 +266,12 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                           >
                             {tab.name}
                           </Heading>
-                        </Center>
+                        </Center> */}
 
-                        <Center w="100%">
-                          <Heading size="xl">${tab.price}</Heading>
-                        </Center>
+                       
 
-                        <Stack w="full" p="0" direction={["column","row"]} alignItems="center">
-                          <Box boxSize="130px">
+                        <Stack w="full" p="0" direction={["column"]} alignItems="center" gridColumnGap={5}>
+                          {/* <Box boxSize="130px">
                             <Image
                               src={tab.image}
                               alt="NFT Image"
@@ -281,7 +280,65 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                               objectFit="contain"
                               fallbackSrc="https://verifiedink.us/img/card-mask.png"
                             />
+                          </Box> */}
+                          <Box maxW="200px">
+                          <TicketPlaceholder tier={tab.id}/>
+                            </Box>
+                            <Center w="100%">
+                          <Heading size="xl" color={getNftTicketColor(tab.id)}>${tab.price}</Heading>
+                        </Center>
+
+                            <Stack
+                          direction="row-reverse"
+                          justifyContent="center"
+                          justifyItems="center"
+                          align="center"
+                          w="full"
+                        >
+                          <Box
+                          border={`1px solid #0E9DE5`}
+                          transform="matrix(0.89, 0, -0.58, 1, 0, 0)"
+                          >
+                            <Select
+                              w="70px"
+                              transform="matrix(0.89, 0, 0.65, 1, 0, 0)"
+                              size={"lg"}
+                              value={ticketNumber}
+                              onChange={(e) =>
+                                setTicketNumber(parseInt(e.target.value, 10))
+                              }
+                              border="none"
+                              _focus={{
+                                outline: "none",
+                                border: "none",
+                              }}
+                            >
+                              {ticketSummary && ticketSummary.filter((ticket: any) => ticket.ticketType === tab.id)[0] &&
+                                ticketSummary.filter((ticket: any) => ticket.ticketType === tab.id)[0].ticketNumbers
+                              // [2, 3, 4, 5, 6, 7, 8, 9, 10]
+                              .map((item: any) => (
+                                <option value={item}> {item}</option>
+                              ))}
+                            </Select>
                           </Box>
+
+                          <Button
+                            bg="#0E9DE5"
+                            size={"lg"}
+                            w={["full", "md"]}
+                            transform="matrix(0.89, 0, -0.58, 1, 0, 0)"
+                            onClick={() => handlePurchaseTicketButton(tab)}
+                          >
+                            <Text
+                              textTransform="uppercase"
+                              fontStyle="normal"
+                              fontWeight="bold"
+                              transform="matrix(1, 0, 0.5, 0.8, 0, 0)"
+                            >
+                              Buy {ticketNumber} Tickets
+                            </Text>
+                          </Button>
+                        </Stack> 
                           <VStack
                             justifyContent="flex-start"
                             alignItems="flex-start"
@@ -299,7 +356,7 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                               <Text
                                 fontWeight="bold"
                                 fontSize="lg"
-                                color="#0E9DE5"
+                                color={getNftTicketColor(tab.id)}
                                 wordWrap="break-word"
                                 wordBreak="break-all"
                               >
@@ -354,57 +411,7 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                           </Stack>
                         </HStack>
 
-                        <Stack
-                          direction="row-reverse"
-                          justifyContent="center"
-                          justifyItems="center"
-                          align="center"
-                          w="full"
-                        >
-                          <Box
-                          border={`1px solid #0E9DE5`}
-                          transform="matrix(0.89, 0, -0.58, 1, 0, 0)"
-                          >
-                            <Select
-                              w="70px"
-                              transform="matrix(0.89, 0, 0.65, 1, 0, 0)"
-                              size={"lg"}
-                              value={ticketNumber}
-                              onChange={(e) =>
-                                setTicketNumber(parseInt(e.target.value, 10))
-                              }
-                              border="none"
-                              _focus={{
-                                outline: "none",
-                                border: "none",
-                              }}
-                            >
-                              {ticketSummary && ticketSummary.filter((ticket: any) => ticket.ticketType === tab.id)[0] &&
-                                ticketSummary.filter((ticket: any) => ticket.ticketType === tab.id)[0].ticketNumbers
-                              // [2, 3, 4, 5, 6, 7, 8, 9, 10]
-                              .map((item: any) => (
-                                <option value={item}> {item}</option>
-                              ))}
-                            </Select>
-                          </Box>
-
-                          <Button
-                            bg="#0E9DE5"
-                            size={"lg"}
-                            w={["full", "md"]}
-                            transform="matrix(0.89, 0, -0.58, 1, 0, 0)"
-                            onClick={() => handlePurchaseTicketButton(tab)}
-                          >
-                            <Text
-                              textTransform="uppercase"
-                              fontStyle="normal"
-                              fontWeight="bold"
-                              transform="matrix(1, 0, 0.5, 0.8, 0, 0)"
-                            >
-                              Buy {ticketNumber} Tickets
-                            </Text>
-                          </Button>
-                        </Stack>
+                        
                       </Stack>
                     </TabPanel>
                   ))}

@@ -28,10 +28,10 @@ const TicketView = (props: TicketViewProps) => {
       return j;
      },
     {      
-      enabled: !!id,
+      enabled: !!id 
     }
   )
-
+  // This is sometimes running on the server, it really shouldn't be. 
   console.log("the tickets", tickets);
   const { changeScreen, isSuccess } = props;
   const handleButtonClicked = () => {
@@ -46,7 +46,7 @@ const TicketView = (props: TicketViewProps) => {
     <Container>
       <Stack spacing={16}>
         <EventTransferHeader />
-        <EventTicketSlider tickets={tickets} isSuccess={isSuccess} />
+        {!isLoading && <EventTicketSlider tickets={tickets} isSuccess={isSuccess} />}
         <Stack
           w="full"
           display="flex"

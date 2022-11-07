@@ -71,7 +71,7 @@ const EventTicketSlider = (props: EventTicketSliderProps) => {
   return (
     <Box>
       <Slider ref={slider} {...settings}>
-        {tickets && tickets.map((ticket: any, index: any) => {
+        {typeof window !== "undefined" && tickets && tickets.map((ticket: any, index: any) => {
           return (
             <Box
               {...props}

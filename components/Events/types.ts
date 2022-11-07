@@ -34,4 +34,5 @@ export type TicketType = {
   supply_total: number;
   supply_remaining: number;
   utility: string[];
+  front_video: boolean;
 };
