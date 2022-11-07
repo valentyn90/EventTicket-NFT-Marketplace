@@ -6,13 +6,18 @@ import React from "react";
 import { EventProvider } from "@/components/Events/hooks/useEventHook";
 import EventInfo from "@/components/Events/views/[id]/EventInfo";
 import EventBuyModel from "@/components/Events/views/[id]/EventBuyModel";
+import events from "@/components/Events/events.json";
 
 const EventDetail = () => {
+
+  const event = events[0]
+
   const meta = (
     <Head>
-      <title>Events Name</title>
-      <meta property="og:title" key="title" content={`Events Name`}  />
-      {/* <meta property="og:image" key="preview" content={`/img/drops.png`} /> */}
+      <title>{event.event_name}</title>
+      <meta property="og:title" key="title" content={event.event_name + " Tickets"}  />
+      <meta property="og:image" key="preview" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/static/ticket_tiers/0/0.png`} />
+      <meta property="og:video" key="video" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/static/ticket_tiers/1/1.mp4`} />
     </Head>
   );
 
