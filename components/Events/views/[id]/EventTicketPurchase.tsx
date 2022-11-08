@@ -328,6 +328,7 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                             w={["full", "md"]}
                             transform="matrix(0.89, 0, -0.58, 1, 0, 0)"
                             onClick={() => handlePurchaseTicketButton(tab)}
+                            disabled={true}
                           >
                             <Text
                               textTransform="uppercase"
@@ -338,7 +339,12 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                               Buy {ticketNumber} Tickets
                             </Text>
                           </Button>
+                          
                         </Stack> 
+                        {/* Italic text */}
+                        <Text color="red" fontStyle="italic" fontSize="md" mt="2">
+                            Tickets will go on sale 11/9
+                          </Text>
                           <VStack
                             justifyContent="flex-start"
                             alignItems="flex-start"
