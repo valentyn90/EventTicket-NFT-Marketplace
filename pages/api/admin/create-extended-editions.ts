@@ -69,7 +69,7 @@ export default async function handler(
       utility_follow: false,
       utility_video: false,
       // today at 8:00pm EST
-      drop_start: new Date().setHours(20, 0, 0, 0),
+      drop_start: new Date(new Date().setHours(20, 0, 0, 0)).toISOString(),
       drop_ended: true,
       extended_quantity: 50,
       percentage: 90,
@@ -93,8 +93,7 @@ export default async function handler(
     const { data: newOwners, error: newOwnerError } = await supabase.from("nft_owner").insert([...original, ...common, ...rare, ...legendary]);
 
     // update all nft_ids in nft with today's mint date
-    const { data: updatedNfts, error: nftError } = await supabase.from("nft").update({ mint_datetime: new Date(), minted: true }).in('id', [o_nft_id, ...new_ids!]);
-
+    const { data: updatedNfts, error: nftError } = await supabase.from("nft").update({ mint_datetime: new Date().toISOString(), minted: true }).in('id', [o_nft_id, ...new_ids!]);
     // update launch nft to legendary
     const { data: updatedNft2, error: nftError2 } = await supabase.from("nft").update({ edition_rarity: "Legendary" }).eq('id', o_nft_id);
 
