@@ -89,7 +89,7 @@ const EventInfo = () => {
             the sights, sounds, food and fun that basketball fans will need for an exciting visit.
             <br /><br />
             The Battleground 2k22 will be held at Dickies Arena, a state-of-the-art sports and entertainment venue 
-            located in downtown Fort Worth. This 14,000-seat arena will provide a playing atmosphere and fan 
+            located near downtown Fort Worth. This 14,000-seat arena will provide a playing atmosphere and fan 
             experience unlike any facility in the country.
             <br /><br />
             The charitable component and backdrop for The Battleground 2k22 will be the a[3] Initiative. We truly 

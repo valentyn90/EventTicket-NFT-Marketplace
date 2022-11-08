@@ -36,9 +36,9 @@ const EventTicketTier = () => {
             >
               {tab.name}
             </Text>
-            {/* <Text textAlign="left" fontSize="sm">
-              {tab.subtitle}
-            </Text> */}
+             <Text textAlign="left" fontSize="md" fontWeight="bold"  color={getNftTicketColor(tab.id)}>
+              {tab.supply_total} Tickets
+            </Text> 
             <Stack lp={2} fontSize={["14px","14px","18px"]}>
               
                 <ul style={{"listStylePosition": "outside"}}>
