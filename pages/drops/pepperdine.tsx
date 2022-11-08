@@ -65,12 +65,12 @@ const Drops: React.FC = () => {
       <meta
         property="og:title"
         key="title"
-        content={`VerifiedInk Drops`}
+        content={`Support Pepperdine Men's Basketball`}
       />
       <meta
         property="og:image"
         key="preview"
-        content={`/img/drops.png`}
+        content={`/img/screenshots/pepperdine.png`}
       />
       {/*<meta
             property="twitter:image"
