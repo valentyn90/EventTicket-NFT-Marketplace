@@ -150,6 +150,18 @@ const Drops: React.FC = () => {
                 </VStack>
               )
             })}
+
+            <VStack p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/drops/pepperdine`) }}>
+              {/* <StaticCard nft_id={1160} width={150} /> */}
+              {/* <CardPicture nft_id={1160} width={140} glow={true}/> */}
+              <Image width={140} src="https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/teams/packs/pepperdine.png"/>
+              <Heading size="sm">
+                Pepperdine Men's Basketball
+                <br/>
+                Drops Nov 14 @ 8:00pm EST
+              </Heading>
+            </VStack>
+
             <VStack p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/drops/naas`) }}>
               {/* <StaticCard nft_id={1160} width={150} /> */}
               <CardPicture nft_id={1160} width={140} glow={true}/>
