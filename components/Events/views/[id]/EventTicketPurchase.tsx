@@ -87,7 +87,7 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
       const ticketColor = getNftTicketColor(ticketType);
       // enumerate all numbers from 1 to ticketCount
       const ticketNumbers = Array.from({ length: Math.min(ticketCount,10) }, (_, i) => i + 1);
-      ticketNumbers.shift()
+      
 
       return {
         ticketType,
@@ -328,7 +328,8 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                             w={["full", "md"]}
                             transform="matrix(0.89, 0, -0.58, 1, 0, 0)"
                             onClick={() => handlePurchaseTicketButton(tab)}
-                            disabled={true}
+                            // disabled if time is before 10am CT on 11/10
+                            disabled={moment().isBefore(moment("2022-11-10T10:00:00-06:00"))}
                           >
                             <Text
                               textTransform="uppercase"
@@ -336,15 +337,15 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                               fontWeight="bold"
                               transform="matrix(1, 0, 0.5, 0.8, 0, 0)"
                             >
-                              Buy {ticketNumber} Tickets
+                              Buy {ticketNumber} Ticket{ticketNumber > 1 && "s"}
                             </Text>
                           </Button>
                           
                         </Stack> 
-                        {/* Italic text */}
+                        {moment().isBefore(moment("2022-11-10T10:00:00-06:00")) &&
                         <Text color="red" fontStyle="italic" fontSize="md" mt="2">
                             Tickets will go on sale 11/10 @ 10am CT
-                          </Text>
+                          </Text>}
                           <VStack
                             justifyContent="flex-start"
                             alignItems="flex-start"

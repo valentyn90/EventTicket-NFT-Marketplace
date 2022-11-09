@@ -13,7 +13,7 @@ const TicketPlaceholder = ({tier} : {tier: number}) => {
         <Box>
             
                 {tierType?.front_video ? 
-                <video width="100%" autoPlay loop muted playsInline placeholder={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/static/ticket_tiers/0/0.png`}>
+                <video width="100%" autoPlay loop muted playsInline placeholder={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/static/ticket_tiers/${tier}/${tier}.png`}>
                     {/* Hardcoded above */}
                     <source
                         src={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/static/ticket_tiers/${tier}/${tier}.mp4`}
