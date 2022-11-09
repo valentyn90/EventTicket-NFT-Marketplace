@@ -343,7 +343,7 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
                         </Stack> 
                         {/* Italic text */}
                         <Text color="red" fontStyle="italic" fontSize="md" mt="2">
-                            Tickets will go on sale 11/9
+                            Tickets will go on sale 11/10 @ 10am CT
                           </Text>
                           <VStack
                             justifyContent="flex-start"

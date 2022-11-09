@@ -27,4 +27,17 @@ const Events = () => {
   );
 };
 
+// Automatically redirect to /events/1
+
+export async function getStaticProps() {
+
+  return {
+    redirect: {
+      destination: '/events/1',
+      permanent: false,
+    },
+  }
+}
+
+
 export default Events;
