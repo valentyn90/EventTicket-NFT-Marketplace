@@ -34,7 +34,7 @@ export const eventTabs: TicketType[] = [
     supply_total: 60,
     supply_remaining: 60,
     utility: ["Sideline seating in first 3 rows","Physical AR card upon arrival","1 in 60 chance for a player autograph","1 in 60 chance for team sweatshirt","1 in 60 chance to attend pre-game shoot around"],
-    front_video: false
+    front_video: true
   },
   {
     id: 0,
