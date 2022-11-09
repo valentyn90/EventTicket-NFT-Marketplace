@@ -29,7 +29,7 @@ const Events = () => {
 
 // Automatically redirect to /events/1
 
-export async function getStaticProps() {
+export async function getServerSideProps(context: any) {
 
   return {
     redirect: {
