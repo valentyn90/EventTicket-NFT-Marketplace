@@ -45,6 +45,7 @@ const EventModal = (props: EventModalProps) => {
   const [errorMessage, setErrorMessage] = useState({
     email: "",
   });
+  const [submitting, setSubmitting] = useState<boolean>(false);
   // const router = useRouter();
 
   const quantity = props.data.quantity as number;
@@ -92,7 +93,7 @@ const EventModal = (props: EventModalProps) => {
   };
 
   async function handlePurchase(purchaseQuantity: number, price: number, event_id: number, ticket_type_id: number) {
-    // setSubmitting(true)
+    setSubmitting(true)
 
 
     const { data: userData, error: userError } = await getUserDetailsByEmail(
@@ -137,7 +138,7 @@ const EventModal = (props: EventModalProps) => {
         duration: 5000,
         isClosable: true,
       });
-      // setSubmitting(false);
+      setSubmitting(false);
 
     }
     mixpanel.people.set({
@@ -150,7 +151,7 @@ const EventModal = (props: EventModalProps) => {
       action: "conversion",
       params: {
         send_to: 'AW-10929860785/rZfECK7b9s0DELHh4dso',
-        value: .06 * (purchaseQuantity * price),
+        value: .25 * (purchaseQuantity * price),
         currency: 'USD'
       },
     });
@@ -176,7 +177,7 @@ const EventModal = (props: EventModalProps) => {
         }
         // Handle Rejection / Errors
         if (data.status) {
-          // setSubmitting(false)
+          setSubmitting(false)
           if (data.status === "success") {
             toast({
               position: "top",
@@ -201,7 +202,7 @@ const EventModal = (props: EventModalProps) => {
       })
       .catch((err) => console.log(err));
 
-    // setSubmitting(false);
+    setSubmitting(false);
 
   }
 
@@ -246,6 +247,7 @@ const EventModal = (props: EventModalProps) => {
                 }
                 minW="200px"
                 transform="matrix(0.89, 0, -0.58, 1, 0, 0)"
+                isLoading={submitting}
               >
                 <Text
                   textTransform="uppercase"

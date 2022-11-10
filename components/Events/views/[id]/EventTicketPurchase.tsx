@@ -71,7 +71,7 @@ const EventTicketPurchase = (props: EventTicketPurchaseProps) => {
   useEffect(() => {
     // group tickets object by tier and provide summary stats
     if(tickets){
-    console.table(tickets)
+    // console.table(tickets)
     const groupedTickets = tickets.reduce((acc: any, ticket: any) => {
       const key = ticket.tier_id;
       if (!acc[key]) {

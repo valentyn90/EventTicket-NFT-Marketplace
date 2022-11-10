@@ -8,7 +8,6 @@ import useWindowDimensions from "@/utils/useWindowDimensions";
 import mixpanel from 'mixpanel-browser';
 import { BuilderComponent, builder, Builder } from '@builder.io/react';
 import Hero from "@/components/Builder/Hero";
-import TransformButton from "@/components/ui/TransformButton";
 
 const WordChange = keyframes`
   0% { content: "Collector" }
@@ -500,16 +499,15 @@ const Home = ({announce} : any) => {
         {/* <Hero nft_id={96} banner_text="Great Gift!" heading="Any Athlete Can Make Their Own VerifiedInk" link_text="Gift Now" link_url="/gift" flip_timer={5}/> */}
         <div className="hero">
           <div className="hero-left">
-            <p className="hero-title">The <text className="hero-gradient">Ultimate</text> Rookie Card</p>
+            <p className="hero-title">Capture <text className="hero-gradient">Your</text> Moment</p>
 
             <p className="hero-subtitle">
-              Athlete created. Athlete owned. <br />
-              Directly invest in the next generation of stars and put money in their hands.
+            VerifiedInk is the first place for athletes like you to design, own, and sell their own limited edition AR Digital Trading Card.
             </p>
             <div className="hero-card-mobile">
               <div className="card-box card-full-opacity">
                 <img src="/img/tap.svg" className="tap" alt="tap" />
-                <StaticCard nft_id={272} width={400} reverse={flipMain} />
+                <StaticCard nft_id={763} width={400} reverse={flipMain} />
               </div>
             </div>
             <div className="hero-button-row">
@@ -540,26 +538,26 @@ const Home = ({announce} : any) => {
           <div className="hero-right">
             <div className="hero-right-cards">
               <div className="card-box">
-                <StaticCard nft_id={301} width={cardSize} />
+                <StaticCard nft_id={1806} width={cardSize} />
               </div >
               <div className="card-box">
-                <StaticCard nft_id={280} width={cardSize} />
+                <StaticCard nft_id={1792} width={cardSize} />
               </div>
               <div className="card-box card-full-opacity">
                 <img src="/img/tap.svg" className="tap" alt="tap" />
-                <StaticCard nft_id={272} width={cardSize} reverse={flipMain} />
+                <StaticCard nft_id={763} width={cardSize} reverse={flipMain} />
               </div>
               <div className="card-box">
-                <StaticCard nft_id={250} width={cardSize} />
+                <StaticCard nft_id={1860} width={cardSize} /> 
               </div>
               <div className="card-box">
-                <StaticCard nft_id={230} width={cardSize} />
+                <StaticCard nft_id={276} width={cardSize} />
               </div>
               <div className="card-box">
-                <StaticCard nft_id={220} width={cardSize} />
+                <StaticCard nft_id={768} width={cardSize} />
               </div>
               <div className="card-box">
-                <StaticCard nft_id={93} width={cardSize} />
+                <StaticCard nft_id={724} width={cardSize} />
               </div>
               <div className="card-box">
                 <StaticCard nft_id={152} width={cardSize} />
@@ -567,16 +565,16 @@ const Home = ({announce} : any) => {
             </div >
             <div className="hero-left-cards">
               <div className="card-box flip">
-                <StaticCard nft_id={332} width={cardSize} />
+                <StaticCard nft_id={198} width={cardSize} />
               </div >
               <div className="card-box flip">
-                <StaticCard nft_id={174} width={cardSize} />
+                <StaticCard nft_id={419} width={cardSize} />
               </div>
               <div className="card-box flip">
-                <StaticCard nft_id={142} width={cardSize} />
+                <StaticCard nft_id={190} width={cardSize} />
               </div>
               <div className="card-box flip">
-                <StaticCard nft_id={200} width={cardSize} />
+                <StaticCard nft_id={277} width={cardSize} />
               </div>
             </div >
           </div >
@@ -631,7 +629,7 @@ const Home = ({announce} : any) => {
               </Link>
             </div>
             <div className="collector-card-box">
-              <StaticCard nft_id={142} width={cardSize} />
+              <StaticCard nft_id={1454} width={cardSize} />
             </div >
           </div >
         </div >
