@@ -170,11 +170,16 @@ const Drops: React.FC = () => {
               </Heading>
             </VStack>
             {activeDrops.map((challenge, index) => {
+              const sold_out = (challenge.quantity_left.standard + challenge.quantity_left.standard == 0)
 
               return (
                 <VStack key={index} p={2} bg="blueBlack" borderRadius={6} border="2px" borderColor="blueBlack2" onClick={() => { setLoading(true); router.push(`/drops/${challenge.id}`) }}>
                   {/* <StaticCard nft_id={challenge.nfts[2]} width={150} /> */}
+                  <Box opacity={sold_out ? "40%" : "100%"}>
                   <CardPicture nft_id={challenge.nfts[2]} width={140} glow={true}/>
+                  </Box>
+                  { sold_out  ? <Box filter="drop-shadow( 0 0 5px black)" position="relative" mb="-50px" top="-150px" ><Image h="50px" mb="-50px" src={'/img/soldout.png'}/></Box> : null}
+
                   <Heading size="sm">
                     {challenge.player_name}'s Drop
                   </Heading>

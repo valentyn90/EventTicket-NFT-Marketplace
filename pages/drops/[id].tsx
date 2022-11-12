@@ -327,6 +327,7 @@ const Auction: React.FC<Props> = ({ drop_data, publicUrl }) => {
                             <Box h="233px" w="175px">
                                 <Triptych nft_list={dropData.nfts} />
                             </Box>
+                            {itemsLeft < 1 ? <Box filter="drop-shadow( 0 0 5px black)" position="relative" mb="-50px" top="-150px" ><Image h="50px"  src={'/img/soldout.png'}/></Box> : null}
                             <Heading as="h2">Buy Now</Heading>
                             <Text>${price}</Text>
                             <Text color="gray">Extended Edition 1/{dropData.extended_quantity}</Text>
