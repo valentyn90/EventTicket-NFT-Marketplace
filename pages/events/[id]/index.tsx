@@ -15,7 +15,7 @@ const EventDetail = () => {
   const meta = (
     <Head>
       <title>{event.event_name}</title>
-      <meta property="og:title" key="title" content={event.event_name + " Tickets"}  />
+      <meta property="og:title" key="title" content={event.event_name + " NFT Game Tickets"}  />
       <meta property="og:image" key="preview" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/static/ticket_tiers/0/0.png`} />
       <meta property="og:video" key="video" content={`https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/static/ticket_tiers/1/1.mp4`} />
     </Head>
