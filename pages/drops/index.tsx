@@ -30,12 +30,12 @@ const Drops: React.FC = () => {
 
       if (challenge_data) {
         const activeDrops = challenge_data.filter(
-          (drop) => new Date(drop.drop_start).valueOf() < Date.now() && !drop.drop_ended
+          (drop) => new Date(drop.drop_start).valueOf() < Date.now() && !drop.drop_ended && new Date(drop.drop_start).toDateString() !== 'Mon Nov 14 2022'
         )
         setActiveDrops(activeDrops)
 
         const announcedDrops = challenge_data.filter(
-          (drop) => new Date(drop.drop_start).valueOf() > Date.now() && !drop.drop_ended
+          (drop) => new Date(drop.drop_start).valueOf() > Date.now() && !drop.drop_ended && new Date(drop.drop_start).toDateString() !== 'Mon Nov 14 2022' 
         )
         setAnnouncedDrops(announcedDrops)
       }
