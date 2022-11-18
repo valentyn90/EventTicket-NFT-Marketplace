@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import Card from "../NftCard/Card";
 import { CardBox } from "../ui/CardBox";
+import StaticVerifiedInkNft from "../VerifiedInkNft/StaticVerifiedInkNft";
 
 const AdminModalContent = () => {
   return (
@@ -13,15 +14,15 @@ const AdminModalContent = () => {
       pb={["0px", "0px", "unset"]}
     >
       <CardBox>
-        <Card
-          nft_id={userStore.ui.selectedNft?.id}
+        <StaticVerifiedInkNft
+          nftId={userStore.ui.selectedNft!.id}
           readOnly={true}
           flip={false}
         />
       </CardBox>
       <CardBox>
-        <Card
-          nft_id={userStore.ui.selectedNft?.id}
+        <StaticVerifiedInkNft
+          nftId={userStore.ui.selectedNft!.id}
           readOnly={true}
           reverse={true}
         />

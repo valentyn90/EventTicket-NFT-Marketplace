@@ -178,7 +178,7 @@ export const CardWrapper = styled.div<StyleProps>`
     mask-position-y: bottom;
   }
 
-  .background-image {
+  .background-img {
     // compatability with older cards
   }
 
@@ -610,7 +610,7 @@ const VerifiedInkNft = forwardRef<HTMLFormElement, Props>(
                 {!isLoading ? (
                   <>
 
-                    <div className="front-image background-image"></div>
+                    <div className="front-image background-img"></div>
 
                     {nft.edition_rarity == "Common" &&
                       <div className="front-overlay"></div>}
