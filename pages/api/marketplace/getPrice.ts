@@ -12,18 +12,6 @@ export default async function create(
 
     const price = data1.solana.usd
 
-
-
-    return res.status(200).json({result: {price: price}})
-
-    const response1 = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd`)
-
-    const data1 = await response1.json()
-
-    const price = data1.solana.usd
-
-
-
     return res.status(200).json({result: {price: price}})
 
   }
