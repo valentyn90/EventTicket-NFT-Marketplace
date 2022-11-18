@@ -41,9 +41,10 @@ interface Props {
   propsEmail: string;
   validated_tx?: string;
   addressInDb?: string[];
+  nft_id?: string;
 }
 
-const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb }) => {
+const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb, nft_id }) => {
   const [loading, setLoading] = useState(false);
   const [emailLinkSent, setEmailLinkSent] = useState(false);
   const [email, setEmail] = useState("");
@@ -51,9 +52,6 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb }) => {
   const [addressRegistered, setAddressRegistered] = useState(false);
   const [addressValidated, setAddressValidated] = useState(false);
   const [addressDisplay, setAddressDisplay] = useState<string[]>();
-
-  const [nfts, setNfts] = useState<any[]>([]);
-  const [reveal, setReveal] = useState(false);
 
 
   const router = useRouter();
@@ -97,7 +95,7 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb }) => {
       addressRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }
-    , [addressRef, router, nfts])
+    , [addressRef, router])
 
 
   async function handleAddressChange(e: React.FormEvent) {
@@ -250,9 +248,11 @@ const SignIn: React.FC<Props> = ({ propsEmail, validated_tx, addressInDb }) => {
             url={`https://verifiedink.us/athletes?utm_content=${email}`}
           />
           <Spacer p={5} />
-          <Button isLoading={loading} w="100%" backgroundColor="white" color="gray.800" onClick={()=>{setLoading(true); router.push(`/card/${router.query.nft_id}`)}}>
+          {(nft_id || router.query.nft_id) &&
+          <Button isLoading={loading} w="100%" backgroundColor="white" color="gray.800" onClick={()=>{setLoading(true); router.push(`/card/${nft_id || router.query.nft_id}`)}}>
             View Your VerifiedInk
           </Button>
+}
         </Box>
         </Box>
       </Box>
@@ -281,6 +281,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { data: validTx, error: validTxError } = await supabase.from("ar_credit_card_sale").select("*")
         .match({ "stripe_tx": stripe_tx }).is("shipped",null)
     
+        console.log(validTx)
 
     validated_tx = validTx && validTx.length > 0
     // Check if any credit card sales are still in completed status
@@ -297,7 +298,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           user_id: user.id,
           addressInDb,
           validated_tx,
-          propsEmail: user.email
+          propsEmail: user.email,
+          nft_id: validTx![0].nft_id
         }
       }
 
@@ -308,6 +310,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         user_id: validTx![0].user_id,
         addressInDb,
         validated_tx,
+        propsEmail: validTx![0].email,
+        nft_id: validTx![0].nft_id
       }
     };
   }

@@ -1,5 +1,7 @@
+import { setMuxValues } from "@/supabase/supabase-client";
 import Nft from "@/types/Nft";
 import { makeAutoObservable } from "mobx";
+import userStore from "./UserStore";
 
 export class NftInput {
   first_name: string = "";
@@ -13,8 +15,6 @@ export class NftInput {
   preview_rotation: number = 0;
   photoUploading: boolean = false;
   videoUploading: boolean = false;
-  muxUploadId: string = "";
-  muxPlaybackId: string = "";
   localVideo: File | undefined = undefined;
   localSignature: any = null;
   localPhoto: File | undefined = undefined;
@@ -25,6 +25,12 @@ export class NftInput {
   color_transition: string = "";
 
   errorMessage = "";
+
+  mux_upload_id: string | null = null;
+  mux_asset_id: string | null = null;
+  mux_playback_id: string | null = null;
+  mux_max_resolution: string | null = null;
+  count_renditions: string | null = null;
 
   constructor(input: Nft | null) {
     makeAutoObservable(this);
@@ -74,6 +80,10 @@ export class NftInput {
     this.color_transition = "";
   };
 
+  deleteThisVideo = () => {
+    this.mux_playback_id = null;
+  };
+
   setLocalPhoto = (photo: File) => {
     this.localPhoto = photo;
   };
@@ -118,5 +128,70 @@ export class NftInput {
   setInputValue = (field: string, value: any) => {
     // @ts-ignore
     this[field] = value;
+  };
+
+  getMuxUpload = async () => {
+    const checkUploadStatus = async () => {
+      // Get upload data by id
+      const res = await fetch(`/api/mux/upload/${this.mux_upload_id}`);
+
+      const data = await res.json();
+      if (data.upload) {
+        // if upload object is ready, set muxUploadId
+        this.setInputValue("mux_asset_id", data.upload.asset_id);
+        // once upload is available then start fetching the asset
+        this.getMuxAsset();
+        clearInterval(checkUploadInterval);
+      }
+    };
+    // run method immediately
+    checkUploadStatus();
+    // run on interval after
+    const checkUploadInterval = setInterval(checkUploadStatus, 5000);
+  };
+
+  getMuxAsset = async () => {
+    /**
+     * need to make a request to the mux url to see if
+     * the request works.
+     */
+    const checkAssetStatus = async () => {
+      if (this.mux_asset_id) {
+        const res = await fetch(`/api/mux/asset/${this.mux_asset_id}`);
+        const data = await res.json();
+        // First check if status is ready
+        if (data.asset?.status === "ready") {
+          // Use m3u8 video
+
+          // but continue to work until static renditions is ready then this is done
+          if (data.asset?.static_renditions.status === "ready") {
+            userStore.ui.setBottomEditComponent("");
+            const count_renditions = parseInt(
+              data.asset.static_renditions.files.length
+            );
+            let file_name = "low";
+            if (count_renditions > 2) {
+              file_name = "high";
+            } else if (count_renditions > 1) {
+              file_name = "medium";
+            }
+            this.count_renditions = file_name;
+            this.mux_max_resolution = file_name;
+            this.setInputValue("mux_playback_id", data.asset.playback_id);
+            this.setVideoUploading(false);
+            clearInterval(checkAssetInterval);
+          }
+        } else if (data.asset?.errors?.messages) {
+          this.setVideoUploading(false);
+          this.setErrorMessage(data.asset?.errors?.messages[0]);
+          userStore.ui.setBottomEditComponent("");
+          clearInterval(checkAssetInterval);
+        }
+      }
+    };
+    // run method immediately
+    checkAssetStatus();
+    // run on interval after
+    const checkAssetInterval = setInterval(checkAssetStatus, 5000);
   };
 }

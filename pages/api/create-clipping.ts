@@ -30,7 +30,7 @@ export default async function handler(
       responseType: "arraybuffer",
     })
     .then(function (resp) {
-      console.log(resp.headers);
+      // console.log(resp.headers);
       var base64data =
         "data:image/png;base64, " +
         Buffer.from(resp.data, "binary").toString("base64");

@@ -15,13 +15,6 @@ test("should navigate to the create page", async ({ page }) => {
   await expect(page).not.toHaveTitle("404: This page could not be found");
 });
 
-test("should navigate to the step-1 page", async ({ page }) => {
-  // Start from the index page (the baseURL is set via the webServer in the playwright.config.ts)
-  await page.goto(`${url}/create/step-1`);
-  await expect(page).toHaveURL(`${url}/athletes/signin`);
-  await expect(page).not.toHaveTitle("404: This page could not be found");
-});
-
 test("should navigate to the faq page", async ({ page }) => {
   // Start from the index page (the baseURL is set via the webServer in the playwright.config.ts)
   await page.goto(`${url}/faq`);

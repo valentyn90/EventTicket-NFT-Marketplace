@@ -78,6 +78,7 @@ const ShareButton: React.FC<Props> = ({
       width={width}
       background={background}
       borderColor={borderColor}
+      disabled={!id}
     >
       <ShareIcon marginRight="10px" fill={fill} />
       <Text pb="2px">{buttonText}</Text>

@@ -29,6 +29,7 @@ import SellNft from "../Collection/SellNft";
 import ShareButton from "../Components/ShareButton";
 import AlertModal from "../ui/AlertModal";
 import { CardBox } from "../ui/CardBox";
+import StaticVerifiedInkNft from "../VerifiedInkNft/StaticVerifiedInkNft";
 import Card from "./Card";
 
 interface Props {
@@ -331,12 +332,13 @@ const CardSerialNoFunctions: React.FC<Props> = ({ nft, parentComponent }) => {
     >
       <Box flex="1">
         <CardBox>
-          <Card
-            nft_id={nft.id}
+          <StaticVerifiedInkNft
+            nftId={nft.id}
             readOnly={true}
             flip={flipCard}
-            initFlip={initFlip}
-            serial_no={selectedSN}
+            staticCard={true}
+            // initFlip={initFlip}
+            // serial_no={selectedSN}
           />
           <div
             className="cardbox-refreshicon-div"

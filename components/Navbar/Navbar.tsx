@@ -52,7 +52,7 @@ export const Template: React.FC = (props) => {
       setTabIndex(3);
     } else if (router.pathname.toLowerCase().includes("naas")) {
       setTabIndex(4);
-    } else if (router.pathname.toLowerCase().includes("drops")) {
+    } else if (router.pathname.toLowerCase().includes("drop")) {
       setTabIndex(4);
     } else if (router.pathname.toLowerCase().includes("blog")) {
       setTabIndex(5);

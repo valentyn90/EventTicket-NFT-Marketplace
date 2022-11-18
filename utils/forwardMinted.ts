@@ -12,7 +12,7 @@ export default async function forwardMinted(req: NextApiRequest) {
     if (nft.data && nft.data.minted) {
       return {
         redirect: {
-          destination: "/create/step-8",
+          destination: "/create",
           permanent: false,
         },
       };

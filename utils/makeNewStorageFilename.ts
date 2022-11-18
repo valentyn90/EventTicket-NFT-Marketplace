@@ -14,6 +14,7 @@ const makeNewStorageFilename = async (
 
   const fileName = data.file_name.split(`tempnft/${temp_user_id}/`)[1];
   const newName = `${user_id}/${fileName}`;
+
   return {
     oldName: data.file_name,
     newName,

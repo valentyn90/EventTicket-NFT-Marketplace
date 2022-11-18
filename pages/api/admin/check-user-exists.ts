@@ -9,18 +9,10 @@ export default async function handler(
 
   let exists = false;
 
-  const { data: users, error } = await supabase.auth.api.listUsers();
+  const { data: users, error } = await supabase.from("user_details").select("*").eq('email', email);
 
-  if (!users || error) {
-    console.log(error);
-    return res.status(200).json({ exists });
-  }
-
-  for (var i = 0; i < users.length; i++) {
-    if (users[i].email === email) {
-      exists = true;
-      break;
-    }
+  if (users && users.length > 0) {
+    exists = true;
   }
 
   return res.status(200).json({ exists });

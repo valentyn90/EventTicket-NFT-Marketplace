@@ -192,9 +192,9 @@ function VideoProofUpload() {
   } = useDropzone({
     onDrop,
     accept: {
-      "video/*":[]
-    }, 
-    multiple: false
+      "video/*": [],
+    },
+    multiple: false,
   });
 
   const style = useMemo(

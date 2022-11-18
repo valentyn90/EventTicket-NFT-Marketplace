@@ -38,7 +38,7 @@ const Page = () => {
               isLoading={loading}
               onClick={() => {
                 setLoading(true);
-                window.location.assign("/create/step-8");
+                window.location.assign("/create");
               }}
             >
               Continue
@@ -48,7 +48,7 @@ const Page = () => {
               isLoading={loading}
               onClick={() => {
                 setLoading(true);
-                window.location.assign("/create/step-6");
+                window.location.assign("/create");
               }}
             >
               Edit Your Original NFT

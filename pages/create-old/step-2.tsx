@@ -12,8 +12,7 @@ import { NextApiRequest } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useMixpanel } from 'react-mixpanel-browser';
-
+import { useMixpanel } from "react-mixpanel-browser";
 
 const StepTwo = () => {
   const router = useRouter();
@@ -25,15 +24,14 @@ const StepTwo = () => {
     if (userStore.nft && userStore.nft.photo) {
       setDisabled(false);
     }
-    if (userStore.nftInput.localPhoto){
+    if (userStore.nftInput.localPhoto) {
       setDisabled(false);
     }
-
-  }, [userStore.nftInput.localPhoto, userStore.nft?.photo])
+  }, [userStore.nftInput.localPhoto, userStore.nft?.photo]);
 
   async function handleStepTwoSubmit(e: any) {
     e.preventDefault();
-    mixpanel.track("NFT - Uploaded Photo")
+    mixpanel.track("NFT - Uploaded Photo");
     setSubmitting(true);
     if (userStore.stepTwoSkip) {
       router.push("/create/step-3");
@@ -76,7 +74,6 @@ const StepTwo = () => {
         // success
         router.push("/create/step-3");
       }
-
     }
   }
 
@@ -115,15 +112,11 @@ const StepTwo = () => {
               </Button>
             </Flex>
 
-            <Box
-              display={["block", "block", "none"]} pt={8}
-              alignSelf="center">
-              
+            <Box display={["block", "block", "none"]} pt={8} alignSelf="center">
               <Card
                 nft_id={userStore.loadedNft?.id}
                 nft_width={375}
                 reverse={false}
-
               />
             </Box>
           </Flex>

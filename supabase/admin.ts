@@ -15,7 +15,7 @@ export const getAdminNfts = async ({
     .from("nft")
     .select(
       `*,
-   user_details ( verified_user, id, twitter ),
+   user_details!nft_user_details_id_fkey ( verified_user, id, twitter ),
    files:screenshot_file_id (file_name),
    admin_actions(*)
    `
@@ -35,7 +35,7 @@ export const getAdminNfts = async ({
           .from("nft")
           .select(
             `*,
-        user_details ( verified_user, id, twitter ),
+        user_details!nft_user_details_id_fkey ( verified_user, id, twitter ),
         files:screenshot_file_id (file_name),
         admin_actions(*)`
           )
@@ -50,7 +50,7 @@ export const getAdminNfts = async ({
           .from("nft")
           .select(
             `*,
-        user_details ( verified_user, id, twitter ),
+        user_details!nft_user_details_id_fkey ( verified_user, id, twitter ),
         files:screenshot_file_id (file_name),
         admin_actions(*)`
           )
@@ -65,7 +65,7 @@ export const getAdminNfts = async ({
           .from("nft")
           .select(
             `*,
-        user_details ( verified_user, id, twitter ),
+        user_details!nft_user_details_id_fkeyuser_details ( verified_user, id, twitter ),
         files:screenshot_file_id (file_name),
         admin_actions(*)`
           )
@@ -85,7 +85,7 @@ export const getAdminNfts = async ({
           .from("nft")
           .select(
             `*,
-        user_details ( verified_user, id, twitter ),
+        user_details!nft_user_details_id_fkeyuser_details ( verified_user, id, twitter ),
         files:screenshot_file_id (file_name),
         admin_actions(*)`
           )

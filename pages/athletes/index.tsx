@@ -583,7 +583,7 @@ const Athletes: React.FC = () => {
                 Completely free to make. Show it off with physcial AR Cards for a small fee.
                 </p>
                 <div className="buttons margin-button">
-                  <Link href="/create/step-1">
+                  <Link href="/create">
                     <Button className="button"
                       isLoading={loading}
                       onClick={() =>{setLoading(true)}}
@@ -676,7 +676,7 @@ const Athletes: React.FC = () => {
             </div>
             <Spacer p={8} />
             <div className="buttons margin-button">
-                  <Link href="/create/step-1">
+                  <Link href="/create">
                   <Button className="button"
                       isLoading={loading}
                       onClick={() =>{setLoading(true)}}
@@ -746,7 +746,7 @@ const Athletes: React.FC = () => {
                   started.
                 </p>
                 <div className="buttons margin-button">
-                  <Link href="/create/step-1">
+                  <Link href="/create">
                   <Button className="button"
                       isLoading={loading}
                       onClick={() =>{setLoading(true)}}

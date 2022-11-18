@@ -5,6 +5,7 @@ import ShareButton from "@/components/Components/ShareButton";
 import Card from "@/components/NftCard/Card";
 import AlertModal from "@/components/ui/AlertModal";
 import { CardBox } from "@/components/ui/CardBox";
+import StaticVerifiedInkNft from "@/components/VerifiedInkNft/StaticVerifiedInkNft";
 import getSolPrice from "@/hooks/nft/getSolPrice";
 import useBuyNft from "@/hooks/nft/useBuyNft";
 import useCancelNftListing from "@/hooks/nft/useCancelNftListing";
@@ -318,6 +319,7 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
             </Box>
             }
             <CardBox>
+              {nft.vfd_year == 2022 ?
               <Card
                 nft_id={nft.id}
                 db_first_name={nft.first_name}
@@ -329,6 +331,14 @@ const CardId: React.FC<Props> = ({ nft, publicUrl, salePrice }) => {
                 initFlip={initFlip}
                 sale_price={salePrice}
               />
+            :
+
+            <StaticVerifiedInkNft
+              public_url={publicUrl}
+              db_first_name={nft.first_name}
+              nftId={nft.id} />
+
+            }
               <div
                 className="cardbox-refreshicon-div"
                 onClick={() => {
@@ -436,9 +446,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         } 
       })
       .catch((err) => {
-        
+        console.log(err)
       });
-      
+  
+  console.log(price)
   const { id } = context.params as any;
 
   let int_id = parseInt(id as string);

@@ -58,8 +58,8 @@ function VideoPlayer({
   var safariSrc = `https://stream.mux.com/${src}/${max_resolution}.mp4`;
   const imagePreview = `https://image.mux.com/${src}/thumbnail.png?width=400&height=400&fit_mode=preserve&time=1`;
 
-  if(!src || src==''){
-    safariSrc = `https://stream.mux.com/DuYBRIASUsk37QD8BpCWXv8i00ucJW9pAEau02cRXhPQQ/high.mp4`
+  if (!src || src == "") {
+    safariSrc = `https://stream.mux.com/DuYBRIASUsk37QD8BpCWXv8i00ucJW9pAEau02cRXhPQQ/high.mp4`;
   }
 
   function handleVideoMetadataLoaded() {
@@ -117,10 +117,16 @@ function VideoPlayer({
       // hls.attachMedia(video);
       video.src = safariSrc;
     } else if (videoSrc != "https://stream.mux.com/.m3u8") {
-      // video.src = videoSrc;
+      // video.src = videoSrc;\
+      video.src = safariSrc;
+
       console.error(
         "This is an old browser that does not support MSE https://developer.mozilla.org/en-US/docs/Web/API/Media_Source_Extensions_API"
       );
+    } else {
+      if (videoSrc === "https://stream.mux.com/.m3u8") {
+        video.src = safariSrc;
+      }
     }
 
     return () => {

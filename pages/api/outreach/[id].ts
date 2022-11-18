@@ -140,7 +140,7 @@ your years of hard work and talent. Finish your VerifiedInk using the link above
 
 async function sendChangesRequiredDM(twitter_handle: string, nft_id: string) {
     const message = `We've reviewed your VerifiedInk and found some changes that need to be made before it's minted. Please \
-visit https://verifiedink.us/create/changes to make the requested changes.`
+visit https://verifiedink.us/create to make the requested changes.`
 
     const result = await sendMessage(twitter_handle, message);
 

@@ -16,7 +16,8 @@ export default async function handler(
         email,
         user_id,
         quantity,
-        nft_id
+        nft_id,
+        back_url
       } = req.body;
 
 
@@ -29,7 +30,10 @@ export default async function handler(
 
       const product = quantity == 1 ? single_product : multi_product
 
-      
+      let cancel_url = `${req.headers.origin}/create?session_id={CHECKOUT_SESSION_ID}&nft_id=${nft_id}&email=${email}&canceled=true`
+      if(back_url){
+        cancel_url = `${req.headers.origin}/${back_url}?session_id={CHECKOUT_SESSION_ID}&nft_id=${nft_id}&email=${email}&canceled=true`
+      }
        
         // Create Checkout Sessions from body params.
         const session = await stripe.checkout.sessions.create({
@@ -43,7 +47,7 @@ export default async function handler(
           customer_email: email,
           mode: "payment",
           success_url: `${req.headers.origin}/create/finish_checkout?session_id={CHECKOUT_SESSION_ID}&nft_id=${nft_id}&email=${email}&success=true&quantity=${quantity}`,
-          cancel_url: `${req.headers.origin}/create/completed?session_id={CHECKOUT_SESSION_ID}&nft_id=${nft_id}&email=${email}&canceled=true`,
+          cancel_url: cancel_url,
           metadata: {
             ar_card: true,
             ar_quantity: quantity,

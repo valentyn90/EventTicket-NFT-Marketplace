@@ -1,17 +1,15 @@
 import { NftStore } from "@/mobx/NftStore";
 import userStore from "@/mobx/UserStore";
-import { Spinner } from "@chakra-ui/spinner";
 import { getFileFromSupabase, getNftById } from "@/supabase/supabase-client";
+import { motion } from "framer-motion";
 import { observer } from "mobx-react-lite";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { CSSProperties, useEffect, useState } from "react";
 import { RiFullscreenLine } from "react-icons/ri";
-import { motion } from "framer-motion";
 import VideoPlayer from "../Components/VideoPlayer";
 import { goFullscreen, handleTouchEvent } from "./CardMethods";
 import { CardWrapper } from "./CardStyles";
-import { toJS } from "mobx";
 
 interface Props {
   nft_id?: number | undefined;
@@ -152,7 +150,7 @@ const Card: React.FunctionComponent<Props> = ({
       // size when the screen is small. The logic is in CardStyles.ts 41-45
       router.pathname.includes("step-8") ||
       router.pathname === "/" ||
-      router.pathname.includes("/create/") ||
+      router.pathname.includes("/create") ||
       router.pathname.includes("/card/") ||
       router.pathname.includes("naas") ||
       router.pathname.includes("screenshot")

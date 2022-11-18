@@ -49,7 +49,7 @@ const Admin = () => {
 
     getAdminNfts({ progressFilter: filterValues }).then((res) => {
       setAllNfts(res);
-      // console.log(res);
+    
       setFilteredNfts(res.slice(range, range + 50));
     });
   }, [userStore.ui.refetchAdmin, progressFilter]);

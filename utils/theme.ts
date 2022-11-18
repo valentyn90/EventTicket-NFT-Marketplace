@@ -42,8 +42,12 @@ const theme = extendTheme({
     viBlue2: "#0D9DE5",
     purpleBlue: "#525AB2",
     purpleBlueTransparent: "#525AB290",
-
-    gray3: "#B3B6BE" 
+    darkPurple: "1d253c",
+    lightPurple: "#3d4662",
+    gray3: "#B3B6BE",
+    gray4: "#4F5567",
+    gray5: "#BEC1C7",
+    gray6: "#4F556733",
   },
   components: {
     Alert,

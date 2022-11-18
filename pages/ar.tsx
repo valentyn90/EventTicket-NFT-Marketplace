@@ -104,7 +104,7 @@ const Ar: React.FC<Props> = ({
           (
             <Button
               onClick={() => {
-                window.location.assign("/create/step-1?referralCode=agmfpKV&utm_content=physical_card");
+                window.location.assign("/create?referralCode=agmfpKV&utm_content=physical_card");
               }
               }
               variant={"solid"}

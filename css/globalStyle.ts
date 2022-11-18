@@ -84,6 +84,15 @@ export const GlobalStyle = createGlobalStyle`
     width: calc(100vw - 2rem);
   }
 
+  .inline-edit {
+    background-color: transparent;
+    width: inherit;
+    border: 0;
+    :focus-visible {
+      outline: none;
+    }
+  }
+
   @media screen and (max-width: 1100px){
     .solana-wallet-multi-btn {
       font-size: 14px;

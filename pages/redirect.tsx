@@ -46,7 +46,7 @@ const Redirect: React.FC<Props> = ({ redirect }) => {
               router.push(redirect);
             } else {
               // NOTE: Need to wait for the cookie to be written
-              router.push("/create/step-1");
+              router.push("/create");
             }
           } else {
             // router.push("/athletes/signin");

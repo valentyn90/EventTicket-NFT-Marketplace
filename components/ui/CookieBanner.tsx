@@ -17,13 +17,11 @@ export const CookieBanner = (props: StackProps): JSX.Element | null => {
     }
   }, []);
 
-
   if (!visible) {
     return null;
   }
 
   return (
-    
     <HStack
       justify="center"
       spacing="4"
@@ -56,6 +54,5 @@ export const CookieBanner = (props: StackProps): JSX.Element | null => {
         </Link>
       </Text>
     </HStack>
-    
   );
 };

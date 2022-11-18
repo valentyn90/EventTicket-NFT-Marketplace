@@ -23,7 +23,7 @@ const StaticCards = () => {
       <Flex>
         <Box flex={1}>StaticCard</Box>
         <Box flex={1}>
-          <StaticCard nft_id={230} width={400} reverse={flip}/>
+          <StaticCard nft_id={96} width={400} reverse={flip}/>
         </Box>
         <Button onClick={() => setFlip(!flip)}>Flip</Button>
       </Flex>

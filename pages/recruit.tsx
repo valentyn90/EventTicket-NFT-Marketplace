@@ -104,7 +104,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (user) {
     return {
       redirect: {
-        destination: "/create/step-8",
+        destination: "/create",
         permanent: false,
       },
     };
