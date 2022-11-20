@@ -20,7 +20,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       ? true
       : false;
   const showNavForLanding =
-    router.pathname === "/ar" || router.pathname === "/screenshot/qr"
+    router.pathname === "/ar" || router.pathname === "/screenshot/qr" || router.pathname.includes("/apparel/")
       ? false
       : true;
 
@@ -28,7 +28,8 @@ const Layout: React.FC<Props> = ({ children }) => {
     router.pathname === "/ar" ||
     router.pathname === "/screenshot/qr" ||
     router.pathname === "/events/[id]/tickets" ||
-    router.pathname === "/events/accept_tickets"
+    router.pathname === "/events/accept_tickets" ||
+    router.pathname.includes("/apparel/")
       ? false
       : true;
   const { colorMode, setColorMode } = useColorMode();
