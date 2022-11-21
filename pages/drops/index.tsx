@@ -157,8 +157,6 @@ const Drops: React.FC = () => {
               <Image width={140} src="https://epfccsgtnbatrzapewjg.supabase.co/storage/v1/object/public/private/teams/packs/pepperdine.png"/>
               <Heading size="sm">
                 Pepperdine Men's Basketball
-                <br/>
-                Drops Nov 14 @ 8:00pm EST
               </Heading>
             </VStack>
 
