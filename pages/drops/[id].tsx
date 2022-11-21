@@ -15,6 +15,7 @@ import mixpanel from 'mixpanel-browser';
 import { useRouter } from "next/router";
 import moment from "moment";
 import Triptych from "@/components/NftCard/triptych";
+import StaticVerifiedInkNft from "@/components/VerifiedInkNft/StaticVerifiedInkNft";
 
 
 interface Props {
@@ -499,7 +500,10 @@ const Auction: React.FC<Props> = ({ drop_data, publicUrl }) => {
                             <Divider pt={2} pb={8} />
                             <Stack py={10} direction={["column", "column", "row"]} alignItems={"center"} gridColumnGap={10}>
                                 <Box flex={1}>
+                                    {dropData.id > 39 ?    
+                                     <StaticCard nft_id={dropData.premium_nft} width={350} /> :
                                     <Card nft_id={dropData.premium_nft} readOnly={true} nft_width={350} />
+                                    }
                                 </Box>
                                 <VStack flex={1} minW={[200, 400, 400]}>
                                     <Heading size="lg">Legendary - 10 Total</Heading>
