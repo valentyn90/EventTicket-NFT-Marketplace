@@ -178,9 +178,9 @@ export async function sendARPurchaseMail(user_id: string, quantity: number, pric
   let template_id = 'd-bb5733c1ab614d7e97628fa96cfff374'
 
   let email = customer_email;
-  if(user_id){
+  if (user_id) {
     const user_details = await supabase.from("user_details").select("*").eq("user_id", user_id).maybeSingle();
-     email = user_details.data.email;
+    email = user_details.data.email;
   }
 
   const msg = {
@@ -219,7 +219,7 @@ export async function sendTicketMail(order_id: number) {
 
   console.log(order)
   // get tier data
-  const tier = eventTabs.find((tab) => tab.id === order.tier_id);
+  const tier = eventTabs.find((tab: { id: any; }) => tab.id === order.tier_id);
 
   //hard code event
   const event = events[0]
@@ -339,41 +339,28 @@ export async function sendAuctionLoserMail(loser_id: string, auction_id: string)
 
 export async function sendAddressMail(email: string) {
 
-  const { data: userData, error: userError } = await getUserDetailsByEmail(email);
-
-  if (userData) {
-    const user_id = userData.user_id;
-
-    const purchase_record = await supabase.from('drop_credit_card_sale')
-      .select('*').eq('user_id', user_id).order('id', { ascending: false }).limit(1).maybeSingle();
-
-    console.log(`https://verifiedink.us/drops/finish_drop_checkout?email=${email}&session_id=${purchase_record.data.stripe_tx}&needs_address=true`)
-    // return { "success": true }
-    if (purchase_record.data) {
-      const msg = {
-        to: email,
-        from: 'VerifiedInk@verifiedink.us',
-        reply_to: 'Support@verifiedink.us',
-        bcc: 'aaron@verifiedink.us',
-        template_id: "d-ffa32fea50c44bd0b26ce31186b9804a",
-        dynamic_template_data: {
-          email,
-          session_id: purchase_record.data.stripe_tx
-        }
-      }
-
-      await sgMail
-        .send(msg)
-        .then(() => {
-          return { "success": true }
-        })
-        .catch((error: any) => {
-          console.log(error)
-          return { "success": true }
-        })
+  const msg = {
+    to: email,
+    from: 'VerifiedInk@verifiedink.us',
+    reply_to: 'Support@verifiedink.us',
+    template_id: "d-ffa32fea50c44bd0b26ce31186b9804a",
+    dynamic_template_data: {
+      email
     }
   }
+
+  await sgMail
+    .send(msg)
+    .then(() => {
+      return { "success": true }
+    })
+    .catch((error: any) => {
+      console.log(error)
+      return { "success": true }
+    })
 }
+
+
 
 export async function sendFanChallengeEmail(email: string, order_id: string) {
 

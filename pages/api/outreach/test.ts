@@ -23,11 +23,13 @@ export default async function outreach(
     //     count = count + 1
     // }
 
+    const result = await sendAddressMail("aaron.linsky+10@gmail.com")
+
     // const result = await sendFanChallengeEmail("aaron.linsky@gmail.com","9")
     // const result = await sendTicketMail(8)
     // const result = await sendGenericDropPurchaseMail('348d305f-3156-44ec-98f6-5d052bea2aa8', 1, 150, 5, 'premium')
 
-    const result = { nothing: "nothing" }
+    // const result = { nothing: "nothing" }
     // console.log(result)
 
     return res.status(200).json(result);
