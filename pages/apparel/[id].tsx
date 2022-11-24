@@ -8,6 +8,7 @@ import router, { useRouter } from "next/router";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
+import { useIntercom } from "react-use-intercom";
 
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
   height: number;
   target: string;
   mask: string;
+  purchase_url: string;
 }
 
 const Ar: React.FC<Props> = ({
@@ -28,6 +30,7 @@ const Ar: React.FC<Props> = ({
   height,
   target,
   mask,
+  purchase_url
 }) => {
 
   const [nftId, setNftId] = useState<number | undefined>(undefined)
@@ -51,18 +54,26 @@ const Ar: React.FC<Props> = ({
     fetchScreenshot()
   }, [nftId])
 
-  async function associateNFT() {
-    const arId = router.query.ar_id
-    if (arId && nftId) {
-      console.log(userStore.nft?.id)
-      console.log(router.query.ar_id)
-      const res = await fetch('/api/ar/associate?ar_id=' + arId + '&nft_id=' + nftId)
-      console.log(res)
-      if (res.ok) {
-        window.location.assign('/ar?ar_id=' + arId)
-      }
-    }
+  
 
+  async function associateNFT() {
+    const arId = router.query.id
+
+
+    // if (arId && nftId) {
+    //   console.log(userStore.nft?.id)
+    //   console.log(router.query.ar_id)
+    //   const res = await fetch('/api/ar/associate?ar_id=' + arId + '&nft_id=' + nftId)
+    //   console.log(res)
+    //   if (res.ok) {
+    //     window.location.assign('/ar?ar_id=' + arId)
+    //   }
+    // }
+
+  }
+
+  async function buyApparel(){
+    window.location.assign(purchase_url)
   }
 
   return (
@@ -81,37 +92,52 @@ const Ar: React.FC<Props> = ({
       <ARViewer nft_id={nft_id} image_link={imageLink} video_link={videoLink} width={width} height={height} target={target} mask={mask} />
 
       {
-        (nftId && nftId != nft_id && (nft_id === 332 || nft_id === 763)) ?
-          (
-            <Button onClick={associateNFT}
 
-              variant="solid"
-              height="110px"
-              style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px" }}
-            >
-              <VStack spacing={2}>
-                <div>Switch NFT</div>
-                <img src={publicUrl} width='40px' />
+        <Button height="100px"
+        onClick={buyApparel}
+        borderRadius={"md"}
+        style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px", backgroundColor:"white" }}
+        >
+            <VStack spacing={2}>
+            <Image
+              src="/img/apparel/merch.webp"
+              width="60px"
+              />
+               
+              <Text color="black">Get Your Own</Text>
               </VStack>
-            </Button>
-          ) :
-          (
-            <Button
-              onClick={() => {
-                window.location.assign("/create?referralCode=agmfpKV&utm_content=physical_card");
-              }
-              }
-              variant={"solid"}
-              borderRadius={"3px"}
-              height="60px"
-              style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px" }}
-            >
-              <VStack spacing={0}>
-                {!nftId && <div style={{ fontSize: "18px", fontFamily: "Lato" }}>Make your</div>}
-                <div style={{ marginBottom: "5px" }}><img width="120px" src="/img/wordmark.svg" /></div>
-              </VStack>
-            </Button>
-          )
+        </Button>    
+        // (nftId && nftId != nft_id && (nft_id === 332 || nft_id === 763)) ?
+        //   (
+        //     <Button onClick={associateNFT}
+
+        //       variant="solid"
+        //       height="110px"
+        //       style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px" }}
+        //     >
+        //       <VStack spacing={2}>
+        //         <div>Switch NFT</div>
+        //         <img src={publicUrl} width='40px' />
+        //       </VStack>
+        //     </Button>
+        //   ) :
+        //   (
+        //     <Button
+        //       onClick={() => {
+        //         window.location.assign("/create?referralCode=agmfpKV&utm_content=physical_card");
+        //       }
+        //       }
+        //       variant={"solid"}
+        //       borderRadius={"3px"}
+        //       height="60px"
+        //       style={{ zIndex: 1000, bottom: "10px", position: "absolute", left: "10px" }}
+        //     >
+        //       <VStack spacing={0}>
+        //         {!nftId && <div style={{ fontSize: "18px", fontFamily: "Lato" }}>Make your</div>}
+        //         <div style={{ marginBottom: "5px" }}><img width="120px" src="/img/wordmark.svg" /></div>
+        //       </VStack>
+        //     </Button>
+        //   )
       }
 
    
@@ -125,7 +151,7 @@ export async function getServerSideProps(context: any) {
 
   const { id } = context.query
   const ar_id = id
-  const { data, error } = await supabase.from(`apparel_mapping`).select(`nft_id, video_url, apparel_config(mask, target, mask_factor) `).eq("apparel_id", ar_id).maybeSingle()
+  const { data, error } = await supabase.from(`apparel_mapping`).select(`nft_id, video_url, apparel_config(mask, target, mask_factor, purchase_url) `).eq("apparel_id", ar_id).maybeSingle()
   let nft_id = 332
 
 
@@ -182,7 +208,8 @@ export async function getServerSideProps(context: any) {
       width,
       height,
       target: data.apparel_config.target,
-      mask: data.apparel_config.mask
+      mask: data.apparel_config.mask,
+      purchase_url: data.apparel_config.purchase_url
     }
   }
 

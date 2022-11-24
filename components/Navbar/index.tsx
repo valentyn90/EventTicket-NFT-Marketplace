@@ -20,7 +20,6 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
-import { useIntercom } from "react-use-intercom";
 import { Navbar } from "./Navbar";
 import { NavTabLink } from "./NavTabLink";
 import { UserProfile } from "./UserProfile";
@@ -28,46 +27,8 @@ import { UserProfile } from "./UserProfile";
 const NavIndex: React.FC = () => {
   const router = useRouter();
   const [referralString, setReferralString] = useState("");
-  const { boot, update } = useIntercom();
-  mixpanel.init("b78dc989c036b821147f68e00c354313");
-
+  
   const MARKET_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MARKETPLACE === "true";
-
-  mixpanel.track("Page View", {
-    path: router.asPath,
-    page_id: router.query.id,
-    query: router.query,
-  });
-
-  const bootWithProps = useCallback(() => {
-    boot();
-    if (userStore.loggedIn) {
-      mixpanel.identify(userStore.userDetails.id);
-      mixpanel.people.set({
-        $email: userStore.email,
-        name: userStore.userDetails.user_name,
-        twitter: userStore.userDetails.twitter,
-        grad_year: userStore.nft?.graduation_year,
-        state: userStore.nft?.usa_state,
-        minted: userStore.nft?.minted,
-      });
-      update({
-        name: userStore.userDetails.user_name,
-        email: userStore.email,
-        userId: userStore.userDetails.id,
-        avatar: {
-          type: "avatar",
-          imageUrl: userStore.avatar_url,
-        },
-        customAttributes: {
-          twitter: userStore.userDetails.twitter,
-          grad_year: userStore.nft?.graduation_year,
-          state: userStore.nft?.usa_state,
-          minted: userStore.nft?.minted,
-        },
-      });
-    }
-  }, [boot, userStore.loggedIn, userStore.loaded]);
 
   useEffect(() => {
     const sign_up = localStorage.getItem("sign_up");
@@ -91,9 +52,6 @@ const NavIndex: React.FC = () => {
     }
   }, [router.query]);
 
-  useEffect(() => {
-    bootWithProps();
-  }, [router.query, userStore.loaded]);
 
   return (
     <>
