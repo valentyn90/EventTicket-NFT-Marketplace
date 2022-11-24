@@ -8,7 +8,7 @@ import router, { useRouter } from "next/router";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
-import { useIntercom } from "react-use-intercom";
+import mixpanel from "mixpanel-browser";
 
 
 interface Props {
@@ -54,6 +54,15 @@ const Ar: React.FC<Props> = ({
     fetchScreenshot()
   }, [nftId])
 
+  useEffect(() => {
+    if(router){
+      mixpanel.track("Apparel Scan", {
+        apparel_id: router.query.id,
+        nft_id: nft_id,
+        videoLink: videoLink,
+      });
+    }
+  },[router])
   
 
   async function associateNFT() {
@@ -73,6 +82,10 @@ const Ar: React.FC<Props> = ({
   }
 
   async function buyApparel(){
+    mixpanel.track("Apparel Purchase Referral", {
+      apparel_id: router.query.id,
+      purchase_url: purchase_url,
+    });
     window.location.assign(purchase_url)
   }
 
@@ -154,9 +167,6 @@ export async function getServerSideProps(context: any) {
   const { data, error } = await supabase.from(`apparel_mapping`).select(`nft_id, video_url, apparel_config(mask, target, mask_factor, purchase_url) `).eq("apparel_id", ar_id).maybeSingle()
   let nft_id = 332
 
-
-  console.log(data)
-
   if(ar_id > 500 && ar_id <= 1000){
     nft_id = 763
   }
@@ -178,7 +188,7 @@ export async function getServerSideProps(context: any) {
 
   let width = 1
   let height = 1
-  const mask_factor = data.apparel_config.mask_factor
+  const mask_factor = data.apparel_config.mask_factor 
 
   const f = await fetch(thumbnail)
   const blob = await f.blob()
@@ -188,14 +198,14 @@ export async function getServerSideProps(context: any) {
     const dimensions = await sizeOf(buff)
     if (dimensions.width && dimensions.height) {
       width = dimensions.width / dimensions.height
-      console.log(width)
+      // console.log(width)
     }
   }
 
   if (width < mask_factor){
     height = mask_factor/width
     width = mask_factor
-    console.log(`new Width: ${width} and new Height: ${height}`)
+    // console.log(`new Width: ${width} and new Height: ${height}`)
     
   }
 
