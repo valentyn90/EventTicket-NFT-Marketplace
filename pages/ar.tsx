@@ -8,6 +8,7 @@ import router, { useRouter } from "next/router";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
+import mixpanel from "mixpanel-browser";
 
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
   imageLink: string;
   videoLink: string;
   width: number;
+  nft_name: string;
 }
 
 const Ar: React.FC<Props> = ({
@@ -22,6 +24,7 @@ const Ar: React.FC<Props> = ({
   imageLink,
   videoLink,
   width,
+  nft_name
 }) => {
 
   const [nftId, setNftId] = useState<number | undefined>(undefined)
@@ -54,6 +57,12 @@ const Ar: React.FC<Props> = ({
         setShowInvite(true)
         setViewInvite(true)
       }
+
+      mixpanel.track("Card Scan", {
+        ar_id: router.query.ar_id,
+        nft_id: nft_id,
+        athlete_name: nft_name,
+      });
     }
   }, [router])
 
@@ -204,13 +213,15 @@ export async function getServerSideProps(context: any) {
     }
   }
 
+  const nft_name = (nft_id === 332 || nft_id === 763) ? "Default" : nft.data.first_name + " " + nft.data.last_name
 
   return {
     props: {
       nft_id,
       imageLink,
       videoLink,
-      width
+      width,
+      nft_name
     }
   }
 
