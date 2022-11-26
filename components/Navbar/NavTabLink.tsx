@@ -9,7 +9,13 @@ import * as React from "react";
 
 export const NavTabLink: React.FC<LinkProps> = (props) => {
   return (
-    <NextLink href={`/${props.children}`.toLowerCase()}>
+    <NextLink 
+    href={props.children === "Apparel" ?
+      "https://apparel.verifiedink.us/"
+      :
+      `/${props.children}`.toLowerCase()
+    }
+    >
       <a>
         <Tab
           _selected={{ color: mode("blue.500", "blue.200") }}
