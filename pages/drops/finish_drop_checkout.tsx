@@ -33,6 +33,7 @@ import { useReward } from "react-rewards";
 import Head from "next/head";
 import { ShippingInformation } from "@/components/ui/ShippingInformation";
 import { CheckCircleIcon } from "@chakra-ui/icons";
+import StaticCard from "@/components/NftCard/StaticCard";
 
 interface Props {
   user_id?: string;
@@ -303,8 +304,8 @@ const SignIn: React.FC<Props> = ({ user_id, pending_assignment, validated_tx, ad
                   <Skeleton  isLoaded={reveal} speed={1.2} >
                     <Center >
                       <VStack>
-                        <Card nft_id={nft.nft_id} nft_width={375} serial_no={nft.serial_no} readOnly={true} />
-                        <Heading size={"md"}>{[drop_data.nfts[2], drop_data.premium_nft].includes(nft.nft_id) ? `Legendary #${nft.serial_no}` : nft.nft_id === drop_data.nfts[2] ? `Rare #${nft.serial_no}/40` : `Common #${nft.serial_no}/445`}</Heading>
+                        <StaticCard nft_id={nft.nft_id} width={375} />
+                        <Heading size={"md"}>{[drop_data.nfts[2], drop_data.premium_nft].includes(nft.nft_id) ? `Legendary #${nft.serial_no}` : nft.nft_id === drop_data.nfts[2] ? `Rare #${nft.serial_no}` : `Common #${nft.serial_no}`}</Heading>
                       </VStack>
                     </Center>
                   </Skeleton>
